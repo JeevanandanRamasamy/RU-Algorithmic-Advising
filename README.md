@@ -1,1 +1,1 @@
-# Fitness-App
+# RU-Algorithmic-Advising
