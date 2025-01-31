@@ -1,1 +1,1 @@
-# RU-Algorithmic-Advising
+# RU Algorithmic Advising
