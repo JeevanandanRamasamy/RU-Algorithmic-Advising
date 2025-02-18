@@ -8,7 +8,6 @@ DROP TABLE IF EXISTS Section;
 DROP TABLE IF EXISTS SchedulePlan;
 DROP TABLE IF EXISTS PlannedCourse;
 DROP TABLE IF EXISTS DegreePlan;
-DROP TABLE IF EXISTS Requirement;
 DROP TABLE IF EXISTS RequirementGroup;
 DROP TABLE IF EXISTS StudentProgram;
 DROP TABLE IF EXISTS Program;
@@ -25,7 +24,7 @@ CREATE TABLE Account (
     password VARCHAR(30),  -- User password (set during registration)
     first_name VARCHAR(50),  -- First name of user
     last_name VARCHAR(50),  -- Last name of user
-    role ENUM ('Student', 'Admin') NOT NULL DEFAULT 'Student'  -- Defines role type
+    role ENUM ('student', 'admin') NOT NULL DEFAULT 'student'  -- Defines role type
 );
 
 -- ==================================================
@@ -37,7 +36,7 @@ CREATE TABLE StudentDetails (
     enroll_date YEAR,  -- Year of enrollment
     credits_earned INT CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
     gpa DECIMAL(3, 2) CHECK (gpa BETWEEN 0.00 AND 4.00),  -- GPA range between 0.00 and 4.00
-    class_year ENUM ('Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate') NOT NULL,  -- Classification based on credits
+    class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate') NOT NULL,  -- Classification based on credits
     FOREIGN KEY (username) REFERENCES Account(username) ON DELETE CASCADE  -- Delete student details if account is deleted
 );
 
@@ -48,7 +47,7 @@ CREATE TABLE Course (
     course_id CHAR(10) PRIMARY KEY,  -- Unique course identifier (e.g., "01:198:431")
     course_name VARCHAR(200) NOT NULL,  -- Name of the course
     credits INT NOT NULL CHECK (credits > 0),  -- Number of credits (must be >0)
-    description TEXT  -- Course description
+    course_link VARCHAR(255)  -- URL to the course page (dynamically fetched)
 );
 
 -- ================================================
@@ -57,7 +56,7 @@ CREATE TABLE Course (
 CREATE TABLE CourseTaken (
     username VARCHAR(6) NOT NULL,  -- Student who took the course
     course_id CHAR(10) NOT NULL,  -- Course identifier
-    term ENUM ('Fall', 'Spring', 'Summer', 'Winter'),  -- Term of completion
+    term ENUM ('fall', 'spring', 'summer', 'winter'),  -- Term of completion
     year YEAR,  -- Year of completion
     grade VARCHAR(2) CHECK (grade IN ('A', 'B+', 'B', 'C+', 'C', 'D', 'F', 'PA', 'NC', 'W')),  -- Grade received
     PRIMARY KEY (username, course_id, term, year),
@@ -71,7 +70,7 @@ CREATE TABLE CourseTaken (
 CREATE TABLE Program (
     program_id VARCHAR(7) PRIMARY KEY,  -- Unique program identifier (e.g., "NB198SJ")
     program_name VARCHAR(200) NOT NULL,  -- Name of the program
-    program_type ENUM ('Major', 'Minor', 'Certificate') NOT NULL,  -- Type of program
+    program_type ENUM ('major', 'minor', 'certificate', 'sas_core') NOT NULL,  -- Type of program
     is_credit_intensive BOOLEAN NOT NULL DEFAULT FALSE  -- Flag for credit-intensive programs
     additional_details TEXT  -- Lists any other important information
 );
@@ -121,7 +120,7 @@ CREATE TABLE DegreePlan (
 CREATE TABLE PlannedCourse (
     plan_id INT NOT NULL,
     course_id CHAR(10) NOT NULL,
-    term ENUM ('Fall', 'Spring', 'Summer', 'Winter') NOT NULL, 
+    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL, 
     year YEAR NOT NULL, 
     PRIMARY KEY (plan_id, course_id),
     FOREIGN KEY (plan_id) REFERENCES DegreePlan (plan_id) ON DELETE CASCADE,
@@ -136,7 +135,7 @@ CREATE TABLE SchedulePlan (
     username VARCHAR(6) NOT NULL, 
     schedule_name VARCHAR(50),  -- Custom name for the schedule
     last_updated DATE NOT NULL,  -- Last modification date
-    term ENUM ('Fall', 'Spring', 'Summer', 'Winter') NOT NULL, 
+    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL, 
     year YEAR NOT NULL, 
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
 );
