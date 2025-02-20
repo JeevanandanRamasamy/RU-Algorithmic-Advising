@@ -71,7 +71,7 @@ CREATE TABLE Program (
     program_id VARCHAR(7) PRIMARY KEY,  -- Unique program identifier (e.g., "NB198SJ")
     program_name VARCHAR(200) NOT NULL,  -- Name of the program
     program_type ENUM ('major', 'minor', 'certificate', 'sas_core') NOT NULL,  -- Type of program
-    is_credit_intensive BOOLEAN NOT NULL DEFAULT FALSE  -- Flag for credit-intensive programs
+    is_credit_intensive BOOLEAN NOT NULL DEFAULT FALSE,  -- Flag for credit-intensive programs
     additional_details TEXT  -- Lists any other important information
 );
 
