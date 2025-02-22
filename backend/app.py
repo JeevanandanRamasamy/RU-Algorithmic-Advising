@@ -11,6 +11,10 @@ username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 host = os.getenv('DB_HOST', 'localhost')
 dbname = os.getenv('DB_NAME')
+print(username)
+print(password)
+print(host)
+print(dbname)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
