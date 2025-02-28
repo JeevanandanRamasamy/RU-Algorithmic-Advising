@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from db import db
 from models import Account
 from routes.courses import course_bp
+from db_service import DBService
 
 load_dotenv()
 
