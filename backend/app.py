@@ -3,10 +3,13 @@ from flask import Flask
 from dotenv import load_dotenv
 from db import db
 from models import Account
+from routes.courses import course_bp
+from db_service import DBService
 
 load_dotenv()
 
-app = Flsk(__name__)
+app = Flask(__name__)
+app.register_blueprint(course_bp)
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 host = os.getenv('DB_HOST', 'localhost')

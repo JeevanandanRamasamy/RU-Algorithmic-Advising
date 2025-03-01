@@ -1,5 +1,5 @@
 from db import db
-from sqlalchemy import Column, String, Text, Boolean, Integer, Numeric, Enum, Date, JSON, PrimaryKeyConstraint, ForeignKey, CheckConstraint
+from sqlalchemy import Column, String, Text, Boolean, Integer, Numeric, Enum, DateTime, JSON, PrimaryKeyConstraint, ForeignKey, CheckConstraint
 from sqlalchemy.dialects.mysql import YEAR, CHAR
 
 class Account(db.Model):
@@ -85,8 +85,7 @@ class RequirementGroup(db.Model):
     group_id = Column(Integer, primary_key=True, autoincrement=True)
     program_id = Column(String(7), ForeignKey('Program.program_id', ondelete='CASCADE'))
     course_id = Column(CHAR(10), ForeignKey('Course.course_id', ondelete='CASCADE'))
-    logic = Column(Enum('AND', 'OR', name='logic_enum'), default=None)
-    min_required = Column(Integer, default=None)
+    num_required = Column(Integer, default=None)
     list = Column(JSON, default=None)
     parent_group_id = Column(Integer, ForeignKey('RequirementGroup.group_id', ondelete='CASCADE'), default=None)
 
@@ -100,7 +99,7 @@ class DegreePlan(db.Model):
     plan_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(6), ForeignKey('StudentDetails.username', ondelete='CASCADE'), nullable=False)
     plan_name = Column(String(50))
-    last_updated = Column(Date, nullable=False)
+    last_updated = Column(DateTime, nullable=False)
 
     def __repr__(self):
         return f"<DegreePlan(plan_id={self.plan_id}, username={self.username}, plan_name={self.plan_name}, last_updated={self.last_updated})>"
@@ -126,7 +125,7 @@ class SchedulePlan(db.Model):
     schedule_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(6), ForeignKey('StudentDetails.username', ondelete='CASCADE'), nullable=False)
     schedule_name = Column(String(50))
-    last_updated = Column(Date, nullable=False)
+    last_updated = Column(DateTime, nullable=False)
     term = Column(Enum('fall', 'spring', 'summer', 'winter', name='term_enum'), nullable=False)
     year = Column(YEAR, nullable=False)
 

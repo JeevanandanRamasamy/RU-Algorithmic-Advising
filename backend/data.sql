@@ -36,71 +36,71 @@ VALUES ('01', 'The SAS Core Curriculum', 'sas_core', FALSE,
 -- Create requirement structure for programs
 -- The structure is a tree where each node is a requirement group
 -- Each requirement group has a parent group, which is NULL if it is a root node
-INSERT INTO RequirementGroup (group_id, program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (1, '01', NULL, 'AND', NULL, NULL, NULL), -- SAS Core Curriculum
-	(2, 'NB198SJ', NULL, 'AND', NULL, NULL, NULL), -- B.S. in Computer Science
-	(3, NULL, NULL, 'AND', NULL, NULL, 2), -- R1 for BSCS
-	(4, NULL, NULL, 'AND', NULL, NULL, 2), -- R3 for BSCS
-	(5, NULL, NULL, 'OR', NULL, NULL, 2), -- R4 for BSCS
-	(6, 'NB198J', NULL, 'AND', NULL, NULL, NULL), -- B.A. in Computer Science
-	(7, NULL, NULL, 'AND', NULL, NULL, 6), -- R1 for BACS
-	(8, NULL, NULL, 'AND', NULL, NULL, 6), -- R3 for BACS
-	(9, 'NB198N', NULL, 'AND', NULL, NULL, NULL), -- Minor in Computer Science
-	(10, NULL, NULL, 'AND', NULL, NULL, 9), -- R1 for CS Minor
-	(11, 'NB219SJ', NULL, 'AND', NULL, NULL, NULL), -- B.S. in Data Science (Computer Science Option)
-	(12, NULL, NULL, 'AND', NULL, NULL, 11), -- R1 for BSDS (Computer Science Option)
-	(13, NULL, NULL, 'AND', NULL, NULL, 11), -- R2 for BSDS (Computer Science Option)
-	(14, 'NB219TJ', NULL, 'AND', NULL, NULL, NULL), -- B.A. in Data Science (Statistics Option)
-	(15, NULL, NULL, 'AND', NULL, NULL, 14), -- R1 for BADS (Statistics Option)
-	(16, NULL, NULL, 'AND', NULL, NULL, 14), -- R2 for BADS (Statistics Option)
-	(17, 'NB219EJ', NULL, 'AND', NULL, NULL, NULL), -- B.S. in Data Science (Economics Option)
-	(18, NULL, NULL, 'AND', NULL, NULL, 17), -- R1 for BSDS (Economics Option)
-	(19, NULL, NULL, 'AND', NULL, NULL, 17), -- R2 for BSDS (Economics Option)
-	(20, 'NB219IJ', NULL, 'AND', NULL, NULL, NULL), -- B.A. in Data Science (Societal Impact Option)
-	(21, NULL, NULL, 'AND', NULL, NULL, 20), -- R1 for BADS (Societal Impact Option)
-	(22, NULL, NULL, 'AND', NULL, NULL, 20), -- R2 for BADS (Societal Impact Option)
-	(23, 'NB219CJ', NULL, 'AND', NULL, NULL, NULL), -- B.S. in Data Science (Chemical Data Science Option)
-	(24, NULL, NULL, 'AND', NULL, NULL, 23), -- R1 for BSDS (Chemical Data Science Option)
-	(25, NULL, NULL, 'AND', NULL, NULL, 23), -- R2 for BSDS (Chemical Data Science Option)
-	(26, 'NB219N', NULL, 'AND', NULL, NULL, NULL), -- Minor in Data Science
-	(27, NULL, NULL, 'AND', NULL, NULL, 26), -- R1 for DS Minor
-	(28, NULL, NULL, 'AND', NULL, NULL, 26), -- R2 for DS Minor
-	(29, NULL, NULL, 'OR', NULL, NULL, 26), -- R3 for DS Minor
-	(30, NULL, NULL, 'AND', NULL, NULL, 29), -- DS Minor (Computer Science Track)
-	(31, NULL, NULL, 'AND', NULL, NULL, 29), -- DS Minor (Statistics Track)
-	(32, NULL, NULL, 'AND', NULL, NULL, 29), -- DS Minor (Economics Track)
-	(33, NULL, NULL, 'AND', NULL, NULL, 29), -- DS Minor (Societal Impact Track)
-	(34, 'NB219X', NULL, 'AND', NULL, NULL, NULL), -- Certificate in Data Science
-	(35, NULL, NULL, 'AND', NULL, NULL, 34), -- R1 for DS Certificate
-	(36, NULL, NULL, 'AND', NULL, NULL, 34), -- R2 for DS Certificate
-	(37, 'NB225X', NULL, 'AND', NULL, NULL, NULL), -- Certificate in Computational Economics and Data Analytics
-	(38, 'NB960J', NULL, 'AND', NULL, NULL, NULL), -- Major in Statistics
-	(39, NULL, NULL, 'AND', NULL, NULL, 38), -- R2 for Statistics Major
-	(40, NULL, NULL, 'AND', NULL, NULL, 38), -- R3 for Statistics Major
-	(41, 'NB960N', NULL, 'AND', NULL, NULL, NULL), -- Minor in Statistics
-	(42, 'NB961J', NULL, 'AND', NULL, NULL, NULL), -- Major in Statistics - Mathematics
-	(43, NULL, NULL, 'AND', NULL, NULL, 42), -- R3 for Statistics - Mathematics Major
-	(44, 'NB640J', NULL, 'AND', NULL, NULL, NULL), -- Major in Mathematics
-	(45, NULL, NULL, 'AND', NULL, NULL, 44), -- R3 for Mathematics Major
-	(46, 'NB640N', NULL, 'AND', NULL, NULL, NULL); -- Minor in Mathematics
+INSERT INTO RequirementGroup (group_id, program_id, course_id, num_required, list, parent_group_id)
+VALUES (1, '01', NULL, 0, NULL, NULL), -- SAS Core Curriculum
+	(2, 'NB198SJ', NULL, 0, NULL, NULL), -- B.S. in Computer Science
+	(3, NULL, NULL, 0, NULL, 2), -- R1 for BSCS
+	(4, NULL, NULL, 0, NULL, 2), -- R3 for BSCS
+	(5, NULL, NULL, 1, NULL, 2), -- R4 for BSCS
+	(6, 'NB198J', NULL, 0, NULL, NULL), -- B.A. in Computer Science
+	(7, NULL, NULL, 0, NULL, 6), -- R1 for BACS
+	(8, NULL, NULL, 0, NULL, 6), -- R3 for BACS
+	(9, 'NB198N', NULL, 0, NULL, NULL), -- Minor in Computer Science
+	(10, NULL, NULL, 0, NULL, 9), -- R1 for CS Minor
+	(11, 'NB219SJ', NULL, 0, NULL, NULL), -- B.S. in Data Science (Computer Science Option)
+	(12, NULL, NULL, 0, NULL, 11), -- R1 for BSDS (Computer Science Option)
+	(13, NULL, NULL, 0, NULL, 11), -- R2 for BSDS (Computer Science Option)
+	(14, 'NB219TJ', NULL, 0, NULL, NULL), -- B.A. in Data Science (Statistics Option)
+	(15, NULL, NULL, 0, NULL, 14), -- R1 for BADS (Statistics Option)
+	(16, NULL, NULL, 0, NULL, 14), -- R2 for BADS (Statistics Option)
+	(17, 'NB219EJ', NULL, 0, NULL, NULL), -- B.S. in Data Science (Economics Option)
+	(18, NULL, NULL, 0, NULL, 17), -- R1 for BSDS (Economics Option)
+	(19, NULL, NULL, 0, NULL, 17), -- R2 for BSDS (Economics Option)
+	(20, 'NB219IJ', NULL, 0, NULL, NULL), -- B.A. in Data Science (Societal Impact Option)
+	(21, NULL, NULL, 0, NULL, 20), -- R1 for BADS (Societal Impact Option)
+	(22, NULL, NULL, 0, NULL, 20), -- R2 for BADS (Societal Impact Option)
+	(23, 'NB219CJ', NULL, 0, NULL, NULL), -- B.S. in Data Science (Chemical Data Science Option)
+	(24, NULL, NULL, 0, NULL, 23), -- R1 for BSDS (Chemical Data Science Option)
+	(25, NULL, NULL, 0, NULL, 23), -- R2 for BSDS (Chemical Data Science Option)
+	(26, 'NB219N', NULL, 0, NULL, NULL), -- Minor in Data Science
+	(27, NULL, NULL, 0, NULL, 26), -- R1 for DS Minor
+	(28, NULL, NULL, 0, NULL, 26), -- R2 for DS Minor
+	(29, NULL, NULL, 1, NULL, 26), -- R3 for DS Minor
+	(30, NULL, NULL, 0, NULL, 29), -- DS Minor (Computer Science Track)
+	(31, NULL, NULL, 0, NULL, 29), -- DS Minor (Statistics Track)
+	(32, NULL, NULL, 0, NULL, 29), -- DS Minor (Economics Track)
+	(33, NULL, NULL, 0, NULL, 29), -- DS Minor (Societal Impact Track)
+	(34, 'NB219X', NULL, 0, NULL, NULL), -- Certificate in Data Science
+	(35, NULL, NULL, 0, NULL, 34), -- R1 for DS Certificate
+	(36, NULL, NULL, 0, NULL, 34), -- R2 for DS Certificate
+	(37, 'NB225X', NULL, 0, NULL, NULL), -- Certificate in Computational Economics and Data Analytics
+	(38, 'NB960J', NULL, 0, NULL, NULL), -- Major in Statistics
+	(39, NULL, NULL, 0, NULL, 38), -- R2 for Statistics Major
+	(40, NULL, NULL, 0, NULL, 38), -- R3 for Statistics Major
+	(41, 'NB960N', NULL, 0, NULL, NULL), -- Minor in Statistics
+	(42, 'NB961J', NULL, 0, NULL, NULL), -- Major in Statistics - Mathematics
+	(43, NULL, NULL, 0, NULL, 42), -- R3 for Statistics - Mathematics Major
+	(44, 'NB640J', NULL, 0, NULL, NULL), -- Major in Mathematics
+	(45, NULL, NULL, 0, NULL, 44), -- R3 for Mathematics Major
+	(46, 'NB640N', NULL, 0, NULL, NULL); -- Minor in Mathematics
 
 -- BSCS/BACS Computer Science Core
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]', 3), -- 3: BSCS
-	(NULL, NULL, 'OR', NULL, '["01:198:206", "01:640:477", "14:332:226"]', 3),
-	(NULL, NULL, 'AND', NULL, '["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]', 7), -- 7: BACS
-	(NULL, NULL, 'OR', NULL, '["01:198:206", "01:640:477", "14:332:226"]', 7);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]', 3), -- 3: BSCS
+	(NULL, NULL, 1, '["01:198:206", "01:640:477", "14:332:226"]', 3),
+	(NULL, NULL, 0, '["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]', 7), -- 7: BACS
+	(NULL, NULL, 1, '["01:198:206", "01:640:477", "14:332:226"]', 7);
 
 -- BSCS/BACS Mathemathics Core
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250"]', 2), -- 2: BSCS
-	(NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250"]', 6); -- 6: BACS
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250"]', 2), -- 2: BSCS
+	(NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250"]', 6); -- 6: BACS
 
 -- BSCS/BACS Computer Science Electives
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
 	"01:198:336", "01:198:439", "01:198:462"]', 4), -- 4: BSCS
-	(NULL, NULL, NULL, 7, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
+	(NULL, NULL, 7, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
 	"01:198:323", "01:198:324", "01:198:334", "01:198:336", "01:198:345", "01:198:352",
 	"01:198:411", "01:198:415", "01:198:416", "01:198:417", "01:198:419", "01:198:424",
 	"01:198:425", "01:198:428", "01:198:431", "01:198:437", "01:198:439", "01:198:440",
@@ -110,9 +110,9 @@ VALUES (NULL, NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198
 	"01:640:461", "01:730:315", "01:730:329", "01:730:407", "01:730:408", "01:730:424",
 	"01:960:384", "01:960:463", "01:960:476", "01:960:486", "14:332:376", "14:332:423",
 	"14:332:424", "14:332:451", "14:332:452", "14:332:476"]', 4),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:198:439", "01:198:462"]', 8), -- 8: BACS
-	(NULL, NULL, 'AND', NULL, '["01:198:314", "01:198:336"]', 8),
-	(NULL, NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
+	(NULL, NULL, 1, '["01:198:210", "01:198:439", "01:198:462"]', 8), -- 8: BACS
+	(NULL, NULL, 0, '["01:198:314", "01:198:336"]', 8),
+	(NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
 	"01:198:323", "01:198:324", "01:198:334", "01:198:336", "01:198:345", "01:198:352",
 	"01:198:411", "01:198:415", "01:198:416", "01:198:417", "01:198:419", "01:198:424",
 	"01:198:425", "01:198:428", "01:198:431", "01:198:437", "01:198:439", "01:198:440",
@@ -124,24 +124,24 @@ VALUES (NULL, NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198
 	"14:332:424", "14:332:451", "14:332:452", "14:332:476"]', 8);
 
 -- BSCS Physics/Chemistry Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:750:271", "01:750:272", "01:750:275", "01:750:276"]', 5),
-	(NULL, NULL, 'AND', NULL, '["01:750:203", "01:750:204", "01:750:205", "01:750:206"]', 5),
-	(NULL, NULL, 'AND', NULL, '["01:750:123", "01:750:124", "01:750:227", "01:750:229"]', 5),
-	(NULL, NULL, 'AND', NULL, '["01:750:193", "01:750:194"]', 5),
-	(NULL, NULL, 'AND', NULL, '["01:160:159", "01:160:160", "01:160:171"]', 5),
-	(NULL, NULL, 'AND', NULL, '["01:160:161", "01:160:162", "01:160:171"]', 5);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:750:271", "01:750:272", "01:750:275", "01:750:276"]', 5),
+	(NULL, NULL, 0, '["01:750:203", "01:750:204", "01:750:205", "01:750:206"]', 5),
+	(NULL, NULL, 0, '["01:750:123", "01:750:124", "01:750:227", "01:750:229"]', 5),
+	(NULL, NULL, 0, '["01:750:193", "01:750:194"]', 5),
+	(NULL, NULL, 0, '["01:160:159", "01:160:160", "01:160:171"]', 5),
+	(NULL, NULL, 0, '["01:160:161", "01:160:162", "01:160:171"]', 5);
 
 -- BSCS/BACS Residency Requirement (removed redundant courses)
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:198:210", "01:198:213", "01:198:214", "01:198:206"]', 2), -- 2: BSCS
-	(NULL, NULL, 'AND', NULL, '["01:198:210", "01:198:213", "01:198:214", "01:198:206"]', 6); -- 6: BACS
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:198:210", "01:198:213", "01:198:214", "01:198:206"]', 2), -- 2: BSCS
+	(NULL, NULL, 0, '["01:198:210", "01:198:213", "01:198:214", "01:198:206"]', 6); -- 6: BACS
 
 -- CS Minor Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, NULL, 2, '["01:198:314", "01:198:336", "01:198:344", "01:198:439",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 2, '["01:198:314", "01:198:336", "01:198:344", "01:198:439",
 	"01:198:462", "01:198:431"]', 10),
-	(NULL, NULL, NULL, 6, '["01:198:111", "01:198:112", "01:198:205", "01:198:206",
+	(NULL, NULL, 6, '["01:198:111", "01:198:112", "01:198:205", "01:198:206",
 	"01:198:210", "01:198:211", "01:198:213", "01:198:214", "01:198:314", "01:198:323",
 	"01:198:324", "01:198:334", "01:198:336", "01:198:344", "01:198:345", "01:198:352",
 	"01:198:411", "01:198:415", "01:198:416", "01:198:417", "01:198:419", "01:198:424",
@@ -149,117 +149,117 @@ VALUES (NULL, NULL, NULL, 2, '["01:198:314", "01:198:336", "01:198:344", "01:198
 	"01:198:452", "01:198:460", "01:198:461", "01:198:462"]', 10);
 
 -- Data Science Core Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 12), -- 12: BSDS Computer Science Track
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 12),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 12),
-	(NULL, NULL, 'OR', NULL, '["01:640:135", "01:640:151"]', 12),
-	(NULL, NULL, 'AND', NULL, '["01:640:250", "04:189:220", "01:198:336"]', 12),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 15), -- 15: BSDS Statistics Track
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 15),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 15),
-	(NULL, NULL, 'OR', NULL, '["01:640:135", "01:640:151"]', 15),
-	(NULL, NULL, 'AND', NULL, '["01:640:250", "04:189:220"]', 15),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 18), -- 18: BSDS Economics Track
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 18),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 18),
-	(NULL, NULL, 'OR', NULL, '["01:640:135", "01:640:151"]', 18),
-	(NULL, NULL, 'AND', NULL, '["01:640:250", "04:189:220"]', 18),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 21), -- 21: BADS Societal Impact Track
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 21),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 21),
-	(NULL, NULL, 'OR', NULL, '["01:640:135", "01:640:151"]', 21),
-	(NULL, NULL, 'AND', NULL, '["01:640:250", "04:189:220"]', 21),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 24), -- 24: BSDS Chemical Data Science Track
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 24),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 24),
-	(NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:250", "04:189:220"]', 24),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 27), -- 27: DS Minor
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 27),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 27),
-	(NULL, NULL, 'OR', NULL, '["01:198:142", "01:960:142"]', 35), -- 27: DS Certificate
-	(NULL, NULL, 'OR', NULL, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 35),
-	(NULL, NULL, 'OR', NULL, '["01:198:210", "01:960:295", "04:547:221"]', 35);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:198:142", "01:960:142"]', 12), -- 12: BSDS Computer Science Track
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 12),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 12),
+	(NULL, NULL, 1, '["01:640:135", "01:640:151"]', 12),
+	(NULL, NULL, 0, '["01:640:250", "04:189:220", "01:198:336"]', 12),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 15), -- 15: BSDS Statistics Track
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 15),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 15),
+	(NULL, NULL, 1, '["01:640:135", "01:640:151"]', 15),
+	(NULL, NULL, 0, '["01:640:250", "04:189:220"]', 15),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 18), -- 18: BSDS Economics Track
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 18),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 18),
+	(NULL, NULL, 1, '["01:640:135", "01:640:151"]', 18),
+	(NULL, NULL, 0, '["01:640:250", "04:189:220"]', 18),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 21), -- 21: BADS Societal Impact Track
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 21),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 21),
+	(NULL, NULL, 1, '["01:640:135", "01:640:151"]', 21),
+	(NULL, NULL, 0, '["01:640:250", "04:189:220"]', 21),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 24), -- 24: BSDS Chemical Data Science Track
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 24),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 24),
+	(NULL, NULL, 0, '["01:640:151", "01:640:250", "04:189:220"]', 24),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 27), -- 27: DS Minor
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 27),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 27),
+	(NULL, NULL, 1, '["01:198:142", "01:960:142"]', 35), -- 27: DS Certificate
+	(NULL, NULL, 1, '["01:960:291", "01:960:212", "01:960:384", "33:136:385"]', 35),
+	(NULL, NULL, 1, '["01:198:210", "01:960:295", "04:547:221"]', 35);
 
 -- BSDS Computer Science Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:640:152", "01:640:251", "01:198:205", "01:198:206",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:640:152", "01:640:251", "01:198:205", "01:198:206",
 	"01:198:439", "01:198:111", "01:198:112", "01:960:463", "01:960:486", "04:547:321"]', 13),
-	(NULL, NULL, 'OR', NULL, '["01:198:461", "01:198:462"]', 13);
+	(NULL, NULL, 1, '["01:198:461", "01:198:462"]', 13);
 
 -- BSDS Statistics Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:198:111", "01:198:112", "01:960:463", "01:960:486"]', 16),
-	(NULL, NULL 'OR', NULL, '["01:640:136", "01:640:152"]', 16),
-	(NULL, NULL, 'OR', NULL, '["01:960:365", "01:960:467", "01:960:490"]', 16);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:198:111", "01:198:112", "01:960:463", "01:960:486"]', 16),
+	(NULL, NULL 1, '["01:640:136", "01:640:152"]', 16),
+	(NULL, NULL, 1, '["01:960:365", "01:960:467", "01:960:490"]', 16);
 
 -- BSDS Economics Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:220:424", "04:547:321", "01:220:102", "01:220:103",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:220:424", "04:547:321", "01:220:102", "01:220:103",
 	"01:220:320", "01:220:321", "01:220:322", "01:220:421"]', 19),
-	(NULL, NULL, 'OR', NULL, '["01:640:136", "01:640:152"]', 19),
-	(NULL, NULL, 'OR', NULL, '["01:220:422", "01:220:423"]', 19);
+	(NULL, NULL, 1, '["01:640:136", "01:640:152"]', 19),
+	(NULL, NULL, 1, '["01:220:422", "01:220:423"]', 19);
 
 -- BADS Societal Impact Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["04:547:201", "04:189:103", "04:547:321", "01:960:486",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["04:547:201", "04:189:103", "04:547:321", "01:960:486",
 	"01:960:463"]', 22),
-	(NULL, NULL, 'OR', NULL, '["01:960:365", "01:960:467", "01:960:490", "01:198:439",
+	(NULL, NULL, 1, '["01:960:365", "01:960:467", "01:960:490", "01:198:439",
 	"01:220:322", "01:359:207", "01:447:303", "01:450:320", "01:450:321", "01:450:330",
 	"01:750:345", "01:790:391", "01:920:360", "11:126:486", "14:332:443"]', 22);
 
 -- BSDS Chemical Data Science Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:640:152", "01:198:111", "01:160:171", "01:198:310"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:159", "01:160:161", "01:160:163", "01:160:165"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:160", "01:160:162", "01:160:164", "01:160:166"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:307", "01:160:315"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:308", "01:160:316"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:960:365", "01:960:463"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:327", "01:160:341"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:160:328", "01:160:342", "01:160:438"]', 25),
-	(NULL, NULL, 'OR', NULL, '["01:694:407", "11:115:403"]', 25);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:640:152", "01:198:111", "01:160:171", "01:198:310"]', 25),
+	(NULL, NULL, 1, '["01:160:159", "01:160:161", "01:160:163", "01:160:165"]', 25),
+	(NULL, NULL, 1, '["01:160:160", "01:160:162", "01:160:164", "01:160:166"]', 25),
+	(NULL, NULL, 1, '["01:160:307", "01:160:315"]', 25),
+	(NULL, NULL, 1, '["01:160:308", "01:160:316"]', 25),
+	(NULL, NULL, 1, '["01:960:365", "01:960:463"]', 25),
+	(NULL, NULL, 1, '["01:160:327", "01:160:341"]', 25),
+	(NULL, NULL, 1, '["01:160:328", "01:160:342", "01:160:438"]', 25),
+	(NULL, NULL, 1, '["01:694:407", "11:115:403"]', 25);
 
 -- Data Science Domain Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:198:310", "01:220:323"]', 28), -- 28: DS Minor
-	(NULL, NULL, 'OR', NULL, '["01:198:439", "01:220:322", "01:359:207", "01:447:303",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:198:310", "01:220:323"]', 28), -- 28: DS Minor
+	(NULL, NULL, 1, '["01:198:439", "01:220:322", "01:359:207", "01:447:303",
 	"01:450:320", "01:450:321", "01:450:330", "01:750:345", "01:790:391", "01:920:360",
 	"01:960:365", "01:960:463", "01:960:486", "04:189:220", "04:547:321", "11:126:486",
 	"14:332:443"]', 28),
-	(NULL, NULL, 'OR', NULL, '["01:198:310", "01:220:323"]', 36), -- 36: DS Certificate
-	(NULL, NULL, 'OR', NULL, '["01:198:439", "01:220:322", "01:359:207", "01:447:303",
+	(NULL, NULL, 1, '["01:198:310", "01:220:323"]', 36), -- 36: DS Certificate
+	(NULL, NULL, 1, '["01:198:439", "01:220:322", "01:359:207", "01:447:303",
 	"01:450:320", "01:450:321", "01:450:330", "01:750:345", "01:790:391", "01:920:360",
 	"01:960:365", "01:960:463", "01:960:486", "04:189:220", "04:547:321", "11:126:486",
 	"14:332:443"]', 36);
 
 -- DS Minor Track Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:960:463"]', 30), -- 30: DS Minor (Computer Science Track)
-	(NULL, NULL, 'OR', NULL, '["01:198:461", "01:198:462"]', 30),
-	(NULL, NULL, 'AND', NULL, '["01:960:486"]', 31), -- 31: DS Minor (Statistics Track)
-	(NULL, NULL, 'OR', NULL, '["01:960:463", "04:189:220", "04:547:321"]', 31),
-	(NULL, NULL, 'AND', NULL, '["01:220:424"]', 32), -- 32: DS Minor (Economics Track)
-	(NULL, NULL, 'OR', NULL, '["04:189:220", "04:547:321"]', 32),
-	(NULL, NULL, 'AND', NULL, '["04:189:220", "04:547:321"]', 33); -- 33: DS Minor (Societal Impact Track)
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:960:463"]', 30), -- 30: DS Minor (Computer Science Track)
+	(NULL, NULL, 1, '["01:198:461", "01:198:462"]', 30),
+	(NULL, NULL, 0, '["01:960:486"]', 31), -- 31: DS Minor (Statistics Track)
+	(NULL, NULL, 1, '["01:960:463", "04:189:220", "04:547:321"]', 31),
+	(NULL, NULL, 0, '["01:220:424"]', 32), -- 32: DS Minor (Economics Track)
+	(NULL, NULL, 1, '["04:189:220", "04:547:321"]', 32),
+	(NULL, NULL, 0, '["04:189:220", "04:547:321"]', 33); -- 33: DS Minor (Societal Impact Track)
 
 -- Certificate in Computational Economics and Data Analytics Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:220:420"]', 37),
-	(NULL, NULL, NULL, 3, '["01:220:410", "01:220:480", "01:220:481", "01:220:482",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:220:420"]', 37),
+	(NULL, NULL, 3, '["01:220:410", "01:220:480", "01:220:481", "01:220:482",
 	"01:220:483", "01:220:485", "01:220:488", "01:220:489", "01:220:401", "01:220:421",
 	"01:220:422", "01:220:423", "01:220:424"]', 37),
-	(NULL, NULL, 'OR', NULL, '["01:220:410", "01:220:480", "01:220:481", "01:220:482",
+	(NULL, NULL, 1, '["01:220:410", "01:220:480", "01:220:481", "01:220:482",
 	"01:220:483", "01:220:485", "01:220:488", "01:220:489"]', 37),
-	(NULL, NULL, 'OR', NULL, '["01:220:401", "01:220:421", "01:220:422", "01:220:423",
+	(NULL, NULL, 1, '["01:220:401", "01:220:421", "01:220:422", "01:220:423",
 	"01:220:424"]', 37);
 
 -- Statistics Major Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:198:107", "01:198:110", "01:198:111", "01:198:170"]', 38), -- 38: Statistics Major
-	(NULL, NULL, 'OR', NULL, '["01:198:107", "01:198:110", "01:198:111", "01:198:170"]', 42), -- 42: Statistics - Mathematics Major
-	(NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01:640:251"]', 39), -- 39: Statistics Major
-	(NULL, NULL, 'OR', NULL, '["01:640:252", "01:640:300", "01:640:311", "01:640:312",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:198:107", "01:198:110", "01:198:111", "01:198:170"]', 38), -- 38: Statistics Major
+	(NULL, NULL, 1, '["01:198:107", "01:198:110", "01:198:111", "01:198:170"]', 42), -- 42: Statistics - Mathematics Major
+	(NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250", "01:640:251"]', 39), -- 39: Statistics Major
+	(NULL, NULL, 1, '["01:640:252", "01:640:300", "01:640:311", "01:640:312",
 	"01:640:321", "01:640:325", "01:640:336", "01:640:338", "01:640:339", "01:640:348",
 	"01:640:350", "01:640:351", "01:640:352", "01:640:354", "01:640:355", "01:640:356",
 	"01:640:357", "01:640:361", "01:640:373", "01:640:374", "01:640:393", "01:640:395",
@@ -270,38 +270,38 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:198:107", "01:198:110", "01:198:111", "01:
 	"01:640:486", "01:640:487", "01:640:488", "01:640:489", "01:640:490", "01:640:491",
 	"01:640:492", "01:640:493", "01:640:494", "01:640:495", "01:640:496", "01:640:497",
 	"01:640:498"]', 39),
-	(NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01:640:251",
+	(NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250", "01:640:251",
 	"01:640:252", "01:640:300", "01:640:311", "01:640:478"]', 42), -- 42: Statistics - Mathematics Major
-	(NULL, NULL, NULL, 2, '["01:960:365", "01:960:467", "01:960:476", "01:960:483"]', 40), -- 40: Statistics Major
-	(NULL, NULL, 'OR', NULL, '["01:960:295", "01:960:390"]', 40),
-	(NULL, NULL, 'OR', NULL, '["01:960:381", "01:640:477"]', 40),
-	(NULL, NULL, 'OR', NULL, '["01:960:382", "01:640:481"]', 40),
-	(NULL, NULL, 'OR', NULL, '["01:960:212", "01:960:384"]', 40),
-	(NULL, NULL, 'AND', NULL, '["01:960:463", "01:960:486", "01:960:490"]', 40),
-	(NULL, NULL, NULL, 2, '["01:960:365", "01:960:467", "01:960:476", "01:960:483"]', 43), -- 43: Statistics - Mathematics Major
-	(NULL, NULL, 'OR', NULL, '["01:960:295", "01:960:390"]', 43),
-	(NULL, NULL, 'OR', NULL, '["01:960:381", "01:640:477"]', 43),
-	(NULL, NULL, 'OR', NULL, '["01:960:382", "01:640:481"]', 43),
-	(NULL, NULL, 'OR', NULL, '["01:960:212", "01:960:384"]', 43),
-	(NULL, NULL, 'AND', NULL, '["01:960:463", "01:960:486", "01:960:490"]', 43);
+	(NULL, NULL, 2, '["01:960:365", "01:960:467", "01:960:476", "01:960:483"]', 40), -- 40: Statistics Major
+	(NULL, NULL, 1, '["01:960:295", "01:960:390"]', 40),
+	(NULL, NULL, 1, '["01:960:381", "01:640:477"]', 40),
+	(NULL, NULL, 1, '["01:960:382", "01:640:481"]', 40),
+	(NULL, NULL, 1, '["01:960:212", "01:960:384"]', 40),
+	(NULL, NULL, 0, '["01:960:463", "01:960:486", "01:960:490"]', 40),
+	(NULL, NULL, 2, '["01:960:365", "01:960:467", "01:960:476", "01:960:483"]', 43), -- 43: Statistics - Mathematics Major
+	(NULL, NULL, 1, '["01:960:295", "01:960:390"]', 43),
+	(NULL, NULL, 1, '["01:960:381", "01:640:477"]', 43),
+	(NULL, NULL, 1, '["01:960:382", "01:640:481"]', 43),
+	(NULL, NULL, 1, '["01:960:212", "01:960:384"]', 43),
+	(NULL, NULL, 0, '["01:960:463", "01:960:486", "01:960:490"]', 43);
 
 -- Statistics Minor Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:960:390", "01:960:295"]', 41),
-	(NULL, NULL, NULL, 3, '["01:640:477", "01:640:481", "01:960:142", "01:960:201",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:960:390", "01:960:295"]', 41),
+	(NULL, NULL, 3, '["01:640:477", "01:640:481", "01:960:142", "01:960:201",
 	"01:960:211", "01:960:212", "01:960:285", "01:960:291", "01:960:295", "01:960:365",
 	"01:960:379", "01:960:381", "01:960:382", "01:960:384", "01:960:391", "01:960:392",
 	"01:960:401", "01:960:435", "01:960:463", "01:960:467", "01:960:476", "01:960:482",
 	"01:960:483", "01:960:484", "01:960:486", "01:960:490", "01:960:491", "01:960:492",
 	"01:960:495", "01:960:EC", "01:960:MAJ"]', 41),
-	(NULL, NULL, NULL, 3, '["01:960:365", "01:960:381", "01:960:382", "01:960:463",
+	(NULL, NULL, 3, '["01:960:365", "01:960:381", "01:960:382", "01:960:463",
 	"01:960:467", "01:960:476", "01:960:483", "01:960:486", "01:960:490"]', 41);
 
 -- Mathematics Major Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01:640:251", "01:640:252"]', 44),
-	(NULL, NULL, 'OR', NULL, '["01:198:107", "01:198:111", "14:332:252"]', 44),
-	(NULL, NULL, NULL, 8, '["01:640:300", "01:640:311", "01:640:312", "01:640:321",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250", "01:640:251", "01:640:252"]', 44),
+	(NULL, NULL, 1, '["01:198:107", "01:198:111", "14:332:252"]', 44),
+	(NULL, NULL, 8, '["01:640:300", "01:640:311", "01:640:312", "01:640:321",
 	"01:640:325", "01:640:336", "01:640:338", "01:640:339", "01:640:348", "01:640:350",
 	"01:640:351", "01:640:352", "01:640:354", "01:640:355", "01:640:356", "01:640:357",
 	"01:640:361", "01:640:373", "01:640:374", "01:640:393", "01:640:395", "01:640:403",
@@ -311,14 +311,14 @@ VALUES (NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01
 	"01:640:458", "01:640:461", "01:640:468", "01:640:477", "01:640:478", "01:640:481",
 	"01:640:485", "01:640:486", "01:640:487", "01:640:488", "01:640:489", "01:640:490",
 	"01:640:493", "01:640:494", "01:640:495", "01:640:496", "01:640:497", "01:640:498"]', 45),
-	(NULL, NULL, 'OR', NULL, '["01:640:311", "01:640:312", "01:640:411", "01:640:412"]', 45),
-	(NULL, NULL, 'OR', NULL, '["01:640:350", "01:640:351", "01:640:352", "01:640:451",
+	(NULL, NULL, 1, '["01:640:311", "01:640:312", "01:640:411", "01:640:412"]', 45),
+	(NULL, NULL, 1, '["01:640:350", "01:640:351", "01:640:352", "01:640:451",
 	"01:640:452"]', 45);
 
 -- Mathematics Minor Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01:640:251"]', 46),
-	(NULL, NULL, NULL, 4, '["01:640:244", "01:640:252", "01:640:300", "01:640:311",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 0, '["01:640:151", "01:640:152", "01:640:250", "01:640:251"]', 46),
+	(NULL, NULL, 4, '["01:640:244", "01:640:252", "01:640:300", "01:640:311",
 	"01:640:312", "01:640:321", "01:640:325", "01:640:336", "01:640:338", "01:640:339",
 	"01:640:348", "01:640:350", "01:640:351", "01:640:352", "01:640:354", "01:640:355",
 	"01:640:356", "01:640:357", "01:640:361", "01:640:373", "01:640:374", "01:640:393",
@@ -331,8 +331,8 @@ VALUES (NULL, NULL, 'AND', NULL, '["01:640:151", "01:640:152", "01:640:250", "01
 	"01:640:497", "01:640:498"]', 46);
 
 -- SAS Core CCD Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:204", "01:013:205", "01:013:206", "01:013:217",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:204", "01:013:205", "01:013:206", "01:013:217",
 	"01:013:225", "01:013:226", "01:013:285", "01:013:304", "01:013:307", "01:013:308",
 	"01:013:311", "01:013:325", "01:014:103", "01:014:104", "01:014:203", "01:014:207",
 	"01:014:214", "01:014:264", "01:014:305", "01:014:353", "01:016:363", "01:050:102",
@@ -359,8 +359,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:204", "01:013:205", "01:013:206", "01:
 	"01:988:447"]', 1);
 
 -- SAS Core CCO Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:285", "01:013:305", "01:013:307", "01:014:104",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:285", "01:013:305", "01:013:307", "01:014:104",
 	"01:050:316", "01:070:111", "01:070:203", "01:070:283", "01:070:324", "01:082:101",
 	"01:082:118", "01:098:250", "01:098:255", "01:119:150", "01:119:154", "01:119:155",
 	"01:119:160", "11:126:111", "01:160:127", "01:185:253", "01:195:270", "01:195:271",
@@ -386,8 +386,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:285", "01:013:305", "01:013:307", "01:
 	"37:575:301", "37:575:302"]', 1);
 
 -- SAS Core NS Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["11:067:142", "11:067:250", "01:070:102", "01:070:111",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["11:067:142", "11:067:250", "01:070:102", "01:070:111",
 	"01:070:201", "01:070:212", "01:070:215", "11:115:100", "01:119:101", "01:119:102",
 	"01:119:103", "01:119:115", "01:119:116", "01:119:150", "01:119:154", "01:119:155",
 	"01:119:160", "01:119:182", "01:119:199", "11:126:111", "01:160:126", "01:160:127",
@@ -404,8 +404,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["11:067:142", "11:067:250", "01:070:102", "01:
 	"01:750:204", "01:750:227", "01:750:228", "01:750:271", "01:750:272"]', 1);
 
 -- SAS Core HST Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:111", "01:013:120", "01:013:130", "01:013:208",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:111", "01:013:120", "01:013:130", "01:013:208",
 	"01:013:217", "01:013:220", "01:013:308", "01:016:220", "01:016:222", "01:016:224",
 	"01:014:205", "01:014:265", "01:014:370", "01:050:223", "01:050:253", "01:050:272",
 	"01:050:344", "01:070:102", "01:070:105", "01:070:112", "01:070:238", "01:070:243",
@@ -442,8 +442,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:111", "01:013:120", "01:013:130", "01:
 	"01:988:224", "01:988:260", "11:550:101", "11:550:250", "37:575:201", "37:575:202"]', 1);
 
 -- SAS Core SCL Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:016:220", "01:016:222", "01:016:224", "01:014:205",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:016:220", "01:016:222", "01:016:224", "01:014:205",
 	"01:050:228", "01:050:271", "01:070:101", "01:070:238", "01:070:243", "01:098:241",
 	"01:098:250", "01:098:252", "01:202:201", "01:220:102", "01:220:120", "01:450:103",
 	"01:450:205", "01:450:211", "01:450:214", "01:450:240", "01:450:241", "01:450:250",
@@ -464,8 +464,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:016:220", "01:016:222", "01:016:224", "01:
 	"37:575:230", "37:575:303", "37:575:309"]', 1);
 
 -- SAS Core AHo Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:201", "01:013:203", "01:013:206", "01:013:210",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:201", "01:013:203", "01:013:206", "01:013:210",
 	"01:013:211", "01:013:221", "01:013:229", "01:013:231", "01:013:232", "01:013:307",
 	"01:013:312", "01:013:314", "01:013:322", "01:013:331", "01:013:346", "01:013:372",
 	"01:050:101", "01:050:240", "01:050:248", "01:050:259", "01:050:263", "01:070:217",
@@ -492,8 +492,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:201", "01:013:203", "01:013:206", "01:
 	"07:203:102", "07:203:133", "07:965:211", "07:965:370"]', 1);
 
 -- SAS Core AHp Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:111", "01:013:201", "01:013:210", "01:013:211",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:111", "01:013:201", "01:013:210", "01:013:211",
 	"01:013:215", "01:013:221", "01:013:229", "01:013:231", "01:013:232", "01:013:311",
 	"01:013:307", "01:013:312", "01:013:314", "01:013:322", "01:013:325", "01:013:331",
 	"01:013:346", "01:014:250", "01:016:363", "01:050:101", "01:050:203", "01:050:210",
@@ -537,8 +537,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:111", "01:013:201", "01:013:210", "01:
 	"07:965:231", "07:965:281", "11:550:101", "11:550:230"]', 1);
 
 -- SAS Core AHq Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:223", "01:013:241", "01:013:243", "01:013:252",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:223", "01:013:241", "01:013:243", "01:013:252",
 	"01:013:261", "01:013:277", "01:013:287", "01:013:289", "01:013:291", "01:013:293",
 	"01:013:295", "01:013:303", "01:070:108", "01:074:241", "01:078:118", "01:165:202",
 	"01:165:210", "01:165:222", "01:190:101", "01:356:155", "01:420:105", "01:420:106",
@@ -551,18 +551,18 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:223", "01:013:241", "01:013:243", "01:
 	"01:940:215", "01:940:261", "01:940:289", "01:956:287", "04:189:101", "04:192:200"]', 1);
 
 -- SAS Core AHr Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:195:282", "01:351:209", "01:351:211", "01:351:212",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:195:282", "01:351:209", "01:351:211", "01:351:212",
 	"01:355:410", "01:420:282", "07:081:423", "07:080:300", "07:700:103", "07:700:133",
 	"11:550:133", "11:550:237"]', 1);
 
 -- SAS Core WC Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:355:101", "01:355:103", "01:355:104"]', 1);
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:355:101", "01:355:103", "01:355:104"]', 1);
 
 -- SAS Core WCr Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:372", "01:014:490", "01:050:240", "01:050:295",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:372", "01:014:490", "01:050:240", "01:050:295",
 	"01:050:327", "01:070:207", "01:070:321", "01:070:417", "01:082:253", "01:082:316",
 	"01:090:322", "01:098:241", "01:098:444", "01:170:245", "01:170:284", "01:170:328",
 	"01:170:350", "01:175:349", "01:175:420", "01:190:323", "01:195:120", "01:195:203",
@@ -586,8 +586,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:372", "01:014:490", "01:050:240", "01:
 	"37:575:201", "37:575:202", "37:575:300"]', 1);
 
 -- SAS Core Wcd Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:013:372", "01:013:401", "01:013:430", "01:013:445",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:013:372", "01:013:401", "01:013:430", "01:013:445",
 	"01:014:490", "01:050:310", "01:050:327", "01:050:353", "01:050:389", "01:070:207",
 	"01:070:284", "01:070:321", "01:070:417", "01:082:253", "01:082:316", "01:082:491",
 	"01:082:492", "01:090:292", "01:090:293", "01:090:294", "01:090:295", "01:090:296",
@@ -621,8 +621,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:013:372", "01:013:401", "01:013:430", "01:
 	"11:573:202", "37:575:201", "37:575:202", "37:575:300"]', 1);
 
 -- SAS Core QQ Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:070:316", "01:014:211", "01:185:301", "01:185:410",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:070:316", "01:014:211", "01:185:301", "01:185:410",
 	"01:198:111", "01:198:142", "01:202:307", "11:216:369", "01:220:110", "01:377:275",
 	"01:377:276", "01:450:320", "01:450:330", "01:615:435", "01:615:445", "01:640:103",
 	"01:640:104", "01:640:106", "01:640:107", "01:640:108", "01:640:109", "01:640:110",
@@ -633,8 +633,8 @@ VALUES (NULL, NULL, 'OR', NULL, '["01:070:316", "01:014:211", "01:185:301", "01:
 	"37:575:250"]', 1);
 
 -- SAS Core QR Requirement
-INSERT INTO RequirementGroup (program_id, course_id, logic, min_required, list, parent_group_id)
-VALUES (NULL, NULL, 'OR', NULL, '["01:198:105", "01:198:107", "01:198:110", "01:198:111",
+INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
+VALUES (NULL, NULL, 1, '["01:198:105", "01:198:107", "01:198:110", "01:198:111",
 	"01:198:142", "01:198:170", "01:220:110", "01:377:275", "01:377:276", "01:450:320",
 	"01:450:321", "01:615:201", "01:640:103", "01:640:104", "01:640:106", "01:640:107",
 	"01:640:108", "01:640:109", "01:640:110", "01:640:112", "01:640:115", "01:640:135",

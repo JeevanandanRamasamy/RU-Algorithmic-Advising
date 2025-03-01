@@ -111,7 +111,7 @@ CREATE TABLE DegreePlan (
     plan_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(6) NOT NULL,
     plan_name VARCHAR(50),  -- Name of the plan (e.g., "CS 4-Year Plan")
-    last_updated DATE NOT NULL,  -- Last modification date
+    last_updated DATETIME NOT NULL,  -- Last modification date
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
 );
 
