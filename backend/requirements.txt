@@ -3,9 +3,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mariadb
-<<<<<<< Updated upstream
 flask-cors
-=======
 
 os
 re
@@ -15,4 +13,3 @@ pandas
 dotenv
 sympy
 datetime
->>>>>>> Stashed changes
