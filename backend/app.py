@@ -3,14 +3,21 @@ from flask import Flask
 from dotenv import load_dotenv
 from db import db
 from models import Account
+from routes.courses import course_bp
+from db_service import DBService
 
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(course_bp)
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 host = os.getenv('DB_HOST', 'localhost')
 dbname = os.getenv('DB_NAME')
+print(username)
+print(password)
+print(host)
+print(dbname)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)

@@ -1,29 +1,22 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import Questionnaire from "./pages/Questionnaire.jsx";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Create from "./pages/Create";
+
+import "./css/index.css";
 
 function App() {
-	return (
-		<>
-			<Router>
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/questionnaire"
-						element={<Questionnaire />}
-					/>
-				</Routes>
-			</Router>
-		</>
-	);
+  return (
+    <div>
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/create" element={<Create />} />
+		  <Route path="/questionnaire" element={<Questionnaire />}/>
+        </Routes>
+      </main>
+    </div>
+  );
 }
 
 export default App;
