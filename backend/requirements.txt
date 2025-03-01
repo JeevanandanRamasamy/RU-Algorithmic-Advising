@@ -3,4 +3,16 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mariadb
+<<<<<<< Updated upstream
 flask-cors
+=======
+
+os
+re
+json
+requests
+pandas
+dotenv
+sympy
+datetime
+>>>>>>> Stashed changes
