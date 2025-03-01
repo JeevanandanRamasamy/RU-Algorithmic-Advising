@@ -5,6 +5,7 @@ from db import db
 from models import Account
 from routes.courses import course_bp
 from flask_cors import CORS
+from db_service import DBService
 
 load_dotenv()
 
