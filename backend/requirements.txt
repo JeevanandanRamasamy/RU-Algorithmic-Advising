@@ -3,3 +3,4 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mariadb
+flask-cors

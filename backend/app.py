@@ -1,13 +1,35 @@
 import os
-from flask import Flask
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from db import db
 from models import Account
 from routes.courses import course_bp
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend-backend communication
+
+# Hardcoded username and password
+USER_CREDENTIALS = {
+    "username": "admin",
+    "password": "password123"
+}
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    if username == USER_CREDENTIALS["username"] and password == USER_CREDENTIALS["password"]:
+    
+        return jsonify({"message": "Login successful", "status": "success"}), 200
+    else:
+        return jsonify({"message": "Invalid credentials", "status": "error"}), 401
+    
+
 app.register_blueprint(course_bp)
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
