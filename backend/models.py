@@ -20,7 +20,7 @@ class StudentDetails(db.Model):
     username = Column(String(6), ForeignKey('Account.username', ondelete='CASCADE'), primary_key=True)
     grad_date = Column(YEAR)
     enroll_date = Column(YEAR)
-    credits_earned = Column(Integer, CheckConstraint('credits_earned >= 0'))
+    credits_earned = Column(Numeric(4,1), CheckConstraint('credits_earned >= 0'))
     gpa = Column(Numeric(3, 2), CheckConstraint('gpa BETWEEN 0.00 AND 4.00'))
     class_year = Column(Enum('freshman', 'sophomore', 'junior', 'senior', 'graduate', name='class_year_enum'), nullable=False)
 
@@ -32,7 +32,7 @@ class Course(db.Model):
 
     course_id = Column(String(10), primary_key=True)
     course_name = Column(String(200), nullable=False)
-    credits = Column(Integer, CheckConstraint('credits > 0'), nullable=False)
+    credits = Column(Numeric(3, 1), CheckConstraint('credits >= 0'), nullable=False)
     course_link = Column(String(255))
 
     def __repr__(self):
@@ -91,7 +91,7 @@ class RequirementGroup(db.Model):
 
     def __repr__(self):
         return (f"<RequirementGroup(group_id={self.group_id}, program_id={self.program_id}, course_id={self.course_id}, "
-                f"logic={self.logic}, min_required={self.min_required}, list={self.list}, parent_group_id={self.parent_group_id})>")
+                f"num_required={self.num_required}, list={self.list}, parent_group_id={self.parent_group_id})>")
     
 class DegreePlan(db.Model):
     __tablename__ = 'DegreePlan'
