@@ -160,13 +160,13 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
         # If we are processing a single course
         group = {
             'course_id': courseID, 
-            'min_required': 1, 
+            'num_required': 1, 
             'list': [prerequisites], 
             'parent_group_id': parent_group_id
         }
         result = DBService.insert_requirement_group(group)
         if isinstance(result, RequirementGroup):
-            print(f"Added course: {group}")
+            print(f"Added group: {result}")
     else:
         # If we are processing a group of prerequisites (AND/OR)
         prerequisites = json.loads(prerequisites.replace("'", '"'))
@@ -175,54 +175,74 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
 
         group = {
             'course_id': courseID, 
-            'logic': logic, 
             'parent_group_id': parent_group_id
         }
+        if logic == 'AND':
+            group['num_required'] = 0
+        elif logic == 'OR':
+            group['num_required'] = 1
+        elif logic.startswith('ATLEAST'):
+            group['num_required'] = int(logic.split(' ')[1])
+        if 'logic' not in str(requirements):
+            # If there are no nested groups
+            group['list'] = requirements
         group_result = DBService.insert_requirement_group(group)
         if not isinstance(group_result, RequirementGroup):
             return
-        print(f"Adding group: {group_result}")
+        print(f"Added group: {group_result}")
 
-        same_group = []
-        for requirement in requirements:
-            if isinstance(requirement, dict):
-                # Recursive call for nested groups
-                add_prerequisites_to_database(courseID=None, prerequisites=str(requirement), parent_group_id=group.group_id)
-            else:
-                same_group.append(requirement)
-        
-        if same_group:
-            sub_group = {
-                'parent_group_id': group.group_id, 
-                'list': same_group
-            }
-            if logic == 'AND':
-                sub_group['min_required'] = 0
-            elif logic == 'OR':
-                sub_group['min_required'] = 1
-            elif logic.startswith('ATLEAST'):
-                sub_group['min_required'] = int(logic.split(' ')[1])
+        if 'logic' in str(requirements):
+            # If there are nested groups
+            same_group = []
+            for requirement in requirements:
+                if isinstance(requirement, dict):
+                    # Recursive call for nested groups
+                    add_prerequisites_to_database(courseID=None, prerequisites=str(requirement), parent_group_id=group_result.group_id)
+                else:
+                    same_group.append(requirement)
+            
+            if same_group:
+                sub_group = {
+                    'parent_group_id': group_result.group_id, 
+                    'list': same_group
+                }
+                if logic == 'AND':
+                    sub_group['num_required'] = 0
+                elif logic == 'OR':
+                    sub_group['num_required'] = 1
+                elif logic.startswith('ATLEAST'):
+                    sub_group['num_required'] = int(logic.split(' ')[1])
 
-            sub_group_result = DBService.insert_requirement_group(sub_group)
-            if isinstance(sub_group_result, RequirementGroup):
-                print(f"Adding sub-group: {sub_group_result}")
+                sub_group_result = DBService.insert_requirement_group(sub_group)
+                if isinstance(sub_group_result, RequirementGroup):
+                    print(f"Added sub-group: {sub_group_result}")
 
 def add_courses_to_database(filename):
     with app.app_context():
         db.create_all()
+        DBService.delete_all_requirement_groups()
+        DBService.delete_all_courses()
         df = pd.read_csv(filename)
+        
         for _, row in df.iterrows():
+            if pd.isna(row['credits']):
+                row['credits'] = 0
+            if pd.isna(row['course_link']):
+                row['course_link'] = None
             course = {
                 'course_id': row['course_id'],
                 'course_name': row['course_name'],
                 'credits': row['credits'],
                 'course_link': row['course_link']
             }
+
             course_result = DBService.insert_course(course)
             if isinstance(course_result, Course):
                 print(f"Added course: {course_result}")
                 if pd.notna(row['prerequisites']):
                     add_prerequisites_to_database(row['course_id'], row['prerequisites'])
+            else:
+                print(f"Error adding course: {course}")
         print("Courses added to database successfully!")
 
 def compare_files(file1, file2):
@@ -269,3 +289,4 @@ if __name__ == "__main__":
     # compare_files("backend/courses.csv", "backend/course_list.csv")
     add_courses_to_database("backend/course_list.csv")
     # add_course_urls("backend/course_list.csv", row_range=(0, 10))
+
