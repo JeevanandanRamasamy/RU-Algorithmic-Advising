@@ -1,7 +1,8 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Create from "./pages/Create";
-import Questionnaire from "./pages/Questionnaire.jsx";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
 
 import "./css/index.css";
 
@@ -15,8 +16,12 @@ function App() {
 						element={<Login />}
 					/>
 					<Route
-						path="/create"
-						element={<Create />}
+						path="/register"
+						element={<Register />}
+					/>
+					<Route
+						path="/home"
+						element={<Home />}
 					/>
 					<Route
 						path="/questionnaire"

@@ -1,43 +1,54 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [message, setMessage] = useState("");
+	const navigate = useNavigate();
+
+	const handleLogin = async () => {
+		const response = await fetch("http://127.0.0.1:8080/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ username, password })
+		});
+
+		const data = await response.json();
+
+		if (data.status === "success") {
+			localStorage.setItem("isAuthenticated", "true");
+			navigate("/home");
+		} else {
+			setMessage("Invalid credentials");
+		}
+	};
+
 	return (
 		<>
-			<div className="login-wrapper">
-				<form>
-					<h2>Login</h2>
-					<p>
-						Need an Account?{" "}
-						<span>
-							<Link to="/create">Create An Account</Link>
-						</span>
-					</p>
-					<div className="input-group">
-						<label htmlFor="netid">NETID</label>
-						<input
-							type="text"
-							name="netid"
-							id="netid"
-							required
-						/>
+			<div>
+				<h2>Login</h2>
+				<Link to="/register">Register</Link>
+				<br />
 
-						<br></br>
-
-						<label htmlFor="password">PASSWORD</label>
-						<input
-							type="password"
-							name="password"
-							id="password"
-							required
-						/>
-
-						<input
-							type="submit"
-							value="Login"
-						/>
-					</div>
-				</form>
+				<input
+					type="text"
+					placeholder="Username"
+					value={username}
+					onChange={e => setUsername(e.target.value)}
+				/>
+				<br />
+				<input
+					type="password"
+					placeholder="Password"
+					value={password}
+					onChange={e => setPassword(e.target.value)}
+				/>
+				<br />
+				<button onClick={handleLogin}>Login</button>
+				<p>{message}</p>
 			</div>
 		</>
 	);
