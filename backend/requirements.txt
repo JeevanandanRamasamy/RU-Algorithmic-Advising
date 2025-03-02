@@ -5,9 +5,6 @@ Flask-Migrate
 mariadb
 flask-cors
 
-os
-re
-json
 requests
 pandas
 dotenv
