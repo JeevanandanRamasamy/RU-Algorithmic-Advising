@@ -60,8 +60,58 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting account: {str(e)}"
+        
+    @staticmethod
+    def delete_all_accounts():
+        try:
+            Account.query.delete()
+            db.session.commit()
+            return "All accounts deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all accounts: {str(e)}"
     
     # ------------------ STUDENT OPERATIONS ------------------
+    @staticmethod
+    def add_student_details(student_data):
+        try:
+            new_student = StudentDetails(**student_data)
+            db.session.add(new_student)
+            db.session.commit()
+            return new_student
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error adding student details: {str(e)}"
+    
+    @staticmethod
+    def delete_student_details(username):
+        try:
+            student = StudentDetails.query.filter_by(username=username).first()
+            if student:
+                db.session.delete(student)
+                db.session.commit()
+                return f"Student {username} deleted successfully"
+            else:
+                return "Student not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting student details: {str(e)}"
+    
+    @staticmethod
+    def update_student_details(username, new_data):
+        try:
+            student = StudentDetails.query.filter_by(username=username).first()
+            if student:
+                for key, value in new_data.items():
+                    setattr(student, key, value)
+                db.session.commit()
+                return student
+            else:
+                return "Student not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating student details: {str(e)}"
+
     @staticmethod
     def get_student_details(username):
         try:
@@ -93,7 +143,7 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving courses taken: {str(e)}"
-    
+        
     # ------------------ COURSE OPERATIONS ------------------
     @staticmethod
     def get_course_by_id(course_id):
@@ -130,6 +180,33 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course: {str(e)}"
+        
+    @staticmethod
+    def update_course(course_id, new_data):
+        """Update a course by its course_id."""
+        try:
+            course = Course.query.filter_by(course_id=course_id).first()
+            if course:
+                for key, value in new_data.items():
+                    setattr(course, key, value)
+                db.session.commit()
+                return course
+            else:
+                return "Course not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating course: {str(e)}"
+        
+    @staticmethod
+    def delete_all_courses():
+        """Delete all courses in the database."""
+        try:
+            Course.query.delete()
+            db.session.commit()
+            return "All courses deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all courses: {str(e)}"
     
     # ------------------ PROGRAM OPERATIONS ------------------
     @staticmethod
@@ -167,6 +244,33 @@ class DBService:
             db.session.rollback()
             return f"Error deleting program: {str(e)}"
     
+    @staticmethod
+    def update_program(program_id, new_data):
+        """Update a program by its program_id."""
+        try:
+            program = Program.query.filter_by(program_id=program_id).first()
+            if program:
+                for key, value in new_data.items():
+                    setattr(program, key, value)
+                db.session.commit()
+                return program
+            else:
+                return "Program not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating program: {str(e)}"
+    
+    @staticmethod
+    def delete_all_programs():
+        """Delete all programs in the database."""
+        try:
+            Program.query.delete()
+            db.session.commit()
+            return "All programs deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all programs: {str(e)}"
+    
     # ------------------ REQUIREMENT GROUP OPERATIONS ------------------
     @staticmethod
     def get_requirement_groups(program_id):
@@ -203,6 +307,17 @@ class DBService:
             db.session.rollback()
             return f"Error deleting requirement group: {str(e)}"
     
+    @staticmethod
+    def delete_all_requirement_groups():
+        """Delete all requirement groups associated with a program."""
+        try:
+            RequirementGroup.query.delete()
+            db.session.commit()
+            return "All requirement groups deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all requirement groups: {str(e)}"
+    
     # ------------------ DEGREE PLAN OPERATIONS ------------------
     @staticmethod
     def get_degree_plans(username):
@@ -238,6 +353,22 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting degree plan: {str(e)}"
+    
+    @staticmethod
+    def update_degree_plan(plan_id, new_data):
+        """Update a degree plan by its ID."""
+        try:
+            plan = DegreePlan.query.filter_by(plan_id=plan_id).first()
+            if plan:
+                for key, value in new_data.items():
+                    setattr(plan, key, value)
+                db.session.commit()
+                return plan
+            else:
+                return "Degree plan not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating degree plan: {str(e)}"
     
     # ------------------ PLANNED COURSE OPERATIONS ------------------
     @staticmethod
@@ -283,6 +414,22 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting planned course: {str(e)}"
+    
+    @staticmethod
+    def update_planned_course(plan_id, course_id, new_data):
+        """Update a planned course by its plan_id and course_id."""
+        try:
+            planned_course = PlannedCourse.query.filter_by(plan_id=plan_id, course_id=course_id).first()
+            if planned_course:
+                for key, value in new_data.items():
+                    setattr(planned_course, key, value)
+                db.session.commit()
+                return planned_course
+            else:
+                return "Planned course not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating planned course: {str(e)}"
 
     # ------------------ SCHEDULE PLAN OPERATIONS ------------------
     @staticmethod
@@ -320,6 +467,22 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting schedule: {str(e)}"
+    
+    @staticmethod
+    def update_schedule(schedule_id, new_data):
+        """Update a schedule plan by its ID."""
+        try:
+            schedule = SchedulePlan.query.filter_by(schedule_id=schedule_id).first()
+            if schedule:
+                for key, value in new_data.items():
+                    setattr(schedule, key, value)
+                db.session.commit()
+                return schedule
+            else:
+                return "Schedule not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating schedule: {str(e)}"
         
     # ------------------ SECTION OPERATIONS ------------------
     @staticmethod
@@ -369,6 +532,22 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting section: {str(e)}"
+    
+    @staticmethod
+    def update_section(schedule_id, course_id, section_num, new_data):
+        """Update a section in a schedule plan."""
+        try:
+            section = Section.query.filter_by(schedule_id=schedule_id, course_id=course_id, section_num=section_num).first()
+            if section:
+                for key, value in new_data.items():
+                    setattr(section, key, value)
+                db.session.commit()
+                return section
+            else:
+                return "Section not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating section: {str(e)}"
 
     # ------------------ GENERAL OPERATIONS ------------------
     @staticmethod
