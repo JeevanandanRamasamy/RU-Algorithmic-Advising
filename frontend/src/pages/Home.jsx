@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Home() {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ function Home() {
     <div>
       <h2>Welcome to Home Page</h2>
       <button onClick={handleLogout}>Logout</button>
+      <Link to="/dragdrop">Planner</Link> {/* For testing */}
     </div>
   );
 }

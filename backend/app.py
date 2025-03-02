@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from db import db
 from models import Account
 from routes.courses import course_bp
+from routes.db_courses import db_course_bp
 from flask_cors import CORS
 from db_service import DBService
 
@@ -32,15 +33,18 @@ def login():
     
 
 app.register_blueprint(course_bp)
+app.register_blueprint(db_course_bp)
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 host = os.getenv('DB_HOST', 'localhost')
 dbname = os.getenv('DB_NAME')
+port = os.getenv('PORT_NUM')
 print(username)
 print(password)
 print(host)
 print(dbname)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
+print(port)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
