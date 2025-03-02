@@ -1,7 +1,16 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Create() {
-  return <div>Create Page</div>;
+	return (
+		<>
+			<Link
+				className="bg-red-600"
+				to="/questionnaire">
+				Register Account
+			</Link>
+		</>
+	);
 }
 
 export default Create;

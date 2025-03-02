@@ -3,3 +3,5 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mariadb
+requests
+dataclasses
