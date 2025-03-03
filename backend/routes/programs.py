@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify
 programs_bp = Blueprint("programs", __name__, url_prefix="/api/programs")
 
 
-@programs_bp.route("/", methods=["GET"])
+@programs_bp.route("", methods=["GET"])
 def get_all_programs():
     try:
         program_type = request.args.get("program_type")

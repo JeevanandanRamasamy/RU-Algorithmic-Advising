@@ -36,6 +36,12 @@ class Account(db.Model):
 @dataclass
 class StudentDetails(db.Model):
     __tablename__ = "StudentDetails"
+    username: str
+    grad_date: str
+    enroll_date: str
+    credits_earned: str
+    gpa: str
+    class_year: str
 
     username = Column(
         String(6), ForeignKey("Account.username", ondelete="CASCADE"), primary_key=True
@@ -106,6 +112,12 @@ class CourseTaken(db.Model):
 class Program(db.Model):
     __tablename__ = "Program"
 
+    program_id: str
+    program_name: str
+    program_type: str
+    is_credit_intensive: bool
+    additional_details: str
+
     program_id = Column(String(7), primary_key=True)
     program_name = Column(String(200), nullable=False)
     program_type = Column(
@@ -122,6 +134,9 @@ class Program(db.Model):
 @dataclass
 class StudentProgram(db.Model):
     __tablename__ = "StudentProgram"
+
+    username: str
+    program_id: str
 
     username = Column(
         String(6),

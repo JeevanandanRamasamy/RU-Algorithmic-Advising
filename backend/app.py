@@ -3,16 +3,41 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from db import db
 from models import Account
-from routes.courses import course_bp
 from flask_cors import CORS
-from db_service import DBService
 from routes.users import users_bp
 from routes.programs import programs_bp
+from routes.courses import course_bp
 
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend-backend communication
+app.register_blueprint(course_bp)
+app.register_blueprint(users_bp)
+app.register_blueprint(programs_bp)
+
+CORS(app)
+
+# @app.after_request
+# def add_cors_headers(response):
+#     response.headers["Access-Control-Allow-Origin"] = "*"
+#     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+#     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+#     return response
+
+
+username = os.getenv("DB_USERNAME")
+password = os.getenv("DB_PASSWORD")
+host = os.getenv("DB_HOST", "localhost")
+dbname = os.getenv("DB_NAME")
+print(username)
+print(password)
+print(host)
+print(dbname)
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
 # Hardcoded username and password
 USER_CREDENTIALS = {"username": "admin", "password": "password123"}
@@ -32,24 +57,6 @@ def login():
         return jsonify({"message": "Login successful", "status": "success"}), 200
     else:
         return jsonify({"message": "Invalid credentials", "status": "error"}), 401
-
-
-app.register_blueprint(course_bp)
-app.register_blueprint(users_bp)
-app.register_blueprint(programs_bp)
-username = os.getenv("DB_USERNAME")
-password = os.getenv("DB_PASSWORD")
-host = os.getenv("DB_HOST", "localhost")
-dbname = os.getenv("DB_NAME")
-print(username)
-print(password)
-print(host)
-print(dbname)
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db.init_app(app)
 
 
 @app.route("/")
