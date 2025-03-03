@@ -9,18 +9,19 @@ from routes.db_planned_courses import db_planned_courses_bp
 from routes.users import users_bp
 from routes.programs import programs_bp
 from flask_cors import CORS
-from db_service import DBService
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from services.db_service import DBService
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
 from datetime import timedelta
 from jwt_helper import init_jwt
 
 load_dotenv()
 
 app = Flask(__name__)
-app.register_blueprint(course_bp)
-app.register_blueprint(users_bp)
-app.register_blueprint(programs_bp)
-
 CORS(app)
 
 # @app.after_request
@@ -31,20 +32,6 @@ CORS(app)
 #     return response
 
 
-username = os.getenv("DB_USERNAME")
-password = os.getenv("DB_PASSWORD")
-host = os.getenv("DB_HOST", "localhost")
-dbname = os.getenv("DB_NAME")
-print(username)
-print(password)
-print(host)
-print(dbname)
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db.init_app(app)
-
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -53,41 +40,59 @@ def login():
 
     # Check in DB
     if not DBService.check_account_exists(username):
-        return jsonify({"message": "Account doesn't exist, please register", "status": "error"}), 401
+        return (
+            jsonify(
+                {"message": "Account doesn't exist, please register", "status": "error"}
+            ),
+            401,
+        )
 
     # Check if credentials match
     account = DBService.get_account_by_username(username)
     if username == account.username and password == account.password:
         # Create JWT token
         access_token = create_access_token(identity=username)
-        
+
         # Return token as part of the response
-        return jsonify({"message": "Login successful", "status": "success", "access_token": access_token}), 200
+        return (
+            jsonify(
+                {
+                    "message": "Login successful",
+                    "status": "success",
+                    "access_token": access_token,
+                }
+            ),
+            200,
+        )
     else:
         return jsonify({"message": "Invalid credentials", "status": "error"}), 401
+
 
 app.register_blueprint(course_bp)
 app.register_blueprint(db_course_bp)
 app.register_blueprint(db_planned_courses_bp)
 app.register_blueprint(programs_bp)
 app.register_blueprint(users_bp)
-username = os.getenv('DB_USERNAME')
-password = os.getenv('DB_PASSWORD')
-host = os.getenv('DB_HOST', 'localhost')
-dbname = os.getenv('DB_NAME')
-port = os.getenv('PORT_NUM')
-key = os.getenv('KEY')
+username = os.getenv("DB_USERNAME")
+password = os.getenv("DB_PASSWORD")
+host = os.getenv("DB_HOST", "localhost")
+dbname = os.getenv("DB_NAME")
+port = os.getenv("PORT_NUM")
+key = os.getenv("KEY")
 print(username)
 print(password)
 print(host)
 print(dbname)
 print(port)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config["JWT_SECRET_KEY"] = key  
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = key
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Tokens expire in 1 hour
 db.init_app(app)
 init_jwt(app)  # Initialize JWTManager
+
 
 @app.route("/")
 def home():
