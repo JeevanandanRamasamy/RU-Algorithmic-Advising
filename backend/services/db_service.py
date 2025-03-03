@@ -208,6 +208,31 @@ class DBService:
             return f"Error inserting program for student: {str(e)}"
 
     @staticmethod
+    def delete_program_for_student(username, program_id):
+        try:
+            if not DBService.check_account_exists(username):
+                return f"User account not found"
+
+            program = DBService.get_program(program_id)
+            if not program:
+                return f"Program not found"
+
+            student_program = (
+                db.session.query(StudentProgram)
+                .filter_by(username=username, program_id=program_id)
+                .first()
+            )
+            if not student_program:
+                return "Program not found for the student."
+
+            db.session.delete(student_program)
+            db.session.commit()
+            return program
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting inserting program for student: {str(e)}"
+
+    @staticmethod
     def get_courses_taken_by_student(username):
         try:
             return (
@@ -292,6 +317,17 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error checking program existence: {str(e)}"
+
+    @staticmethod
+    def check_program_exists_for_student(username, program_id):
+        try:
+            return StudentProgram.query.filter(
+                StudentProgram.username == username,
+                StudentProgram.program_id == program_id,
+            ).scalar()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error checking program for student: {str(e)}"
 
     @staticmethod
     def insert_program(program_data):
