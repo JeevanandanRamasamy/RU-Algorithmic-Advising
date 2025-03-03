@@ -34,7 +34,7 @@ CREATE TABLE StudentDetails (
     username VARCHAR(6) PRIMARY KEY,  -- Foreign key to Account
     grad_date YEAR,  -- Expected graduation year
     enroll_date YEAR,  -- Year of enrollment
-    credits_earned INT CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
+    credits_earned DECIMAL(4,1) CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
     gpa DECIMAL(3, 2) CHECK (gpa BETWEEN 0.00 AND 4.00),  -- GPA range between 0.00 and 4.00
     class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate') NOT NULL,  -- Classification based on credits
     FOREIGN KEY (username) REFERENCES Account(username) ON DELETE CASCADE  -- Delete student details if account is deleted
@@ -46,7 +46,7 @@ CREATE TABLE StudentDetails (
 CREATE TABLE Course (
     course_id CHAR(10) PRIMARY KEY,  -- Unique course identifier (e.g., "01:198:431")
     course_name VARCHAR(200) NOT NULL,  -- Name of the course
-    credits INT NOT NULL CHECK (credits > 0),  -- Number of credits (must be >0)
+    credits DECIMAL(3,1) NOT NULL CHECK (credits >= 0),  -- Number of credits (must be >= 0)
     course_link VARCHAR(255)  -- URL to the course page (dynamically fetched)
 );
 

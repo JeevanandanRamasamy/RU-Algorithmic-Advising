@@ -548,7 +548,6 @@ course_id,course_name,credits,course_link,prerequisites
 05:300:480,LITERACY FOR STUDENTS WITH DISABILITIES,3.0,http://syllabi.gse.rutgers.edu/home/05-300,"{'logic': 'AND', 'requirements': ['05:300:200', '05:300:383']}"
 05:300:494,LITERACY DEVELOPMENT IN THE EARLY YEARS,3.0,http://syllabi.gse.rutgers.edu/home/05-300,05:300:200
 05:300:406,COMMUNITY-BASED LANGUAGE LEARNING,3.0,http://syllabi.gse.rutgers.edu/home/05-300,
-05:300:430,PRINCIPLES OF LANGUAGE LEARNING: SECOND AND WORLD LANGUAGE ACQUISITION,3.0,http://syllabi.gse.rutgers.edu/home/05-300,05:300:200
 05:300:498,CLINICAL EXPERIENCE PHASE 1,0.5,http://syllabi.gse.rutgers.edu/home/05-300,
 11:364:112,SEBS EOF ACADEMIC SUPPORT,1.0,,
 14:332:221,PRINCIPLES OF ELECTRICAL ENGINEERING I,3.0,http://www.ece.rutgers.edu/undergraduate-course-descriptions,"{'logic': 'AND', 'requirements': [{'logic': 'OR', 'requirements': ['01:640:152', '01:640:154', '01:640:192']}, {'logic': 'OR', 'requirements': ['01:750:124', '01:750:116', '01:750:201', '01:750:203', '01:750:271']}]}"
@@ -603,8 +602,6 @@ course_id,course_name,credits,course_link,prerequisites
 01:355:395,INTERNSHIP,3.0,https://wp.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:355:101', '01:355:103', '01:355:104']}"
 01:355:397,WRITING INTERNSHIP FOR BUSINESS AND TECHNICAL WRITING MINORS,3.0,https://wp.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:355:101', '01:355:103', '01:355:104']}"
 01:355:410,COMPOSING GRAPHIC NARRATIVES,3.0,https://wp.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:355:101', '01:355:103', '01:355:104']}"
-01:355:101,COLLEGE WRITING,3.0,https://wp.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:355:100', '01:356:156']}"
-01:355:104,COLLEGE WRITING EXTENDED,4.5,https://wp.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:355:095', '01:355:100', '01:356:156']}"
 01:351:209,CREATIVE WRITING: INTRODUCTION TO MULTIMEDIA COMPOSITION,3.0,https://wh.rutgers.edu/academics/undergraduate/courses/creativewriting,
 01:351:211,INTRODUCTION TO CREATIVE WRITING,3.0,https://wh.rutgers.edu/academics/undergraduate/courses/creativewriting,
 01:351:303,CREATIVE WRITING: SCREENWRITING FOR FILM,3.0,https://wh.rutgers.edu/academics/undergraduate/courses/creativewriting,"{'logic': 'OR', 'requirements': ['01:351:211', '01:351:212']}"
@@ -1029,7 +1026,6 @@ course_id,course_name,credits,course_link,prerequisites
 01:560:101,ELEMENTARY ITALIAN,4.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,
 01:560:102,ELEMENTARY ITALIAN,4.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,01:560:101
 01:560:105,ITAL FOR RDG KNOWLDG,3.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,
-01:560:131,INTERMEDIATE ITALIAN,4.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,"{'logic': 'OR', 'requirements': ['01:560:102', '01:560:121']}"
 01:560:132,INTERMEDIATE ITALIAN,4.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,01:560:131
 01:560:231,ITALIAN CULTURE,3.0,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,
 01:560:248,A CULTURAL TOUR OF ITALY,1.5,https://italian.rutgers.edu/academics/undergraduate/course-descriptions,
@@ -1554,8 +1550,7 @@ course_id,course_name,credits,course_link,prerequisites
 01:750:115,EXTENDED ANALYTIC I,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:640:026
 01:750:123,ANALYTICAL PHYSICS I,2.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:640:112
 01:750:161,ELEMENTS OF PHYSICS,4.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:640:112
-01:750:202,EXTENDED GEN PHYSICS LAB,0.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:116', '01:750:124', '01:750:193', '01:750:201', '01:750:203', '01:750:271']}"
-01:750:202,EXTENDED GEN PHYSICS,5.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:116', '01:750:124', '01:750:193', '01:750:201', '01:750:203', '01:750:271']}"
+01:750:202,EXTENDED GEN PHYSICS + LAB,5.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:116', '01:750:124', '01:750:193', '01:750:201', '01:750:203', '01:750:271']}"
 01:750:203,GENERAL PHYSICS,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:640:112
 01:750:204,GENERAL PHYSICS,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:201', '01:750:203']}"
 01:750:205,GENERAL PHYSICS LABORATORY,1.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:640:112
@@ -1659,7 +1654,6 @@ course_id,course_name,credits,course_link,prerequisites
 01:790:488,FIELD INT IN POL SCI,,https://polisci.rutgers.edu/academics/undergraduate/course-descriptions,
 01:790:495,HONORS IN POLI SCI,3.0,https://polisci.rutgers.edu/academics/undergraduate/course-descriptions,
 01:790:496,HONORS IN POLITICAL SCIENCE,3.0,https://polisci.rutgers.edu/academics/undergraduate/course-descriptions,
-01:790:481,INTERNSHIP IN POLITICAL SCIENCE,3.0,https://polisci.rutgers.edu/academics/undergraduate/course-descriptions,
 01:790:491,ADVANCED INDEPENDENT STUDY AND RESEARCH,3.0,https://polisci.rutgers.edu/academics/undergraduate/course-descriptions,
 01:810:102,ELEMENTARY PORTUGUESE,4.0,https://span-port.rutgers.edu/spanish-syllabi-synopses,01:810:101
 01:810:201,PORTUGUESE AND LUSO-AFRO-BRAZILIAN CULTURES AND CONVERSATION,4.0,https://span-port.rutgers.edu/spanish-syllabi-synopses,
@@ -2009,7 +2003,6 @@ course_id,course_name,credits,course_link,prerequisites
 01:988:491,SEM WOM/GENDR STUDYS,3.0,https://womens-studies.rutgers.edu/academics/undergraduate/undergraduate-courses/current-course-descriptions,"{'logic': 'OR', 'requirements': ['01:988:301', '01:988:302', '01:988:303']}"
 01:988:493,INDEPENDENT STUDY,,https://womens-studies.rutgers.edu/academics/undergraduate/undergraduate-courses/current-course-descriptions,
 01:988:497,HNRS RES WOM/GNDR ST,3.0,https://womens-studies.rutgers.edu/academics/undergraduate/undergraduate-courses/current-course-descriptions,
-01:988:422,INTSHP WOM&GNDR STDY,3.0,https://womens-studies.rutgers.edu/academics/undergraduate/undergraduate-courses/current-course-descriptions,
 01:991:101,EXPLORATIONS IN LANGUAGES AND CULTURES,1.0,https://lep.rutgers.edu/undergraduate-program/courses,
 01:991:110,EXPLORATIONS IN LANGUAGES AND CULTURES COURSE 1,1.0,https://lep.rutgers.edu/undergraduate-program/courses,
 01:991:121,LANGUAGES & CULTURES ACROSS THE CURRICULUM MODULE-LEVEL 1,1.0,https://lep.rutgers.edu/undergraduate-program/courses,
@@ -2959,8 +2952,7 @@ course_id,course_name,credits,course_link,prerequisites
 01:750:124,ANALYTICAL PHYSICS I,2.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:115', '01:750:123']}"
 01:750:140,GREENHOUSE EFFECT,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,
 01:750:194,PHYSICS FOR THE SCIENCES LABORATORY,0.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,01:750:193
-01:750:201,EXTENDED GEN PHYSICS LAB,0.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:640:112', '01:640:115', '01:640:135', '01:640:151', '21:640:114', '21:640:135', '50:640:115', '50:640:121']}"
-01:750:201,EXTENDED GEN PHYSICS,5.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:640:112', '01:640:115', '01:640:135', '01:640:151', '21:640:114', '21:640:135', '50:640:115', '50:640:121']}"
+01:750:201,EXTENDED GEN PHYSICS + LAB,5.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:640:112', '01:640:115', '01:640:135', '01:640:151', '21:640:114', '21:640:135', '50:640:115', '50:640:121']}"
 01:750:227,ANALYTICAL PHYSICS II,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'AND', 'requirements': [{'logic': 'OR', 'requirements': ['01:750:116', '01:750:124', '01:750:271']}, '01:640:152']}"
 01:750:228,ANALYTICAL PHYSICS IIB,3.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'AND', 'requirements': ['01:640:152', {'logic': 'OR', 'requirements': ['01:750:204', '01:750:227', '01:750:272']}]}"
 01:750:230,ANALYTICAL PHYSICS II LABORATORY,1.0,http://www.physics.rutgers.edu/homes-ugcourses.shtml,"{'logic': 'OR', 'requirements': ['01:750:204', '01:750:227', '21:750:204', '21:750:214', '50:750:132', '50:750:204']}"
@@ -3249,7 +3241,6 @@ course_id,course_name,credits,course_link,prerequisites
 01:090:229,SPECIAL TOPICS,1.0,https://catalogs.rutgers.edu/generated/nb-ug_current/pg88.html,
 01:098:444,SEMINAR ON EAST ASIAN SOCIETIES,3.0,https://alc.rutgers.edu/academics/undergraduate/asian-studies-undergraduate,
 11:115:110,EXPERIMENTS WITH GREEN FLUORESCENT PROTEIN,3.0,https://dbm.rutgers.edu/biochemistry/courses/,
-11:115:301,INTRO BIOCHEMISTRY,3.0,https://dbm.rutgers.edu/biochemistry/courses/,"{'logic': 'OR', 'requirements': ['01:160:209', '01:160:307', '01:160:315', '21:160:335']}"
 11:115:301,INTRO BIOCHEMISTRY,3.0,https://dbm.rutgers.edu/biochemistry/courses/,"{'logic': 'OR', 'requirements': ['01:160:209', '01:160:307', '01:160:315', '21:160:335']}"
 01:119:154,GENETICS/LAW/SOC POL,3.0,http://biology.rutgers.edu/biological-sciences/courses#bio,
 01:119:155,HUMAN GENETICS,3.0,http://biology.rutgers.edu/biological-sciences/courses#bio,

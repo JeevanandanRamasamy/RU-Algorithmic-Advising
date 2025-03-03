@@ -190,7 +190,7 @@ VALUES (NULL, NULL, 0, '["01:640:152", "01:640:251", "01:198:205", "01:198:206",
 -- BSDS Statistics Track Requirement
 INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
 VALUES (NULL, NULL, 0, '["01:198:111", "01:198:112", "01:960:463", "01:960:486"]', 16),
-	(NULL, NULL 1, '["01:640:136", "01:640:152"]', 16),
+	(NULL, NULL, 1, '["01:640:136", "01:640:152"]', 16),
 	(NULL, NULL, 1, '["01:960:365", "01:960:467", "01:960:490"]', 16);
 
 -- BSDS Economics Track Requirement
