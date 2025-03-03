@@ -94,8 +94,16 @@ class Course(db.Model):
     def __repr__(self):
         return f"<Course(course_id={self.course_id}, course_name={self.course_name}, credits={self.credits}, course_link={self.course_link})>"
 
+    def to_dict(self):
+        return {
+            "course_id": self.course_id,
+            "course_name": self.course_name,
+            "credits": self.credits,
+            "course_link": self.course_link
+        }
 
 @dataclass
+
 class CourseTaken(db.Model):
     __tablename__ = "CourseTaken"
 
@@ -205,7 +213,14 @@ class DegreePlan(db.Model):
 
     def __repr__(self):
         return f"<DegreePlan(plan_id={self.plan_id}, username={self.username}, plan_name={self.plan_name}, last_updated={self.last_updated})>"
-
+    
+    def to_dict(self):
+        return {
+            "plan_id": self.plan_id,
+            "username": self.username,
+            "plan_name": self.plan_name,
+            "last_updated": self.last_updated
+        }
 
 @dataclass
 class PlannedCourse(db.Model):
