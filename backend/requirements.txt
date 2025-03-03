@@ -2,6 +2,7 @@ python-dotenv==1.0.1
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
+flask-jwt-extended
 mariadb
 Flask-Cors==5.0.10
 
