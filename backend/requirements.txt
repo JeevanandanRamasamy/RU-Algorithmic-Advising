@@ -3,10 +3,13 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mariadb
-flask-cors
+Flask-Cors==5.0.10
 
 requests
 pandas
 dotenv
 sympy
 datetime
+
+requests
+dataclasses

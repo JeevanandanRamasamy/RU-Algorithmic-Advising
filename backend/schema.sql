@@ -94,11 +94,13 @@ CREATE TABLE RequirementGroup (
 	-- Only one of program_id or course_id can be not null at once
 	program_id VARCHAR(7), -- ID of the program that this requirement group applies to
 	course_id CHAR(10), -- ID of the course that this requirement group applies to
-	num_required INT DEFAULT NULL, -- Number of courses / groups required from the list (if applicable)
+	num_required INT DEFAULT NULL, -- Logic used to combine the courses in this group
+    min_courses_required INT DEFAULT NULL, -- Minimum number of courses required from the list of courses in the group (if applicable)
+    min_credits_required INT DEFAULT NULL, -- Minimum number of credits required from the list of courses in the group (if applicable)
 	list JSON DEFAULT NULL, -- JSON field to store a list of courses that are part of this group
 	parent_group_id INT DEFAULT NULL, -- Parent group ID that links this group to another higher-level group
-	FOREIGN KEY (program_id) REFERENCES Program (program_id) ON DELETE CASCADE, 
-	FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE, 
+	FOREIGN KEY (program_id) REFERENCES Program (program_id) ON DELETE CASCADE,
+	FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE,
 	FOREIGN KEY (parent_group_id) REFERENCES RequirementGroup (group_id) ON DELETE CASCADE
 );
 
@@ -107,7 +109,7 @@ CREATE TABLE RequirementGroup (
 -- ================================================
 CREATE TABLE DegreePlan (
     plan_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(6) NOT NULL,  
+    username VARCHAR(6) NOT NULL,
     plan_name VARCHAR(50),  -- Name of the plan (e.g., "CS 4-Year Plan")
     last_updated DATETIME NOT NULL,  -- Last modification date
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
@@ -119,8 +121,8 @@ CREATE TABLE DegreePlan (
 CREATE TABLE PlannedCourse (
     plan_id INT NOT NULL,
     course_id CHAR(10) NOT NULL,
-    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL, 
-    year YEAR NOT NULL, 
+    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL,
+    year YEAR NOT NULL,
     PRIMARY KEY (plan_id, course_id),
     FOREIGN KEY (plan_id) REFERENCES DegreePlan (plan_id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE
@@ -130,12 +132,12 @@ CREATE TABLE PlannedCourse (
 -- SchedulePlan Table: Stores schedules for specific terms
 -- =======================================================
 CREATE TABLE SchedulePlan (
-    schedule_id INT AUTO_INCREMENT PRIMARY KEY, 
-    username VARCHAR(6) NOT NULL, 
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(6) NOT NULL,
     schedule_name VARCHAR(50),  -- Custom name for the schedule
-    last_updated DATETIME NOT NULL,  -- Last modification date
-    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL, 
-    year YEAR NOT NULL, 
+    last_updated DATE NOT NULL,  -- Last modification date
+    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL,
+    year YEAR NOT NULL,
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
 );
 
