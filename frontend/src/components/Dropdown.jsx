@@ -1,4 +1,5 @@
 const Dropdown = ({ options, selectedValue, onChange, placeholder }) => {
+	console.log(selectedValue);
 	return (
 		<select
 			className="cursor-pointer"

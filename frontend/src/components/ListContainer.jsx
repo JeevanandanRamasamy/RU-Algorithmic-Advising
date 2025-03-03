@@ -1,10 +1,16 @@
 import React from "react";
 import ListItem from "./ListItem";
 
-const ListContainer = ({ query, handleQueryChange, values, searchText, type }) => {
-	const handleButtonClick = (type, value) => {
-		console.log(`${type} added: ${value}`);
-	};
+const ListContainer = ({
+	query,
+	handleQueryChange,
+	values,
+	searchText,
+	key_field,
+	field,
+	buttonType,
+	handleButtonClick
+}) => {
 	return (
 		<div className="flex flex-col gap-3">
 			<input
@@ -18,10 +24,11 @@ const ListContainer = ({ query, handleQueryChange, values, searchText, type }) =
 				{values &&
 					values.map(value => (
 						<ListItem
-							key={value}
-							value={value}
+							key={value[key_field]}
+							id={value[key_field]}
+							value={value[field]}
 							onClick={handleButtonClick}
-							type={type}
+							buttonType={buttonType}
 						/>
 					))}
 			</div>

@@ -1,14 +1,14 @@
 import React from "react";
 import Button from "./Button";
 
-const ListItem = ({ type, value, onClick }) => {
+const ListItem = ({ id, value, onClick, buttonType }) => {
 	return (
 		<div className="flex justify-between items-center p-2 border-b">
 			<span>{value}</span>
 			<Button
-				onClick={() => onClick(type, value)}
+				onClick={() => onClick(id)}
 				className="bg-blue-500 text-white p-1 rounded"
-				label="Add"
+				label={buttonType}
 			/>
 		</div>
 	);
