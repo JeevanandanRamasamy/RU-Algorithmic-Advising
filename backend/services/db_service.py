@@ -180,6 +180,34 @@ class DBService:
             return f"Error retrieving students in program: {str(e)}"
 
     @staticmethod
+    def insert_program_for_student(username, program_id):
+
+        try:
+            if not DBService.check_account_exists(username):
+                return f"User account not found"
+
+            program = DBService.get_program(program_id)
+
+            if not program:
+                return f"Program not found"
+
+            if DBService.check_program_exists_for_student(username, program_id):
+                return f"Student has already added program"
+
+            student_program = StudentProgram(username=username, program_id=program_id)
+
+            db.session.add(student_program)
+            db.session.commit()
+
+            return program
+
+        except SQLAlchemyError as e:
+
+            db.session.rollback()
+
+            return f"Error inserting program for student: {str(e)}"
+
+    @staticmethod
     def get_courses_taken_by_student(username):
         try:
             return (

@@ -8,7 +8,6 @@ function Register() {
 				<Link to="/">LOGIN</Link>
 				<Link to="/questionnaire">Register Account</Link>
 			</div>
-			;
 		</>
 	);
 }
