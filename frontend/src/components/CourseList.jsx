@@ -3,8 +3,8 @@ import CourseItem from './CourseItem';
 
 const CourseList = ({ courses, onDrop, plannedCourseIds = [] }) => {
   // Filter out courses that are already in the plan
-  const availableCourses = courses.filter(course => !plannedCourseIds.includes(course.id));
-  
+  const availableCourses = courses.filter(course => !plannedCourseIds.includes(course.course_id));
+
   return (
     <div className="course-list">
       {availableCourses.length > 0 ? (

@@ -4,15 +4,22 @@ import { useDrag } from 'react-dnd';
 const CourseItem = ({ course, isPlanned = false }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'COURSE',
-    item: { id: course.id },
+    item: { id: course.course_id },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-    canDrag: !isPlanned,  // You can’t drag a course once it’s planned
+    canDrag: !isPlanned,  // Disable drag when the course is already planned
   }));
 
+  // Log the course ID when the drag starts
+  React.useEffect(() => {
+    if (isDragging) {
+      console.log(`Dragging course: ${course.course_name} (ID: ${course.course_id})`);
+    }
+  }, [isDragging, course]);
+
   return (
-    <div 
+    <div
       ref={drag}
       className={`course-item ${isDragging ? 'dragging' : ''} ${isPlanned ? 'planned' : ''}`}
       style={{ opacity: isDragging ? 0.5 : 1 }}

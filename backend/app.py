@@ -5,19 +5,17 @@ from db import db
 from models import Account
 from routes.courses import course_bp
 from routes.db_courses import db_course_bp
+from routes.db_planned_courses import db_planned_courses_bp
 from flask_cors import CORS
 from db_service import DBService
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from datetime import timedelta
+from jwt_helper import init_jwt
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend-backend communication
-
-# Hardcoded username and password
-USER_CREDENTIALS = {
-    "username": "admin",
-    "password": "password123"
-}
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -25,20 +23,31 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    if username == USER_CREDENTIALS["username"] and password == USER_CREDENTIALS["password"]:
-    
-        return jsonify({"message": "Login successful", "status": "success"}), 200
+    # Check in DB
+    if not DBService.check_account_exists(username):
+        return jsonify({"message": "Account doesn't exist, please register", "status": "error"}), 401
+
+    # Check if credentials match
+    account = DBService.get_account_by_username(username)
+    if username == account.username and password == account.password:
+        # Create JWT token
+        access_token = create_access_token(identity=username)
+        
+        # Return token as part of the response
+        return jsonify({"message": "Login successful", "status": "success", "access_token": access_token}), 200
     else:
         return jsonify({"message": "Invalid credentials", "status": "error"}), 401
     
 
 app.register_blueprint(course_bp)
 app.register_blueprint(db_course_bp)
+app.register_blueprint(db_planned_courses_bp)
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 host = os.getenv('DB_HOST', 'localhost')
 dbname = os.getenv('DB_NAME')
 port = os.getenv('PORT_NUM')
+key = os.getenv('KEY')
 print(username)
 print(password)
 print(host)
@@ -46,7 +55,10 @@ print(dbname)
 print(port)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["JWT_SECRET_KEY"] = key  
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Tokens expire in 1 hour
 db.init_app(app)
+init_jwt(app)  # Initialize JWTManager
 
 @app.route("/")
 def home():

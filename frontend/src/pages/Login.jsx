@@ -1,56 +1,52 @@
-import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     const response = await fetch("http://127.0.0.1:8080/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
 
     const data = await response.json();
 
     if (data.status === "success") {
-      localStorage.setItem("isAuthenticated", "true");
+      login(username, data.access_token); // Store username + token in AuthContext
       navigate("/home");
     } else {
-      setMessage("Invalid credentials");
+      setMessage(data.message || "Something went wrong, please try again");
     }
   };
 
   return (
-    <>
-      <div>
-        <h2>Login</h2>
-        <Link to="/register">Register</Link>
-        <br />
-
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <button onClick={handleLogin}>Login</button>
-        <p>{message}</p>
-      </div>
-    </>
+    <div>
+      <h2>Login</h2>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <br />
+      <button onClick={handleLogin}>Login</button>
+      <p>{message}</p>
+      <Link to="/register">Register</Link>
+    </div>
   );
 }
 
