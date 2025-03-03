@@ -17,6 +17,7 @@ SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 
 
 def get_json(url):
+    """Fetches JSON data from a URL."""
     response = requests.get(url)
     return response.json()
 
@@ -27,19 +28,23 @@ def search_course_url(courseID, course_name):
     headers = {"Accept": "application/json", "X-Subscription-Token": BRAVE_API_KEY}
     params = {"q": query, "count": 1}
 
+    # Make a GET request to the Brave Search API
     response = requests.get(SEARCH_URL, headers=headers, params=params)
     response.raise_for_status()  # Raises an error for bad responses
     data = response.json()
 
+    # Extract the first search result URL
     if "web" in data and "results" in data["web"]:
         return data["web"]["results"][0]["url"]  # Get first result URL
     return None
 
 
 def parse_and_simplify_prereqs(subject, pre_reqs):
+    """Parses and simplifies the prerequisites string into a logical structure."""
     if not pre_reqs:
         return None
 
+    # Remove any tokens outside of the format
     prereq_str = re.sub(r"<[^>]+>", "", pre_reqs).lower()
     prereq_str = re.sub("any course equal or greater than:", "", prereq_str)
     if prereq_str.endswith("course within the subject area:"):
@@ -58,7 +63,9 @@ def parse_and_simplify_prereqs(subject, pre_reqs):
             .replace("ten", "10")
         )
         return {"logic": f"ATLEAST {prereq_str}", "courses": [f"XX:{subject}:XXX"]}
-    if prereq_str.find("course from the following:") != -1:
+    if (
+        prereq_str.find("course from the following:") != -1
+    ):  # if the prereq is a list of courses
         number = prereq_str.split(" ")[1]
         number = (
             number.replace("one", "1")
@@ -129,6 +136,7 @@ def parse_logic(temp_expr, course_symbols):
 
 
 def parse_courses(json_data, courses):
+    """Parses the JSON data and updates the courses list."""
     # Convert list of courses to a dictionary for faster lookups
     course_dict = {course["course_id"]: course for course in courses}
 
@@ -142,13 +150,13 @@ def parse_courses(json_data, courses):
         )
         existing = course_id in course_dict
 
+        # Extract course data
         course_name = (course.get("expandedTitle") or course.get("title") or "").strip()
         credits = course.get("credits", None)
         course_link = course.get("synopsisUrl", None)
         prerequisites = parse_and_simplify_prereqs(
             course["subject"], course.get("preReqNotes", None)
         )
-        # print(f"{course_id} - {course_name} ({credits}): {course_link}\n{course['preReqNotes']}\n{prerequisites}")
 
         if existing:
             if prerequisites and course_dict[course_id]["prerequisites"] is None:
@@ -167,16 +175,18 @@ def parse_courses(json_data, courses):
 
 
 def get_course_list():
-    # Check if the courses.csv file already exists
-    if os.path.exists("backend/courses.csv"):
-        courses = pd.read_csv("backend/courses.csv").to_dict(orient="records")
-        print(f"Loaded {len(courses)} courses from existing file.")
+    """Fetches course data from the Rutgers API and saves it to a CSV file."""
+    # Check if the course_list.csv file already exists
+    if os.path.exists("backend/course_list.csv"):
+        course_list = pd.read_csv("backend/course_list.csv").to_dict(orient="records")
+        print(f"Loaded {len(course_list)} courses from existing file.")
     else:
-        courses = []
+        course_list = []
         print("No existing course file found. Starting fresh.")
 
-    course_list = "https://sis.rutgers.edu/oldsoc/init.json"
-    courses_json = get_json(course_list)
+    # Loop through all semesters and subjects to get course data
+    departments_api = "https://sis.rutgers.edu/oldsoc/init.json"
+    department_list = get_json(departments_api)
     semesters = [
         f"{month}{year}"
         for year in ["2025", "2024", "2023", "2022"]
@@ -187,17 +197,17 @@ def get_course_list():
         ]
     ]
     for semester in semesters:
-        for subject in courses_json["subjects"]:
+        for subject in department_list["subjects"]:
             subject_code = subject["code"]
             subject_url = f"https://sis.rutgers.edu/oldsoc/courses.json?subject={subject_code}&semester={semester}&campus=NB&level=UG"
             json_data = get_json(subject_url)
-            courses = parse_courses(json_data, courses)
+            course_list = parse_courses(json_data, course_list)
         print(f"Parsed {semester}")
 
     # Save the courses to a CSV file
-    print(f"Total courses parsed: {len(courses)}")
-    df = pd.DataFrame(courses)
-    df.to_csv("backend/courses.csv", index=False)
+    print(f"Total courses parsed: {len(course_list)}")
+    df = pd.DataFrame(course_list)
+    df.to_csv("backend/course_list.csv", index=False)
 
 
 def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None):
@@ -209,59 +219,76 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
         # If we are processing a single course
         group = {
             "course_id": courseID,
-            "min_required": 1,
+            "num_required": 1,
             "list": [prerequisites],
             "parent_group_id": parent_group_id,
         }
         result = DBService.insert_requirement_group(group)
         if isinstance(result, RequirementGroup):
-            print(f"Added course: {group}")
+            print(f"Added group: {result}")
     else:
         # If we are processing a group of prerequisites (AND/OR)
         prerequisites = json.loads(prerequisites.replace("'", '"'))
         logic = prerequisites.get("logic")
         requirements = prerequisites.get("requirements")
 
-        group = {
-            "course_id": courseID,
-            "logic": logic,
-            "parent_group_id": parent_group_id,
-        }
+        group = {"course_id": courseID, "parent_group_id": parent_group_id}
+        if logic == "AND":
+            group["num_required"] = 0
+        elif logic == "OR":
+            group["num_required"] = 1
+        elif logic.startswith("ATLEAST"):
+            group["num_required"] = int(logic.split(" ")[1])
+        if "logic" not in str(requirements):
+            # If there are no nested groups
+            group["list"] = requirements
         group_result = DBService.insert_requirement_group(group)
         if not isinstance(group_result, RequirementGroup):
             return
-        print(f"Adding group: {group_result}")
+        print(f"Added group: {group_result}")
 
-        same_group = []
-        for requirement in requirements:
-            if isinstance(requirement, dict):
-                # Recursive call for nested groups
-                add_prerequisites_to_database(
-                    courseID=None,
-                    prerequisites=str(requirement),
-                    parent_group_id=group.group_id,
-                )
-            else:
-                same_group.append(requirement)
+        if "logic" in str(requirements):
+            # If there are nested groups
+            same_group = []
+            for requirement in requirements:
+                if isinstance(requirement, dict):
+                    # Recursive call for nested groups
+                    add_prerequisites_to_database(
+                        courseID=None,
+                        prerequisites=str(requirement),
+                        parent_group_id=group_result.group_id,
+                    )
+                else:
+                    same_group.append(requirement)
 
-        if same_group:
-            sub_group = {"parent_group_id": group.group_id, "list": same_group}
-            if logic == "AND":
-                sub_group["min_required"] = 0
-            elif logic == "OR":
-                sub_group["min_required"] = 1
-            elif logic.startswith("ATLEAST"):
-                sub_group["min_required"] = int(logic.split(" ")[1])
+            if same_group:
+                sub_group = {
+                    "parent_group_id": group_result.group_id,
+                    "list": same_group,
+                }
+                if logic == "AND":
+                    sub_group["num_required"] = 0
+                elif logic == "OR":
+                    sub_group["num_required"] = 1
+                elif logic.startswith("ATLEAST"):
+                    sub_group["num_required"] = int(logic.split(" ")[1])
 
-            sub_group_result = DBService.insert_requirement_group(sub_group)
-            if isinstance(sub_group_result, RequirementGroup):
-                print(f"Adding sub-group: {sub_group_result}")
+                sub_group_result = DBService.insert_requirement_group(sub_group)
+                if isinstance(sub_group_result, RequirementGroup):
+                    print(f"Added sub-group: {sub_group_result}")
 
 
 def add_courses_to_database(filename):
+    """Adds courses from a CSV file to the database."""
     with app.app_context():
         db.create_all()
         df = pd.read_csv(filename)
+
+        # Handle missing values for credits and course_link
+        df["credits"] = df["credits"].fillna(0)
+        df["course_link"] = df["course_link"].where(pd.notna(df["course_link"]), None)
+
+        # Add courses to the database
         for _, row in df.iterrows():
             course = {
                 "course_id": row["course_id"],
@@ -270,45 +297,19 @@ def add_courses_to_database(filename):
                 "course_link": row["course_link"],
             }
             course_result = DBService.insert_course(course)
-            if isinstance(course_result, Course):
+            if isinstance(course_result, Course):  # Check if insertion was successful
                 print(f"Added course: {course_result}")
-                if pd.notna(row["prerequisites"]):
+                if pd.notna(row["prerequisites"]):  # Add prerequisites if they exist
                     add_prerequisites_to_database(
                         row["course_id"], row["prerequisites"]
                     )
+            else:
+                print(f"Error adding course: {course}")
         print("Courses added to database successfully!")
 
 
-def compare_files(file1, file2):
-    df1 = pd.read_csv(file1)
-    df2 = pd.read_csv(file2)
-    merged_df = pd.merge(df1, df2, on="course_id", how="outer", indicator=True)
-
-    # Courses in file1 but not in file2
-    only_in_file1 = merged_df[merged_df["_merge"] == "left_only"]
-    missing_courses = df1[df1["course_id"].isin(only_in_file1["course_id"])]
-    print(f"Courses in {file1} but not in {file2}:")
-    print(missing_courses)
-
-    # Courses in file1 with prereqs but missing prereqs in file2
-    prereq_missing = df1.merge(df2, on="course_id", suffixes=("_file1", "_file2"))
-    prereq_missing = prereq_missing[
-        (prereq_missing["prerequisites_file1"].notna())
-        & (prereq_missing["prerequisites_file2"].isna())
-    ]
-    print(f"Courses in {file1} with prereqs but missing prereqs in {file2}:")
-    print(prereq_missing)
-
-    # Update missing prerequisites in df1
-    for _, row in prereq_missing.iterrows():
-        df2.loc[df2["course_id"] == row["course_id"], "prerequisites"] = row[
-            "prerequisites_file1"
-        ]
-    df2 = pd.concat([df2, missing_courses], ignore_index=True)
-    df2.to_csv(file2, index=False)
-
-
 def add_course_urls(filename, row_range=(0, 1900)):
+    """Adds course URLs to the CSV file using the Brave Search API."""
     df = pd.read_csv(filename)
     start, end = row_range
 
@@ -319,11 +320,10 @@ def add_course_urls(filename, row_range=(0, 1900)):
         if course_link:
             df.at[i, "course_link"] = course_link
     df.to_csv(filename, index=False)
-    print(f"Updated {filename} with course URLs.")
+    print(f"Updated {filename} with {end - start} course URLs.")
 
 
 if __name__ == "__main__":
     # get_course_list()
-    # compare_files("backend/courses.csv", "backend/course_list.csv")
     add_courses_to_database("backend/course_list.csv")
     # add_course_urls("backend/course_list.csv", row_range=(0, 10))

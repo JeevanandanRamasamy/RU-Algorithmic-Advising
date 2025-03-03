@@ -77,7 +77,57 @@ class DBService:
             db.session.rollback()
             return f"Error deleting account: {str(e)}"
 
+    @staticmethod
+    def delete_all_accounts():
+        try:
+            Account.query.delete()
+            db.session.commit()
+            return "All accounts deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all accounts: {str(e)}"
+
     # ------------------ STUDENT OPERATIONS ------------------
+    @staticmethod
+    def add_student_details(student_data):
+        try:
+            new_student = StudentDetails(**student_data)
+            db.session.add(new_student)
+            db.session.commit()
+            return new_student
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error adding student details: {str(e)}"
+
+    @staticmethod
+    def delete_student_details(username):
+        try:
+            student = StudentDetails.query.filter_by(username=username).first()
+            if student:
+                db.session.delete(student)
+                db.session.commit()
+                return f"Student {username} deleted successfully"
+            else:
+                return "Student not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting student details: {str(e)}"
+
+    @staticmethod
+    def update_student_details(username, new_data):
+        try:
+            student = StudentDetails.query.filter_by(username=username).first()
+            if student:
+                for key, value in new_data.items():
+                    setattr(student, key, value)
+                db.session.commit()
+                return student
+            else:
+                return "Student not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating student details: {str(e)}"
+
     @staticmethod
     def get_student_details(username):
         try:
@@ -142,63 +192,6 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving courses taken: {str(e)}"
-
-    @staticmethod
-    def check_program_exists_for_student(username, program_id):
-        try:
-            return StudentProgram.query.filter(
-                StudentProgram.username == username,
-                StudentProgram.program_id == program_id,
-            ).scalar()
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return f"Error checking program for student: {str(e)}"
-
-    @staticmethod
-    def insert_program_for_student(username, program_id):
-        try:
-            if not DBService.check_account_exists(username):
-                return f"User account not found"
-
-            program = DBService.get_program(program_id)
-            if not program:
-                return f"Program not found"
-
-            if DBService.check_program_exists_for_student(username, program_id):
-                return f"Student has already added program"
-
-            student_program = StudentProgram(username=username, program_id=program_id)
-            db.session.add(student_program)
-            db.session.commit()
-            return program
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return f"Error inserting program for student: {str(e)}"
-
-    @staticmethod
-    def delete_program_for_student(username, program_id):
-        try:
-            if not DBService.check_account_exists(username):
-                return f"User account not found"
-
-            program = DBService.get_program(program_id)
-            if not program:
-                return f"Program not found"
-
-            student_program = (
-                db.session.query(StudentProgram)
-                .filter_by(username=username, program_id=program_id)
-                .first()
-            )
-            if not student_program:
-                return "Program not found for the student."
-
-            db.session.delete(student_program)
-            db.session.commit()
-            return program
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return f"Error deleting inserting program for student: {str(e)}"
 
     # ------------------ COURSE OPERATIONS ------------------
     @staticmethod
@@ -418,6 +411,24 @@ class DBService:
             db.session.rollback()
             return f"Error deleting planned course: {str(e)}"
 
+    @staticmethod
+    def update_planned_course(plan_id, course_id, new_data):
+        """Update a planned course by its plan_id and course_id."""
+        try:
+            planned_course = PlannedCourse.query.filter_by(
+                plan_id=plan_id, course_id=course_id
+            ).first()
+            if planned_course:
+                for key, value in new_data.items():
+                    setattr(planned_course, key, value)
+                db.session.commit()
+                return planned_course
+            else:
+                return "Planned course not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating planned course: {str(e)}"
+
     # ------------------ SCHEDULE PLAN OPERATIONS ------------------
     @staticmethod
     def get_schedule(username):
@@ -509,6 +520,24 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting section: {str(e)}"
+
+    @staticmethod
+    def update_section(schedule_id, course_id, section_num, new_data):
+        """Update a section in a schedule plan."""
+        try:
+            section = Section.query.filter_by(
+                schedule_id=schedule_id, course_id=course_id, section_num=section_num
+            ).first()
+            if section:
+                for key, value in new_data.items():
+                    setattr(section, key, value)
+                db.session.commit()
+                return section
+            else:
+                return "Section not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating section: {str(e)}"
 
     # ------------------ GENERAL OPERATIONS ------------------
     @staticmethod
