@@ -4,13 +4,13 @@ Flask-SQLAlchemy
 Flask-Migrate
 flask-jwt-extended
 mariadb
-flask-cors
+Flask-Cors==5.0.10
 
-os
-re
-json
 requests
 pandas
 dotenv
 sympy
 datetime
+
+requests
+dataclasses
