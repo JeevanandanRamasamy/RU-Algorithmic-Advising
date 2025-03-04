@@ -7,11 +7,11 @@ const PlannedCourseItem = ({ plannedCourse, onRemove }) => {
   
   return (
     <div className="planned-course-item">
-      <h3>{plannedCourse.course_name}</h3>
-      <p>ID: {plannedCourse.course_id}</p>
-      <p>{plannedCourse.credits} credits</p>
-      <a href={plannedCourse.course_link} target="_blank" rel="noopener noreferrer">Course Details</a>
-      <button onClick={handleRemoveClick}>Remove</button>
+      <h3 className="planned-course-name">{plannedCourse.course_name}</h3>
+      <p className="planned-course-code"> ID: {plannedCourse.course_id}</p>
+      <p className="planned-course-credits">{plannedCourse.credits} credits</p>
+      <a className="planned-course-link" href={plannedCourse.course_link} target="_blank" rel="noopener noreferrer">Course Details</a>
+      <button className="planned-course-remove" onClick={handleRemoveClick}>Remove</button>
     </div>
   );
 };
