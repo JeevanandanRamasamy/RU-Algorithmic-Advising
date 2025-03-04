@@ -6,6 +6,7 @@ import DropdownWithSearch from "../components/DropdownWithSearch";
 import Button from "../components/Button";
 import { majors, minors, subjects, certificate } from "../data/sas";
 import ListContainer from "../components/ListContainer";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Questionnaire = () => {
 	const [gradYear, setGradYear] = useState("");
@@ -157,7 +158,7 @@ const Questionnaire = () => {
 	useEffect(() => {
 		const fetchPrograms = async () => {
 			try {
-				const response = await fetch("http://127.0.0.1:8080/api/programs");
+				const response = await fetch(`${backendUrl}/api/programs`);
 				const data = await response.json();
 				setFilteredPrograms(data.programs);
 				setPrograms(data.programs);
@@ -168,9 +169,7 @@ const Questionnaire = () => {
 
 		const fetchUserPrograms = async () => {
 			try {
-				const response = await fetch(
-					"http://127.0.0.1:8080/api/users/program?username=admin"
-				);
+				const response = await fetch(`${backendUrl}/api/users/program?username=admin`);
 				const data = await response.json();
 				setSelectedPrograms(data.student_program);
 			} catch (error) {
@@ -179,9 +178,7 @@ const Questionnaire = () => {
 		};
 		const fetchUserDetails = async () => {
 			try {
-				const response = await fetch(
-					"http://127.0.0.1:8080/api/users/details?username=admin"
-				);
+				const response = await fetch(`${backendUrl}/api/users/details?username=admin`);
 				const data = await response.json();
 				const fields = {
 					grad_date: setGradYear,
@@ -268,7 +265,7 @@ const Questionnaire = () => {
 	}, [selectedProgramsQuery, selectedPrograms]);
 
 	const handleInsertProgram = async program_id => {
-		const response = await fetch("http://127.0.0.1:8080/api/users/program", {
+		const response = await fetch(`${backendUrl}/api/users/program`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -287,7 +284,7 @@ const Questionnaire = () => {
 	};
 
 	const handleRemoveProgram = async program_id => {
-		const response = await fetch("http://127.0.0.1:8080/api/users/program", {
+		const response = await fetch(`${backendUrl}/api/users/program`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json"
@@ -304,7 +301,7 @@ const Questionnaire = () => {
 		// TODO: handle errors
 	};
 	const saveData = async () => {
-		const response = await fetch("http://127.0.0.1:8080/api/users/details", {
+		const response = await fetch(`${backendUrl}/api/users/details`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json"
