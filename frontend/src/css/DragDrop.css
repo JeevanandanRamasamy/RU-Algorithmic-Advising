@@ -126,31 +126,27 @@
     opacity: 0.5;
   }
 
-  .planned-course-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: default;
-  }
-
-  .course-code {
+  .course-code,
+  .planned-course-code {
     font-weight: bold;
     color: #2c3e50;
     margin-bottom: 5px;
   }
 
-  .course-title {
+  .course-title,
+  .planned-course-title {
     font-size: 16px;
     margin-bottom: 5px;
   }
 
   .course-credits,
-  .course-dept {
+  .course-dept,
+  .planned-course-credits {
     font-size: 14px;
     color: #666;
   }
-
-  .remove-button {
+  
+  .planned-course-remove {
     background-color: #f44336;
     color: white;
     border: none;
@@ -263,10 +259,26 @@
     background-color: rgba(33, 150, 243, 0.1);
     border: 2px dashed #2196f3;
   }
+  
+  .course-link, .planned-course-link {
+    color: #007bff;
+    text-decoration: none;
+}
 
-  .planned-course-item {
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
+  .course-link:hover,
+  .planned-course-link:hover {
+    text-decoration: underline;
+}
+
+.planned-course-remove {
+  margin-left: 150px; /* Add some space between the course details and the button */
+  visibility: hidden
+}
+
+.planned-course-item:hover .planned-course-remove {
+  visibility: visible; /* Show the button when hovering over the item */
+}
+
+.planned-course-remove:hover {
+  background-color: #d32f2f; /* Optional: Add hover effect to the button */
+}

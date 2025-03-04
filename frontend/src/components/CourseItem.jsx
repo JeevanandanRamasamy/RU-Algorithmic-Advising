@@ -24,10 +24,10 @@ const CourseItem = ({ course, isPlanned = false }) => {
       className={`course-item ${isDragging ? 'dragging' : ''} ${isPlanned ? 'planned' : ''}`}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
-      <div className="course-title">{course.course_name}</div>
-      <div className="course-code">{course.course_id}</div>
-      <div className="course-credits">{course.credits} credits</div>
-      <div className="course-link">{course.course_link}</div>
+      <h3 className="course-title">{course.course_name}</h3>
+      <p className="course-code">ID: {course.course_id}</p>
+      <p className="course-credits">{course.credits} credits</p>
+      <a className="course-link" href={course.course_link} target="_blank" rel="noopener noreferrer">Course Details</a>
     </div>
   );
 };

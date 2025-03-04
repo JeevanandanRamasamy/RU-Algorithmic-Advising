@@ -53,7 +53,7 @@ const PlannedCourses = ({ plannedCourses, onRemoveCourse, onDropCourse }) => {
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
-			console.log("Dropped course:", item);
+			//console.log("Dropped course:", item);
 			onDropCourse(item.id); // Pass courseId
 		},
 		collect: monitor => ({
@@ -62,7 +62,7 @@ const PlannedCourses = ({ plannedCourses, onRemoveCourse, onDropCourse }) => {
 	}));
 
 	const handleRemoveCourse = courseId => {
-		console.log("Removing course with ID:", courseId);
+		//console.log("Removing course with ID:", courseId);
 		onRemoveCourse(courseId);
 	};
 

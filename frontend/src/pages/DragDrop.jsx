@@ -54,10 +54,10 @@ function DragDrop() {
 			console.error("Error fetching planned courses:", error);
 		}
 	};
-
+  /*
 	useEffect(() => {
 		console.log("plan_id: ", planId);
-	}, [planId]);
+	}, [planId]);*/
 
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
@@ -107,7 +107,7 @@ function DragDrop() {
 					prevPlannedCourses.filter(course => course.course_id !== courseId)
 				);
 			} else {
-				console.log("Course added to the plan");
+				//console.log("Course added to the plan");
 				// Only update the planId if needed (assuming API gives back plan_id)
 				const data = await response.json();
 				setPlanId(data.plan_id || planId); // Only update if new plan_id is returned
@@ -152,10 +152,10 @@ function DragDrop() {
 				console.error("Error removing course:", data.message);
 				// If there's an error, restore the previous state by re-fetching
 				await fetchPlannedCourses();
-			} else {
-				console.log("Course removed successfully");
+			} //else {
+				//console.log("Course removed successfully");
 				// No need to refetch if the operation was successful
-			}
+			//}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);
 			// In case of an error, restore the previous state
