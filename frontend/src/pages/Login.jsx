@@ -16,7 +16,7 @@ function Login() {
       body: JSON.stringify({ username, password }),
     });
 
-		const data = await response.json();
+    const data = await response.json();
 
     if (data.status === "success") {
       login(username, data.access_token); // Store username + token in AuthContext
@@ -29,6 +29,10 @@ function Login() {
   return (
     <div>
       <h2>Login</h2>
+      <p>
+        Need an account? <a href="#">Create an Account</a>
+      </p>
+
       <input
         type="text"
         placeholder="Username"
