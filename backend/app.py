@@ -8,6 +8,8 @@ from routes.db_courses import db_course_bp
 from routes.db_planned_courses import db_planned_courses_bp
 from routes.users import users_bp
 from routes.programs import programs_bp
+from routes.register_route import register_bp
+
 from flask_cors import CORS
 from services.db_service import DBService
 from flask_jwt_extended import (
@@ -73,6 +75,8 @@ app.register_blueprint(db_course_bp)
 app.register_blueprint(db_planned_courses_bp)
 app.register_blueprint(programs_bp)
 app.register_blueprint(users_bp)
+app.register_blueprint(register_bp)
+
 username = os.getenv("DB_USERNAME")
 password = os.getenv("DB_PASSWORD")
 host = os.getenv("DB_HOST", "localhost")

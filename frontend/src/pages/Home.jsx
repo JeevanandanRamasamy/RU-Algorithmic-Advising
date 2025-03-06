@@ -18,6 +18,9 @@ function Home() {
       <h2>Welcome {user} to the home page</h2> {/* Display username */}
       <LogoutButton /> {/* Use the reusable LogoutButton */}
       <Link to="/dragdrop">Planner</Link> {/* For testing */}
+      <p>
+        <Link to="/questionnaire">QA</Link>
+      </p>
     </div>
   );
 }
