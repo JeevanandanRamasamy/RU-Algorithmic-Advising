@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Dropdown from "../components/Dropdown";
 import { useEffect } from "react";
 import CourseTakenList from "../components/CourseTakenList";
@@ -23,6 +24,7 @@ const Questionnaire = () => {
 	const [filteredCourses, setFilteredCourses] = useState([]);
 	const [filteredSelectedPrograms, setFilteredSelectedPrograms] = useState([]);
 	const classes = ["freshman", "sophomore", "junior", "senior", "graduate"];
+	const navigate = useNavigate();
 
 	const handleGpaChange = e => {
 		const value = e.target.value;
@@ -231,6 +233,7 @@ const Questionnaire = () => {
 	// 	setData(prev => ({ ...prev, ...filtered }));
 	// }, [query, data.programs, data.courses]);
 
+	// TODO: handle accounts
 	useEffect(() => {
 		if (!courses) return;
 
@@ -320,6 +323,10 @@ const Questionnaire = () => {
 		});
 		console.log(response);
 		//TODO: redirect
+		if (data.status == "success") {
+			redirect("/home");
+		} else {
+		}
 	};
 
 	return (
