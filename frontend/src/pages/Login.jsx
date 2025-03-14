@@ -9,7 +9,6 @@ function Login() {
 	const [message, setMessage] = useState("");
 	const { login } = useAuth();
 	const navigate = useNavigate();
-	console.log(backendUrl);
 
 	const handleLogin = async () => {
 		const response = await fetch(`${backendUrl}/login`, {

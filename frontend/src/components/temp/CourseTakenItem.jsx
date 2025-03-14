@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from "../Button";
 //TODO: need a way to know if course has already been added
 const CourseTakenItem = ({ course, onClick }) => {
 	return (

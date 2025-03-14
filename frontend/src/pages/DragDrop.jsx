@@ -1,42 +1,47 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import CourseList from "../components/CourseList";
+import AvailableCourses from "../components/AvailableCourses";
 import PlannedCourses from "../components/PlannedCourses";
 import LogoutButton from "../components/navbuttons/LogoutButton";
 import HomeButton from "../components/navbuttons/HomeButton";
+import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function DragDrop() {
-	const [courses, setCourses] = useState([]);
 	const [plannedCourses, setPlannedCourses] = useState([]);
 	const [planId, setPlanId] = useState(null); // Add a state to hold plan_id
-	const [searchAvailable, setSearchAvailable] = useState("");
+	// const [searchAvailable, setSearchAvailable] = useState("");
 	const [loading, setLoading] = useState(true);
 	const { user, token, logout } = useAuth();
+	const { courses, coursesLoading, coursesError, fetchCourses, setCourses } = useCourses(
+		backendUrl,
+		token
+	);
+	console.log(courses);
 
 	useEffect(() => {
-		fetchCourses();
 		fetchPlannedCourses();
 	}, [token]);
 
-	const fetchCourses = useCallback(async (search = "") => {
-		setLoading(true);
-		try {
-			const url = search
-				? `${backendUrl}/api/db_courses?search=${encodeURIComponent(search)}`
-				: `${backendUrl}/api/db_courses`;
+	// const fetchCourses = useCallback(async (search = "") => {
+	// 	setLoading(true);
+	// 	try {
+	// 		const url = search
+	// 			? `${backendUrl}/api/db_courses?search=${encodeURIComponent(search)}`
+	// 			: `${backendUrl}/api/db_courses`;
 
-			const response = await fetch(url);
-			const data = await response.json();
-			// console.log("Fetched Courses:", data);
-			setCourses(data);
-		} catch (error) {
-			console.error("Error fetching courses:", error);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+	// 		const response = await fetch(url);
+	// 		const data = await response.json();
+	// 		// console.log("Fetched Courses:", data);
+	// 		setCourses(data);
+	// 	} catch (error) {
+	// 		console.error("Error fetching courses:", error);
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// }, []);
 
 	const fetchPlannedCourses = async () => {
 		try {
@@ -54,21 +59,21 @@ function DragDrop() {
 			console.error("Error fetching planned courses:", error);
 		}
 	};
-  /*
+	/*
 	useEffect(() => {
 		console.log("plan_id: ", planId);
 	}, [planId]);*/
 
-	useEffect(() => {
-		const delayDebounceFn = setTimeout(() => {
-			fetchCourses(searchAvailable);
-		}, 300);
-		return () => clearTimeout(delayDebounceFn);
-	}, [searchAvailable, fetchCourses]);
+	// useEffect(() => {
+	// 	const delayDebounceFn = setTimeout(() => {
+	// 		fetchCourses(searchAvailable);
+	// 	}, 300);
+	// 	return () => clearTimeout(delayDebounceFn);
+	// }, [searchAvailable, fetchCourses]);
 
-	const handleSearchAvailable = e => {
-		setSearchAvailable(e.target.value);
-	};
+	// const handleSearchAvailable = e => {
+	// 	setSearchAvailable(e.target.value);
+	// };
 
 	const addCourseToPlan = async courseId => {
 		setCourses(prevCourses => {
@@ -153,8 +158,8 @@ function DragDrop() {
 				// If there's an error, restore the previous state by re-fetching
 				await fetchPlannedCourses();
 			} //else {
-				//console.log("Course removed successfully");
-				// No need to refetch if the operation was successful
+			//console.log("Course removed successfully");
+			// No need to refetch if the operation was successful
 			//}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);
@@ -173,7 +178,7 @@ function DragDrop() {
 			<HomeButton />
 			<LogoutButton />
 			<main className="course-planner">
-				<section className="available-courses">
+				{/* <section className="available-courses">
 					<h2>Available Courses</h2>
 					<div className="search-container">
 						<input
@@ -187,8 +192,9 @@ function DragDrop() {
 					<CourseList
 						courses={courses}
 						isPlanned={false}
-					/>
-				</section>
+					/> */}
+				{/* </section> */}
+				<AvailableCourses courses={courses} />
 				<section className="planned-courses">
 					<h2>Planned Courses</h2>
 					<PlannedCourses

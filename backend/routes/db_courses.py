@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from backend.services.db_course_service import DBCourseService
 from models import Course  # Import the Course model
 from sqlalchemy import or_
 from services.db_service import DBService
@@ -56,7 +57,7 @@ def get_course_by_id():
             return jsonify({"message": "Course ID is required"}), 400
 
         # Call the service to get the course by ID
-        course = DBService.get_course_by_id(course_id)
+        course = DBCourseService.get_course_by_id(course_id)
 
         if isinstance(
             course, Course

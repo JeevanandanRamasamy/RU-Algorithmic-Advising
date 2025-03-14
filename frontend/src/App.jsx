@@ -29,7 +29,11 @@ function App() {
 					/>
 					<Route
 						path="/questionnaire"
-						element={<Questionnaire />}
+						element={
+							<DndProvider backend={HTML5Backend}>
+								<Questionnaire />
+							</DndProvider>
+						}
 					/>
 					<Route
 						path="/dragdrop"

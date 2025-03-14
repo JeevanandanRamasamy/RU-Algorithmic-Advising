@@ -48,6 +48,7 @@ const PlannedCourses = ({ plannedCourses, onRemoveCourse, onDropCourse }) => {
 
 		fetchCourseDetails();
 	}, [plannedCourses]); // Only re-run when plannedCourses changes
+	console.log(detailedCourses);
 
 	// Drag-and-drop functionality using react-dnd
 	const [{ isOver }, drop] = useDrop(() => ({

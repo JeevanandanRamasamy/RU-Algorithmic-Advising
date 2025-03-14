@@ -1,21 +1,42 @@
-import React from 'react';
-import CourseItem from './CourseItem';
+import React from "react";
+import CourseItem from "./CourseItem";
 
-const CourseList = ({ courses, onDrop, plannedCourseIds = [] }) => {
-  // Filter out courses that are already in the plan
-  const availableCourses = courses.filter(course => !plannedCourseIds.includes(course.course_id));
-
-  return (
-    <div className="course-list">
-      {availableCourses.length > 0 ? (
-        availableCourses.map(course => (
-          <CourseItem key={course.course_id} course={course} />
-        ))
-      ) : (
-        <div className="no-courses">No available courses found</div>
-      )}
-    </div>
-  );
+// const CourseList = ({ courses, onDrop, plannedCourseIds = [] }) => {
+// const CourseList = ({ courses, onDrop, filteredCourseIds = [] }) => {
+const CourseList = ({ courses, onDrop }) => {
+	// const availableCourses = courses.filter(
+	// 	course => !filteredCourseIds.includes(course.course_id)
+	// );
+	console.log(courses);
+	return (
+		<div className="course-list">
+			{courses.length > 0 ? (
+				<>
+					{(() => {
+						const items = [];
+						for (let i = 0; i < Math.min(50, courses.length); i++) {
+							items.push(
+								<CourseItem
+									key={courses[i].course_id}
+									course={courses[i]}
+								/>
+							);
+						}
+						return items;
+					})()}
+				</>
+			) : (
+				// // courses.map(course => (
+				// courses.slice(0, 50).map(course => (
+				// 	<CourseItem
+				// 		key={course.course_id}
+				// 		course={course}
+				// 	/>
+				// ))
+				<div className="no-courses">No available courses found</div>
+			)}
+		</div>
+	);
 };
 
 export default CourseList;

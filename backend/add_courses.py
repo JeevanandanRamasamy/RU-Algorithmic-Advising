@@ -6,10 +6,11 @@ import pandas as pd
 from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
-from backend.services.db_service import DBService
+from services.db_service import DBService
 from models import RequirementGroup, Course
 from db import db
 from app import app
+from services.db_course_service import DBCourseService
 
 load_dotenv()
 BRAVE_API_KEY = os.getenv("BRAVE_API_KEY")
@@ -296,7 +297,7 @@ def add_courses_to_database(filename):
                 "credits": row["credits"],
                 "course_link": row["course_link"],
             }
-            course_result = DBService.insert_course(course)
+            course_result = DBCourseService.insert_course(course)
             if isinstance(course_result, Course):  # Check if insertion was successful
                 print(f"Added course: {course_result}")
                 if pd.notna(row["prerequisites"]):  # Add prerequisites if they exist
@@ -325,5 +326,6 @@ def add_course_urls(filename, row_range=(0, 1900)):
 
 if __name__ == "__main__":
     # get_course_list()
-    add_courses_to_database("backend/course_list.csv")
+    add_courses_to_database("course_list.csv")
+    # add_courses_to_database("backend/course_list.csv")
     # add_course_urls("backend/course_list.csv", row_range=(0, 10))
