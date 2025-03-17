@@ -7,42 +7,32 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DragDrop from "./pages/DragDrop";
+import Navbar from "./components/navbar/Navbar";
 
 import "./css/index.css";
 
 function App() {
-	return (
-		<div>
-			<main className="main-content">
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/home"
-						element={<Home />}
-					/>
-					<Route
-						path="/questionnaire"
-						element={<Questionnaire />}
-					/>
-					<Route
-						path="/dragdrop"
-						element={
-							<DndProvider backend={HTML5Backend}>
-								<DragDrop />
-							</DndProvider>
-						}
-					/>
-				</Routes>
-			</main>
-		</div>
-	);
+  return (
+    <div>
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/questionnaire" element={<Questionnaire />} />
+          <Route path="/navbar" element={<Navbar />} />
+          <Route
+            path="/dragdrop"
+            element={
+              <DndProvider backend={HTML5Backend}>
+                <DragDrop />
+              </DndProvider>
+            }
+          />
+        </Routes>
+      </main>
+    </div>
+  );
 }
 
 export default App;
