@@ -189,3 +189,48 @@ class RequirementService:
         for group in requirement_groups:
             check_missing_courses(group.group_id)
         return list(missing_courses)
+
+    @staticmethod
+    def get_suggested_courses(username, max_credits=20.5):
+        """Suggest courses for a student based on their current credits and requirements."""
+        # Fetch programs associated with the student
+        programs = DBService.get_student_programs(username)
+        if not programs:
+            return "No programs found for the student"
+        program_ids = [program.program_id for program in programs]
+
+        # Fetch missing requirements for each program
+        missing_courses = set()
+        for program_id in program_ids:
+            missing_courses.update(DBService.get_missing_requirements(username, program_id=program_id))
+
+        suggested_courses = set()
+        total_credits = 0
+        priority = set()
+
+        # Step 1: Identify missing prerequisites for the courses
+        for course in missing_courses:
+            if not DBService.check_requirements_met(username, course_id=course):
+                missing_prereqs = DBService.get_missing_requirements(username, course_id=course)
+                priority.update(missing_prereqs)
+        
+        # Step 2: Add the missing prerequisites to the suggested courses
+        for prereq in priority:
+            total_credits += DBService.get_course_by_id(prereq).credits
+            if total_credits <= max_credits:
+                suggested_courses.add(prereq)
+            else:
+                break
+        
+        # Step 3: If there's still space for more credits, suggest remaining courses
+        if total_credits < max_credits:
+            remaining_courses = missing_courses - priority
+            for course in remaining_courses:
+                if DBService.check_requirements_met(username, course_id=course):
+                    total_credits += DBService.get_course_by_id(course).credits
+                    if total_credits <= max_credits:
+                        suggested_courses.add(course)
+                    else:
+                        break
+                
+        return suggested_courses
