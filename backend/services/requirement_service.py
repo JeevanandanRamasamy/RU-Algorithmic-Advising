@@ -2,6 +2,34 @@ from services.db_service import DBService
 
 class RequirementService:
     @staticmethod
+    def get_all_prerequisites(course_id, visited=None):
+        """Retrieve all prerequisite courses for a given course."""
+        if visited is None:
+            visited = set()  # Keep track of visited courses to avoid infinite loops
+        course = DBService.get_course_by_id(course_id)
+        if not course or course_id in visited:
+            return set()  # Return an empty set if the course does not exist or has been visited
+        visited.add(course_id)  # Mark this course as visited
+
+        requirement_groups = DBService.get_requirement_group_by_course(course_id)
+        if not requirement_groups:
+            return set()
+        prerequisites = set()
+        
+        for group in requirement_groups:
+            if group.list:
+                prerequisites.update(group.list)
+            
+            # Recursively get prerequisites from child groups
+            child_groups = DBService.get_child_requirement_groups(group.group_id)
+            for child in child_groups:
+                if child.list:
+                    prerequisites.update(child.list)
+                prerequisites.update(DBService.get_all_prerequisites(child.group_id, visited))
+
+        return prerequisites
+
+    @staticmethod
     def check_requirements_met(username, program_id=None, course_id=None, extra_courses=None):
         """Check if a student has met the requirements for a given program."""
         if program_id:
@@ -29,6 +57,13 @@ class RequirementService:
             courses_taken.update(extra_courses)
         if not courses_taken:
             return False  # No courses taken means requirements are not met
+
+        math_courses = {course for course in courses_taken if course.startswith("01:640:")}
+        # Collect all prerequisites first to avoid modifying set during iteration
+        math_prereqs = set()
+        for course in math_courses:
+            math_prereqs.update(DBService.get_all_prerequisites(course))
+        courses_taken.update(math_prereqs)
 
         def check_group_fulfillment(group_id, courses_taken):
             """Recursively check if a student meets the requirements for a requirement group."""
