@@ -1,0 +1,125 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Colors */
+  --body-color: #e4e9f7;
+  --sidebar-color: #fffce0;
+  --primary-color: #cc0033;
+  --primary-color-light: #f6f5ff;
+  --toggle-color: #ddd;
+  --text-color: #707070;
+  --color-white: #fff;
+
+  /* Transition */
+  --tran-02: all 0.2s ease;
+  --tran-03: all 0.3s ease;
+  --tran-04: all 0.4s ease;
+  --tran-05: all 0.5s ease;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--sidebar-color);
+  width: 250px;
+  height: 100%;
+  border: 1px solid var(--primary-color);
+  padding: 10px;
+  transition: var(--tran-05);
+}
+
+/* Sidebar header */
+.sidebar .nav-top .header {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.sidebar .nav-top .header .header-text {
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+.sidebar .nav-top .header .header-text .name {
+  font-weight: 500;
+}
+
+.sidebar .toggle {
+  position: absolute;
+  top: 50%;
+  right: -25px;
+  transform: translateY(-50%);
+  height: 25px;
+  width: 25px;
+  background: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--sidebar-color);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Side bar menu */
+.sidebar .menu-bar {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.sidebar li {
+  height: 50px;
+  margin-top: 10px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  background: var(--color-white);
+}
+.sidebar li .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  font-size: 20px;
+}
+
+.sidebar li a {
+  text-decoration: none;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: var(--tran-04);
+  color: var(--text-color);
+}
+
+.sidebar li a:hover {
+  background: var(--primary-color);
+}
+
+.sidebar li a:hover .icon,
+.sidebar li a:hover .text {
+  color: var(--color-white);
+}
+
+/* Closed Side Bar */
+.sidebar.close .text {
+  opacity: 0;
+}
+
+.sidebar.close img {
+  width: 55px;
+}
+
+.sidebar.close {
+  width: 88px;
+}
