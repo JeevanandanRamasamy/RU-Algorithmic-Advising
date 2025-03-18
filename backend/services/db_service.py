@@ -28,7 +28,6 @@ class DBService:
 
     @staticmethod
     def check_account_exists(username):
-        print("this")
         try:
             return db.session.query(
                 db.exists().where(Account.username == username)
@@ -283,6 +282,47 @@ class DBService:
             db.session.rollback()
             return f"Error deleting course: {str(e)}"
 
+    # ------------------ COURSE TAKEN OPERATIONS ------------------
+    @staticmethod
+    def insert_course_taken(course_taken_data):
+        """Insert a new course taken record into the database."""
+        try:
+            new_course_taken = CourseTaken(**course_taken_data)
+            db.session.add(new_course_taken)
+            db.session.commit()
+            return new_course_taken
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error inserting course taken: {str(e)}"
+        
+    @staticmethod
+    def delete_course_taken(username, course_id):
+        """Delete a course taken record by username and course_id."""
+        try:
+            course_taken = CourseTaken.query.filter_by(
+                username=username, course_id=course_id
+            ).first()
+            if course_taken:
+                db.session.delete(course_taken)
+                db.session.commit()
+                return f"Course {course_id} taken by {username} deleted successfully"
+            else:
+                return "Course taken record not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting course taken: {str(e)}"
+        
+    @staticmethod
+    def delete_all_courses_taken(username):
+        """Delete all course taken records for a student."""
+        try:
+            CourseTaken.query.filter_by(username=username).delete()
+            db.session.commit()
+            return f"All courses taken by {username} deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all courses taken: {str(e)}"
+    
     # ------------------ PROGRAM OPERATIONS ------------------
     @staticmethod
     def get_programs(program_type):
@@ -358,12 +398,40 @@ class DBService:
 
     # ------------------ REQUIREMENT GROUP OPERATIONS ------------------
     @staticmethod
-    def get_requirement_groups(program_id):
+    def get_requirement_group_by_id(group_id):
+        """Retrieve a requirement group by its group_id."""
+        try:
+            return RequirementGroup.query.filter_by(group_id=group_id).first()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving requirement group: {str(e)}"
+    
+    @staticmethod
+    def get_requirement_group_by_program(program_id):
+        """Retrieve all requirement groups associated with a program."""
         try:
             return RequirementGroup.query.filter_by(program_id=program_id).all()
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving requirement groups: {str(e)}"
+    
+    @staticmethod
+    def get_requirement_group_by_course(course_id):
+        """Retrieve all requirement groups associated with a course."""
+        try:
+            return RequirementGroup.query.filter_by(course_id=course_id).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving requirement groups: {str(e)}"
+    
+    @staticmethod
+    def get_child_requirement_groups(parent_group_id):
+        """Retrieve all child requirement groups associated with a parent group."""
+        try:
+            return RequirementGroup.query.filter_by(parent_group_id=parent_group_id).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving child requirement groups: {str(e)}"
 
     @staticmethod
     def insert_requirement_group(requirement_data):
