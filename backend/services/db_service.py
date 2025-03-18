@@ -311,6 +311,17 @@ class DBService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course taken: {str(e)}"
+        
+    @staticmethod
+    def delete_all_courses_taken(username):
+        """Delete all course taken records for a student."""
+        try:
+            CourseTaken.query.filter_by(username=username).delete()
+            db.session.commit()
+            return f"All courses taken by {username} deleted successfully"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting all courses taken: {str(e)}"
     
     # ------------------ PROGRAM OPERATIONS ------------------
     @staticmethod
