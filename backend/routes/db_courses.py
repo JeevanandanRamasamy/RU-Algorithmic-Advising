@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request
-from backend.services.db_course_service import DBCourseService
+from services.course_service import DBCourseService
 from models import Course  # Import the Course model
 from sqlalchemy import or_
 from services.db_service import DBService
 
+# //TODO: remove
 # Define a Blueprint for database-related course routes
 db_course_bp = Blueprint("db_courses", __name__)
 

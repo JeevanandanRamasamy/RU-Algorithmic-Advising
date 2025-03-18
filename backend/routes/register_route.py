@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from backend.services.user_service import UserService
+from services.user_service import UserService
 from services.db_service import DBService
 from sqlalchemy.exc import SQLAlchemyError
 from flask import Blueprint

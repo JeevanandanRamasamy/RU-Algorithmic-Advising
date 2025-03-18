@@ -95,7 +95,7 @@ function DragDrop() {
 		});
 
 		try {
-			const response = await fetch(`${backendUrl}/api/planned_courses/add`, {
+			const response = await fetch(`${backendUrl}/api/planned_courses`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -140,7 +140,7 @@ function DragDrop() {
 				prevPlannedCourses.filter(course => course.course_id !== courseId)
 			);
 
-			const response = await fetch(`${backendUrl}/api/planned_courses/drop`, {
+			const response = await fetch(`${backendUrl}/api/planned_courses`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",

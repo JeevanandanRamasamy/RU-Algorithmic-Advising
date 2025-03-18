@@ -22,7 +22,7 @@ const PlannedCourses = ({ plannedCourses, onRemoveCourse, onDropCourse }) => {
 				plannedCourses.map(async plannedCourse => {
 					try {
 						const response = await fetch(
-							`${backendUrl}/api/db_courses/id?id=${encodeURIComponent(
+							`${backendUrl}/api/courses/${encodeURIComponent(
 								plannedCourse.course_id
 							)}`
 						);

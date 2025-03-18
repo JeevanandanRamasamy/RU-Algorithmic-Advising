@@ -15,7 +15,7 @@ from models import (
 )
 from sqlalchemy.exc import SQLAlchemyError
 from services.user_service import UserService
-from services.db_course_service import DBCourseService
+from services.course_service import CourseService
 
 
 class TakenCourseService:
@@ -39,12 +39,12 @@ class TakenCourseService:
             if not UserService.check_account_exists(username):
                 return f"User account not found"
 
-            course = DBCourseService.get_course_by_id(course_id)
+            course = CourseService.get_course_by_id(course_id)
 
             if not course:
                 return f"Course not found"
 
-            if DBCourseService.check_course_exists_for_student(username, course_id):
+            if CourseService.check_course_exists_for_student(username, course_id):
                 return f"Student has already added program"
 
             taken_course = CourseTaken(username=username, course_id=course_id)

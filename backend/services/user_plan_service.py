@@ -7,7 +7,7 @@ from services.db_service import DBService
 # TODO This whole file can and should be cleaned up / optimized
 
 
-class UserPlan:
+class UserPlanService:
     @staticmethod
     def get_planned_courses_for_user():
         """Retrieve planned courses for the logged-in user."""

@@ -1,5 +1,5 @@
 from flask import request
-from backend.services.user_program_service import UserProgramService
+from services.user_program_service import UserProgramService
 from services.db_service import DBService
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity

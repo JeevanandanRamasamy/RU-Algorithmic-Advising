@@ -8,7 +8,7 @@ const useCourses = (backendUrl, token) => {
 	const fetchCourses = useCallback(async () => {
 		setCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/db_courses`, {
+			const response = await fetch(`${backendUrl}/api/courses`, {
 				headers: {
 					Authorization: `Bearer ${token}`
 				}

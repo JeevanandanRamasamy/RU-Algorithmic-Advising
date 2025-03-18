@@ -1,12 +1,12 @@
 from flask import request
-from backend.services.taken_course_service import TakenCourseService
+from services.taken_course_service import TakenCourseService
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-users_bp = Blueprint("user_taken_courses", __name__, url_prefix="/api/users")
+taken_courses_bp = Blueprint("user_taken_courses", __name__, url_prefix="/api/users")
 
 
-@users_bp.route("/taken_courses", methods=["GET"])
+@taken_courses_bp.route("/taken_courses", methods=["GET"])
 @jwt_required
 def get_taken_courses():
     try:
@@ -32,7 +32,7 @@ def get_taken_courses():
         return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
 
 
-@users_bp.route("/taken_courses", methods=["POST"])
+@taken_courses_bp.route("/taken_courses", methods=["POST"])
 @jwt_required()
 def add_taken_course():
     try:
@@ -63,7 +63,7 @@ def add_taken_course():
         return jsonify({"error": f"Error adding course: {str(e)}"}), 500
 
 
-@users_bp.route("/taken_courses", methods=["DELETE"])
+@taken_courses_bp.route("/taken_courses", methods=["DELETE"])
 @jwt_required()
 def remove_taken_course():
     try:
@@ -94,7 +94,7 @@ def remove_taken_course():
         return jsonify({"error": f"Error removing course: {str(e)}"}), 500
 
 
-@users_bp.route("/taken_courses", methods=["PUT"])
+@taken_courses_bp.route("/taken_courses", methods=["PUT"])
 @jwt_required()
 def update_taken_course():
     try:

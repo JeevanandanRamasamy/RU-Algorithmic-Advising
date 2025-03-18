@@ -1,5 +1,5 @@
-from backend.services.program_service import ProgramService
-from backend.services.user_service import UserService
+from services.program_service import ProgramService
+from services.user_service import UserService
 from db import db
 from datetime import datetime
 from models import (
