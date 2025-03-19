@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css"; // Ensure styles are imported
 import logo from "./images/minilogo.svg";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
+import { useAuth } from "../../context/AuthContext"; // Import authentication context
 
 const Navbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // Manages navbar state
 
+  const { user, logout } = useAuth(); // Get auth state and logout function
+  const navigate = useNavigate();
+
   const toggleNavbar = () => {
     setIsCollapsed((prev) => !prev);
   };
+
+  // Redirect to login page if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate("/"); // Redirect to login if user is not found
+    }
+  }, [user, navigate]);
 
   return (
     <nav className={`sidebar ${isCollapsed ? "close" : ""}`}>
@@ -68,10 +79,10 @@ const Navbar = () => {
         </ul>
         <div className="nav-bottom">
           <li className="nav-link">
-            <Link to="/logout">
+            <a href="" onClick={logout}>
               <i className="bx bx-log-out icon"></i>
               <span className="text nav-text">Logout</span>
-            </Link>
+            </a>
           </li>
         </div>
       </div>
