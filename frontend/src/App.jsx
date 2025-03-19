@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DragDrop from "./pages/DragDrop";
+import Navbar from "./components/navbar/Navbar";
 
 import "./css/index.css";
 
@@ -26,6 +27,10 @@ function App() {
 					<Route
 						path="/home"
 						element={<Home />}
+					/>
+					<Route
+						path="/navbar"
+						element={<Navbar />}
 					/>
 					<Route
 						path="/questionnaire"

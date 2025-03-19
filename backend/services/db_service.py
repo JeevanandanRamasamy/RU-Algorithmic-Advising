@@ -19,12 +19,42 @@ from sqlalchemy.exc import SQLAlchemyError
 class DBService:
     # ------------------ REQUIREMENT GROUP OPERATIONS ------------------
     @staticmethod
-    def get_requirement_groups(program_id):
+    def get_requirement_group_by_id(group_id):
+        """Retrieve a requirement group by its group_id."""
+        try:
+            return RequirementGroup.query.filter_by(group_id=group_id).first()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving requirement group: {str(e)}"
+
+    @staticmethod
+    def get_requirement_group_by_program(program_id):
+        """Retrieve all requirement groups associated with a program."""
         try:
             return RequirementGroup.query.filter_by(program_id=program_id).all()
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving requirement groups: {str(e)}"
+
+    @staticmethod
+    def get_requirement_group_by_course(course_id):
+        """Retrieve all requirement groups associated with a course."""
+        try:
+            return RequirementGroup.query.filter_by(course_id=course_id).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving requirement groups: {str(e)}"
+
+    @staticmethod
+    def get_child_requirement_groups(parent_group_id):
+        """Retrieve all child requirement groups associated with a parent group."""
+        try:
+            return RequirementGroup.query.filter_by(
+                parent_group_id=parent_group_id
+            ).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving child requirement groups: {str(e)}"
 
     @staticmethod
     def insert_requirement_group(requirement_data):

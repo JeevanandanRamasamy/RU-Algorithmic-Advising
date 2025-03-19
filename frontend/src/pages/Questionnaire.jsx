@@ -2,12 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "../components/Dropdown";
 import { useEffect } from "react";
-// import CourseTakenList from "../components/CourseTakenList";
-import DropdownWithSearch from "../components/DropdownWithSearch";
 import Button from "../components/Button";
-import { majors, minors, subjects, certificate } from "../data/sas";
 import ListContainer from "../components/ListContainer";
-import CourseList from "../components/CourseList";
 import { useAuth } from "../context/AuthContext";
 import AvailableCourses from "../components/AvailableCourses";
 import useCourses from "../hooks/useCourses";
@@ -71,7 +67,7 @@ const Questionnaire = () => {
 		const fetchUserPrograms = async () => {
 			try {
 				if (!user) return;
-				const response = await fetch(`${backendUrl}/api/users/program?username=${user}`, {
+				const response = await fetch(`${backendUrl}/api/users/programs`, {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
@@ -87,7 +83,7 @@ const Questionnaire = () => {
 		const fetchUserDetails = async () => {
 			try {
 				if (!user) return;
-				const response = await fetch(`${backendUrl}/api/users/details?username=${user}`, {
+				const response = await fetch(`${backendUrl}/api/users/details`, {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
@@ -141,7 +137,7 @@ const Questionnaire = () => {
 	}, [selectedProgramsQuery, selectedPrograms]);
 
 	const handleInsertProgram = async program_id => {
-		const response = await fetch(`${backendUrl}/api/users/program`, {
+		const response = await fetch(`${backendUrl}/api/users/programs`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -166,7 +162,7 @@ const Questionnaire = () => {
 	};
 
 	const handleRemoveProgram = async program_id => {
-		const response = await fetch(`${backendUrl}/api/users/program`, {
+		const response = await fetch(`${backendUrl}/api/users/programs`, {
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",

@@ -1,20 +1,21 @@
 from flask import request
 from services.user_program_service import UserProgramService
-from services.db_service import DBService
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-users_bp = Blueprint("user_programs", __name__, url_prefix="/api/users/programs")
+users_programs_bp = Blueprint(
+    "user_programs", __name__, url_prefix="/api/users/programs"
+)
 
 
-@users_bp.route("", methods=["GET"])
+@users_programs_bp.route("", methods=["GET"])
 @jwt_required()
 def get_program_for_student():
     try:
         username = get_jwt_identity()
         if not username:
             return jsonify({"error": "Missing username"}), 400
-        student_programs = DBService.get_student_programs(username)
+        student_programs = UserProgramService.get_student_programs(username)
         if isinstance(student_programs, str):
             return jsonify({"error": student_programs}), 500
         return (
@@ -31,7 +32,7 @@ def get_program_for_student():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
-@users_bp.route("", methods=["POST"])
+@users_programs_bp.route("", methods=["POST"])
 @jwt_required()
 def insert_program_for_student():
     """
@@ -65,7 +66,7 @@ def insert_program_for_student():
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
-@users_bp.route("", methods=["DELETE"])
+@users_programs_bp.route("", methods=["DELETE"])
 @jwt_required()
 def delete_program_for_student():
     """
