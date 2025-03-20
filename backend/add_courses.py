@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
-from backend.services.db_service import DBService
+from services.db_service import DBService
 from models import RequirementGroup, Course
 from db import db
 from app import app

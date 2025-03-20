@@ -1257,7 +1257,7 @@ course_id,course_name,credits,course_link,prerequisites
 01:640:250,INTRO LINEAR ALGEBRA,3.0,https://math.rutgers.edu/academics/undergraduate/courses,01:640:112
 01:640:251,MULTIVARIABLE CALCULUS,4.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:640:152', '01:640:192', '21:640:136', '21:640:156', '50:640:122']}"
 01:640:285,INTRODUCTION TO INTEREST THEORY FOR ACTUARIAL SCIENCE,3.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:640:251', '21:640:235', '50:640:221']}"
-01:640:291,HONORS CALCULUS III,4.0,https://math.rutgers.edu/academics/undergraduate/courses,
+01:640:291,HONORS CALCULUS III,4.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:640:152', '01:640:192', '21:640:136', '21:640:156', '50:640:122']}"
 01:640:300,INTRO MATH REASONING,3.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:640:250', '01:640:251', '01:640:291', '01:640:350', '21:640:235', '21:640:350']}"
 01:640:311,INTRODUCTION TO REAL ANALYSIS I,4.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'AND', 'requirements': ['01:640:300', {'logic': 'OR', 'requirements': ['01:640:244', '01:640:252', '01:640:292', {'logic': 'AND', 'requirements': ['21:640:314', '01:640:250']}, {'logic': 'AND', 'requirements': ['21:640:314', '21:640:350']}]}]}"
 01:640:321,INTRO APPLIED MATH,3.0,https://math.rutgers.edu/academics/undergraduate/courses,"{'logic': 'OR', 'requirements': ['01:640:244', '01:640:252', '01:640:292', {'logic': 'AND', 'requirements': ['21:640:314', {'logic': 'OR', 'requirements': ['01:640:250', '01:640:350', '21:640:350']}]}]}"
