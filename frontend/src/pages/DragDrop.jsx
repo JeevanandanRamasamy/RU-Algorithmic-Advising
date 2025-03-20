@@ -5,6 +5,8 @@ import PlannedCourses from "../components/PlannedCourses";
 import LogoutButton from "../components/navbuttons/LogoutButton";
 import HomeButton from "../components/navbuttons/HomeButton";
 import "../css/DragDrop.css";
+import Navbar from "../components/navbar/Navbar";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function DragDrop() {
@@ -170,8 +172,7 @@ function DragDrop() {
 			<header className="app-header">
 				<h1>Course Planner</h1>
 			</header>
-			<HomeButton />
-			<LogoutButton />
+			<Navbar/>
 			<main className="course-planner">
 				<section className="available-courses">
 					<h2>Available Courses</h2>

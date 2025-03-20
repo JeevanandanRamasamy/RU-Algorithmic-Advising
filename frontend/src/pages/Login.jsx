@@ -1,6 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import logo from "../assets/minilogo.svg";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
@@ -36,7 +37,7 @@ function Login() {
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
 					{/* Logo Section */}
 					<div className="mb-4">
-						<img src="logo-url.png" alt="Logo" className="h-16" /> {/* TODO: Add this */}
+						<img src={logo} alt="Logo" />
 					</div>
 					<header className="mb-0">
 						<h1>Welcome!</h1>
