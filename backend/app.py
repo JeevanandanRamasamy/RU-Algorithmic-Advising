@@ -9,6 +9,8 @@ from routes.db_planned_courses import db_planned_courses_bp
 from routes.users import users_bp
 from routes.programs import programs_bp
 from routes.register_route import register_bp
+from routes.login import login_bp
+from routes.verification import verification_bp
 
 from flask_cors import CORS
 from services.db_service import DBService
@@ -20,6 +22,7 @@ from flask_jwt_extended import (
 )
 from datetime import timedelta
 from jwt_helper import init_jwt
+
 
 load_dotenv()
 
@@ -33,49 +36,14 @@ CORS(app)
 #     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
 #     return response
 
-
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-
-    # Check in DB
-    if not DBService.check_account_exists(username):
-        return (
-            jsonify(
-                {"message": "Account doesn't exist, please register", "status": "error"}
-            ),
-            401,
-        )
-
-    # Check if credentials match
-    account = DBService.get_account_by_username(username)
-    if username == account.username and password == account.password:
-        # Create JWT token
-        access_token = create_access_token(identity=username)
-
-        # Return token as part of the response
-        return (
-            jsonify(
-                {
-                    "message": "Login successful",
-                    "status": "success",
-                    "access_token": access_token,
-                }
-            ),
-            200,
-        )
-    else:
-        return jsonify({"message": "Invalid credentials", "status": "error"}), 401
-
-
 app.register_blueprint(course_bp)
 app.register_blueprint(db_course_bp)
 app.register_blueprint(db_planned_courses_bp)
 app.register_blueprint(programs_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(register_bp)
+app.register_blueprint(login_bp)
+app.register_blueprint(verification_bp)
 
 username = os.getenv("DB_USERNAME")
 password = os.getenv("DB_PASSWORD")
