@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import logo from "../assets/minilogo.svg";
+import logo from "../assets/minilogo.png";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
