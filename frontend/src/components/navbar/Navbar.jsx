@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./style.css"; // Ensure styles are imported
-import logo from "./images/minilogo.svg";
+import logo from "./images/minilogo.png";
 import { Link } from "react-router-dom"; // Import Link for navigation
 
 const Navbar = () => {
@@ -15,11 +15,11 @@ const Navbar = () => {
       <div className="nav-top">
         <div className="header">
           <span className="image">
-            <img src={logo} alt="Logo" />
+            <img src={logo} alt="Logo" style={{ width: "65px", height: "65px" }} />
           </span>
           <div className="header-text text">
             <span className="name">
-              RuSuper
+              RU Super
               <br />
               Scheduler
             </span>
