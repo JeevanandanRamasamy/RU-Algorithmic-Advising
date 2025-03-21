@@ -1,13 +1,22 @@
 import React, { useState } from "react";
 import "./style.css"; // Ensure styles are imported
-import logo from "./images/minilogo.svg";
+import logo from "../../assets/minilogo.svg";
 import { Link } from "react-router-dom"; // Import Link for navigation
+import { useAuth } from "../../context/AuthContext"; // Import the AuthContext to access logout
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // Manages navbar state
+  const { logout } = useAuth(); // Access logout function from context
+  const navigate = useNavigate(); // Get navigate function from useNavigate
 
   const toggleNavbar = () => {
     setIsCollapsed((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    logout(); // Call the logout function from context
+    navigate("/"); // Redirect to the login page
   };
 
   return (
@@ -36,13 +45,13 @@ const Navbar = () => {
         </div>
         <ul className="menu-links">
           <li className="nav-link">
-            <Link to="/">
+            <Link to="/home">
               <i className="bx bx-home icon"></i>
               <span className="text nav-text">Dashboard</span>
             </Link>
           </li>
           <li className="nav-link">
-            <Link to="/degree-planner">
+            <Link to="/dragdrop">
               <i className="bx bx-bar-chart-alt-2 icon"></i>
               <span className="text nav-text">Degree Planner</span>
             </Link>
@@ -68,10 +77,10 @@ const Navbar = () => {
         </ul>
         <div className="nav-bottom">
           <li className="nav-link">
-            <Link to="/logout">
+            <a onClick={handleLogout}>
               <i className="bx bx-log-out icon"></i>
               <span className="text nav-text">Logout</span>
-            </Link>
+            </a>
           </li>
         </div>
       </div>
