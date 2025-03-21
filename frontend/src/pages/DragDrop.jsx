@@ -4,6 +4,8 @@ import LogoutButton from "../components/navbuttons/LogoutButton";
 import HomeButton from "../components/navbuttons/HomeButton";
 import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
+import Navbar from "../components/navbar/Navbar";
+
 import AvailableCourses from "../components/courses/AvailableCourses";
 import PlannedCourses from "../components/courses/PlannedCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
@@ -39,12 +41,11 @@ function DragDrop() {
 
 	// TODO: Filter out taken courses
 	return (
-		<div className="app">
+		<div className="app ml-[110px] pt-[5px]">
 			<header className="app-header">
 				<h1>Course Planner</h1>
 			</header>
-			<HomeButton />
-			<LogoutButton />
+			<Navbar />
 			<main className="course-planner">
 				{/* <section className="available-courses">
 					<h2>Available Courses</h2>

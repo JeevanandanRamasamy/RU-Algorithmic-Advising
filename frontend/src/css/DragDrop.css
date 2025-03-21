@@ -13,8 +13,8 @@
 
   .app {
     max-width: 1200px;
-    margin: 0 auto;
     padding: 20px;
+    margin: 0 auto 0 110px;
   }
 
   .app-header {

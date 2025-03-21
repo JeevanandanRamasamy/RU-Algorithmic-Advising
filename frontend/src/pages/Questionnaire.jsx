@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
 import ListContainer from "../components/generic/ListContainer";
+import Navbar from "../components/navbar/Navbar";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -222,123 +223,140 @@ const Questionnaire = () => {
 
 	return (
 		<>
-			<div className="flex gap-5">
-				<div className="flex flex-col gap-3">
-					<div className="flex flex-row gap-5 items-center">
-						<label
-							className=""
-							htmlFor="enrolled-year">
-							Enrolled Year:
-						</label>
-						<input
-							type="text"
-							id="enrolled-year"
-							value={enrolledYear}
-							onChange={handleEnrolledYearChange}
-							maxLength={4}
-							placeholder="Enter Enrolled Year"
-							className="border border-gray-300 p-2 rounded"
+			<div className="">
+				<Navbar />
+				<div className="ml-[110px] pt-[5px]">
+					<div className="flex px-[10px] justify-evenly">
+						<div className="flex flex-col gap-3">
+							<div className="flex flex-row gap-5 items-center">
+								<label
+									className="w-[180px]"
+									htmlFor="enrolled-year">
+									Enter Enrolled Year:
+								</label>
+								<input
+									type="text"
+									id="enrolled-year"
+									value={enrolledYear}
+									onChange={handleEnrolledYearChange}
+									maxLength={4}
+									className="border border-gray-300 p-2 rounded w-8"
+								/>
+							</div>
+							<div className="flex flex-row gap-5 items-center">
+								<label
+									className="w-[180px]"
+									htmlFor="graduation-year">
+									Enter Graduation Year:
+								</label>
+								<input
+									type="text"
+									id="graduation-year"
+									value={gradYear}
+									onChange={handleGradYearChange}
+									maxLength={4}
+									className="border border-gray-300 p-2 rounded w-8"
+								/>
+							</div>
+							<div className="flex flex-row gap-5 items-center">
+								<Dropdown
+									options={classes}
+									selectedValue={classYear}
+									onChange={event => setClassYear(event.target.value)}
+									placeholder="Select Class Year"
+								/>
+							</div>
+							<div className="flex flex-row gap-5 items-center">
+								<label
+									className=""
+									htmlFor="GPA">
+									GPA:
+								</label>
+								<input
+									type="number"
+									max="4.0"
+									min="0"
+									step="0.01"
+									id="gpa-input"
+									value={gpa}
+									onChange={handleGpaChange}
+									placeholder="Enter GPA (0.00 - 4.00)"
+									className="border border-gray-300 p-2 rounded"
+								/>
+							</div>
+						</div>
+						<div className="flex gap-[20px] pt-[10x] pb-[10px]">
+							<ListContainer
+								query={programsQuery}
+								handleQueryChange={event => setProgramsQuery(event.target.value)}
+								values={filteredPrograms}
+								searchText="Search Program By Name"
+								type="Program"
+								field="program_name"
+								key_field="program_id"
+								buttonType="add"
+								handleButtonClick={handleInsertProgram}
+							/>
+							<ListContainer
+								query={selectedProgramsQuery}
+								handleQueryChange={event =>
+									setSelectedProgramsQuery(event.target.value)
+								}
+								searchText="Search Selected Programs"
+								values={filteredSelectedPrograms}
+								field="program_name"
+								key_field="program_id"
+								buttonType="remove"
+								handleButtonClick={handleRemoveProgram}
+							/>
+						</div>
+					</div>
+					<div className="flex gap-[30px]">
+						<CourseListContainer
+							title="Available Courses"
+							searchQuery={searchAvailable}
+							setSearchQuery={setSearchAvailable}
+							courses={courses}
+							excludedCourseIds={
+								takenCourses?.length > 0
+									? takenCourses.map(
+											takenCourse => takenCourse.course_info.course_id
+									  )
+									: []
+							}
+							CourseComponent={AvailableCourses}
+						/>
+						<CourseListContainer
+							title="Taken Courses"
+							searchQuery={searchTaken}
+							setSearchQuery={setSearchTaken}
+							courses={takenCourses}
+							getCourse={course => course.course_info}
+							CourseComponent={TakenCourses}
+							courseComponentProps={{
+								loading: takenCoursesLoading,
+								error: takenCoursesError,
+								onRemoveCourse: handleRemoveTakenCourse,
+								onAddCourse: handleAddTakenCourse
+							}}
 						/>
 					</div>
-					<div className="flex flex-row gap-5 items-center">
-						<label
-							className=""
-							htmlFor="graduation-year">
-							Graduation Year:
-						</label>
-						<input
-							type="text"
-							id="graduation-year"
-							value={gradYear}
-							onChange={handleGradYearChange}
-							maxLength={4}
-							placeholder="Enter year"
-							className="border border-gray-300 p-2 rounded"
+					<div className="flex justify-center mt-5">
+						<Button
+							className="bg-blue-500 text-white p-1 rounded w-20"
+							label="Save"
+							onClick={saveData}
 						/>
 					</div>
-					<div className="flex flex-row gap-5 items-center">
-						<Dropdown
-							options={classes}
-							selectedValue={classYear}
-							onChange={event => setClassYear(event.target.value)}
-							placeholder="Select Class Year"
-						/>
-					</div>
-
-					<div className="flex flex-row gap-5 items-center">
-						<label
-							className=""
-							htmlFor="GPA">
-							GPA:
-						</label>
-						<input
-							type="number"
-							max="4.0"
-							min="0"
-							step="0.01"
-							id="gpa-input"
-							value={gpa}
-							onChange={handleGpaChange}
-							placeholder="Enter GPA (0.00 - 4.00)"
-							className="border border-gray-300 p-2 rounded"
-						/>
-					</div>
+					{/* <div className="flex justify-center mt-5">
+					<Button
+						className="bg-blue-500 text-white p-1 rounded w-20"
+						label="Save"
+						onClick={saveData}
+					/>
+		</div> */}
 				</div>
-				<ListContainer
-					query={programsQuery}
-					handleQueryChange={event => setProgramsQuery(event.target.value)}
-					values={filteredPrograms}
-					searchText="Search Program By Name"
-					type="Program"
-					field="program_name"
-					key_field="program_id"
-					buttonType="add"
-					handleButtonClick={handleInsertProgram}
-				/>
-				<ListContainer
-					query={selectedProgramsQuery}
-					handleQueryChange={event => setSelectedProgramsQuery(event.target.value)}
-					searchText="Search Selected Programs"
-					values={filteredSelectedPrograms}
-					field="program_name"
-					key_field="program_id"
-					buttonType="remove"
-					handleButtonClick={handleRemoveProgram}
-				/>
 			</div>
-			<div className="flex gap-[30px]">
-				<CourseListContainer
-					title="Available Courses"
-					searchQuery={searchAvailable}
-					setSearchQuery={setSearchAvailable}
-					courses={courses}
-					excludedCourseIds={
-						takenCourses?.length > 0
-							? takenCourses.map(takenCourse => takenCourse.course_info.course_id)
-							: []
-					}
-					CourseComponent={AvailableCourses}
-				/>
-				<CourseListContainer
-					title="Taken Courses"
-					searchQuery={searchTaken}
-					setSearchQuery={setSearchTaken}
-					courses={takenCourses}
-					getCourse={course => course.course_info}
-					CourseComponent={TakenCourses}
-					courseComponentProps={{
-						loading: takenCoursesLoading,
-						error: takenCoursesError,
-						onRemoveCourse: handleRemoveTakenCourse,
-						onAddCourse: handleAddTakenCourse
-					}}
-				/>
-			</div>
-			<Button
-				className="bg-blue-500 text-white p-1 rounded w-20"
-				label="Save"
-				onClick={saveData}
-			/>
 		</>
 	);
 };

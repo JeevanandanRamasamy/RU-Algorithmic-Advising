@@ -123,3 +123,7 @@
 .sidebar.close {
   width: 88px;
 }
+
+.nav-link a {
+  cursor: pointer; /* Ensures the pointer cursor shows on hover */
+}

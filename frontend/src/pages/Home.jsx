@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Import AuthContext
-import LogoutButton from "../components/navbuttons/LogoutButton"; // Import LogoutButton
+// import LogoutButton from "../components/navbuttons/LogoutButton"; // Import LogoutButton
+import Navbar from "../components/navbar/Navbar";
 
 function Home() {
 	const { user } = useAuth(); // Get user
@@ -14,13 +15,13 @@ function Home() {
 	}, [user, navigate]); // Runs whenever user changes
 
 	return (
-		<div>
-			<h2>Welcome {user} to the home page</h2> {/* Display username */}
-			<LogoutButton /> {/* Use the reusable LogoutButton */}
-			<Link to="/dragdrop">Planner</Link> {/* For testing */}
-			<p>
-				<Link to="/questionnaire">QA</Link>
-			</p>
+		<div className="flex justify-end items-center h-screen pr-5">
+			<h2>
+				Welcome {user} to the home page. Unsure what to put on the home page that is not in
+				the navbar already
+			</h2>{" "}
+			{/* Display username */}
+			<Navbar />
 		</div>
 	);
 }
