@@ -1,17 +1,18 @@
 import os
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+from services.user_service import UserService
 from db import db
 from models import Account
-from routes.courses import course_bp
-from routes.db_courses import db_course_bp
-from routes.db_planned_courses import db_planned_courses_bp
-from routes.users import users_bp
-from routes.programs import programs_bp
+from routes.courses_route import course_bp
+from routes.planned_courses_route import planned_courses_bp
+from routes.programs_route import programs_bp
 from routes.register_route import register_bp
+from routes.taken_courses_route import taken_courses_bp
+from routes.user_programs_route import users_programs_bp
+from routes.users_route import users_bp
 
 from flask_cors import CORS
-from services.db_service import DBService
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -25,6 +26,21 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+
+@app.before_request
+def handle_options_request():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "CORS preflight successful"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type, Authorization"
+        )
+        return response, 200
+
 
 # @app.after_request
 # def add_cors_headers(response):
@@ -41,16 +57,14 @@ def login():
     password = data.get("password")
 
     # Check in DB
-    if not DBService.check_account_exists(username):
+    if not UserService.check_account_exists(username):
         return (
-            jsonify(
-                {"message": "Account doesn't exist, please register", "status": "error"}
-            ),
+            jsonify({"message": "Account doesn't exist, please register"}),
             401,
         )
 
     # Check if credentials match
-    account = DBService.get_account_by_username(username)
+    account = UserService.get_account_by_username(username)
     if username == account.username and password == account.password:
         # Create JWT token
         access_token = create_access_token(identity=username)
@@ -60,22 +74,23 @@ def login():
             jsonify(
                 {
                     "message": "Login successful",
-                    "status": "success",
                     "access_token": access_token,
                 }
             ),
             200,
         )
     else:
-        return jsonify({"message": "Invalid credentials", "status": "error"}), 401
+        return jsonify({"message": "Invalid credentials"}), 401
 
 
 app.register_blueprint(course_bp)
-app.register_blueprint(db_course_bp)
-app.register_blueprint(db_planned_courses_bp)
+app.register_blueprint(planned_courses_bp)
 app.register_blueprint(programs_bp)
 app.register_blueprint(users_bp)
+app.register_blueprint(users_programs_bp)
 app.register_blueprint(register_bp)
+app.register_blueprint(taken_courses_bp)
+
 
 username = os.getenv("DB_USERNAME")
 password = os.getenv("DB_PASSWORD")

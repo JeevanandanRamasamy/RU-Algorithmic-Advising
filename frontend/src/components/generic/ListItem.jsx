@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "./Button";
+import Button from "../generic/Button";
 
 const ListItem = ({ id, value, onClick, buttonType }) => {
 	return (

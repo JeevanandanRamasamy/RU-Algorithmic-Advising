@@ -10,7 +10,6 @@ function Login() {
 	const [message, setMessage] = useState("");
 	const { login } = useAuth();
 	const navigate = useNavigate();
-	//console.log(backendUrl);
 
 	const handleLogin = async () => {
 		const response = await fetch(`${backendUrl}/login`, {
@@ -21,7 +20,7 @@ function Login() {
 
 		const data = await response.json();
 
-		if (data.status === "success") {
+		if (response.ok) {
 			login(username, data.access_token); // Store username + token in AuthContext
 			navigate("/home");
 		} else {
@@ -30,14 +29,17 @@ function Login() {
 	};
 
 	return (
-		<div className="h-screen flex items-center justify-center">
-			<>
-			</>
+		<div className="h-screen flex items-center justify-center overflow-hidden">
+			<></>
 			<div className="w-2/3 h-screen flex items-center mb-0 justify-center">
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
 					{/* Logo Section */}
 					<div className="mb-4">
-						<img src={logo} alt="Logo" className="w-32 h-32" />
+						<img
+							src={logo}
+							alt="Logo"
+							className="w-32 h-32"
+						/>
 					</div>
 					<header className="mb-0">
 						<h1>Welcome!</h1>
@@ -65,9 +67,11 @@ function Login() {
 						{/* TODO: not sure how password change will work yet*/}
 						<Link to="/register">Forgot password?</Link>
 					</p>
-					<button onClick={handleLogin}
-						className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						>Login</button>
+					<button
+						onClick={handleLogin}
+						className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500">
+						Login
+					</button>
 					<p>{message}</p>
 				</div>
 			</div>
@@ -75,7 +79,6 @@ function Login() {
 			<div className="w-1/3 h-screen bg-red-500 flex items-center justify-center">
 				{/* Replace with an image if needed */}
 				{/* <img src="your-image-url.jpg" alt="Description" className="w-full h-full object-cover" /> */}
-				
 			</div>
 		</div>
 	);

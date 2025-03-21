@@ -1,15 +1,24 @@
 from flask import Blueprint, jsonify, request
-from services.course_service import DBCourseService
-from models import Course  # Import the Course model
 from sqlalchemy import or_
-from services.db_service import DBService
+from models import Course
+from services.course_soc_service import RutgersCourseAPI
+from services.course_service import CourseService
 
-# //TODO: remove
-# Define a Blueprint for database-related course routes
-db_course_bp = Blueprint("db_courses", __name__)
+# Define a Blueprint for course-related routes
+course_bp = Blueprint("courses", __name__, url_prefix="/api/courses")
 
 
-@db_course_bp.route("/api/db_courses", methods=["GET"])
+@course_bp.route("/soc", methods=["GET"])
+def get_courses():
+    """
+    API endpoint to fetch and return course information from the Rutgers SOC API.
+    """
+    api = RutgersCourseAPI(subject="198", semester="12025", campus="NB", level="UG")
+    courses = api.get_courses()
+    return jsonify(courses)
+
+
+@course_bp.route("", methods=["GET"])
 def get_db_courses():
     """
     API endpoint to fetch course information from the database.
@@ -46,11 +55,9 @@ def get_db_courses():
         return jsonify({"message": f"Error fetching courses: {e}"}), 500
 
 
-@db_course_bp.route("/api/db_courses/id", methods=["GET"])
-def get_course_by_id():
+@course_bp.route("/<course_id>", methods=["GET"])
+def get_course_by_id(course_id):
     try:
-        # Extract the course ID from the query parameters
-        course_id = request.args.get("id")
 
         print(f"Received course_id: {course_id}")  # Log the course_id to the console
 
@@ -58,7 +65,7 @@ def get_course_by_id():
             return jsonify({"message": "Course ID is required"}), 400
 
         # Call the service to get the course by ID
-        course = DBCourseService.get_course_by_id(course_id)
+        course = CourseService.get_course_by_id(course_id)
 
         if isinstance(
             course, Course

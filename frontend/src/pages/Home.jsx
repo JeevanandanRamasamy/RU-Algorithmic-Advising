@@ -5,21 +5,25 @@ import { useAuth } from "../context/AuthContext"; // Import AuthContext
 import Navbar from "../components/navbar/Navbar";
 
 function Home() {
-  const { user } = useAuth(); // Get user
-  const navigate = useNavigate();
+	const { user } = useAuth(); // Get user
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/"); // Redirect to login if not authenticated
-    }
-  }, [user, navigate]); // Runs whenever user changes
+	useEffect(() => {
+		if (!user) {
+			navigate("/"); // Redirect to login if not authenticated
+		}
+	}, [user, navigate]); // Runs whenever user changes
 
-  return (
-    <div className="flex justify-end items-center h-screen pr-5">
-      <h2>Welcome {user} to the home page. Unsure what to put on the home page that is not in the navbar already</h2> {/* Display username */}
-      <Navbar/>
-    </div>
-  );
+	return (
+		<div className="flex justify-end items-center h-screen pr-5">
+			<h2 className="ml-[110px] pt-[5px]">
+				Welcome {user} to the home page. Unsure what to put on the home page that is not in
+				the navbar already
+			</h2>{" "}
+			{/* Display username */}
+			<Navbar />
+		</div>
+	);
 }
 
 export default Home;
