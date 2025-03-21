@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import logo from "../assets/minilogo.svg";
+import logo from "../assets/minilogo.png";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
@@ -29,7 +29,7 @@ function Login() {
 	};
 
 	return (
-		<div className="h-screen flex items-center justify-center">
+		<div className="h-screen flex items-center justify-center overflow-hidden">
 			<></>
 			<div className="w-2/3 h-screen flex items-center mb-0 justify-center">
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
@@ -38,6 +38,7 @@ function Login() {
 						<img
 							src={logo}
 							alt="Logo"
+							className="w-32 h-32"
 						/>
 					</div>
 					<header className="mb-0">

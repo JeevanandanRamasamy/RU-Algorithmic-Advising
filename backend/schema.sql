@@ -36,7 +36,7 @@ CREATE TABLE StudentDetails (
     enroll_date YEAR,  -- Year of enrollment
     credits_earned DECIMAL(4,1) CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
     gpa DECIMAL(3, 2) CHECK (gpa BETWEEN 0.00 AND 4.00),  -- GPA range between 0.00 and 4.00
-    class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate') NOT NULL,  -- Classification based on credits
+    class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate'),  -- Classification based on credits
     FOREIGN KEY (username) REFERENCES Account(username) ON DELETE CASCADE  -- Delete student details if account is deleted
 );
 

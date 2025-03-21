@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./style.css"; // Ensure styles are imported
-import logo from "../../assets/minilogo.svg";
+import logo from "../../assets/minilogo.png";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../../context/AuthContext"; // Import the AuthContext to access logout
 import { useNavigate } from "react-router-dom";
@@ -24,11 +24,11 @@ const Navbar = () => {
       <div className="nav-top">
         <div className="header">
           <span className="image">
-            <img src={logo} alt="Logo" />
+            <img src={logo} alt="Logo" className="w-16 h-16" />
           </span>
           <div className="header-text text">
             <span className="name">
-              RuSuper
+              RU Super
               <br />
               Scheduler
             </span>

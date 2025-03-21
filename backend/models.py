@@ -41,7 +41,7 @@ class StudentDetails(db.Model):
     grad_date: str
     enroll_date: str
     credits_earned: int
-    gpa: int
+    gpa: float
     class_year: str
 
     username = Column(
@@ -60,20 +60,6 @@ class StudentDetails(db.Model):
             "graduate",
             name="class_year_enum",
         ),
-        nullable=False,
-    )
-    credits_earned = Column(Numeric(4, 1), CheckConstraint("credits_earned >= 0"))
-    gpa = Column(Numeric(3, 2), CheckConstraint("gpa BETWEEN 0.00 AND 4.00"))
-    class_year = Column(
-        Enum(
-            "freshman",
-            "sophomore",
-            "junior",
-            "senior",
-            "graduate",
-            name="class_year_enum",
-        ),
-        nullable=False,
     )
 
     def __repr__(self):
@@ -241,7 +227,7 @@ class PlannedCourse(db.Model):
     plan_id: str
     course_id: str
     term: str
-    year: bool
+    year: int
 
     plan_id = Column(
         Integer, ForeignKey("DegreePlan.plan_id", ondelete="CASCADE"), nullable=False

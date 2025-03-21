@@ -16,7 +16,7 @@ function Home() {
 
 	return (
 		<div className="flex justify-end items-center h-screen pr-5">
-			<h2>
+			<h2 className="ml-[110px] pt-[5px]">
 				Welcome {user} to the home page. Unsure what to put on the home page that is not in
 				the navbar already
 			</h2>{" "}
