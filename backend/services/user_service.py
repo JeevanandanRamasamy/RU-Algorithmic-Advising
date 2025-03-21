@@ -41,9 +41,7 @@ class UserService:
     def insert_new_account(account_data):
         try:
             new_account = Account(**account_data)
-            new_student_details = StudentDetails(username=account_data["username"])
             db.session.add(new_account)
-            db.session.add(new_student_details)
             db.session.commit()
             return new_account
         except SQLAlchemyError as e:
