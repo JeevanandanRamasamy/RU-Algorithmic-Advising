@@ -18,13 +18,11 @@ def register():
 
     # Validation
     if not username or not password or not first_name or not last_name:
-        return jsonify({"message": "All fields are required.", "status": "error"}), 400
+        return jsonify({"message": "All fields are required."}), 400
 
     if len(username) > 6:
         return (
-            jsonify(
-                {"message": "Username must be at most 6 characters.", "status": "error"}
-            ),
+            jsonify({"message": "Username must be at most 6 characters."}),
             400,
         )
 
@@ -33,7 +31,6 @@ def register():
             jsonify(
                 {
                     "message": "Password must be at least 6 characters.",
-                    "status": "error",
                 }
             ),
             400,
@@ -41,7 +38,7 @@ def register():
 
     # Check if username already exists
     if UserService.check_account_exists(username):
-        return jsonify({"message": "Username already taken.", "status": "error"}), 409
+        return jsonify({"message": "Username already taken."}), 409
 
     # Insert into database
     account_data = {
@@ -55,6 +52,13 @@ def register():
     result = UserService.insert_new_account(account_data)
 
     if isinstance(result, str):  # If DBService returns an error string
-        return jsonify({"message": result, "status": "error"}), 500
+        return (
+            jsonify(
+                {
+                    "message": result,
+                }
+            ),
+            500,
+        )
 
-    return jsonify({"message": "Registration successful", "status": "success"}), 201
+    return jsonify({"message": "Registration successful"}), 201

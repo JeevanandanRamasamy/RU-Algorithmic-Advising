@@ -14,14 +14,13 @@ def get_program_for_student():
     try:
         username = get_jwt_identity()
         if not username:
-            return jsonify({"error": "Missing username"}), 400
+            return jsonify({"message": "Missing username"}), 400
         student_programs = UserProgramService.get_student_programs(username)
         if isinstance(student_programs, str):
-            return jsonify({"error": student_programs}), 500
+            return jsonify({"message": student_programs}), 500
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Programs for {username} successfully retrieved",
                     "student_program": student_programs,
                 }
@@ -29,7 +28,7 @@ def get_program_for_student():
             200,
         )
     except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500
 
 
 @users_programs_bp.route("", methods=["POST"])
@@ -43,19 +42,18 @@ def insert_program_for_student():
         username = get_jwt_identity()
         program_id = data.get("program_id")
         if not username or not program_id:
-            return jsonify({"error": "Missing username or program_id"}), 400
+            return jsonify({"message": "Missing username or program_id"}), 400
 
         student_program = UserProgramService.insert_program_for_student(
             username, program_id
         )
         print(student_program)
         if isinstance(student_program, str):
-            return jsonify({"error": student_program}), 500
+            return jsonify({"message": student_program}), 500
 
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": "Program inserted successfully",
                     "student_program": student_program,
                 }
@@ -63,7 +61,7 @@ def insert_program_for_student():
             201,
         )
     except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500
 
 
 @users_programs_bp.route("", methods=["DELETE"])
@@ -77,16 +75,15 @@ def delete_program_for_student():
         username = get_jwt_identity()
         program_id = data.get("program_id")
         if not username or not program_id:
-            return jsonify({"error": "Missing username or program_id"}), 400
+            return jsonify({"message": "Missing username or program_id"}), 400
         student_program = UserProgramService.delete_program_for_student(
             username, program_id
         )
         if isinstance(student_program, str):
-            return jsonify({"error": student_program}), 500
+            return jsonify({"message": student_program}), 500
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Program {program_id} was deleted from user {username} successfully",
                     "student_program": student_program,
                 }
@@ -94,4 +91,4 @@ def delete_program_for_student():
             202,
         )
     except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500

@@ -59,9 +59,7 @@ def login():
     # Check in DB
     if not UserService.check_account_exists(username):
         return (
-            jsonify(
-                {"message": "Account doesn't exist, please register", "status": "error"}
-            ),
+            jsonify({"message": "Account doesn't exist, please register"}),
             401,
         )
 
@@ -76,14 +74,13 @@ def login():
             jsonify(
                 {
                     "message": "Login successful",
-                    "status": "success",
                     "access_token": access_token,
                 }
             ),
             200,
         )
     else:
-        return jsonify({"message": "Invalid credentials", "status": "error"}), 401
+        return jsonify({"message": "Invalid credentials"}), 401
 
 
 app.register_blueprint(course_bp)

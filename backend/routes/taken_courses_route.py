@@ -7,21 +7,20 @@ taken_courses_bp = Blueprint("user_taken_courses", __name__, url_prefix="/api/us
 
 
 @taken_courses_bp.route("/taken_courses", methods=["GET"])
-@jwt_required
+@jwt_required()
 def get_taken_courses():
     try:
         username = get_jwt_identity()
 
         if not username:
-            return jsonify({"error": "Missing username"}), 400
-        taken_courses = TakenCourseService.get_courses_taken_by_student()
+            return jsonify({"message": "Missing username"}), 400
+        taken_courses = TakenCourseService.get_courses_taken_by_student(username)
 
         if isinstance(taken_courses, str):
-            return jsonify({"error", taken_courses}), 500
+            return jsonify({"message", taken_courses}), 500
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Courses retrieved for user {username}",
                     "taken_courses": taken_courses,
                 }
@@ -40,19 +39,18 @@ def add_taken_course():
         data = request.get_json()
 
         if not username or "course_id" not in data:
-            return jsonify({"error": "Missing username or course_id"}), 400
+            return jsonify({"message": "Missing username or course_id"}), 400
 
         course_id = data.get("course_id")
 
-        result = TakenCourseService.add_course_for_student(username, course_id)
+        result = TakenCourseService.insert_course_taken_by_student(username, course_id)
 
         if isinstance(result, str):
-            return jsonify({"error": result}), 500
+            return jsonify({"message": result}), 500
 
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Course {course_id} added for user {username}",
                     "taken_course": result,
                 }
@@ -60,7 +58,7 @@ def add_taken_course():
             201,
         )
     except Exception as e:
-        return jsonify({"error": f"Error adding course: {str(e)}"}), 500
+        return jsonify({"message": f"Error adding course: {str(e)}"}), 500
 
 
 @taken_courses_bp.route("/taken_courses", methods=["DELETE"])
@@ -69,29 +67,30 @@ def remove_taken_course():
     try:
         username = get_jwt_identity()
         data = request.get_json()
+        course_id = data.get("course_id")
+        print(username, course_id)
 
-        if not username or "course_id" not in data:
-            return jsonify({"error": "Missing username or course_id"}), 400
+        if not username or not course_id:
+            return jsonify({"message": "Missing username or course_id"}), 400
 
-        course_id = data["course_id"]
+        taken_course = TakenCourseService.remove_course_taken_by_student(
+            username, course_id
+        )
 
-        result = TakenCourseService.remove_course_for_student(username, course_id)
-
-        if isinstance(result, str):
-            return jsonify({"error": result}), 500
+        if isinstance(taken_course, str):
+            return jsonify({"message": taken_course}), 500
 
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Course {course_id} removed for user {username}",
-                    "removed_course": result,
+                    "removed_course": taken_course,
                 }
             ),
             202,
         )
     except Exception as e:
-        return jsonify({"error": f"Error removing course: {str(e)}"}), 500
+        return jsonify({"message": f"Error removing course: {str(e)}"}), 500
 
 
 @taken_courses_bp.route("/taken_courses", methods=["PUT"])
@@ -103,7 +102,7 @@ def update_taken_course():
 
         if not username or "course_id" not in data or "new_course_id" not in data:
             return (
-                jsonify({"error": "Missing username, course_id, or new_course_id"}),
+                jsonify({"message": "Missing username, course_id, or new_course_id"}),
                 400,
             )
 
@@ -115,12 +114,11 @@ def update_taken_course():
         )
 
         if isinstance(result, str):
-            return jsonify({"error": result}), 500
+            return jsonify({"message": result}), 500
 
         return (
             jsonify(
                 {
-                    "status": "success",
                     "message": f"Course {course_id} updated to {new_course_id} for user {username}",
                     "updated_course": result,
                 }
@@ -128,4 +126,4 @@ def update_taken_course():
             200,
         )
     except Exception as e:
-        return jsonify({"error": f"Error updating course: {str(e)}"}), 500
+        return jsonify({"message": f"Error updating course: {str(e)}"}), 500

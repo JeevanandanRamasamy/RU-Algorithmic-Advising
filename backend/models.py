@@ -36,11 +36,12 @@ class Account(db.Model):
 @dataclass
 class StudentDetails(db.Model):
     __tablename__ = "StudentDetails"
+
     username: str
     grad_date: str
     enroll_date: str
-    credits_earned: str
-    gpa: str
+    credits_earned: int
+    gpa: int
     class_year: str
 
     username = Column(
@@ -84,6 +85,10 @@ class StudentDetails(db.Model):
 @dataclass
 class Course(db.Model):
     __tablename__ = "Course"
+    course_id: str
+    course_name: str
+    credits: int
+    course_link: str
 
     course_id = Column(String(10), primary_key=True)
     course_name = Column(String(200), nullable=False)
@@ -99,13 +104,19 @@ class Course(db.Model):
             "course_id": self.course_id,
             "course_name": self.course_name,
             "credits": self.credits,
-            "course_link": self.course_link
+            "course_link": self.course_link,
         }
 
-@dataclass
 
+@dataclass
 class CourseTaken(db.Model):
     __tablename__ = "CourseTaken"
+
+    username: str
+    course_id: str
+    term: str
+    grade: str
+    year: int
 
     username = Column(
         String(6),
@@ -124,7 +135,7 @@ class CourseTaken(db.Model):
         ),
     )
 
-    __table_args__ = (PrimaryKeyConstraint("username", "course_id", "term", "year"),)
+    __table_args__ = (PrimaryKeyConstraint("username", "course_id"),)
 
     def __repr__(self):
         return f"<CourseTaken(username={self.username}, course_id={self.course_id}, term={self.term}, year={self.year})>"
@@ -213,18 +224,24 @@ class DegreePlan(db.Model):
 
     def __repr__(self):
         return f"<DegreePlan(plan_id={self.plan_id}, username={self.username}, plan_name={self.plan_name}, last_updated={self.last_updated})>"
-    
+
     def to_dict(self):
         return {
             "plan_id": self.plan_id,
             "username": self.username,
             "plan_name": self.plan_name,
-            "last_updated": self.last_updated
+            "last_updated": self.last_updated,
         }
+
 
 @dataclass
 class PlannedCourse(db.Model):
     __tablename__ = "PlannedCourse"
+
+    plan_id: str
+    course_id: str
+    term: str
+    year: bool
 
     plan_id = Column(
         Integer, ForeignKey("DegreePlan.plan_id", ondelete="CASCADE"), nullable=False

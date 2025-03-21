@@ -59,7 +59,7 @@ CREATE TABLE CourseTaken (
     term ENUM ('fall', 'spring', 'summer', 'winter'),  -- Term of completion
     year YEAR,  -- Year of completion
     grade VARCHAR(2) CHECK (grade IN ('A', 'B+', 'B', 'C+', 'C', 'D', 'F', 'PA', 'NC', 'W')),  -- Grade received
-    PRIMARY KEY (username, course_id, term, year),
+    PRIMARY KEY (username, course_id),
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE
 );

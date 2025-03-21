@@ -16,7 +16,7 @@ def get_all_programs():
             else ProgramService.get_programs()
         )
         if isinstance(programs, str):
-            return jsonify({"error": programs}), 500
+            return jsonify({"message": programs}), 500
         return (
             jsonify(
                 {
@@ -32,4 +32,4 @@ def get_all_programs():
         )
 
     except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500
