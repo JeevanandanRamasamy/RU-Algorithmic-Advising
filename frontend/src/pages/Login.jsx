@@ -19,7 +19,7 @@ function Login() {
 
 		const data = await response.json();
 
-		if (data.status === "success") {
+		if (response.ok) {
 			login(username, data.access_token); // Store username + token in AuthContext
 			navigate("/home");
 		} else {

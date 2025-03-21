@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Dropdown from "../components/Dropdown";
-import { useEffect } from "react";
-import Button from "../components/Button";
-import ListContainer from "../components/ListContainer";
+import CourseListContainer from "../components/courses/CourseListContainer";
+import Button from "../components/generic/Button";
+import TakenCourses from "../components/courses/TakenCourses";
+import Dropdown from "../components/generic/Dropdown";
+import AvailableCourses from "../components/courses/AvailableCourses";
 import { useAuth } from "../context/AuthContext";
-import AvailableCourses from "../components/AvailableCourses";
 import useCourses from "../hooks/useCourses";
+import useTakenCourses from "../hooks/useTakenCourses";
+import ListContainer from "../components/generic/ListContainer";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Questionnaire = () => {
@@ -22,13 +25,30 @@ const Questionnaire = () => {
 	const [filteredSelectedPrograms, setFilteredSelectedPrograms] = useState([]);
 	const classes = ["freshman", "sophomore", "junior", "senior", "graduate"];
 	const { user, token } = useAuth();
-	const { courses, coursesLoading, coursesError, fetchCourses, setCourses } = useCourses(
-		backendUrl,
-		token
-	);
-	const navigate = useNavigate();
+	const {
+		courses,
+		coursesLoading,
+		coursesError,
+		fetchCourses,
+		setCourses,
+		searchAvailable,
+		setSearchAvailable,
+		filteredCourses,
+		setFilteredCourses
+	} = useCourses(backendUrl, token);
+	const {
+		takenCourses,
+		takenCoursesLoading,
+		takenCoursesError,
+		fetchTakenCourses,
+		setTakenCourses,
+		handleRemoveTakenCourse,
+		handleAddTakenCourse,
+		searchTaken,
+		setSearchTaken
+	} = useTakenCourses(backendUrl, token, setCourses);
 
-	console.log(user);
+	const navigate = useNavigate();
 
 	const handleGpaChange = e => {
 		const value = e.target.value;
@@ -91,7 +111,6 @@ const Questionnaire = () => {
 					}
 				});
 				const data = await response.json();
-				console.log(data);
 				const fields = {
 					grad_date: setGradYear,
 					enroll_date: setEnrolledYear,
@@ -150,13 +169,10 @@ const Questionnaire = () => {
 			})
 		});
 		const data = await response.json();
-		console.log(data);
-		if (data.status === "success") {
-			console.log(data);
-			console.log(selectedPrograms);
+		if (response.ok) {
 			setSelectedPrograms(prev => [...prev, data.student_program]);
 		} else {
-			console.log(data);
+			// console.log(data);
 		}
 		// TODO: handle errors
 	};
@@ -171,8 +187,8 @@ const Questionnaire = () => {
 			body: JSON.stringify({ username: "admin", program_id: program_id })
 		});
 		const data = await response.json();
-		console.log(data);
-		if (data.status === "success") {
+		// console.log(data);
+		if (response.ok) {
 			setSelectedPrograms(
 				selectedPrograms.filter(p => p.program_id !== data.student_program.program_id)
 			);
@@ -197,19 +213,12 @@ const Questionnaire = () => {
 				)
 			)
 		});
-
-		const data = await response.json();
-		console.log(response);
 		//TODO: redirect
-		if (data.status == "success") {
+		if (response.ok) {
 			navigate("/home");
 		} else {
 		}
 	};
-
-	// useEffect(() => {
-	// 	fetchCourses();
-	// }, [token]);
 
 	return (
 		<>
@@ -275,31 +284,55 @@ const Questionnaire = () => {
 						/>
 					</div>
 				</div>
-
-				<div>
-					<ListContainer
-						query={programsQuery}
-						handleQueryChange={event => setProgramsQuery(event.target.value)}
-						values={filteredPrograms}
-						searchText="Search Program By Name"
-						type="Program"
-						field="program_name"
-						key_field="program_id"
-						buttonType="add"
-						handleButtonClick={handleInsertProgram}
-					/>
-					<ListContainer
-						query={selectedProgramsQuery}
-						handleQueryChange={event => setSelectedProgramsQuery(event.target.value)}
-						searchText="Search Selected Programs"
-						values={filteredSelectedPrograms}
-						field="program_name"
-						key_field="program_id"
-						buttonType="remove"
-						handleButtonClick={handleRemoveProgram}
-					/>
-				</div>
-				<AvailableCourses courses={courses} />
+				<ListContainer
+					query={programsQuery}
+					handleQueryChange={event => setProgramsQuery(event.target.value)}
+					values={filteredPrograms}
+					searchText="Search Program By Name"
+					type="Program"
+					field="program_name"
+					key_field="program_id"
+					buttonType="add"
+					handleButtonClick={handleInsertProgram}
+				/>
+				<ListContainer
+					query={selectedProgramsQuery}
+					handleQueryChange={event => setSelectedProgramsQuery(event.target.value)}
+					searchText="Search Selected Programs"
+					values={filteredSelectedPrograms}
+					field="program_name"
+					key_field="program_id"
+					buttonType="remove"
+					handleButtonClick={handleRemoveProgram}
+				/>
+			</div>
+			<div className="flex gap-[30px]">
+				<CourseListContainer
+					title="Available Courses"
+					searchQuery={searchAvailable}
+					setSearchQuery={setSearchAvailable}
+					courses={courses}
+					excludedCourseIds={
+						takenCourses?.length > 0
+							? takenCourses.map(takenCourse => takenCourse.course_info.course_id)
+							: []
+					}
+					CourseComponent={AvailableCourses}
+				/>
+				<CourseListContainer
+					title="Taken Courses"
+					searchQuery={searchTaken}
+					setSearchQuery={setSearchTaken}
+					courses={takenCourses}
+					getCourse={course => course.course_info}
+					CourseComponent={TakenCourses}
+					courseComponentProps={{
+						loading: takenCoursesLoading,
+						error: takenCoursesError,
+						onRemoveCourse: handleRemoveTakenCourse,
+						onAddCourse: handleAddTakenCourse
+					}}
+				/>
 			</div>
 			<Button
 				className="bg-blue-500 text-white p-1 rounded w-20"

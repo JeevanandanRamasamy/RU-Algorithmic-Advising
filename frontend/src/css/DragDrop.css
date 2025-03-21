@@ -145,7 +145,7 @@
     font-size: 14px;
     color: #666;
   }
-  
+
   .planned-course-remove {
     background-color: #f44336;
     color: white;
@@ -259,7 +259,7 @@
     background-color: rgba(33, 150, 243, 0.1);
     border: 2px dashed #2196f3;
   }
-  
+
   .course-link, .planned-course-link {
     color: #007bff;
     text-decoration: none;

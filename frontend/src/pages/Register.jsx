@@ -48,7 +48,7 @@ function Register() {
 
 			const data = await response.json();
 
-			if (data.status === "success") {
+			if (response.ok) {
 				setMessage("Registration successful! Redirecting to login...");
 				setTimeout(() => navigate("/questionnaire"), 1500); // Redirect after success
 			} else {
