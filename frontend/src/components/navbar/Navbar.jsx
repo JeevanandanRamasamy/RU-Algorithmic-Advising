@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from "react";
 import "./style.css"; // Ensure styles are imported
+import logo from "../../assets/minilogo.png";
+import { Link } from "react-router-dom"; // Import Link for navigation
+import { useAuth } from "../../context/AuthContext"; // Import the AuthContext to access logout
+import { useNavigate } from "react-router-dom";
 import logo from "./images/minilogo.svg";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../../context/AuthContext"; // Import authentication context
 
 const Navbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // Manages navbar state
+  const { logout } = useAuth(); // Access logout function from context
+  const navigate = useNavigate(); // Get navigate function from useNavigate
 
   const { user, logout } = useAuth(); // Get auth state and logout function
   const navigate = useNavigate();
 
   const toggleNavbar = () => {
     setIsCollapsed((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    logout(); // Call the logout function from context
+    navigate("/"); // Redirect to the login page
   };
 
   // Redirect to login page if not authenticated
@@ -26,11 +37,11 @@ const Navbar = () => {
       <div className="nav-top">
         <div className="header">
           <span className="image">
-            <img src={logo} alt="Logo" />
+            <img src={logo} alt="Logo" className="w-16 h-16" />
           </span>
           <div className="header-text text">
             <span className="name">
-              RuSuper
+              RU Super
               <br />
               Scheduler
             </span>
@@ -47,13 +58,13 @@ const Navbar = () => {
         </div>
         <ul className="menu-links">
           <li className="nav-link">
-            <Link to="/">
+            <Link to="/home">
               <i className="bx bx-home icon"></i>
               <span className="text nav-text">Dashboard</span>
             </Link>
           </li>
           <li className="nav-link">
-            <Link to="/degree-planner">
+            <Link to="/dragdrop">
               <i className="bx bx-bar-chart-alt-2 icon"></i>
               <span className="text nav-text">Degree Planner</span>
             </Link>

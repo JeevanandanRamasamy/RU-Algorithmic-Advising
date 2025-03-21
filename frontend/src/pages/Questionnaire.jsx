@@ -7,6 +7,7 @@ import DropdownWithSearch from "../components/DropdownWithSearch";
 import Button from "../components/Button";
 import { majors, minors, subjects, certificate } from "../data/sas";
 import ListContainer from "../components/ListContainer";
+import Navbar from "../components/navbar/Navbar";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Questionnaire = () => {
@@ -331,7 +332,8 @@ const Questionnaire = () => {
 
 	return (
 		<>
-			<div className="flex gap-5">
+			<div className="flex gap-5 justify-end">
+			<Navbar/>
 				<div className="flex flex-col gap-3">
 					{/* <div className="flex flex-row gap-5 items-center">
 					<label
@@ -490,11 +492,13 @@ const Questionnaire = () => {
 					handleButtonClick={handleRemoveProgram}
 				/>
 			</div>
-			<Button
-				className="bg-blue-500 text-white p-1 rounded w-20"
-				label="Save"
-				onClick={saveData}
-			/>
+			<div className="flex justify-end mt-5">
+				<Button
+					className="bg-blue-500 text-white p-1 rounded w-20"
+					label="Save"
+					onClick={saveData}
+				/>
+			</div>
 		</>
 	);
 };
