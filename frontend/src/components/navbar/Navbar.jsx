@@ -10,9 +10,6 @@ import { useAuth } from "../../context/AuthContext"; // Import authentication co
 
 const Navbar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // Manages navbar state
-  const { logout } = useAuth(); // Access logout function from context
-  const navigate = useNavigate(); // Get navigate function from useNavigate
-
   const { user, logout } = useAuth(); // Get auth state and logout function
   const navigate = useNavigate();
 
