@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./style.css"; // Ensure styles are imported
-import logo from "./images/minilogo.svg";
+import logo from "../../assets/minilogo.png";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../../context/AuthContext"; // Import authentication context
 
