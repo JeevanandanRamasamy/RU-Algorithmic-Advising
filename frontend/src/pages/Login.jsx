@@ -37,7 +37,7 @@ function Login() {
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
 					{/* Logo Section */}
 					<div className="mb-4">
-						<img src={logo} alt="Logo" />
+						<img src={logo} alt="Logo" className="w-32 h-32" />
 					</div>
 					<header className="mb-0">
 						<h1>Welcome!</h1>
