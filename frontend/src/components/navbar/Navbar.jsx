@@ -15,7 +15,7 @@ const Navbar = () => {
       <div className="nav-top">
         <div className="header">
           <span className="image">
-            <img src={logo} alt="Logo" style={{ width: "65px", height: "65px" }} />
+            <img src={logo} alt="Logo" className="w-16 h-16" />
           </span>
           <div className="header-text text">
             <span className="name">
