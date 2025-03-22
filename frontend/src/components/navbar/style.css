@@ -25,13 +25,13 @@
 }
 
 .sidebar {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   background: var(--sidebar-color);
   width: 250px;
   height: 100%;
-  border: 1px solid var(--primary-color);
+  border-right: 1px solid var(--primary-color);
   padding: 10px;
   transition: var(--tran-05);
 }
@@ -67,6 +67,7 @@
   color: var(--sidebar-color);
   font-size: 22px;
   cursor: pointer;
+  z-index: 1100;
 }
 
 /* Side bar menu */
