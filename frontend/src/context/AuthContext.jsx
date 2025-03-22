@@ -1,37 +1,35 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from "react";
 
 // Create a context for authentication
 const AuthContext = createContext();
 
 // Provide the AuthContext to the entire app
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(() => localStorage.getItem("user") || null);
+  const [token, setToken] = useState(
+    () => localStorage.getItem("token") || null
+  );
 
-  // Check if there is a stored user and token on app load
+  // Save user and token when changed
   useEffect(() => {
-    const storedUser = localStorage.getItem("username");
-    const storedToken = localStorage.getItem("token");
-
-    if (storedUser && storedToken) {
-      setUser(storedUser);
-      setToken(storedToken);
+    if (user && token) {
+      localStorage.setItem("user", user);
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     }
-  }, []);
+  }, [user, token]);
 
-  // Login function
-  const login = (username, authToken) => {
+  const login = (username, accessToken) => {
     setUser(username);
-    setToken(authToken);
-    localStorage.setItem("username", username);
-    localStorage.setItem("token", authToken);
+    setToken(accessToken);
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("username");
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
 

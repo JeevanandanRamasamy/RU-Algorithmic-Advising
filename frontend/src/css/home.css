@@ -1,0 +1,16 @@
+.home-wrapper {
+  height: 100%;
+  width: 100%;
+  background: #fff;
+}
+
+.home-content {
+  padding-left: 50px;
+  padding-top: 50px;
+}
+
+.body-main {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
