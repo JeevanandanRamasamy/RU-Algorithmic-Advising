@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 import requests
 import pandas as pd
 from dotenv import load_dotenv
@@ -22,9 +23,9 @@ def get_json(url):
     return response.json()
 
 
-def search_course_url(courseID, course_name):
+def search_course_url(courseID):
     """Searches for the first course URL using Brave Search API."""
-    query = f"Rutgers {courseID} {course_name}"
+    query = f'Rutgers "{courseID}"'
     headers = {"Accept": "application/json", "X-Subscription-Token": BRAVE_API_KEY}
     params = {"q": query, "count": 1}
 
@@ -35,7 +36,9 @@ def search_course_url(courseID, course_name):
 
     # Extract the first search result URL
     if "web" in data and "results" in data["web"]:
-        return data["web"]["results"][0]["url"]  # Get first result URL
+        for result in data["web"]["results"][:5]:  # Check the first 5 results
+            if result["url"].find(courseID[7:]) != -1:  # Check if the course ID is in the URL
+                return data["web"]["results"][0]["url"]  # Get first result URL
     return None
 
 
@@ -174,11 +177,11 @@ def parse_courses(json_data, courses):
     return list(course_dict.values())
 
 
-def get_course_list():
+def get_course_list(file_name):
     """Fetches course data from the Rutgers API and saves it to a CSV file."""
-    # Check if the course_list.csv file already exists
-    if os.path.exists("backend/course_list.csv"):
-        course_list = pd.read_csv("backend/course_list.csv").to_dict(orient="records")
+    # Check if the CSV file already exists
+    if os.path.exists(file_name):
+        course_list = pd.read_csv(file_name).to_dict(orient="records")
         print(f"Loaded {len(course_list)} courses from existing file.")
     else:
         course_list = []
@@ -207,7 +210,7 @@ def get_course_list():
     # Save the courses to a CSV file
     print(f"Total courses parsed: {len(course_list)}")
     df = pd.DataFrame(course_list)
-    df.to_csv("backend/course_list.csv", index=False)
+    df.to_csv(file_name, index=False)
 
 
 def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None):
@@ -315,15 +318,17 @@ def add_course_urls(filename, row_range=(0, 1900)):
 
     for i, row in df.iloc[start:end].iterrows():
         course_id = row["course_id"]
-        course_name = row["course_name"]
-        course_link = search_course_url(course_id, course_name)
+        course_link = search_course_url(course_id)
         if course_link:
             df.at[i, "course_link"] = course_link
+        time.sleep(1) # To avoid hitting the API too fast
+        print(f"Row {i}: {course_id} - {course_link}")
     df.to_csv(filename, index=False)
     print(f"Updated {filename} with {end - start} course URLs.")
 
 
 if __name__ == "__main__":
-    # get_course_list()
-    add_courses_to_database("backend/course_list.csv")
-    # add_course_urls("backend/course_list.csv", row_range=(0, 10))
+    file_name = "course_list.csv"
+    # get_course_list(file_name)
+    # add_courses_to_database(file_name)
+    # add_course_urls(file_name, row_range=(1800, 3800))
