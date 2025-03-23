@@ -110,8 +110,8 @@ function Register() {
 					email,
 					password,
 					first_name: firstName,
-					last_name: lastName,
-				}),
+					last_name: lastName
+				})
 			});
 
 			const registerData = await registerResponse.json();
@@ -121,9 +121,7 @@ function Register() {
 				registerData.status === "success" ||
 				registerData.message === "Registration successful"
 			) {
-				console.log(
-					"Registration successful! Updating message and scheduling redirect..."
-				);
+				console.log("Registration successful! Updating message and scheduling redirect...");
 
 				setMessage("Registration successful! Redirecting to login...");
 
@@ -157,9 +155,11 @@ function Register() {
 						type="email"
 						placeholder="Enter @rutgers.edu email"
 						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						onChange={e => setEmail(e.target.value)}
 					/>
-					<button onClick={handleSendVerification} disabled={loading}>
+					<button
+						onClick={handleSendVerification}
+						disabled={loading}>
 						{loading ? "Sending..." : "Send Code"}
 					</button>
 				</div>
@@ -172,40 +172,46 @@ function Register() {
 						type="text"
 						placeholder="Enter Verification Code"
 						value={code}
-						onChange={(e) => setCode(e.target.value)}
+						onChange={e => setCode(e.target.value)}
 					/>
 					<br />
-					<input type="text" value={username} disabled />{" "}
+					<input
+						type="text"
+						value={username}
+						disabled
+					/>{" "}
 					{/* Auto-filled username */}
 					<input
 						type="text"
 						placeholder="First Name"
 						value={firstName}
-						onChange={(e) => setFirstName(e.target.value)}
+						onChange={e => setFirstName(e.target.value)}
 					/>
 					<br />
 					<input
 						type="text"
 						placeholder="Last Name"
 						value={lastName}
-						onChange={(e) => setLastName(e.target.value)}
+						onChange={e => setLastName(e.target.value)}
 					/>
 					<br />
 					<input
 						type="password"
 						placeholder="Create Password"
 						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						onChange={e => setPassword(e.target.value)}
 					/>
 					<br />
 					<input
 						type="password"
 						placeholder="Confirm Password"
 						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
+						onChange={e => setConfirmPassword(e.target.value)}
 					/>
 					<br />
-					<button onClick={handleVerifyAndRegister} disabled={loading}>
+					<button
+						onClick={handleVerifyAndRegister}
+						disabled={loading}>
 						{loading ? "Registering..." : "Register"}
 					</button>
 				</div>

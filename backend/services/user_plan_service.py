@@ -1,4 +1,4 @@
-from models import db, DegreePlan, PlannedCourse
+from models import Course, db, DegreePlan, PlannedCourse
 from flask_jwt_extended import get_jwt_identity  # To get user info from JWT
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
@@ -7,12 +7,11 @@ from services.db_service import DBService
 # TODO This whole file can and should be cleaned up / optimized
 
 
-class UserPlan:
+class UserPlanService:
     @staticmethod
-    def get_planned_courses_for_user():
+    def get_planned_courses_for_user(username):
         """Retrieve planned courses for the logged-in user."""
         try:
-            username = get_jwt_identity()  # Get the username from JWT
             degree_plans = DegreePlan.query.filter_by(
                 username=username
             ).all()  # Get the user's degree plans
@@ -35,23 +34,78 @@ class UserPlan:
 
             # Iterate through each degree plan to get associated planned courses
             for plan in degree_plans:
-                courses = PlannedCourse.query.filter_by(
-                    plan_id=plan.plan_id
-                ).all()  # Get planned courses for each degree plan
-                for course in courses:
+                courses = (
+                    db.session.query(PlannedCourse, Course)
+                    .join(Course, Course.course_id == PlannedCourse.course_id)
+                    .filter(PlannedCourse.plan_id == plan.plan_id)
+                    .all()
+                )
+                for planned_course, course in courses:
                     planned_courses.append(
                         {
-                            "plan_id": course.plan_id,
-                            "course_id": course.course_id,
-                            "term": course.term,
-                            "year": course.year,
+                            "plan_id": planned_course.plan_id,
+                            "term": planned_course.term,
+                            "year": planned_course.year,
+                            "course_info": {
+                                "course_id": course.course_id,
+                                "course_name": course.course_name,
+                                "credits": course.credits,
+                                "course_link": course.course_link,
+                            },
                         }
                     )
+                # PlannedCourse.query.filter_by(
+                #     plan_id=plan.plan_id
+                # ).join(Course, Course.course_id == ).all()  # Get planned courses for each degree plan
+                # for course in courses:
+                #     planned_courses.append(
+                #         {
+                #             "plan_id": course.plan_id,
+                #             "course_id": course.course_id,
+                #             "term": course.term,
+                #             "year": course.year,
+                #         }
+                #     )
 
             return planned_courses  # Return list of planned courses for the user
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving planned courses: {str(e)}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    @staticmethod
+    def get_planned_course_for_user(course_id, plan_id):
+        """Retrieve planned course for the logged-in user. by course_id and plan_d"""
+        try:
+            planned_course = (
+                db.session.query(PlannedCourse, Course)
+                .join(Course, Course.course_id == PlannedCourse.course_id)
+                .filter(
+                    PlannedCourse.course_id == course_id
+                    and PlannedCourse.plan_id == plan_id
+                )
+                .first()
+            )
+            if not planned_course:
+                return f"Planned course not found"
+
+            planned, course = planned_course
+
+            return {
+                "plan_id": planned.plan_id,
+                "term": planned.term,
+                "year": planned.year,
+                "course_info": {
+                    "course_id": course.course_id,
+                    "course_name": course.course_name,
+                    "credits": course.credits,
+                    "course_link": course.course_link,
+                },
+            }
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving planned course: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
 
@@ -80,31 +134,19 @@ class UserPlan:
 
         # Check if the course already exists in the planned courses
         existing_course = PlannedCourse.query.filter_by(
-            plan_id=degree_plan.plan_id, course_id=course_id
+            course_id=course_id,
+            plan_id=degree_plan.plan_id,
         ).first()
 
         if existing_course:
             return f"Course {course_id} is already in the plan"
-
-        # Prepare data for the planned course
-        planned_course_data = {
-            "plan_id": degree_plan.plan_id,
-            "course_id": course_id,
-            "term": term,
-            "year": year,
-        }
-
-        # Insert the course using the insert_planned_course method
-        response = DBService.insert_planned_course(planned_course_data)
-
-        if isinstance(response, PlannedCourse):  # If course insertion was successful
-            return {
-                "message": f"Course {course_id} added to degree plan",
-                "plan_id": degree_plan.plan_id,
-                "course_id": course_id,
-            }
-        else:
-            return {"message": response}  # Error message from insert_planned_course
+        planned_course = PlannedCourse(
+            plan_id=plan_id, course_id=course_id, term=term, year=year
+        )
+        print(plan_id, course_id)
+        db.session.add(planned_course)
+        db.session.commit()
+        return UserPlanService.get_planned_course_for_user(course_id, plan_id)
 
     @staticmethod
     def drop_course_from_plan(plan_id, course_id):
@@ -129,6 +171,7 @@ class UserPlan:
 
         # Now that we are sure the degree plan exists, use the delete_planned_course method to remove the course
         response = DBService.delete_planned_course(plan_id, course_id)
+        print(response)
 
         if "successfully" in response:
             # If the course was successfully deleted, update the degree plan's last updated timestamp

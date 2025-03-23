@@ -1,4 +1,5 @@
 from flask import request
+from services.program_service import ProgramService
 from services.db_service import DBService
 from flask import Blueprint, jsonify
 
@@ -10,12 +11,12 @@ def get_all_programs():
     try:
         program_type = request.args.get("program_type")
         programs = (
-            DBService.get_programs(program_type)
+            ProgramService.get_programs(program_type)
             if program_type in ["major", "minor", "certificate", "sas_core"]
-            else DBService.get_programs()
+            else ProgramService.get_programs()
         )
         if isinstance(programs, str):
-            return jsonify({"error": programs}), 500
+            return jsonify({"message": programs}), 500
         return (
             jsonify(
                 {
@@ -31,4 +32,4 @@ def get_all_programs():
         )
 
     except Exception as e:
-        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500

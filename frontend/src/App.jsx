@@ -13,28 +13,50 @@ import Navbar from "./components/navbar/Navbar";
 import "./css/index.css";
 
 function App() {
-  return (
-    <div>
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/reset_password" element={<ResetPassword />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/questionnaire" element={<Questionnaire />} />
-          <Route path="/navbar" element={<Navbar />} />
-          <Route
-            path="/dragdrop"
-            element={
-              <DndProvider backend={HTML5Backend}>
-                <DragDrop />
-              </DndProvider>
-            }
+	return (
+		<div>
+			<main className="main-content">
+				<Routes>
+					<Route
+						path="/"
+						element={<Login />}
+					/>
+					<Route
+						path="/register"
+						element={<Register />}
+					/>
+          <Route 
+            path="/reset_password" 
+            element={<ResetPassword />} 
           />
-        </Routes>
-      </main>
-    </div>
-  );
+					<Route
+						path="/home"
+						element={<Home />}
+					/>
+					<Route
+						path="/navbar"
+						element={<Navbar />}
+					/>
+					<Route
+						path="/questionnaire"
+						element={
+							<DndProvider backend={HTML5Backend}>
+								<Questionnaire />
+							</DndProvider>
+						}
+					/>
+					<Route
+						path="/dragdrop"
+						element={
+							<DndProvider backend={HTML5Backend}>
+								<DragDrop />
+							</DndProvider>
+						}
+					/>
+				</Routes>
+			</main>
+		</div>
+	);
 }
 
 export default App;
