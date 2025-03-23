@@ -62,8 +62,7 @@ function Login() {
           />
           <br />
           <p>
-            {/* TODO: not sure how password change will work yet*/}
-            <Link to="/register">Forgot password?</Link>
+            <Link to="/reset_password">Forgot password?</Link>
           </p>
           <button
             onClick={handleLogin}

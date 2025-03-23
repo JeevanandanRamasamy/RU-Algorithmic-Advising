@@ -37,7 +37,7 @@ def send_email(email, code):
         return False
 
 # Route to send a verification code
-@verification_bp.route("/send-verification", methods=["POST"])
+@verification_bp.route("/api/send-verification", methods=["POST"])
 def send_verification():
     data = request.json
     email = data.get("email")
@@ -58,7 +58,7 @@ def send_verification():
     return jsonify({"success": False, "message": "Invalid email"}), 400
 
 # Route to verify the OTP
-@verification_bp.route("/verify-code", methods=["POST"])
+@verification_bp.route("/api/verify-code", methods=["POST"])
 def verify_code():
     data = request.json
     email = data.get("email")

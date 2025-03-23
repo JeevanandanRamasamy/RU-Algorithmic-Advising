@@ -44,12 +44,12 @@ def register():
         return jsonify({"message": result, "status": "error"}), 500
 
     student_detail = {
-    "username" : username,
-    "grad_date": 2025,
-    "enroll_date": 2025,
-    "credits_earned": 0,
-    "gpa": 0.00,
-    "class_year": "Freshman"
+        "username" : username,
+        "grad_date": 2025,
+        "enroll_date": 2025,
+        "credits_earned": 0,
+        "gpa": 0.00,
+        "class_year": "Freshman"
     }
 
     result = DBService.add_student_details(student_detail)
