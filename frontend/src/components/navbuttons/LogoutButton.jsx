@@ -1,3 +1,5 @@
+// This is not needed ; logout functionality already included in the navigation bar
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Import the AuthContext to access logout
@@ -11,11 +13,7 @@ function LogoutButton() {
     navigate("/"); // Redirect to the login page
   };
 
-  return (
-    <button onClick={handleLogout}>
-      Logout
-    </button>
-  );
+  return <button onClick={handleLogout}>Logout</button>;
 }
 
 export default LogoutButton;

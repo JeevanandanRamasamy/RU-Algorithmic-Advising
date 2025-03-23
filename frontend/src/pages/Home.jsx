@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Import AuthContext
-// import LogoutButton from "../components/navbuttons/LogoutButton"; // Import LogoutButton
 import Navbar from "../components/navbar/Navbar";
+import { useAuth } from "../context/AuthContext";
+import "../css/home.css";
 
 function Home() {
 	const { user } = useAuth(); // Get user
@@ -16,12 +16,11 @@ function Home() {
 
 	return (
 		<div className="flex justify-end items-center h-screen pr-5">
+			<Navbar />
 			<h2 className="ml-[110px] pt-[5px]">
 				Welcome {user} to the home page. Unsure what to put on the home page that is not in
 				the navbar already
-			</h2>{" "}
-			{/* Display username */}
-			<Navbar />
+			</h2>
 		</div>
 	);
 }

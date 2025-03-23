@@ -1,110 +1,228 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL; // Load backend URL from env file
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Register() {
-	const [username, setUsername] = useState("");
+	const [step, setStep] = useState(1); // Step 1: Enter Email, Step 2: Verify OTP & Set Password
+	const [email, setEmail] = useState("");
+	const [code, setCode] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
+	const [username, setUsername] = useState(""); // Auto-generated from email
 	const [message, setMessage] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate(); // Redirect after successful registration
 
-	const handleRegister = async () => {
-		// Basic validation
-		if (!username || !password || !confirmPassword || !firstName || !lastName) {
+	// Step 1: Send Verification Code
+	const handleSendVerification = async () => {
+		setMessage("");
+
+		if (!email.endsWith("rutgers.edu")) {
+			setMessage("Invalid email. Only @rutgers.edu emails are allowed.");
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			// Extract username from email (before '@')
+			const extractedUsername = email.split("@")[0];
+			setUsername(extractedUsername);
+
+			const response = await fetch(`${backendUrl}/send-verification`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email })
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				setMessage("Verification code sent to your email!");
+				setStep(2); // Move to the next step
+			} else {
+				setMessage(data.message || "Error sending verification code.");
+			}
+		} catch (error) {
+			console.error("Error:", error);
+			setMessage("Network error. Please try again later.");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	// Step 2: Verify Code & Register User
+	const handleVerifyAndRegister = async () => {
+		setMessage("");
+
+		console.log("Starting verification process...");
+
+		if (!code) {
+			console.log("No code entered.");
+			setMessage("Please enter the verification code.");
+			return;
+		}
+
+		if (!password || !confirmPassword || !firstName || !lastName) {
+			console.log("Missing required fields.");
 			setMessage("All fields are required.");
 			return;
 		}
+
 		if (password !== confirmPassword) {
+			console.log("Passwords do not match.");
 			setMessage("Passwords do not match.");
 			return;
 		}
-		if (password.length < 6) {
-			setMessage("Password must be at least 6 characters.");
-			return;
-		}
-		if (username.length > 6) {
-			setMessage("Username must be 6 characters or less.");
-			return;
-		}
 
-		setLoading(true); // Disable button while submitting
+		setLoading(true);
 
 		try {
-			const response = await fetch(`${backendUrl}/api/register`, {
+			console.log("Sending verification request to backend...");
+
+			// Step 1: Verify OTP
+			const verifyResponse = await fetch(`${backendUrl}/verify-code`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email, code })
+			});
+
+			const verifyData = await verifyResponse.json();
+			console.log("OTP Verification Response:", verifyData);
+
+			if (!verifyData.success) {
+				console.log("OTP verification failed.");
+				setMessage("Invalid verification code, please try again.");
+				return;
+			}
+
+			console.log("OTP verified successfully! Proceeding with registration...");
+
+			// Step 2: Register User
+			const registerResponse = await fetch(`${backendUrl}/api/register`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					username,
+					email,
 					password,
 					first_name: firstName,
 					last_name: lastName
 				})
 			});
 
-			const data = await response.json();
+			const registerData = await registerResponse.json();
+			console.log("Registration Response:", registerData);
 
-			if (response.ok) {
+			if (
+				registerData.status === "success" ||
+				registerData.message === "Registration successful"
+			) {
+				console.log("Registration successful! Updating message and scheduling redirect...");
+
 				setMessage("Registration successful! Redirecting to login...");
-				setTimeout(() => navigate("/questionnaire"), 1500); // Redirect after success
+
+				// Ensure the message is updated before redirecting
+				setTimeout(() => {
+					console.log("Redirecting to login...");
+
+					navigate("/"); // Redirect after showing the message
+				}, 2000);
 			} else {
-				setMessage(data.message || "Registration failed.");
+				console.log("Registration failed.");
+				setMessage(registerData.message || "Registration failed.");
 			}
 		} catch (error) {
 			console.error("Error:", error);
 			setMessage("Network error. Please try again later.");
 		} finally {
-			setLoading(false); // Re-enable button
+			console.log("Process complete. Resetting loading state.");
+			setLoading(false);
 		}
 	};
 
 	return (
-		<div className="flex flex-col items-center">
-			<Link to="/">LOGIN</Link>
-			<h1>Register</h1>
+		<div>
+			<h2>Register</h2>
 
-			<input
-				type="text"
-				placeholder="Username (max 6 chars)"
-				value={username}
-				onChange={e => setUsername(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="First Name"
-				value={firstName}
-				onChange={e => setFirstName(e.target.value)}
-			/>
-			<input
-				type="text"
-				placeholder="Last Name"
-				value={lastName}
-				onChange={e => setLastName(e.target.value)}
-			/>
-			<input
-				type="password"
-				placeholder="Password (min 6 chars)"
-				value={password}
-				onChange={e => setPassword(e.target.value)}
-			/>
-			<input
-				type="password"
-				placeholder="Confirm Password"
-				value={confirmPassword}
-				onChange={e => setConfirmPassword(e.target.value)}
-			/>
+			{step === 1 && (
+				<div>
+					<h3>Enter Your Email</h3>
+					<input
+						type="email"
+						placeholder="Enter @rutgers.edu email"
+						value={email}
+						onChange={e => setEmail(e.target.value)}
+					/>
+					<button
+						onClick={handleSendVerification}
+						disabled={loading}>
+						{loading ? "Sending..." : "Send Code"}
+					</button>
+				</div>
+			)}
 
-			<button
-				onClick={handleRegister}
-				disabled={loading}>
-				{loading ? "Registering..." : "Register"}
-			</button>
+			{step === 2 && (
+				<div>
+					<h3>Verify Code & Set Password</h3>
+					<input
+						type="text"
+						placeholder="Enter Verification Code"
+						value={code}
+						onChange={e => setCode(e.target.value)}
+					/>
+					<br></br>
+					<input
+						type="text"
+						value={username}
+						disabled
+					/>{" "}
+					{/* Auto-filled username */}
+					<input
+						type="text"
+						placeholder="First Name"
+						value={firstName}
+						onChange={e => setFirstName(e.target.value)}
+					/>
+					<br></br>
+					<input
+						type="text"
+						placeholder="Last Name"
+						value={lastName}
+						onChange={e => setLastName(e.target.value)}
+					/>
+					<br></br>
+					<input
+						type="password"
+						placeholder="Create Password"
+						value={password}
+						onChange={e => setPassword(e.target.value)}
+					/>
+					<br></br>
+					<input
+						type="password"
+						placeholder="Confirm Password"
+						value={confirmPassword}
+						onChange={e => setConfirmPassword(e.target.value)}
+					/>
+					<br></br>
+					<button
+						onClick={handleVerifyAndRegister}
+						disabled={loading}>
+						{loading ? "Registering..." : "Register"}
+					</button>
+				</div>
+			)}
 
-			<p>{message}</p>
+			{message && <p>{message}</p>}
+
+			<p>
+				Go back to
+				<Link to={"/"}>Login</Link>
+			</p>
 		</div>
 	);
 }

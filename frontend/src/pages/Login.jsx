@@ -12,7 +12,7 @@ function Login() {
 	const navigate = useNavigate();
 
 	const handleLogin = async () => {
-		const response = await fetch(`${backendUrl}/login`, {
+		const response = await fetch(`${backendUrl}/api/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ username, password })
@@ -22,6 +22,7 @@ function Login() {
 
 		if (response.ok) {
 			login(username, data.access_token); // Store username + token in AuthContext
+			localStorage.setItem("token", data.access_token); // Persist it
 			navigate("/home");
 		} else {
 			setMessage(data.message || "Something went wrong, please try again");

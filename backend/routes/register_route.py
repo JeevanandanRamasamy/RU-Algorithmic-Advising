@@ -22,7 +22,9 @@ def register():
 
     if len(username) > 6:
         return (
-            jsonify({"message": "Username must be at most 6 characters."}),
+            jsonify(
+                {"message": "Username must be at most 6 characters.", "status": "error"}
+            ),
             400,
         )
 
@@ -31,6 +33,7 @@ def register():
             jsonify(
                 {
                     "message": "Password must be at least 6 characters.",
+                    "status": "error",
                 }
             ),
             400,
@@ -49,7 +52,7 @@ def register():
         "role": role,
     }
 
-    result = UserService.insert_new_account(account_data)
+    result = DBService.insert_new_account(account_data)
 
     if isinstance(result, str):  # If DBService returns an error string
         return (
@@ -61,4 +64,18 @@ def register():
             500,
         )
 
-    return jsonify({"message": "Registration successful"}), 201
+    student_detail = {
+        "username": username,
+        "grad_date": 2025,
+        "enroll_date": 2025,
+        "credits_earned": 0,
+        "gpa": 0.00,
+        "class_year": "Freshman",
+    }
+
+    result = DBService.add_student_details(student_detail)
+
+    ## Can add some validation to make sure student details is added
+    print(result)
+
+    return jsonify({"message": "Registration successful", "status": "success"}), 201

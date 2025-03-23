@@ -41,35 +41,12 @@ function DragDrop() {
 
 	// TODO: Filter out taken courses
 	return (
-		<div className="app ml-[110px] pt-[5px]">
+		<div className="app">
+			<Navbar />
 			<header className="app-header">
 				<h1>Course Planner</h1>
 			</header>
-			<Navbar />
 			<main className="course-planner">
-				{/* <section className="available-courses">
-					<h2>Available Courses</h2>
-					<div className="search-container">
-						<input
-							type="text"
-							id="search-courses"
-							placeholder="Search courses"
-							value={searchAvailable}
-							onChange={handleSearchAvailable}
-						/>
-					</div>
-					<CourseList
-						courses={courses}
-						isPlanned={false}
-					/> */}
-				{/* </section> */}
-				{/* <AvailableCourses
-					searchAvailable={searchAvailable}
-					setSearchAvailable={setSearchAvailable}
-					filteredCourses={filteredCourses}
-					excludedCourseIds={plannedCourses.map(course => course.course_id)}
-				/> */}
-
 				<CourseListContainer
 					title="Available Courses"
 					searchQuery={searchAvailable}
@@ -98,15 +75,6 @@ function DragDrop() {
 						onAddCourse: handleAddPlannedCourse
 					}}
 				/>
-
-				{/* <section className="planned-courses">
-					<h2>Planned Courses</h2>
-					<PlannedCourses
-						plannedCourses={plannedCourses}
-						onRemoveCourse={dropCourseFromPlan}
-						onDropCourse={addCourseToPlan}
-					/>
-				</section> */}
 			</main>
 		</div>
 	);
