@@ -32,10 +32,10 @@ function Register() {
 			const extractedUsername = email.split("@")[0];
 			setUsername(extractedUsername);
 
-			const response = await fetch(`${backendUrl}/send-verification`, {
+			const response = await fetch(`${backendUrl}/api/send-verification`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email })
+				body: JSON.stringify({ email }),
 			});
 
 			const data = await response.json();
@@ -84,10 +84,10 @@ function Register() {
 			console.log("Sending verification request to backend...");
 
 			// Step 1: Verify OTP
-			const verifyResponse = await fetch(`${backendUrl}/verify-code`, {
+			const verifyResponse = await fetch(`${backendUrl}/api/verify-code`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email, code })
+				body: JSON.stringify({ email, code }),
 			});
 
 			const verifyData = await verifyResponse.json();
@@ -174,7 +174,7 @@ function Register() {
 						value={code}
 						onChange={e => setCode(e.target.value)}
 					/>
-					<br></br>
+					<br />
 					<input
 						type="text"
 						value={username}
@@ -187,28 +187,28 @@ function Register() {
 						value={firstName}
 						onChange={e => setFirstName(e.target.value)}
 					/>
-					<br></br>
+					<br />
 					<input
 						type="text"
 						placeholder="Last Name"
 						value={lastName}
 						onChange={e => setLastName(e.target.value)}
 					/>
-					<br></br>
+					<br />
 					<input
 						type="password"
 						placeholder="Create Password"
 						value={password}
 						onChange={e => setPassword(e.target.value)}
 					/>
-					<br></br>
+					<br />
 					<input
 						type="password"
 						placeholder="Confirm Password"
 						value={confirmPassword}
 						onChange={e => setConfirmPassword(e.target.value)}
 					/>
-					<br></br>
+					<br />
 					<button
 						onClick={handleVerifyAndRegister}
 						disabled={loading}>

@@ -156,9 +156,9 @@ class RequirementService:
                 # Need at least `num_required` courses from the list
                 taken_in_group = required_courses.intersection(courses_taken)
                 needed = num_required - len(taken_in_group)
-                print(f"Courses taken in group: {taken_in_group}, needed: {needed}, missing_courses: {missing_courses}, required_courses: {required_courses}")
                 while needed > 0:
-                    options = required_courses - taken_in_group
+                    # Sort by first 2 digits then by last 3 digits
+                    options = sorted(required_courses - taken_in_group, key=lambda x: (x[:2], x[7:]))
                     valid_courses = [course for course in options
                         if RequirementService.check_requirements_met(username, course_id=course, extra_courses=missing_courses)]
                     if not valid_courses:
@@ -168,7 +168,6 @@ class RequirementService:
                                 needed -= 1
                                 if needed <= 0:
                                     break
-                    print(valid_courses, needed, missing_courses, required_courses)
                     missing_courses.update(valid_courses[:needed])
                     needed -= len(valid_courses)
 

@@ -4,6 +4,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DragDrop from "./pages/DragDrop";
@@ -24,6 +25,10 @@ function App() {
 						path="/register"
 						element={<Register />}
 					/>
+          <Route 
+            path="/reset_password" 
+            element={<ResetPassword />} 
+          />
 					<Route
 						path="/home"
 						element={<Home />}
