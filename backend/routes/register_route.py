@@ -52,7 +52,7 @@ def register():
         "role": role,
     }
 
-    result = DBService.insert_new_account(account_data)
+    result = UserService.insert_new_account(account_data)
 
     if isinstance(result, str):  # If DBService returns an error string
         return (
@@ -73,7 +73,7 @@ def register():
         "class_year": "Freshman",
     }
 
-    result = DBService.add_student_details(student_detail)
+    result = UserService.add_student_details(student_detail)
 
     ## Can add some validation to make sure student details is added
     print(result)

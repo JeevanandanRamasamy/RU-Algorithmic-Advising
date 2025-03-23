@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
+from services.user_service import UserService
 from services.db_service import DBService  # Assuming DBService is inside services
 
 login_bp = Blueprint("login", __name__)
+
 
 @login_bp.route("/api/login", methods=["POST"])
 def login():
@@ -11,7 +13,7 @@ def login():
     password = data.get("password")
 
     # Check in DB
-    if not DBService.check_account_exists(username):
+    if not UserService.check_account_exists(username):
         return (
             jsonify(
                 {"message": "Account doesn't exist, please register", "status": "error"}
@@ -20,7 +22,7 @@ def login():
         )
 
     # Check if credentials match
-    account = DBService.get_account_by_username(username)
+    account = UserService.get_account_by_username(username)
     if account and username == account.username and password == account.password:
         # Create JWT token
         access_token = create_access_token(identity=username)
@@ -38,6 +40,3 @@ def login():
         )
     else:
         return jsonify({"message": "Invalid credentials", "status": "error"}), 401
-
-
-

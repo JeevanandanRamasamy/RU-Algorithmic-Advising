@@ -53,39 +53,6 @@ def handle_options_request():
 #     return response
 
 
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-
-    # Check in DB
-    if not UserService.check_account_exists(username):
-        return (
-            jsonify({"message": "Account doesn't exist, please register"}),
-            401,
-        )
-
-    # Check if credentials match
-    account = UserService.get_account_by_username(username)
-    if username == account.username and password == account.password:
-        # Create JWT token
-        access_token = create_access_token(identity=username)
-
-        # Return token as part of the response
-        return (
-            jsonify(
-                {
-                    "message": "Login successful",
-                    "access_token": access_token,
-                }
-            ),
-            200,
-        )
-    else:
-        return jsonify({"message": "Invalid credentials"}), 401
-
-
 app.register_blueprint(course_bp)
 app.register_blueprint(planned_courses_bp)
 app.register_blueprint(programs_bp)
