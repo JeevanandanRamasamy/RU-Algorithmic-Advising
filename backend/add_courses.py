@@ -28,7 +28,7 @@ def search_course_url(courseID):
     """Searches for the first course URL using Brave Search API."""
     query = f'Rutgers "{courseID}"'
     headers = {"Accept": "application/json", "X-Subscription-Token": BRAVE_API_KEY}
-    params = {"q": query, "count": 1}
+    params = {"q": query, "count": 5}
 
     # Make a GET request to the Brave Search API
     response = requests.get(SEARCH_URL, headers=headers, params=params)
@@ -312,24 +312,27 @@ def add_courses_to_database(filename):
         print("Courses added to database successfully!")
 
 
-def add_course_urls(filename, row_range=(0, 1900)):
+def add_course_urls(filename):
     """Adds course URLs to the CSV file using the Brave Search API."""
     df = pd.read_csv(filename)
-    start, end = row_range
+    dept_list = ['013', '014', '016', '050', '070', '082', '090', '136', '160', '185', '189', '192', '198', '220', 
+                 '355', '390', '547', '640', '650', '700', '730', '750', '790', '830', '920', '960', '966']
+    df_filtered = df[df["course_id"].str[3:6].isin(dept_list)]
 
-    for i, row in df.iloc[start:end].iterrows():
+    for i, row in df_filtered.iterrows():
         course_id = row["course_id"]
-        course_link = search_course_url(course_id)
+        course_link = row["course_link"]
+        # course_link = search_course_url(course_id)
         if course_link:
             df.at[i, "course_link"] = course_link
         time.sleep(1) # To avoid hitting the API too fast
         print(f"Row {i}: {course_id} - {course_link}")
     df.to_csv(filename, index=False)
-    print(f"Updated {filename} with {end - start} course URLs.")
+    print(f"Updated {filename} with {len(df_filtered)} course URLs.")
 
 
 if __name__ == "__main__":
     file_name = "course_list.csv"
     # get_course_list(file_name)
     # add_courses_to_database(file_name)
-    # add_course_urls(file_name, row_range=(1800, 3800))
+    add_course_urls(file_name)

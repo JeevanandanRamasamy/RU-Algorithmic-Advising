@@ -138,3 +138,28 @@ class TakenCourseService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error inserting program for student: {str(e)}"
+        
+    @staticmethod
+    def remove_all_courses_taken_by_student(username):
+        try:
+            if not UserService.check_account_exists(username):
+                return f"User account not found"
+
+            courses_taken = (
+                db.session.query(CourseTaken)
+                .filter(CourseTaken.username == username)
+                .all()
+            )
+
+            if not courses_taken:
+                return "Student has not taken any courses"
+
+            for taken_course in courses_taken:
+                db.session.delete(taken_course)
+
+            db.session.commit()
+            return TakenCourseService.get_courses_taken_by_student(username)
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error removing all courses taken by student: {str(e)}"
