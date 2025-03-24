@@ -1,4 +1,8 @@
 from services.db_service import DBService
+from services.program_service import ProgramService
+from services.course_service import CourseService
+from services.taken_course_service import TakenCourseService
+from services.user_program_service import UserProgramService
 
 class RequirementService:
     @staticmethod
@@ -6,7 +10,7 @@ class RequirementService:
         """Retrieve all prerequisite courses for a given course."""
         if visited is None:
             visited = set()  # Keep track of visited courses to avoid infinite loops
-        course = DBService.get_course_by_id(course_id)
+        course = CourseService.get_course_by_id(course_id)
         if not course or course_id in visited:
             return set()  # Return an empty set if the course does not exist or has been visited
         visited.add(course_id)  # Mark this course as visited
@@ -30,9 +34,12 @@ class RequirementService:
         return prerequisites
 
     @staticmethod
-    def check_requirements_met(username, program_id=None, course_id=None, extra_courses=None):
+    def check_requirements_met(username, group_id=None, program_id=None, course_id=None, extra_courses=None):
         """Check if a student has met the requirements for a given program."""
-        if program_id:
+        if group_id:
+            # Fetch requirement groups for a specific group_id
+            requirement_groups = [DBService.get_requirement_group_by_id(group_id)]
+        elif program_id:
             # Fetch program requirement groups
             program = DBService.get_program(program_id)
             if not program:
@@ -51,7 +58,7 @@ class RequirementService:
             return True  # No requirements to check
 
         # Fetch student's completed courses
-        courses_taken = DBService.get_courses_taken_by_student(username)
+        courses_taken = TakenCourseService.get_courses_taken_by_student(username)
         courses_taken = {course.course_id for course in courses_taken} # Extract course_ids
         if extra_courses:
             courses_taken.update(extra_courses)
@@ -71,16 +78,16 @@ class RequirementService:
             if not group:
                 return True  # No requirements to fulfill
                 
-            required_courses = set(group.list) if group.list else set()
             num_required = group.num_required
 
-            # If num_required = 0, all courses in the list must be taken
-            if num_required == 0 and not required_courses.issubset(courses_taken):
-                return False
-
-            # If num_required > 0, at least num_required courses from the list must be taken
-            if num_required > 0 and len(required_courses.intersection(courses_taken)) < num_required:
-                return False
+            if group.list:
+                required_courses = set(group.list)
+                # If num_required = 0, all courses in the list must be taken
+                if num_required == 0 and not required_courses.issubset(courses_taken):
+                    return False
+                # If num_required > 0, at least num_required courses from the list must be taken
+                if num_required > 0 and len(required_courses.intersection(courses_taken)) < num_required:
+                    return False
 
             # Recursively check child groups
             child_groups = DBService.get_child_requirement_groups(group_id)
@@ -109,13 +116,13 @@ class RequirementService:
         """Return a list of courses the student still needs to complete."""
         if program_id:
             # Fetch program requirement groups
-            program = DBService.get_program(program_id)
+            program = ProgramService.get_program(program_id)
             if not program:
                 raise ValueError(f"Program {program_id} not found")
             requirement_groups = DBService.get_requirement_group_by_program(program_id)
         elif course_id:
             # Fetch requirement groups for a specific course
-            course = DBService.get_course_by_id(course_id)
+            course = CourseService.get_course_by_id(course_id)
             if not course:
                 raise ValueError(f"Course {course_id} not found")
             requirement_groups = DBService.get_requirement_group_by_course(course_id)
@@ -126,7 +133,7 @@ class RequirementService:
             return []  # No requirements to check
 
         # Fetch student's completed courses
-        courses_taken = DBService.get_courses_taken_by_student(username)
+        courses_taken = TakenCourseService.get_courses_taken_by_student(username)
         if not courses_taken:
             courses_taken = set()
         else:
@@ -137,8 +144,8 @@ class RequirementService:
         def check_missing_courses(group_id):
             """Recursive helper function to find missing courses."""
             group = DBService.get_requirement_group_by_id(group_id)
-            if not group:
-                return
+            if not group or RequirementService.check_requirements_met(username, group_id=group_id):
+                return # No requirements to check or already met
             
             required_courses = set(group.list) if group.list else set()
             num_required = group.num_required
@@ -149,7 +156,7 @@ class RequirementService:
                 # All courses in the list must be taken
                 options = required_courses - courses_taken
                 for course in options:
-                    if not DBService.get_course_by_id(course):
+                    if not CourseService.get_course_by_id(course):
                         return  # Course not found, skip it
                 missing_courses.update(options)
             elif num_required > 0 and required_courses:
@@ -163,7 +170,7 @@ class RequirementService:
                         if RequirementService.check_requirements_met(username, course_id=course, extra_courses=missing_courses)]
                     if not valid_courses:
                         for course in options:
-                            if DBService.get_course_by_id(course):
+                            if CourseService.get_course_by_id(course):
                                 missing_courses.add(course)
                                 needed -= 1
                                 if needed <= 0:
@@ -204,7 +211,7 @@ class RequirementService:
     def get_suggested_courses(username, max_credits=20.5):
         """Suggest courses for a student based on their current credits and requirements."""
         # Fetch programs associated with the student
-        programs = DBService.get_student_programs(username)
+        programs = UserProgramService.get_student_programs(username)
         if not programs:
             return "No programs found for the student"
         program_ids = [program.program_id for program in programs]
@@ -213,6 +220,17 @@ class RequirementService:
         missing_courses = set()
         for program_id in program_ids:
             missing_courses.update(RequirementService.get_missing_requirements(username, program_id=program_id))
+
+        # Remove redundant math courses if a higher-level math course is available
+        math_courses = {course for course in missing_courses if course.startswith("01:640:")}
+        highest_math_course = None
+        for course in math_courses:
+            if (not highest_math_course or course > highest_math_course) and RequirementService.check_requirements_met(username, course_id=course):
+                highest_math_course = course
+        if highest_math_course:
+            for course in math_courses:
+                if course < highest_math_course:
+                    missing_courses.discard(course)
 
         suggested_courses = set()
         total_credits = 0
@@ -228,7 +246,7 @@ class RequirementService:
         print("Priority courses (missing prerequisites):", priority)
         for prereq in priority:
             if RequirementService.check_requirements_met(username, course_id=prereq):
-                total_credits += DBService.get_course_by_id(prereq).credits
+                total_credits += CourseService.get_course_by_id(prereq).credits
                 if total_credits <= max_credits:
                     suggested_courses.add(prereq)
                 else:
@@ -239,10 +257,12 @@ class RequirementService:
             remaining_courses = missing_courses - priority
             for course in remaining_courses:
                 if RequirementService.check_requirements_met(username, course_id=course):
-                    total_credits += DBService.get_course_by_id(course).credits
-                    if total_credits <= max_credits:
+                    additional_credits = CourseService.get_course_by_id(course).credits
+                    if additional_credits + total_credits <= max_credits:
                         suggested_courses.add(course)
+                        total_credits += additional_credits
                     else:
+                        # Stop suggesting courses if adding this one exceeds max credits
                         break
                 
-        return suggested_courses
+        return suggested_courses, total_credits

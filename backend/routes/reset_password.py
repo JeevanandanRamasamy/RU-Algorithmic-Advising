@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from services.db_service import DBService
+from services.user_service import UserService
 from sqlalchemy.exc import SQLAlchemyError
 
 reset_password_bp = Blueprint("reset_password", __name__)  # Create a Blueprint object
@@ -13,7 +13,7 @@ def validate_username():
         return jsonify({"message": "Username is required.", "status": "error"}), 400
 
     # Validation
-    if not DBService.check_account_exists(username):
+    if not UserService.check_account_exists(username):
         return jsonify({"message": "User not found.", "status": "error"}), 404
     
     return jsonify({"message": "Username is valid.", "status": "success"}), 200
@@ -29,12 +29,12 @@ def reset_password():
         return jsonify({"message": "Username and new password are required.", "status": "error"}), 400
 
     # Check if user exists
-    if not DBService.check_account_exists(username):
+    if not UserService.check_account_exists(username):
         return jsonify({"message": "User not found.", "status": "error"}), 404
     
     # Update password
     try:
-        account = DBService.get_account_by_username(username)
+        account = UserService.get_account_by_username(username)
         account_data = {
             "username": username,
             "password": new_password,
@@ -42,7 +42,7 @@ def reset_password():
             "last_name": account.last_name,
             "role": account.role
         }
-        update_result = DBService.update_account(username, account_data)
+        update_result = UserService.update_account(username, account_data)
 
         if update_result:
             return jsonify({"message": "Password reset successful.", "status": "success"}), 200
