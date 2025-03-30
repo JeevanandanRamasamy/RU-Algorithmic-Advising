@@ -112,10 +112,8 @@ class UserPlanService:
     @staticmethod
     def add_course_to_plan(course_id, plan_id, term, year):
         username = get_jwt_identity()  # Get the username from JWT
-
         # Get the degree plan(s) for the user
         degree_plans = DBService.get_degree_plans(username)
-
         # If no degree plans exist for the user, create a new one
         if not degree_plans:
             plan_data = {
@@ -139,38 +137,46 @@ class UserPlanService:
         ).first()
 
         if existing_course:
-            return f"Course {course_id} is already in the plan"
-        planned_course = PlannedCourse(
-            plan_id=plan_id, course_id=course_id, term=term, year=year
-        )
-        print(plan_id, course_id)
-        db.session.add(planned_course)
-        db.session.commit()
+            existing_course.term = term
+            existing_course.year = int(year)
+            db.session.commit()
+        else:
+            planned_course = PlannedCourse(
+                plan_id=plan_id, course_id=course_id, term=term, year=int(year)
+            )
+            db.session.add(planned_course)
+            db.session.commit()
+        UserPlanService.get_planned_course_for_user(course_id, plan_id)
+
         return UserPlanService.get_planned_course_for_user(course_id, plan_id)
 
     @staticmethod
-    def drop_course_from_plan(plan_id, course_id):
+    def drop_course_from_plan(course_id):
         username = get_jwt_identity()  # Get the username from JWT
 
-        # Get the degree plans for the user
         degree_plans = DBService.get_degree_plans(username)
 
-        # If no degree plans exist, create a new one
-        degree_plan = next(
-            (plan for plan in degree_plans if plan.plan_id == plan_id), None
-        )
-
-        if not degree_plan:
-            # Create a new degree plan for the user
+        if not degree_plans:
             plan_data = {
                 "username": username,
-                "plan_name": f"New Plan {plan_id}",  # This will be assigned after commit, so don't worry about plan_id initially
+                "plan_name": f"New Plan",  # Plan name will be generated upon commit
                 "last_updated": datetime.now(),
             }
             degree_plan = DBService.insert_degree_plan(plan_data)
+            # Ensure degree_plan is returned correctly from insert_degree_plan
+            if not isinstance(degree_plan, DegreePlan):
+                return {"message": f"Error creating degree plan: {degree_plan}"}, 500
+        else:
+            degree_plan = degree_plans[
+                0
+            ]  # Assuming user can have multiple plans, select the first one.
+
+        # Get the degree plans for the user
+
+        # If no degree plans exist, create a new one
 
         # Now that we are sure the degree plan exists, use the delete_planned_course method to remove the course
-        response = DBService.delete_planned_course(plan_id, course_id)
+        response = DBService.delete_planned_course(degree_plan.plan_id, course_id)
         print(response)
 
         if "successfully" in response:
@@ -178,7 +184,11 @@ class UserPlanService:
             degree_plan.last_updated = datetime.now()
             db.session.commit()
 
-            return {"message": response, "plan_id": plan_id, "course_id": course_id}
+            return {
+                "message": response,
+                "plan_id": degree_plan.plan_id,
+                "course_id": course_id,
+            }
         else:
             # If there was an error, return the response as is
             return {"message": response}

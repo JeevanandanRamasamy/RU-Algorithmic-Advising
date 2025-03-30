@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
-import LogoutButton from "../components/navbuttons/LogoutButton";
-import HomeButton from "../components/navbuttons/HomeButton";
 import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
+import DropCoursesContainer from "../components/dropCoursesContainer";
 
 import AvailableCourses from "../components/courses/AvailableCourses";
-import PlannedCourses from "../components/courses/PlannedCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import usePlannedCourses from "../hooks/usePlannedCourses";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -38,6 +36,7 @@ function DragDrop() {
 		handleAddPlannedCourse,
 		handleRemovePlannedCourse
 	} = usePlannedCourses(backendUrl, token, courses);
+	console.log(plannedCourses);
 
 	// TODO: Filter out taken courses
 	return (
@@ -61,7 +60,44 @@ function DragDrop() {
 					}
 					CourseComponent={AvailableCourses}
 				/>
-				<CourseListContainer
+
+				<DropCoursesContainer
+					term="fall"
+					year={2022}
+					courses={plannedCourses}
+					getCourse={course => course.course_info}
+					handleAddPlannedCourse={handleAddPlannedCourse}
+					handleRemovePlannedCourse={handleRemovePlannedCourse}
+				/>
+				<DropCoursesContainer
+					term="spring"
+					year={2023}
+					courses={plannedCourses}
+					getCourse={course => course.course_info}
+					handleAddPlannedCourse={handleAddPlannedCourse}
+					handleRemovePlannedCourse={handleRemovePlannedCourse}
+				/>
+				{/* <DropCoursesContainer
+					term="Fall"
+					year={1995}
+				/>
+				<DropCoursesContainer
+					term="Spring"
+					year={1995}
+				/>
+				<DropCoursesContainer
+					term="Fall"
+					year={1995}
+				/>
+				<DropCoursesContainer
+					term="Spring"
+					year={1995}
+				/>
+				<DropCoursesContainer
+					term="Fall"
+					year={1995}
+				/> */}
+				{/* <CourseListContainer
 					title="Planned Courses"
 					searchQuery={searchPlannedQuery}
 					setSearchQuery={setSearchPlannedQuery}
@@ -74,7 +110,7 @@ function DragDrop() {
 						onRemoveCourse: handleRemovePlannedCourse,
 						onAddCourse: handleAddPlannedCourse
 					}}
-				/>
+				/> */}
 			</main>
 		</div>
 	);

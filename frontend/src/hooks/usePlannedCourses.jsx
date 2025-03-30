@@ -4,11 +4,10 @@ const usePlannedCourses = (backendUrl, token) => {
 	const [plannedCourses, setPlannedCourses] = useState([]);
 	const [plannedCoursesLoading, setPlannedCoursesLoading] = useState(false);
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);
-
 	const [searchPlannedQuery, setSearchPlannedQuery] = useState("");
-	const [planId, setPlanId] = useState(null);
+	// const [planId, setPlanId] = useState(null);
 
-	const fetchPlannedCourses = useCallback(async () => {
+	const fetchPlannedCourses = async () => {
 		setPlannedCoursesLoading(true);
 		try {
 			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
@@ -19,43 +18,55 @@ const usePlannedCourses = (backendUrl, token) => {
 			if (!response.ok) throw new Error("Failed to fetch courses");
 
 			const data = await response.json();
+			console.log(data);
 			setPlannedCourses(data.planned_courses ? data.planned_courses : []);
-			const planIdValue = data?.planned_courses[0]?.plan_id || planId || null;
-			console.log("Assigned planId:", planIdValue);
-			setPlanId(planIdValue);
 		} catch (err) {
 			setPlannedCoursesError(err.message);
 			console.error("Error fetching courses:", err);
 		} finally {
 			setPlannedCoursesLoading(false);
 		}
-	}, [backendUrl, token]);
+	};
 	useEffect(() => {
 		if (token) {
 			fetchPlannedCourses();
 		}
-	}, [token, fetchPlannedCourses]);
+	}, []);
 
-	const handleAddPlannedCourse = async courseId => {
+	const handleAddPlannedCourse = async (courseId, term, year) => {
 		try {
+			console.log(plannedCourses);
 			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${localStorage.getItem("token")}`
+					"Authorization": `Bearer ${token}`
 				},
-				body: JSON.stringify({ course_id: courseId })
+				body: JSON.stringify({ course_id: courseId, term: term, year: year })
 			});
 
 			const data = await response.json();
+			console.log(data);
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
 				setPlannedCoursesError(data.message);
 			} else {
-				setPlannedCourses(prevCourses => [...prevCourses, data.planned_course]);
-				if (data?.plannedCourses?.length > 0) {
-					setPlanId(data.planned_courses[0].plan_id);
-				}
+				setPlannedCourses(prevCourses => {
+					const courseIndex = prevCourses.findIndex(
+						course => course?.course_info?.course_id === courseId
+					);
+					if (courseIndex !== -1) {
+						const updatedCourses = [...prevCourses];
+						updatedCourses[courseIndex] = {
+							...updatedCourses[courseIndex],
+							term: term,
+							year: year
+						};
+						return updatedCourses;
+					} else {
+						return [...prevCourses, data.planned_course];
+					}
+				});
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
@@ -67,21 +78,21 @@ const usePlannedCourses = (backendUrl, token) => {
 		setPlannedCoursesLoading(true);
 
 		try {
-			if (!planId) {
-				console.log(planId);
-				console.error("Plan ID is missing!");
-				return;
-			}
+			// if (!planId) {
+			// 	// console.log(planId);
+			// 	console.error("Plan ID is missing!");
+			// 	return;
+			// }
 
 			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${localStorage.getItem("token")}`
+					"Authorization": `Bearer ${token}`
 				},
 				body: JSON.stringify({
-					course_id: courseId,
-					plan_id: planId
+					course_id: courseId
+					// plan_id: planId
 				})
 			});
 
@@ -97,9 +108,9 @@ const usePlannedCourses = (backendUrl, token) => {
 					prevPlannedCourses.filter(course => course.course_info.course_id !== courseId)
 				);
 
-				setPlanId(
-					data?.planned_courses?.length > 0 ? data.planned_courses[0].plan_id : planId
-				); // Only update if new plan_id is returned
+				// setPlanId(
+				// 	data?.planned_courses?.length > 0 ? data.planned_courses[0].plan_id : planId
+				// ); // Only update if new plan_id is returned
 			} //else {
 			//console.log("Course removed successfully");
 			// No need to refetch if the operation was successful
