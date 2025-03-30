@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
-import Dropdown from "../components/generic/Dropdown";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import { useAuth } from "../context/AuthContext";
 import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
-import ListContainer from "../components/generic/ListContainer";
 import Navbar from "../components/navbar/Navbar";
 import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
