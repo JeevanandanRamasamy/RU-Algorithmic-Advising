@@ -1,10 +1,23 @@
 from flask import Flask, request, jsonify
 from services.user_service import UserService
-# from services.db_service import DBService
-# from sqlalchemy.exc import SQLAlchemyError
 from flask import Blueprint
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
+
+@register_bp.route("/api/check_username_exists", methods=["POST"])
+def validate_username():
+    data = request.json
+    username = data.get("username")
+
+    if not username:
+        return jsonify({"message": "Username is required.", "status": "error"}), 400
+
+    # Check if username already exists
+    if UserService.check_account_exists(username):
+        return jsonify({"message": "User already exists.", "status": "error"}), 409
+    
+    return jsonify({"message": "Username is valid.", "status": "success"}), 200
+
 
 @register_bp.route("/api/register", methods=["POST"])
 def register():
