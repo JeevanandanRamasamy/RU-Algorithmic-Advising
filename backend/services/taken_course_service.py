@@ -1,5 +1,5 @@
 from db import db
-from datetime import datetime
+# from datetime import datetime
 from models.course import Course
 from models.course_taken import CourseTaken
 from sqlalchemy.exc import SQLAlchemyError
