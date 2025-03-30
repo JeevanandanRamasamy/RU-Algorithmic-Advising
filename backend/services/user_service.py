@@ -28,7 +28,6 @@ class UserService:
 
     @staticmethod
     def check_account_exists(username):
-        print("this")
         try:
             return db.session.query(
                 db.exists().where(Account.username == username)

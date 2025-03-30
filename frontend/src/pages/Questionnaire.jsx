@@ -10,6 +10,7 @@ import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
 import ListContainer from "../components/generic/ListContainer";
 import Navbar from "../components/navbar/Navbar";
+import DropCoursesContainer from "../components/dropCoursesContainer";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -226,7 +227,7 @@ const Questionnaire = () => {
 			<div className="">
 				<Navbar />
 				<div className="ml-[110px] pt-[5px]">
-					<div className="flex px-[10px] justify-evenly">
+					{/* <div className="flex px-[10px] justify-evenly">
 						<div className="flex flex-col gap-3">
 							<div className="flex flex-row gap-5 items-center">
 								<label
@@ -310,7 +311,7 @@ const Questionnaire = () => {
 								handleButtonClick={handleRemoveProgram}
 							/>
 						</div>
-					</div>
+					</div> */}
 					<div className="flex gap-[30px]">
 						<CourseListContainer
 							title="Available Courses"
@@ -326,7 +327,7 @@ const Questionnaire = () => {
 							}
 							CourseComponent={AvailableCourses}
 						/>
-						<CourseListContainer
+						{/* <CourseListContainer
 							title="Taken Courses"
 							searchQuery={searchTaken}
 							setSearchQuery={setSearchTaken}
@@ -339,6 +340,10 @@ const Questionnaire = () => {
 								onRemoveCourse: handleRemoveTakenCourse,
 								onAddCourse: handleAddTakenCourse
 							}}
+						/> */}
+						<DropCoursesContainer
+							term=""
+							year={1995}
 						/>
 					</div>
 					<div className="flex justify-center mt-5">
