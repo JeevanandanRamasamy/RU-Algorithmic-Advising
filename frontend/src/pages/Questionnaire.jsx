@@ -345,6 +345,14 @@ const Questionnaire = () => {
 							term=""
 							year={1995}
 						/>
+						<DropCoursesContainer
+							term=""
+							year={1995}
+						/>
+						<DropCoursesContainer
+							term=""
+							year={1995}
+						/>
 					</div>
 					<div className="flex justify-center mt-5">
 						<Button
