@@ -1,11 +1,10 @@
 from flask import Flask, request, jsonify
 from services.user_service import UserService
-from services.db_service import DBService
-from sqlalchemy.exc import SQLAlchemyError
+# from services.db_service import DBService
+# from sqlalchemy.exc import SQLAlchemyError
 from flask import Blueprint
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
-
 
 @register_bp.route("/api/register", methods=["POST"])
 def register():

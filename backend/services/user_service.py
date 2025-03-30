@@ -1,18 +1,7 @@
 from db import db
-from datetime import datetime
-from models import (
-    Account,
-    StudentDetails,
-    Course,
-    CourseTaken,
-    Program,
-    StudentProgram,
-    RequirementGroup,
-    DegreePlan,
-    PlannedCourse,
-    SchedulePlan,
-    Section,
-)
+# from datetime import datetime
+from models.account import Account
+from models.student_details import StudentDetails
 from sqlalchemy.exc import SQLAlchemyError
 
 
