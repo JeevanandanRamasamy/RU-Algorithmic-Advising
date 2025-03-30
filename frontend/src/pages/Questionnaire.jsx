@@ -19,16 +19,6 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Questionnaire = () => {
 	const { user, token } = useAuth();
-	// const [gradYear, setGradYear] = useState("");
-	// const [enrolledYear, setEnrolledYear] = useState("");
-	// const [programsQuery, setProgramsQuery] = useState("");
-	// const [selectedProgramsQuery, setSelectedProgramsQuery] = useState("");
-	// const [gpa, setGpa] = useState(0);
-	// const [classYear, setClassYear] = useState("");
-	// const [programs, setPrograms] = useState([]);
-	// const [selectedPrograms, setSelectedPrograms] = useState([]);
-	// const [filteredPrograms, setFilteredPrograms] = useState([]);
-	// const [filteredSelectedPrograms, setFilteredSelectedPrograms] = useState([]);
 	const {
 		classes,
 		gradYear,
@@ -82,154 +72,6 @@ const Questionnaire = () => {
 		searchTaken,
 		setSearchTaken
 	} = useTakenCourses(backendUrl, token, setCourses);
-
-	// useEffect(() => {
-	// 	const fetchPrograms = async () => {
-	// 		try {
-	// 			const response = await fetch(`${backendUrl}/api/programs`);
-	// 			const data = await response.json();
-	// 			setFilteredPrograms(data.programs);
-	// 			setPrograms(data.programs);
-	// 		} catch (error) {
-	// 			console.error("Error fetching programs:", error);
-	// 		}
-	// 	};
-
-	// 	const fetchUserPrograms = async () => {
-	// 		try {
-	// 			if (!user) return;
-	// 			const response = await fetch(`${backendUrl}/api/users/programs`, {
-	// 				method: "GET",
-	// 				headers: {
-	// 					"Content-Type": "application/json",
-	// 					"Authorization": `Bearer ${localStorage.getItem("token")}`
-	// 				}
-	// 			});
-	// 			const data = await response.json();
-	// 			setSelectedPrograms(data.student_program);
-	// 		} catch (error) {
-	// 			console.error("Error fetching programs:", error);
-	// 		}
-	// 	};
-	// const fetchUserDetails = async () => {
-	// 	try {
-	// 		if (!user) return;
-	// 		const response = await fetch(`${backendUrl}/api/users/details`, {
-	// 			method: "GET",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 				"Authorization": `Bearer ${localStorage.getItem("token")}`
-	// 			}
-	// 		});
-	// 		const data = await response.json();
-	// 		const fields = {
-	// 			grad_date: setGradYear,
-	// 			enroll_date: setEnrolledYear,
-	// 			gpa: setGpa,
-	// 			class_year: setClassYear
-	// 		};
-	// 		Object.entries(fields).forEach(([key, setter]) => {
-	// 			if (data.user_details[key]) {
-	// 				setter(data.user_details[key]);
-	// 			}
-	// 		});
-	// 	} catch (error) {
-	// 		console.error("Error fetching programs:", error);
-	// 	}
-	// };
-	// 	fetchPrograms();
-	// 	fetchUserPrograms();
-	// 	// fetchUserDetails();
-	// }, [user]);
-
-	// useEffect(() => {
-	// 	if (!programs) return;
-
-	// 	const filteredPrograms = programsQuery
-	// 		? programs.filter(program =>
-	// 				program.program_name.toLowerCase().includes(programsQuery.toLowerCase())
-	// 		  )
-	// 		: programs;
-
-	// 	setFilteredPrograms(filteredPrograms);
-	// }, [programsQuery, programs]);
-
-	// useEffect(() => {
-	// 	if (!selectedPrograms) return;
-
-	// 	const filteredSelectedPrograms = selectedProgramsQuery?.trim()
-	// 		? selectedPrograms.filter(program =>
-	// 				program.program_name.toLowerCase().includes(selectedProgramsQuery.toLowerCase())
-	// 		  )
-	// 		: selectedPrograms;
-
-	// 	setFilteredSelectedPrograms(filteredSelectedPrograms);
-	// }, [selectedProgramsQuery, selectedPrograms]);
-
-	// const handleInsertProgram = async program_id => {
-	// 	const response = await fetch(`${backendUrl}/api/users/programs`, {
-	// 		method: "POST",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 			"Authorization": `Bearer ${localStorage.getItem("token")}`
-	// 		},
-
-	// 		body: JSON.stringify({
-	// 			username: user,
-	// 			program_id: program_id
-	// 		})
-	// 	});
-	// 	const data = await response.json();
-	// 	if (response.ok) {
-	// 		setSelectedPrograms(prev => [...prev, data.student_program]);
-	// 	} else {
-	// 		// console.log(data);
-	// 	}
-	// 	// TODO: handle errors
-	// };
-
-	// const handleRemoveProgram = async program_id => {
-	// 	const response = await fetch(`${backendUrl}/api/users/programs`, {
-	// 		method: "DELETE",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 			"Authorization": `Bearer ${localStorage.getItem("token")}`
-	// 		},
-	// 		body: JSON.stringify({ username: "admin", program_id: program_id })
-	// 	});
-	// 	const data = await response.json();
-	// 	// console.log(data);
-	// 	if (response.ok) {
-	// 		setSelectedPrograms(
-	// 			selectedPrograms.filter(p => p.program_id !== data.student_program.program_id)
-	// 		);
-	// 	}
-	// 	// TODO: handle errors
-	// };
-	// const saveData = async () => {
-	// 	const response = await fetch(`${backendUrl}/api/users/details`, {
-	// 		method: "PUT",
-	// 		headers: {
-	// 			"Content-Type": "application/json",
-	// 			"Authorization": `Bearer ${localStorage.getItem("token")}`
-	// 		},
-	// 		body: JSON.stringify(
-	// 			Object.fromEntries(
-	// 				Object.entries({
-	// 					grad_date: gradYear,
-	// 					enroll_date: enrolledYear,
-	// 					gpa: gpa,
-	// 					class_year: classYear
-	// 				}).filter(([_, value]) => value !== "")
-	// 			)
-	// 		)
-	// 	});
-	// 	//TODO: redirect
-	// 	if (response.ok) {
-	// 		navigate("/home");
-	// 	} else {
-	// 	}
-	// };
 
 	return (
 		<>
@@ -300,13 +142,6 @@ const Questionnaire = () => {
 							onClick={saveStudentDetails}
 						/>
 					</div>
-					{/* <div className="flex justify-center mt-5">
-					<Button
-						className="bg-blue-500 text-white p-1 rounded w-20"
-						label="Save"
-						onClick={saveData}
-					/>
-		</div> */}
 				</div>
 			</div>
 		</>
