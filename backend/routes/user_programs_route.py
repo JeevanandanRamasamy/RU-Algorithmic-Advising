@@ -11,6 +11,9 @@ users_programs_bp = Blueprint(
 @users_programs_bp.route("", methods=["GET"])
 @jwt_required()
 def get_program_for_student():
+    """
+    API endpoint to get programs for a student
+    """
     try:
         username = get_jwt_identity()
         if not username:

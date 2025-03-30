@@ -17,7 +17,6 @@ const useCourses = (backendUrl, token) => {
 			if (!response.ok) throw new Error("Failed to fetch courses");
 
 			const data = await response.json();
-			console.log(data);
 			setCourses(data);
 		} catch (err) {
 			setCoursesError(err.message);
