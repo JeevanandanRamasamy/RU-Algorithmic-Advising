@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import or_
-from models import Course
+from models.course import Course
 from services.course_soc_service import RutgersCourseAPI
 from services.course_service import CourseService
 

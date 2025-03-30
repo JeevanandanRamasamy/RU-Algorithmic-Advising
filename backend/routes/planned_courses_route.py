@@ -9,7 +9,6 @@ planned_courses_bp = Blueprint(
     "planned_courses", __name__, url_prefix="/api/users/planned_courses"
 )
 
-
 # Get all planned courses for the logged-in user
 @planned_courses_bp.route("", methods=["GET"])
 @jwt_required()  # Ensure the user is authenticated using JWT
