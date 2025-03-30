@@ -9,6 +9,7 @@ from routes.planned_courses_route import planned_courses_bp
 from routes.programs_route import programs_bp
 from routes.register_route import register_bp
 from routes.login import login_bp
+from routes.reset_password import reset_password_bp
 from routes.verification import verification_bp
 from routes.taken_courses_route import taken_courses_bp
 from routes.user_programs_route import users_programs_bp
@@ -60,6 +61,7 @@ app.register_blueprint(users_bp)
 app.register_blueprint(users_programs_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
+app.register_blueprint(reset_password_bp)
 app.register_blueprint(verification_bp)
 app.register_blueprint(taken_courses_bp)
 
