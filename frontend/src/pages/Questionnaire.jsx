@@ -102,8 +102,8 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					<div className="flex gap-[30px]">
-						{/* <CourseListContainer
+					{/* <div className="flex gap-[30px]"> */}
+					{/* <CourseListContainer
 							title="Available Courses"
 							searchQuery={searchAvailable}
 							setSearchQuery={setSearchAvailable}
@@ -117,7 +117,7 @@ const Questionnaire = () => {
 							}
 							CourseComponent={AvailableCourses}
 						/> */}
-						{/* <CourseListContainer
+					{/* <CourseListContainer
 							title="Taken Courses"
 							searchQuery={searchTaken}
 							setSearchQuery={setSearchTaken}
@@ -131,7 +131,7 @@ const Questionnaire = () => {
 								onAddCourse: handleAddTakenCourse
 							}}
 						/> */}
-					</div>
+					{/* </div> */}
 					<div className="flex justify-center mt-5">
 						<Button
 							className="bg-blue-500 text-white p-1 rounded w-20"

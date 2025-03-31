@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, request, jsonify
 from services.user_service import UserService
 from services.db_service import DBService
@@ -64,10 +65,12 @@ def register():
             500,
         )
 
+    current_year = datetime.now().year
+
     student_detail = {
         "username": username,
-        "grad_date": 2025,
-        "enroll_date": 2025,
+        "grad_date": current_year + 4,
+        "enroll_date": current_year,
         "credits_earned": 0,
         "gpa": 0.00,
         "class_year": "Freshman",

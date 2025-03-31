@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 const classes = ["freshman", "sophomore", "junior", "senior", "graduate"];
 import { useNavigate } from "react-router-dom";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useAuth } from "../context/AuthContext";
 
-const useStudentDetails = (backendUrl, user, token) => {
+const useStudentDetails = () => {
+	const { user, token } = useAuth();
 	const [gradYear, setGradYear] = useState("");
 	const [enrolledYear, setEnrolledYear] = useState("");
 	const [gpa, setGpa] = useState(0);

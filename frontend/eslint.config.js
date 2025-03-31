@@ -23,9 +23,9 @@ export default [
 			"react-hooks": reactHooks,
 			"react-refresh": reactRefresh
 		},
-		corePlugins: {
-			preflight: false
-		},
+		// corePlugins: {
+		// 	preflight: false
+		// },
 		rules: {
 			...js.configs.recommended.rules,
 			...react.configs.recommended.rules,

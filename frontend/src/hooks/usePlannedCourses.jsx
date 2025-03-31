@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const usePlannedCourses = (backendUrl, token) => {
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+const usePlannedCourses = () => {
+	const { user, token } = useAuth();
 	const [plannedCourses, setPlannedCourses] = useState([]);
 	const [plannedCoursesLoading, setPlannedCoursesLoading] = useState(false);
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);

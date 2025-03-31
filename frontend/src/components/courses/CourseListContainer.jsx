@@ -19,8 +19,8 @@ const CourseListContainer = ({
 		: [];
 
 	return (
-		<section className="flex-1 bg-white rounded-lg shadow-md p-5 h-[600px] flex flex-col">
-			<h2>{title}</h2>
+		<section className="flex-1 bg-white rounded-lg shadow-md p-5 h-[400px] flex flex-col">
+			<h2 className="m-0 p-2 text-center">{title}</h2>
 			<div className="mb-4">
 				<input
 					className="w-full p-[10px] border border-gray-300 rounded text-sm box-border"

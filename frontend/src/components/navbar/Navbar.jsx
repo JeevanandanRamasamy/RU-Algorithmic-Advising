@@ -22,7 +22,7 @@ const Navbar = () => {
 	}, [user, navigate]);
 
 	return (
-		<nav className={`sidebar ${isCollapsed ? "close" : ""}`}>
+		<nav className={`sidebar ${isCollapsed ? "close" : ""} z-100`}>
 			<div className="nav-top">
 				<div className="header">
 					<span className="image">

@@ -40,7 +40,10 @@ function App() {
 					<Route
 						path="/questionnaire"
 						element={
-							<DndProvider backend={HTML5Backend}>
+							<DndProvider
+								backend={HTML5Backend}
+								// autoScroll={true}
+							>
 								<Questionnaire />
 							</DndProvider>
 						}
@@ -48,7 +51,10 @@ function App() {
 					<Route
 						path="/degree-planner"
 						element={
-							<DndProvider backend={HTML5Backend}>
+							<DndProvider
+								backend={HTML5Backend}
+								// autoScroll={true}
+							>
 								<DegreePlanner />
 							</DndProvider>
 						}

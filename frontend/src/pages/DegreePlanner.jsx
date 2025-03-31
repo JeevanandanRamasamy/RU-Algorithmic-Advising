@@ -1,52 +1,30 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
-import DropCoursesContainer from "../components/dropCoursesContainer";
-
 import AvailableCourses from "../components/courses/AvailableCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import usePlannedCourses from "../hooks/usePlannedCourses";
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import SemesterPlanner from "../components/semesterPlanner";
+import DraggableCourseList from "../components/draggableCourseList";
 
 function DragDrop() {
-	const { user, token, logout } = useAuth();
-	const {
-		courses,
-		coursesLoading,
-		coursesError,
-		fetchCourses,
-		setCourses,
-		searchAvailable,
-		setSearchAvailable,
-		filteredCourses,
-		setFilteredCourses,
-		excludeCoursesByIds
-	} = useCourses(backendUrl, token);
+	const { courses, searchAvailable, setSearchAvailable } = useCourses();
 	const {
 		plannedCourses,
 		plannedCoursesLoading,
 		plannedCoursesError,
-		planId,
 		fetchPlannedCourses,
 		setPlannedCourses,
 		searchPlannedQuery,
 		setSearchPlannedQuery,
 		handleAddPlannedCourse,
 		handleRemovePlannedCourse
-	} = usePlannedCourses(backendUrl, token, courses);
-	console.log(plannedCourses);
-
-	// TODO: Filter out taken courses
+	} = usePlannedCourses();
 	return (
-		<div className="app">
-			<Navbar />
-			<header className="app-header">
-				<h1>Course Planner</h1>
-			</header>
-			<main className="course-planner">
-				<CourseListContainer
+		<>
+			<div className="fixed">
+				<DraggableCourseList
 					title="Available Courses"
 					searchQuery={searchAvailable}
 					setSearchQuery={setSearchAvailable}
@@ -60,8 +38,32 @@ function DragDrop() {
 					}
 					CourseComponent={AvailableCourses}
 				/>
+			</div>
+			<div className="app h-auto overflow-x-hidden">
+				<Navbar />
 
-				<DropCoursesContainer
+				<header className="app-header">
+					<h1>Course Planner</h1>
+				</header>
+				<main className="gap-8 flex flex-col">
+					{/* <CourseListContainer
+					title="Available Courses"
+					searchQuery={searchAvailable}
+					setSearchQuery={setSearchAvailable}
+					courses={courses}
+					excludedCourseIds={
+						plannedCourses?.length > 0
+							? plannedCourses.map(
+									plannedCourse => plannedCourse.course_info.course_id
+							  )
+							: []
+					}
+					CourseComponent={AvailableCourses}
+					/> */}
+					<SemesterPlanner
+						{...{ plannedCourses, handleAddPlannedCourse, handleRemovePlannedCourse }}
+					/>
+					{/* <DropCoursesContainer
 					term="fall"
 					year={2022}
 					courses={plannedCourses}
@@ -76,8 +78,8 @@ function DragDrop() {
 					getCourse={course => course.course_info}
 					handleAddPlannedCourse={handleAddPlannedCourse}
 					handleRemovePlannedCourse={handleRemovePlannedCourse}
-				/>
-				{/* <DropCoursesContainer
+					/> */}
+					{/* <DropCoursesContainer
 					term="Fall"
 					year={1995}
 				/>
@@ -96,8 +98,8 @@ function DragDrop() {
 				<DropCoursesContainer
 					term="Fall"
 					year={1995}
-				/> */}
-				{/* <CourseListContainer
+						/> */}
+					{/* <CourseListContainer
 					title="Planned Courses"
 					searchQuery={searchPlannedQuery}
 					setSearchQuery={setSearchPlannedQuery}
@@ -110,9 +112,10 @@ function DragDrop() {
 						onRemoveCourse: handleRemovePlannedCourse,
 						onAddCourse: handleAddPlannedCourse
 					}}
-				/> */}
-			</main>
-		</div>
+		/> */}
+				</main>
+			</div>
+		</>
 	);
 }
 

@@ -14,7 +14,6 @@ const DropCoursesContainer = ({
 	handleAddPlannedCourse,
 	handleRemovePlannedCourse
 }) => {
-	// const { year, setYear, term, setTerm } = useSemester(year, term);
 	const coursesBySemester = courses?.filter(
 		course => course?.term === term && course?.year === year
 	);
@@ -29,13 +28,13 @@ const DropCoursesContainer = ({
 		})
 	}));
 	return (
-		<div className="bg-white rounded-lg shadow-md p-5 h-[600px] flex flex-col">
-			<div>
+		<div className="flex-1 bg-white rounded-lg shadow-md p-5 h-[400px] flex flex-col">
+			<div className="text-center h-[10%]">
 				{term?.toUpperCase()} {year}
 			</div>
 			<div
 				ref={drop}
-				className={`h-full flex-1 overflow-y-auto border border-gray-200 rounded-md p-2.5 ${
+				className={`h-[90%] border border-gray-200 overflow-y-scroll rounded-md p-2.5 ${
 					isOver ? "drag-over" : ""
 				}`}>
 				{loading ? (
