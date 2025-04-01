@@ -9,7 +9,7 @@ const useTakenCourses = (backendUrl, token, setAvailableCourses) => {
 	const fetchTakenCourses = useCallback(async () => {
 		setTakenCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/taken_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/taken`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}
@@ -38,7 +38,7 @@ const useTakenCourses = (backendUrl, token, setAvailableCourses) => {
 
 	const handleAddTakenCourse = async courseId => {
 		try {
-			const response = await fetch(`${backendUrl}/api/users/taken_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -63,7 +63,7 @@ const useTakenCourses = (backendUrl, token, setAvailableCourses) => {
 	const handleRemoveTakenCourse = async courseId => {
 		setTakenCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/taken_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",

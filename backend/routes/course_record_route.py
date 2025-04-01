@@ -7,7 +7,7 @@ course_record_bp = Blueprint(
     "course_record", __name__, url_prefix="/api/users/course_record"
 )
 
-@course_record_bp.route("/api/course_record/taken", methods=["GET"])
+@course_record_bp.route("taken", methods=["GET"])
 @jwt_required()
 def get_taken_courses():
     try:
@@ -31,7 +31,7 @@ def get_taken_courses():
     except Exception as e:
         return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
 
-@course_record_bp.route("/api/course_record/planned", methods=["GET"])
+@course_record_bp.route("planned", methods=["GET"])
 @jwt_required()
 def get_planned_courses():
     try:
@@ -89,7 +89,7 @@ def add_course_record():
         return jsonify({"message": f"Error adding course: {str(e)}"}), 500
 
 
-@course_record_bp.route("/api/course_record", methods=["DELETE"])
+@course_record_bp.route("", methods=["DELETE"])
 @jwt_required()
 def remove_course_record():
     try:
@@ -118,7 +118,7 @@ def remove_course_record():
         return jsonify({"message": f"Error removing course: {str(e)}"}), 500
 
 
-@course_record_bp.route("/api/course_record", methods=["PUT"])
+@course_record_bp.route("", methods=["PUT"])
 @jwt_required()
 def update_course_record():
     try:
