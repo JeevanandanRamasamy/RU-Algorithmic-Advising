@@ -9,4 +9,37 @@ const generateSemesters = (enrolledYear, gradYear) => {
 
 	return semesters;
 };
-export { generateSemesters };
+
+const getCurrentSemester = () => {
+	const date = new Date();
+	const month = date.getMonth() + 1;
+	const year = date.getFullYear();
+
+	const term = month >= 9 ? "fall" : "spring";
+	return { term, year };
+};
+
+const generateSemestersTillNow = startYear => {
+	const semesters = [];
+	const currentSemester = getCurrentSemester();
+	let year = startYear;
+	let term = "fall";
+
+	while (year <= currentSemester.year) {
+		semesters.push({ term, year });
+		if (year === currentSemester.year && term === currentSemester.term) break;
+		if (term === "fall") {
+			term = "spring";
+			year++;
+		} else {
+			term = "fall";
+		}
+	}
+	// semesters.push(currentSemester);
+	return semesters;
+};
+
+const containsSemester = (semestersTillNow, year, term) => {
+	return semestersTillNow.some(semester => semester.year === year && semester.term === term);
+};
+export { generateSemesters, generateSemestersTillNow, containsSemester };

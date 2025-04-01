@@ -4,6 +4,7 @@ import { useDrop } from "react-dnd";
 import CourseList from "./courses/CourseList";
 import CourseItem from "./courses/CourseItem";
 import PlannedCourseItem from "./courses/PlannedCourseItem";
+import { containsSemester } from "../helpers/semesters";
 
 const DropCoursesContainer = ({
 	loading,
@@ -12,7 +13,8 @@ const DropCoursesContainer = ({
 	courses,
 	getCourse,
 	handleAddPlannedCourse,
-	handleRemovePlannedCourse
+	handleRemovePlannedCourse,
+	semestersTillNow = { semestersTillNow }
 }) => {
 	const coursesBySemester = courses?.filter(
 		course => course?.term === term && course?.year === year
@@ -27,14 +29,19 @@ const DropCoursesContainer = ({
 			isOver: !!monitor.isOver()
 		})
 	}));
+
 	return (
-		<div className="flex-1 bg-white rounded-lg shadow-md p-5 h-[400px] flex flex-col">
-			<div className="text-center h-[10%]">
+		<div
+			className={`flex-1
+		${containsSemester(semestersTillNow, year, term) ? "bg-green-600" : "bg-blue-700"}
+
+		 rounded-lg shadow-md p-5 h-[400px] flex flex-col `}>
+			<div className="text-center h-[10%] text-white">
 				{term?.toUpperCase()} {year}
 			</div>
 			<div
 				ref={drop}
-				className={`h-[90%] border border-gray-200 overflow-y-scroll rounded-md p-2.5 ${
+				className={`bg-white h-[90%] border border-gray-200 overflow-y-scroll rounded-md p-2.5 ${
 					isOver ? "drag-over" : ""
 				}`}>
 				{loading ? (

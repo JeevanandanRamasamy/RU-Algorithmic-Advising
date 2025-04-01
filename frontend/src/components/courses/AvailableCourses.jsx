@@ -15,7 +15,7 @@ export const AvailableCourses = ({
 	// 	: [];
 	return (
 		<div
-			className={`h-full border border-gray-200 rounded-md p-2.5 flex flex-row gap-3 overflow-x-auto overflow-y-hidden`}>
+			className={`non-draggable h-full border border-gray-200 rounded-md p-2.5 flex flex-row gap-3 overflow-x-auto overflow-y-hidden`}>
 			<CourseList
 				courses={courses}
 				getCourse={getCourse}

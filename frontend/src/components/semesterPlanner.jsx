@@ -1,10 +1,11 @@
 import useStudentDetails from "../hooks/useStudentDetails";
 import DropCoursesContainer from "../components/dropCoursesContainer";
-import { generateSemesters } from "../helpers/semesters";
+import { generateSemesters, generateSemestersTillNow } from "../helpers/semesters";
 
 const SemesterPlanner = ({ plannedCourses, handleAddPlannedCourse, handleRemovePlannedCourse }) => {
 	const { enrolledYear, gradYear } = useStudentDetails();
 	const semesters = generateSemesters(enrolledYear, gradYear);
+	const semestersTillNow = generateSemestersTillNow(enrolledYear);
 
 	return (
 		<>
@@ -19,6 +20,7 @@ const SemesterPlanner = ({ plannedCourses, handleAddPlannedCourse, handleRemoveP
 							getCourse={course => course.course_info}
 							handleAddPlannedCourse={handleAddPlannedCourse}
 							handleRemovePlannedCourse={handleRemovePlannedCourse}
+							semestersTillNow={semestersTillNow}
 						/>
 					);
 				})}
