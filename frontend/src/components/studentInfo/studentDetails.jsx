@@ -45,14 +45,14 @@ const studentDetails = ({
 					className="border border-gray-300 p-2 rounded w-8"
 				/>
 			</div>
-			<div className="flex flex-row gap-5 items-center">
+			{/* <div className="flex flex-row gap-5 items-center">
 				<Dropdown
 					options={classes}
 					selectedValue={classYear}
 					onChange={event => setClassYear(event.target.value)}
 					placeholder="Select Class Year"
 				/>
-			</div>
+			</div> */}
 			<div className="flex flex-row gap-5 items-center">
 				<label
 					className=""

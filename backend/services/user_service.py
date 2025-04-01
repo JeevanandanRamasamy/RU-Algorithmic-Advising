@@ -1,4 +1,5 @@
 from db import db
+
 # from datetime import datetime
 from models.account import Account
 from models.student_details import StudentDetails
@@ -111,12 +112,14 @@ class UserService:
             return f"Error retrieving student details: {str(e)}"
 
     @staticmethod
-    def update_student_details(username, new_data):
+    def update_student_details(username, enrolled_date, grad_date, gpa):
         try:
+            if enrolled_date >= grad_date:
+                return "Enrolled year can not be the same as graduate year"
             student_details = StudentDetails.query.filter_by(username=username).first()
             if student_details:
-                for key, value in new_data.items():
-                    setattr(student_details, key, value)
+                # for key, value in new_data.items():
+                #     setattr(student_details, key, value)
                 db.session.commit()
                 return student_details
             else:
