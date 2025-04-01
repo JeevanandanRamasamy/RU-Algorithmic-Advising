@@ -6,12 +6,10 @@ USE RUAA;
 -- Ensures that dependencies are dropped/added in the correct order
 DROP TABLE IF EXISTS Section;
 DROP TABLE IF EXISTS SchedulePlan;
-DROP TABLE IF EXISTS PlannedCourse;
-DROP TABLE IF EXISTS DegreePlan;
 DROP TABLE IF EXISTS RequirementGroup;
 DROP TABLE IF EXISTS StudentProgram;
 DROP TABLE IF EXISTS Program;
-DROP TABLE IF EXISTS CourseTaken;
+DROP TABLE IF EXISTS CourseRecord;
 DROP TABLE IF EXISTS Course;
 DROP TABLE IF EXISTS StudentDetails;
 DROP TABLE IF EXISTS Account;
@@ -36,7 +34,6 @@ CREATE TABLE StudentDetails (
     enroll_date YEAR,  -- Year of enrollment
     credits_earned DECIMAL(4,1) CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
     gpa DECIMAL(3, 2) CHECK (gpa BETWEEN 0.00 AND 4.00),  -- GPA range between 0.00 and 4.00
-    class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate'),  -- Classification based on credits
     FOREIGN KEY (username) REFERENCES Account(username) ON DELETE CASCADE  -- Delete student details if account is deleted
 );
 
@@ -45,15 +42,36 @@ CREATE TABLE StudentDetails (
 -- ===========================================
 CREATE TABLE Course (
     course_id CHAR(10) PRIMARY KEY,  -- Unique course identifier (e.g., "01:198:431")
-    course_name VARCHAR(200) NOT NULL,  -- Name of the course
+    course_name VARCHAR(255) NOT NULL,  -- Name of the course
     credits DECIMAL(3,1) NOT NULL CHECK (credits >= 0),  -- Number of credits (must be >= 0)
+    requirements VARCHAR(500),  -- Prerequisites for the course (e.g., "01:198:111")
     course_link VARCHAR(255)  -- URL to the course page (dynamically fetched)
 );
 
--- ================================================
--- CourseTaken Table: Tracks student course history
--- ================================================
-CREATE TABLE CourseTaken (
+-- =======================================================================
+-- SPNRequest Table: Stores requests for Special Permission Numbers (SPNs)
+-- =======================================================================
+CREATE TABLE SPNRequest (
+    student_id VARCHAR(6) NOT NULL,  -- Student requesting the SPN
+    course_id CHAR(10) NOT NULL,  -- Course for which SPN is requested
+    section_num CHAR(2) NOT NULL,  -- Section number (e.g., "01")
+    index_num CHAR(5) NOT NULL,  -- Index number for registration
+    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL,  -- Term of the course
+    year YEAR NOT NULL,  -- Year of the course
+    reason VARCHAR(255) NOT NULL,  -- Reason for requesting the SPN
+    status ENUM ('pending', 'approved', 'denied') NOT NULL DEFAULT 'pending',  -- Status of the request
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp of the request
+    admin_id VARCHAR(6),  -- Admin who processed the request (if applicable)
+    PRIMARY KEY (student_id, course_id, section_num),
+    FOREIGN KEY (student_id) REFERENCES StudentDetails (username) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES Account (username) ON DELETE SET NULL  -- Admin ID can be null if not processed yet
+);
+
+-- =================================================
+-- CourseRecord Table: Tracks student course history
+-- =================================================
+CREATE TABLE CourseRecord (
     username VARCHAR(6) NOT NULL,  -- Student who took the course
     course_id CHAR(10) NOT NULL,  -- Course identifier
     term ENUM ('fall', 'spring', 'summer', 'winter'),  -- Term of completion
@@ -104,30 +122,6 @@ CREATE TABLE RequirementGroup (
 	FOREIGN KEY (parent_group_id) REFERENCES RequirementGroup (group_id) ON DELETE CASCADE
 );
 
--- ================================================
--- DegreePlan Table: Stores a student's degree plan
--- ================================================
-CREATE TABLE DegreePlan (
-    plan_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(6) NOT NULL,
-    plan_name VARCHAR(50),  -- Name of the plan (e.g., "CS 4-Year Plan")
-    last_updated DATETIME NOT NULL,  -- Last modification date
-    FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
-);
-
--- ===========================================================
--- PlannedCourse Table: Tracks planned courses per degree plan
--- ===========================================================
-CREATE TABLE PlannedCourse (
-    plan_id INT NOT NULL,
-    course_id CHAR(10) NOT NULL,
-    term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL,
-    year YEAR NOT NULL,
-    PRIMARY KEY (plan_id, course_id),
-    FOREIGN KEY (plan_id) REFERENCES DegreePlan (plan_id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE
-);
-
 -- =======================================================
 -- SchedulePlan Table: Stores schedules for specific terms
 -- =======================================================
@@ -135,7 +129,7 @@ CREATE TABLE SchedulePlan (
     schedule_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(6) NOT NULL,
     schedule_name VARCHAR(50),  -- Custom name for the schedule
-    last_updated DATE NOT NULL,  -- Last modification date
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Timestamp of the last update
     term ENUM ('fall', 'spring', 'summer', 'winter') NOT NULL,
     year YEAR NOT NULL,
     FOREIGN KEY (username) REFERENCES StudentDetails (username) ON DELETE CASCADE
@@ -150,7 +144,7 @@ CREATE TABLE Section (
     section_num CHAR(2) NOT NULL,  -- Section number (e.g., "01")
     index_num CHAR(5) NOT NULL,  -- Index number for registration
     instructor VARCHAR(50) NOT NULL,  -- Instructor's name
-    PRIMARY KEY (schedule_id, course_id, section_num),
+    PRIMARY KEY (schedule_id, course_id),
     FOREIGN KEY (schedule_id) REFERENCES SchedulePlan (schedule_id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE
 );
