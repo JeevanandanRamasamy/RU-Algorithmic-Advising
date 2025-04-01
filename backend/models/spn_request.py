@@ -3,10 +3,12 @@ from sqlalchemy import (
     Column,
     String,
     Enum,
+    DateTime,
     PrimaryKeyConstraint,
     ForeignKey,
     CheckConstraint,
 )
+from datetime import datetime
 from sqlalchemy.dialects.mysql import YEAR
 
 class SPNRequest(db.Model):
@@ -27,9 +29,11 @@ class SPNRequest(db.Model):
     year = Column(YEAR, nullable=False)
     reason = Column(String(255), nullable=False)
     status = Column(
-        Enum("Pending", "Approved", "Denied"), nullable=False
+        Enum("Pending", "Approved", "Denied"), nullable=False, default="Pending"
     )
-    timestamp = __
+    timestamp = Column(
+        DateTime, default=datetime.utcnow, nullable=False
+    )
     admin_id = Column(
         String(6),
         ForeignKey("Account.username", ondelete="SET NULL"),
