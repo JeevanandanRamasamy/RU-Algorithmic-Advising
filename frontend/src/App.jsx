@@ -7,7 +7,7 @@ import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
-import DragDrop from "./pages/DragDrop";
+import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
 
 import "./css/index.css";
@@ -25,10 +25,10 @@ function App() {
 						path="/register"
 						element={<Register />}
 					/>
-          <Route 
-            path="/reset_password" 
-            element={<ResetPassword />} 
-          />
+					<Route
+						path="/reset-password"
+						element={<ResetPassword />}
+					/>
 					<Route
 						path="/home"
 						element={<Home />}
@@ -40,16 +40,22 @@ function App() {
 					<Route
 						path="/questionnaire"
 						element={
-							<DndProvider backend={HTML5Backend}>
+							<DndProvider
+								backend={HTML5Backend}
+								// autoScroll={true}
+							>
 								<Questionnaire />
 							</DndProvider>
 						}
 					/>
 					<Route
-						path="/dragdrop"
+						path="/degree-planner"
 						element={
-							<DndProvider backend={HTML5Backend}>
-								<DragDrop />
+							<DndProvider
+								backend={HTML5Backend}
+								// autoScroll={true}
+							>
+								<DegreePlanner />
 							</DndProvider>
 						}
 					/>

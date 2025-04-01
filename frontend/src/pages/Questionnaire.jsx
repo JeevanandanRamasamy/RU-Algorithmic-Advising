@@ -10,6 +10,7 @@ import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
+import DropCoursesContainer from "../components/dropCoursesContainer";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -57,17 +58,17 @@ const Questionnaire = () => {
 		filteredCourses,
 		setFilteredCourses
 	} = useCourses(backendUrl, token);
-	const {
-		takenCourses,
-		takenCoursesLoading,
-		takenCoursesError,
-		fetchTakenCourses,
-		setTakenCourses,
-		handleRemoveTakenCourse,
-		handleAddTakenCourse,
-		searchTaken,
-		setSearchTaken
-	} = useTakenCourses(backendUrl, token, setCourses);
+	// const {
+	// 	takenCourses,
+	// 	takenCoursesLoading,
+	// 	takenCoursesError,
+	// 	fetchTakenCourses,
+	// 	setTakenCourses,
+	// 	handleRemoveTakenCourse,
+	// 	handleAddTakenCourse,
+	// 	searchTaken,
+	// 	setSearchTaken
+	// } = useTakenCourses(backendUrl, token, setCourses);
 
 	return (
 		<>
@@ -101,8 +102,8 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					<div className="flex gap-[30px]">
-						<CourseListContainer
+					{/* <div className="flex gap-[30px]"> */}
+					{/* <CourseListContainer
 							title="Available Courses"
 							searchQuery={searchAvailable}
 							setSearchQuery={setSearchAvailable}
@@ -115,8 +116,8 @@ const Questionnaire = () => {
 									: []
 							}
 							CourseComponent={AvailableCourses}
-						/>
-						<CourseListContainer
+						/> */}
+					{/* <CourseListContainer
 							title="Taken Courses"
 							searchQuery={searchTaken}
 							setSearchQuery={setSearchTaken}
@@ -129,8 +130,8 @@ const Questionnaire = () => {
 								onRemoveCourse: handleRemoveTakenCourse,
 								onAddCourse: handleAddTakenCourse
 							}}
-						/>
-					</div>
+						/> */}
+					{/* </div> */}
 					<div className="flex justify-center mt-5">
 						<Button
 							className="bg-blue-500 text-white p-1 rounded w-20"

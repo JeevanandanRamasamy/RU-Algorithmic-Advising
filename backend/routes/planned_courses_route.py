@@ -53,11 +53,11 @@ def get_planned_courses():
 def add_planned_course():
     data = request.get_json()
     course_id = data.get("course_id")
-    # term = data.get("term")
-    # year = data.get("year")
+    term = data.get("term")
+    year = data.get("year")
     plan_id = 1
-    term = "Summer"
-    year = 2025
+    # term = "Summer"
+    # year = 2025
 
     if not course_id or not term or not year:
         return jsonify({"message": "Missing required fields"}), 400
@@ -83,14 +83,15 @@ def drop_planned_course():
     print("dpc")
     data = request.get_json()
     course_id = data.get("course_id")
-    plan_id = data.get("plan_id")
+    # plan_id = data.get("plan_id")
 
-    if not course_id or not plan_id:
+    # if not course_id or not plan_id:
+    if not course_id:
         return jsonify({"message": "Missing required fields"}), 400
 
     try:
         # Call the service function to remove the course from the user's planned courses
-        response = UserPlanService.drop_course_from_plan(plan_id, course_id)
+        response = UserPlanService.drop_course_from_plan(course_id)
         print(response)
 
         if isinstance(response, dict):

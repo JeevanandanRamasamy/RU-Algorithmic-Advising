@@ -2,11 +2,11 @@ import React from "react";
 
 const Button = ({ onClick, className, label }) => {
 	return (
-		<div
+		<button
 			onClick={onClick}
 			className={`cursor-pointer text-center ${className}`}>
 			{label}
-		</div>
+		</button>
 	);
 };
 

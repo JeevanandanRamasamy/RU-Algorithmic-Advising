@@ -65,8 +65,8 @@ function Login() {
 					/>
 					<br />
 					<p>
-            <Link to="/reset_password">Forgot password?</Link>
-          </p>
+						<Link to="/reset-password">Forgot password?</Link>
+					</p>
 					<button
 						onClick={handleLogin}
 						className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500">
