@@ -18,7 +18,7 @@ def get_courses():
     return jsonify(courses)
 
 
-@course_bp.route("", methods=["GET"])
+@course_bp.route("/api/db_courses", methods=["GET"])
 def get_db_courses():
     """
     API endpoint to fetch course information from the database.
