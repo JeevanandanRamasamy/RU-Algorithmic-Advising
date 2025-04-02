@@ -38,14 +38,9 @@ def update_user_details():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        # fields = ["grad_date", "enroll_date", "gpa", "class_year"]
-
-        # new_data = {
-        #     field: data.get(field) for field in fields if data.get(field) is not None
-        # }
 
         updated_user_details = UserService.update_student_details(
-            username, data["enrolled_date"], data["grad_date"], data["gpa"]
+            username, data["enroll_year"], data["grad_year"], data["gpa"]
         )
         if isinstance(updated_user_details, str):
             return jsonify({"message": updated_user_details}), 500

@@ -7,6 +7,10 @@ from sqlalchemy import (
     CheckConstraint,
 )
 
+from dataclasses import dataclass
+
+
+@dataclass
 class Course(db.Model):
     __tablename__ = "Course"
     course_id = Column(String(10), primary_key=True)
@@ -23,5 +27,5 @@ class Course(db.Model):
             "course_id": self.course_id,
             "course_name": self.course_name,
             "credits": self.credits,
-            "course_link": self.course_link
+            "course_link": self.course_link,
         }

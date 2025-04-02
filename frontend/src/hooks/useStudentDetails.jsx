@@ -6,10 +6,10 @@ import { useAuth } from "../context/AuthContext";
 
 const useStudentDetails = () => {
 	const { user, token } = useAuth();
-	const [gradYear, setGradYear] = useState("");
-	const [enrolledYear, setEnrolledYear] = useState("");
+	const currentYear = new Date().getFullYear();
+	const [gradYear, setGradYear] = useState(currentYear + 4);
+	const [enrolledYear, setEnrolledYear] = useState(currentYear);
 	const [gpa, setGpa] = useState(0);
-	const [classYear, setClassYear] = useState("");
 
 	const navigate = useNavigate();
 
@@ -49,8 +49,7 @@ const useStudentDetails = () => {
 				const fields = {
 					grad_date: setGradYear,
 					enroll_date: setEnrolledYear,
-					gpa: setGpa,
-					class_year: setClassYear
+					gpa: setGpa
 				};
 				Object.entries(fields).forEach(([key, setter]) => {
 					if (data.user_details[key]) {
@@ -76,13 +75,11 @@ const useStudentDetails = () => {
 					Object.entries({
 						grad_date: gradYear,
 						enroll_date: enrolledYear,
-						gpa: gpa,
-						class_year: classYear
+						gpa: gpa
 					}).filter(([_, value]) => value !== "")
 				)
 			)
 		});
-		//TODO: redirect
 		if (response.ok) {
 			navigate("/home");
 		} else {
@@ -97,8 +94,6 @@ const useStudentDetails = () => {
 		setEnrolledYear,
 		gpa,
 		setGpa,
-		classYear,
-		setClassYear,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,

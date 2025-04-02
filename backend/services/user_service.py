@@ -1,9 +1,12 @@
+from models.planned_course import PlannedCourse
+from utils.semesters import generate_semesters
 from db import db
 
 # from datetime import datetime
 from models.account import Account
 from models.student_details import StudentDetails
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import tuple_
 
 
 class UserService:
@@ -111,14 +114,20 @@ class UserService:
             return f"Error retrieving student details: {str(e)}"
 
     @staticmethod
-    def update_student_details(username, enrolled_date, grad_date, gpa):
+    def update_student_details(username, enrolled_year, grad_year, gpa):
         try:
-            if enrolled_date >= grad_date:
+            if int(enrolled_year) >= int(grad_year):
                 return "Enrolled year can not be the same as graduate year"
             student_details = StudentDetails.query.filter_by(username=username).first()
             if student_details:
-                # for key, value in new_data.items():
-                #     setattr(student_details, key, value)
+                student_details.enrolled_year = enrolled_year
+                student_details.grad_year = grad_year
+                student_details.gpa = gpa
+                semesters = generate_semesters(int(enrolled_year), grad_year)
+                valid_terms = {(s["term"], s["year"]) for s in semesters}
+                PlannedCourse.query.filter(
+                    tuple_(PlannedCourse.term, PlannedCourse.year).notin_(valid_terms)
+                ).delete(synchronize_session=False)
                 db.session.commit()
                 return student_details
             else:

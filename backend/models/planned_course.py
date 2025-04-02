@@ -5,10 +5,15 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
 )
+
+from dataclasses import dataclass
 from sqlalchemy.dialects.mysql import YEAR, CHAR
 
+
+@dataclass
 class PlannedCourse(db.Model):
     __tablename__ = "PlannedCourse"
+
     plan_id = Column(
         Integer, ForeignKey("DegreePlan.plan_id", ondelete="CASCADE"), nullable=False
     )

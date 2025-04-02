@@ -24,8 +24,6 @@ const Questionnaire = () => {
 		setEnrolledYear,
 		gpa,
 		setGpa,
-		// classYear,
-		// setClassYear,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,
@@ -47,17 +45,17 @@ const Questionnaire = () => {
 		handleRemoveProgram
 	} = usePrograms(backendUrl, user, token);
 
-	const {
-		courses,
-		coursesLoading,
-		coursesError,
-		fetchCourses,
-		setCourses,
-		searchAvailable,
-		setSearchAvailable,
-		filteredCourses,
-		setFilteredCourses
-	} = useCourses(backendUrl, token);
+	// const {
+	// 	courses,
+	// 	coursesLoading,
+	// 	coursesError,
+	// 	fetchCourses,
+	// 	setCourses,
+	// 	searchAvailable,
+	// 	setSearchAvailable,
+	// 	filteredCourses,
+	// 	setFilteredCourses
+	// } = useCourses(backendUrl, token);
 	// const {
 	// 	takenCourses,
 	// 	takenCoursesLoading,
@@ -83,8 +81,6 @@ const Questionnaire = () => {
 								gradYear,
 								handleGradYearChange,
 								classes,
-								classYear,
-								setClassYear,
 								gpa,
 								handleGpaChange
 							}}

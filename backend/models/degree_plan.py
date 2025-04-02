@@ -6,7 +6,10 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
 )
+from dataclasses import dataclass
 
+
+@dataclass
 class DegreePlan(db.Model):
     __tablename__ = "DegreePlan"
     plan_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -20,11 +23,11 @@ class DegreePlan(db.Model):
 
     def __repr__(self):
         return f"<DegreePlan(plan_id={self.plan_id}, username={self.username}, plan_name={self.plan_name}, last_updated={self.last_updated})>"
-    
+
     def to_dict(self):
         return {
             "plan_id": self.plan_id,
             "username": self.username,
             "plan_name": self.plan_name,
-            "last_updated": self.last_updated
+            "last_updated": self.last_updated,
         }

@@ -4,7 +4,7 @@ const Button = ({ onClick, className, label }) => {
 	return (
 		<button
 			onClick={onClick}
-			className={`cursor-pointer text-center ${className}`}>
+			className={`cursor-pointer text-center border-none ${className}`}>
 			{label}
 		</button>
 	);

@@ -32,8 +32,8 @@ CREATE TABLE Account (
 -- ==================================================
 CREATE TABLE StudentDetails (
     username VARCHAR(6) PRIMARY KEY,  -- Foreign key to Account
-    grad_date YEAR,  -- Expected graduation year
-    enroll_date YEAR,  -- Year of enrollment
+    grad_year YEAR,  -- Expected graduation year
+    enroll_year YEAR,  -- Year of enrollment
     credits_earned DECIMAL(4,1) CHECK (credits_earned >= 0),  -- Total credits earned (non-negative)
     gpa DECIMAL(3, 2) CHECK (gpa BETWEEN 0.00 AND 4.00),  -- GPA range between 0.00 and 4.00
     class_year ENUM ('freshman', 'sophomore', 'junior', 'senior', 'graduate'),  -- Classification based on credits

@@ -8,7 +8,10 @@ from sqlalchemy import (
     CheckConstraint,
 )
 from sqlalchemy.dialects.mysql import YEAR
+from dataclasses import dataclass
 
+
+@dataclass
 class CourseTaken(db.Model):
     __tablename__ = "CourseTaken"
     username = Column(

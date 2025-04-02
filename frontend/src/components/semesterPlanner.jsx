@@ -6,6 +6,7 @@ const SemesterPlanner = ({ plannedCourses, handleAddPlannedCourse, handleRemoveP
 	const { enrolledYear, gradYear } = useStudentDetails();
 	const semesters = generateSemesters(enrolledYear, gradYear);
 	const semestersTillNow = generateSemestersTillNow(enrolledYear);
+	console.log(semestersTillNow);
 
 	return (
 		<>

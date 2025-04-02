@@ -35,7 +35,6 @@ const generateSemestersTillNow = startYear => {
 			term = "fall";
 		}
 	}
-	// semesters.push(currentSemester);
 	return semesters;
 };
 
