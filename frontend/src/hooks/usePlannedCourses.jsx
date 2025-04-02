@@ -9,12 +9,11 @@ const usePlannedCourses = () => {
 	const [plannedCoursesLoading, setPlannedCoursesLoading] = useState(false);
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);
 	const [searchPlannedQuery, setSearchPlannedQuery] = useState("");
-	// const [planId, setPlanId] = useState(null);
 
 	const fetchPlannedCourses = async () => {
 		setPlannedCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/planned`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}
@@ -39,8 +38,7 @@ const usePlannedCourses = () => {
 
 	const handleAddPlannedCourse = async (courseId, term, year) => {
 		try {
-			console.log(plannedCourses);
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -88,7 +86,7 @@ const usePlannedCourses = () => {
 			// 	return;
 			// }
 
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",

@@ -4,7 +4,6 @@ from flask import Blueprint, request, jsonify
 import os
 from dotenv import load_dotenv
 import time  # ⏳ For OTP expiration
-import re
 
 verification_bp = Blueprint("verification", __name__)  # Create a Blueprint
 verification_codes = {}  # Temporary storage for OTPs (use a database later)

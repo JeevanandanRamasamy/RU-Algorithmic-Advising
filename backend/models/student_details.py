@@ -21,8 +21,6 @@ class StudentDetails(db.Model):
     enroll_year: int
     credits_earned: str
     gpa: str
-    class_year: str
-
     username = Column(
         String(6), ForeignKey("Account.username", ondelete="CASCADE"), primary_key=True
     )
@@ -30,17 +28,6 @@ class StudentDetails(db.Model):
     enroll_year = Column(YEAR)
     credits_earned = Column(Integer, CheckConstraint("credits_earned >= 0"))
     gpa = Column(Numeric(3, 2), CheckConstraint("gpa BETWEEN 0.00 AND 4.00"))
-    class_year = Column(
-        Enum(
-            "freshman",
-            "sophomore",
-            "junior",
-            "senior",
-            "graduate",
-            name="class_year_enum",
-        ),
-        nullable=False,
-    )
     credits_earned = Column(Numeric(4, 1), CheckConstraint("credits_earned >= 0"))
     gpa = Column(Numeric(3, 2), CheckConstraint("gpa BETWEEN 0.00 AND 4.00"))
     class_year = Column(
