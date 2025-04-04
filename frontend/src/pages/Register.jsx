@@ -5,13 +5,12 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Register() {
 	const [step, setStep] = useState(1); // Step 1: Enter Email, Step 2: Verify OTP & Set Password
-	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
 	const [code, setCode] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [username, setUsername] = useState(""); // Auto-generated from email
 	const [message, setMessage] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate(); // Redirect after successful registration
@@ -19,27 +18,33 @@ function Register() {
 	// Step 1: Send Verification Code
 	const handleSendVerification = async () => {
 		setMessage("");
-
-		if (!email.endsWith("rutgers.edu")) {
-			setMessage("Invalid email. Only @rutgers.edu emails are allowed.");
-			return;
-		}
-
+		if (!username) {
+            setMessage("Please enter your Rutgers NetID.");
+            return;
+        }
 		setLoading(true);
 
 		try {
-			// Extract username from email (before '@')
-			const extractedUsername = email.split("@")[0];
-			setUsername(extractedUsername);
+			const validateResponse = await fetch(`${backendUrl}/api/check_username_exists`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ username }),
+			});
+
+			const validateData = await validateResponse.json();
+			if (validateData.status !== "success") {
+				setMessage("Account already exists. Please login.");
+				setLoading(false);
+				return;
+			}
 
 			const response = await fetch(`${backendUrl}/api/send-verification`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email }),
+				body: JSON.stringify({ username }),
 			});
 
 			const data = await response.json();
-
 			if (data.success) {
 				setMessage("Verification code sent to your email!");
 				setStep(2); // Move to the next step
@@ -87,7 +92,7 @@ function Register() {
 			const verifyResponse = await fetch(`${backendUrl}/api/verify-code`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ email, code }),
+				body: JSON.stringify({ username, code }),
 			});
 
 			const verifyData = await verifyResponse.json();
@@ -107,7 +112,6 @@ function Register() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					username,
-					email,
 					password,
 					first_name: firstName,
 					last_name: lastName
@@ -150,12 +154,12 @@ function Register() {
 
 			{step === 1 && (
 				<div>
-					<h3>Enter Your Email</h3>
+					<h3>Enter Your Rutgers NetID</h3>
 					<input
-						type="email"
-						placeholder="Enter @rutgers.edu email"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
+						type="text"
+						placeholder="Enter your NetID (e.g., abc123)"
+						value={username}
+						onChange={e => setUsername(e.target.value)}
 					/>
 					<button
 						onClick={handleSendVerification}

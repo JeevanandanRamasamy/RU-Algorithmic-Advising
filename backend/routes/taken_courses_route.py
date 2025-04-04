@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 taken_courses_bp = Blueprint("user_taken_courses", __name__, url_prefix="/api/users")
 
-
 @taken_courses_bp.route("/taken_courses", methods=["GET"])
 @jwt_required()
 def get_taken_courses():

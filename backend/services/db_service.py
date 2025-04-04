@@ -1,20 +1,11 @@
 from db import db
 from datetime import datetime
-from models import (
-    Account,
-    StudentDetails,
-    Course,
-    CourseTaken,
-    Program,
-    StudentProgram,
-    RequirementGroup,
-    DegreePlan,
-    PlannedCourse,
-    SchedulePlan,
-    Section,
-)
+from models.requirement_group import RequirementGroup
+from models.degree_plan import DegreePlan
+from models.planned_course import PlannedCourse
+from models.schedule_plan import SchedulePlan
+from models.section import Section
 from sqlalchemy.exc import SQLAlchemyError
-
 
 class DBService:
     # ------------------ REQUIREMENT GROUP OPERATIONS ------------------

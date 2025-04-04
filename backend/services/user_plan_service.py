@@ -1,4 +1,7 @@
-from models import Course, db, DegreePlan, PlannedCourse
+from db import db
+from models.course import Course
+from models.degree_plan import DegreePlan
+from models.planned_course import PlannedCourse
 from flask_jwt_extended import get_jwt_identity  # To get user info from JWT
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
@@ -6,15 +9,12 @@ from services.db_service import DBService
 
 # TODO This whole file can and should be cleaned up / optimized
 
-
 class UserPlanService:
     @staticmethod
     def get_planned_courses_for_user(username):
         """Retrieve planned courses for the logged-in user."""
         try:
-            degree_plans = DegreePlan.query.filter_by(
-                username=username
-            ).all()  # Get the user's degree plans
+            degree_plans = DBService.get_degree_plans(username)
 
             if not degree_plans:
                 plan_data = {
