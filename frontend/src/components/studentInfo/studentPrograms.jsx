@@ -11,6 +11,7 @@ const studentPrograms = ({
 	handleInsertProgram,
 	handleRemoveProgram
 }) => {
+	console.log(filteredPrograms);
 	return (
 		<div className="flex gap-[20px] pt-[10x] pb-[10px]">
 			<ListContainer
@@ -23,6 +24,11 @@ const studentPrograms = ({
 				key_field="program_id"
 				buttonType="add"
 				handleButtonClick={handleInsertProgram}
+				excludedByKeys={
+					filteredSelectedPrograms
+						? filteredSelectedPrograms.map(program => program?.program_id)
+						: []
+				}
 			/>
 			<ListContainer
 				query={selectedProgramsQuery}

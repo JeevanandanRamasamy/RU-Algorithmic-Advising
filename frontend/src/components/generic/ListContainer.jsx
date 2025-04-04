@@ -9,8 +9,10 @@ const ListContainer = ({
 	key_field,
 	field,
 	buttonType,
-	handleButtonClick
+	handleButtonClick,
+	excludedByKeys = []
 }) => {
+	console.log(excludedByKeys);
 	return (
 		<div className="flex flex-col gap-3">
 			<input
@@ -22,15 +24,17 @@ const ListContainer = ({
 			/>
 			<div className="h-144 overflow-y-auto w-64 p-2 border border-black rounded-2xl">
 				{values &&
-					values.map(value => (
-						<ListItem
-							key={value[key_field]}
-							id={value[key_field]}
-							value={value[field]}
-							onClick={handleButtonClick}
-							buttonType={buttonType}
-						/>
-					))}
+					values
+						.filter(value => !excludedByKeys.includes(value[key_field]))
+						.map(value => (
+							<ListItem
+								key={value[key_field]}
+								id={value[key_field]}
+								value={value[field]}
+								onClick={handleButtonClick}
+								buttonType={buttonType}
+							/>
+						))}
 			</div>
 		</div>
 	);

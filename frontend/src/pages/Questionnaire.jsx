@@ -10,6 +10,7 @@ import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
+import DropCoursesContainer from "../components/dropCoursesContainer";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -19,16 +20,14 @@ const Questionnaire = () => {
 		classes,
 		gradYear,
 		setGradYear,
-		enrolledYear,
-		setEnrolledYear,
+		enrollYear,
+		setEnrollYear,
 		gpa,
 		setGpa,
-		classYear,
-		setClassYear,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,
-		handleEnrolledYearChange
+		handleEnrollYearChange
 	} = useStudentDetails(backendUrl, user, token);
 
 	const {
@@ -46,28 +45,28 @@ const Questionnaire = () => {
 		handleRemoveProgram
 	} = usePrograms(backendUrl, user, token);
 
-	const {
-		courses,
-		coursesLoading,
-		coursesError,
-		fetchCourses,
-		setCourses,
-		searchAvailable,
-		setSearchAvailable,
-		filteredCourses,
-		setFilteredCourses
-	} = useCourses(backendUrl, token);
-	const {
-		takenCourses,
-		takenCoursesLoading,
-		takenCoursesError,
-		fetchTakenCourses,
-		setTakenCourses,
-		handleRemoveTakenCourse,
-		handleAddTakenCourse,
-		searchTaken,
-		setSearchTaken
-	} = useTakenCourses(backendUrl, token, setCourses);
+	// const {
+	// 	courses,
+	// 	coursesLoading,
+	// 	coursesError,
+	// 	fetchCourses,
+	// 	setCourses,
+	// 	searchAvailable,
+	// 	setSearchAvailable,
+	// 	filteredCourses,
+	// 	setFilteredCourses
+	// } = useCourses(backendUrl, token);
+	// const {
+	// 	takenCourses,
+	// 	takenCoursesLoading,
+	// 	takenCoursesError,
+	// 	fetchTakenCourses,
+	// 	setTakenCourses,
+	// 	handleRemoveTakenCourse,
+	// 	handleAddTakenCourse,
+	// 	searchTaken,
+	// 	setSearchTaken
+	// } = useTakenCourses(backendUrl, token, setCourses);
 
 	return (
 		<>
@@ -77,13 +76,11 @@ const Questionnaire = () => {
 					<div className="flex px-[10px] justify-evenly">
 						<StudentDetails
 							{...{
-								enrolledYear,
-								handleEnrolledYearChange,
+								enrollYear,
+								handleEnrollYearChange,
 								gradYear,
 								handleGradYearChange,
 								classes,
-								classYear,
-								setClassYear,
 								gpa,
 								handleGpaChange
 							}}
@@ -101,8 +98,8 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					<div className="flex gap-[30px]">
-						<CourseListContainer
+					{/* <div className="flex gap-[30px]"> */}
+					{/* <CourseListContainer
 							title="Available Courses"
 							searchQuery={searchAvailable}
 							setSearchQuery={setSearchAvailable}
@@ -115,8 +112,8 @@ const Questionnaire = () => {
 									: []
 							}
 							CourseComponent={AvailableCourses}
-						/>
-						<CourseListContainer
+						/> */}
+					{/* <CourseListContainer
 							title="Taken Courses"
 							searchQuery={searchTaken}
 							setSearchQuery={setSearchTaken}
@@ -129,8 +126,8 @@ const Questionnaire = () => {
 								onRemoveCourse: handleRemoveTakenCourse,
 								onAddCourse: handleAddTakenCourse
 							}}
-						/>
-					</div>
+						/> */}
+					{/* </div> */}
 					<div className="flex justify-center mt-5">
 						<Button
 							className="bg-blue-500 text-white p-1 rounded w-20"

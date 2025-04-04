@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const useTakenCourses = (backendUrl, token, setAvailableCourses) => {
+const useTakenCourses = setAvailableCourses => {
 	const [takenCourses, setTakenCourses] = useState([]);
 	const [takenCoursesLoading, setTakenCoursesLoading] = useState(false);
 	const [takenCoursesError, setTakenCoursesError] = useState(null);

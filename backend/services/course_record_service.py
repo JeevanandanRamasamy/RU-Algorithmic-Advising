@@ -4,6 +4,7 @@ from models.course import Course
 from models.course_record import CourseRecord
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class CourseRecordService:
     @staticmethod
     def convert_courses_to_dict(courses):
@@ -33,7 +34,7 @@ class CourseRecordService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error checking course for student: {str(e)}"
-    
+
     @staticmethod
     def get_course_records(username):
         """Retrieve all course records from a user's degree plan."""
@@ -50,27 +51,36 @@ class CourseRecordService:
             return f"Error retrieving course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-    
+
     @staticmethod
     def get_course_record_by_course_id(username, course_id):
         """Retrieve a course record by its username and course_id."""
         try:
-            return db.session.query(CourseRecord).filter_by(
-                username=username, course_id=course_id
-            ).first()
+            course = (
+                db.session.query(CourseRecord, Course)
+                .filter_by(username=username, course_id=course_id)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+                .first()
+            )
+            print(course)
+            return CourseRecordService.convert_courses_to_dict([course])[0]
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving course record: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-        
+
     @staticmethod
     def get_course_record_by_term(username, term, year):
         """Retrieve course records from a user's degree plan by semester and year."""
         try:
             courses = (
                 db.session.query(CourseRecord, Course)
-                .filter(CourseRecord.username == username, CourseRecord.term == term, CourseRecord.year == year)
+                .filter(
+                    CourseRecord.username == username,
+                    CourseRecord.term == term,
+                    CourseRecord.year == year,
+                )
                 .join(Course, Course.course_id == CourseRecord.course_id)
                 .all()
             )
@@ -80,7 +90,7 @@ class CourseRecordService:
             return f"Error retrieving course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-    
+
     @staticmethod
     def get_past_course_records(username):
         """Retrieve all past course records from a user's degree plan."""
@@ -94,18 +104,25 @@ class CourseRecordService:
                 terms.append("summer")
             if current_date.month == 12:
                 terms.append("fall")
-            
+
             if terms:
                 courses = (
                     db.session.query(CourseRecord, Course)
-                    .filter(CourseRecord.username == username, CourseRecord.term.in_(terms), CourseRecord.year <= current_date.year)
+                    .filter(
+                        CourseRecord.username == username,
+                        CourseRecord.term.in_(terms),
+                        CourseRecord.year <= current_date.year,
+                    )
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
-            else: # no terms completed in the current year
+            else:  # no terms completed in the current year
                 courses = (
                     db.session.query(CourseRecord, Course)
-                    .filter(CourseRecord.username == username, CourseRecord.year < current_date.year)
+                    .filter(
+                        CourseRecord.username == username,
+                        CourseRecord.year < current_date.year,
+                    )
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
@@ -115,7 +132,7 @@ class CourseRecordService:
             return f"Error retrieving past course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-    
+
     @staticmethod
     def get_future_course_records(username):
         """Retrieve all future course records from a user's degree plan."""
@@ -129,18 +146,25 @@ class CourseRecordService:
                 terms.append("summer")
             if current_date.month == 1:
                 terms.append("spring")
-            
+
             if terms:
                 courses = (
                     db.session.query(CourseRecord, Course)
-                    .filter(CourseRecord.username == username, CourseRecord.term.in_(terms), CourseRecord.year >= current_date.year)
+                    .filter(
+                        CourseRecord.username == username,
+                        CourseRecord.term.in_(terms),
+                        CourseRecord.year >= current_date.year,
+                    )
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
-            else: # all terms completed in the current year
+            else:  # all terms completed in the current year
                 courses = (
                     db.session.query(CourseRecord, Course)
-                    .filter(CourseRecord.username == username, CourseRecord.year > current_date.year)
+                    .filter(
+                        CourseRecord.username == username,
+                        CourseRecord.year > current_date.year,
+                    )
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
@@ -155,14 +179,19 @@ class CourseRecordService:
     def insert_course_record(course_record_data):
         """Insert a course record into a user's degree plan."""
         try:
+
             new_course = CourseRecord(**course_record_data)
             db.session.add(new_course)
             db.session.commit()
-            return new_course
+            return CourseRecordService.get_course_record_by_course_id(
+                course_record_data["username"], course_record_data["course_id"]
+            )
+
+            # return new_course
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error inserting course record: {str(e)}"
-    
+
     @staticmethod
     def update_course_record(username, course_id, new_data):
         """Update a course record by its username and course_id."""
@@ -172,9 +201,15 @@ class CourseRecordService:
             ).first()
             if course_record:
                 for key, value in new_data.items():
-                    setattr(course_record, key, value)
-                db.session.commit()
-                return course_record
+                    if hasattr(course_record, key):
+                        setattr(course_record, key, value)
+
+                    else:
+                        return f"Invalid field: {key}"
+                    db.session.commit()
+                    return CourseRecordService.get_course_record_by_course_id(
+                        username, course_id
+                    )
             else:
                 return "Course record not found"
         except SQLAlchemyError as e:
@@ -197,7 +232,7 @@ class CourseRecordService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course record: {str(e)}"
-    
+
     @staticmethod
     def delete_all_course_records(username):
         """Delete all course records from a user's degree plan."""

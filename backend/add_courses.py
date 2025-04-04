@@ -4,6 +4,7 @@ import json
 import time
 import requests
 import pandas as pd
+from services.requirement_group_service import RequirementGroupService
 from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
@@ -39,7 +40,9 @@ def search_course_url(courseID):
     # Extract the first search result URL
     if "web" in data and "results" in data["web"]:
         for result in data["web"]["results"][:5]:  # Check the first 5 results
-            if result["url"].find(courseID[7:]) != -1:  # Check if the course ID is in the URL
+            if (
+                result["url"].find(courseID[7:]) != -1
+            ):  # Check if the course ID is in the URL
                 return data["web"]["results"][0]["url"]  # Get first result URL
     return None
 
@@ -228,7 +231,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
             "list": [prerequisites],
             "parent_group_id": parent_group_id,
         }
-        result = DBService.insert_requirement_group(group)
+        result = RequirementGroupService.insert_requirement_group(group)
         if isinstance(result, RequirementGroup):
             print(f"Added group: {result}")
     else:
@@ -247,7 +250,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
         if "logic" not in str(requirements):
             # If there are no nested groups
             group["list"] = requirements
-        group_result = DBService.insert_requirement_group(group)
+        group_result = RequirementGroupService.insert_requirement_group(group)
         if not isinstance(group_result, RequirementGroup):
             return
         print(f"Added group: {group_result}")
@@ -278,7 +281,9 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 elif logic.startswith("ATLEAST"):
                     sub_group["num_required"] = int(logic.split(" ")[1])
 
-                sub_group_result = DBService.insert_requirement_group(sub_group)
+                sub_group_result = RequirementGroupService.insert_requirement_group(
+                    sub_group
+                )
                 if isinstance(sub_group_result, RequirementGroup):
                     print(f"Added sub-group: {sub_group_result}")
 
@@ -316,8 +321,35 @@ def add_courses_to_database(filename):
 def add_course_urls(filename):
     """Adds course URLs to the CSV file using the Brave Search API."""
     df = pd.read_csv(filename)
-    dept_list = ['013', '014', '016', '050', '070', '082', '090', '136', '160', '185', '189', '192', '198', '220', 
-                 '355', '390', '547', '640', '650', '700', '730', '750', '790', '830', '920', '960', '966']
+    dept_list = [
+        "013",
+        "014",
+        "016",
+        "050",
+        "070",
+        "082",
+        "090",
+        "136",
+        "160",
+        "185",
+        "189",
+        "192",
+        "198",
+        "220",
+        "355",
+        "390",
+        "547",
+        "640",
+        "650",
+        "700",
+        "730",
+        "750",
+        "790",
+        "830",
+        "920",
+        "960",
+        "966",
+    ]
     df_filtered = df[df["course_id"].str[3:6].isin(dept_list)]
 
     for i, row in df_filtered.iterrows():
@@ -326,7 +358,7 @@ def add_course_urls(filename):
         # course_link = search_course_url(course_id)
         if course_link:
             df.at[i, "course_link"] = course_link
-        time.sleep(1) # To avoid hitting the API too fast
+        time.sleep(1)  # To avoid hitting the API too fast
         print(f"Row {i}: {course_id} - {course_link}")
     df.to_csv(filename, index=False)
     print(f"Updated {filename} with {len(df_filtered)} course URLs.")
@@ -335,5 +367,5 @@ def add_course_urls(filename):
 if __name__ == "__main__":
     file_name = "course_list.csv"
     # get_course_list(file_name)
-    # add_courses_to_database(file_name)
-    add_course_urls(file_name)
+    add_courses_to_database(file_name)
+    # add_course_urls(file_name)

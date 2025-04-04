@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify
 
 programs_bp = Blueprint("programs", __name__, url_prefix="/api/programs")
 
+
 @programs_bp.route("", methods=["GET"])
 def get_all_programs():
     try:
@@ -13,6 +14,7 @@ def get_all_programs():
             if program_type in ["major", "minor", "certificate", "sas_core"]
             else ProgramService.get_programs()
         )
+        print(programs)
         if isinstance(programs, str):
             return jsonify({"message": programs}), 500
         return (

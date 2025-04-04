@@ -14,25 +14,14 @@ export const AvailableCourses = ({
 	// 	? filteredCourses.filter(course => !excludedCourseIds.includes(course.course_id))
 	// 	: [];
 	return (
-		// <section className="available-courses">
-		// 	<h2>Available Courses</h2>
-		// 	<div className="search-container">
-		// 		<input
-		// 			type="text"
-		// 			id="search-courses"
-		// 			placeholder="Search courses"
-		// 			value={searchAvailable}
-		// 			onChange={e => {
-		// 				setSearchAvailable(e.target.value);
-		// 			}}
-		// 		/>
-		// 	</div>
-		<CourseList
-			courses={courses}
-			getCourse={getCourse}
-			CourseItemComponent={CourseItem}
-		/>
-		// </section>
+		<div
+			className={`non-draggable h-full border border-gray-200 rounded-md p-2.5 flex flex-row gap-3 overflow-x-auto overflow-y-hidden`}>
+			<CourseList
+				courses={courses}
+				getCourse={getCourse}
+				CourseItemComponent={CourseItem}
+			/>
+		</div>
 	);
 };
 

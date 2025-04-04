@@ -7,7 +7,10 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.dialects.mysql import CHAR
+from dataclasses import dataclass
 
+
+@dataclass
 class RequirementGroup(db.Model):
     __tablename__ = "RequirementGroup"
     group_id = Column(Integer, primary_key=True, autoincrement=True)

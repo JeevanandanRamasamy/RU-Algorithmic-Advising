@@ -1,8 +1,10 @@
+from datetime import datetime
 from flask import Flask, request, jsonify
 from services.user_service import UserService
 from flask import Blueprint
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
+
 
 @register_bp.route("/api/check_username_exists", methods=["POST"])
 def validate_username():
@@ -15,7 +17,7 @@ def validate_username():
     # Check if username already exists
     if UserService.check_account_exists(username):
         return jsonify({"message": "User already exists.", "status": "error"}), 409
-    
+
     return jsonify({"message": "Username is valid.", "status": "success"}), 200
 
 
@@ -76,10 +78,12 @@ def register():
             500,
         )
 
+    current_year = datetime.now().year
+
     student_detail = {
         "username": username,
-        "grad_date": 2025,
-        "enroll_date": 2025,
+        "grad_year": current_year + 4,
+        "enroll_year": current_year,
         "credits_earned": 0,
         "gpa": 0.00,
         "class_year": "Freshman",

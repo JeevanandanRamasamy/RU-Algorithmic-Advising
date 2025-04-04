@@ -1,7 +1,9 @@
-import React from "react";
 import { useState, useEffect } from "react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useAuth } from "../context/AuthContext";
 
-const usePrograms = (backendUrl, user, token) => {
+const usePrograms = () => {
+	const { user, token } = useAuth();
 	const [selectedProgramsQuery, setSelectedProgramsQuery] = useState("");
 	const [programs, setPrograms] = useState([]);
 	const [programsQuery, setProgramsQuery] = useState("");

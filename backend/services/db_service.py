@@ -2,6 +2,7 @@ from db import db
 from models.schedule_plan import SchedulePlan
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class DBService:
     # ------------------ SCHEDULE PLAN OPERATIONS ------------------
     @staticmethod
