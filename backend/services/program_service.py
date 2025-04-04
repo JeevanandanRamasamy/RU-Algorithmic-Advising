@@ -1,5 +1,4 @@
 from db import db
-# from datetime import datetime
 from models.program import Program
 from sqlalchemy.exc import SQLAlchemyError
 

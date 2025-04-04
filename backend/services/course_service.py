@@ -1,7 +1,5 @@
 from db import db
-# from datetime import datetime
 from models.course import Course
-from models.course_taken import CourseTaken
 from sqlalchemy.exc import SQLAlchemyError
 
 class CourseService:
@@ -14,6 +12,15 @@ class CourseService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving course: {str(e)}"
+    
+    @staticmethod
+    def get_courses_by_ids(course_ids):
+        """Retrieve courses by their course_ids."""
+        try:
+            return Course.query.filter(Course.course_id.in_(course_ids)).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving courses: {str(e)}"
 
     @staticmethod
     def insert_course(course_data):
@@ -41,13 +48,3 @@ class CourseService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course: {str(e)}"
-
-    @staticmethod
-    def check_course_exists_for_student(username, course_id):
-        try:
-            return CourseTaken.query.filter(
-                CourseTaken.username == username, CourseTaken.course_id == course_id
-            ).scalar()
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return f"Error checking course for student: {str(e)}"

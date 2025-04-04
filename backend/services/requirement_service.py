@@ -1,7 +1,7 @@
-from services.db_service import DBService
+from services.requirement_group_service import RequirementGroupService
 from services.program_service import ProgramService
 from services.course_service import CourseService
-from services.taken_course_service import TakenCourseService
+from services.course_record_service import CourseRecordService
 from services.user_program_service import UserProgramService
 
 class RequirementService:
@@ -15,7 +15,7 @@ class RequirementService:
             return set()  # Return an empty set if the course does not exist or has been visited
         visited.add(course_id)  # Mark this course as visited
 
-        requirement_groups = DBService.get_requirement_group_by_course(course_id)
+        requirement_groups = RequirementGroupService.get_requirement_group_by_course(course_id)
         if not requirement_groups:
             return set()
         prerequisites = set()
@@ -25,7 +25,7 @@ class RequirementService:
                 prerequisites.update(group.list)
             
             # Recursively get prerequisites from child groups
-            child_groups = DBService.get_child_requirement_groups(group.group_id)
+            child_groups = RequirementGroupService.get_child_requirement_groups(group.group_id)
             for child in child_groups:
                 if child.list:
                     prerequisites.update(child.list)
@@ -38,19 +38,19 @@ class RequirementService:
         """Check if a student has met the requirements for a given program."""
         if group_id:
             # Fetch requirement groups for a specific group_id
-            requirement_groups = [DBService.get_requirement_group_by_id(group_id)]
+            requirement_groups = [RequirementGroupService.get_requirement_group_by_id(group_id)]
         elif program_id:
             # Fetch program requirement groups
-            program = DBService.get_program(program_id)
+            program = ProgramService.get_program(program_id)
             if not program:
                 return False
-            requirement_groups = DBService.get_requirement_group_by_program(program_id)
+            requirement_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
         elif course_id:
             # Fetch requirement groups for a specific course
-            course = DBService.get_course_by_id(course_id)
+            course = CourseService.get_course_by_id(course_id)
             if not course:
                 return False
-            requirement_groups = DBService.get_requirement_group_by_course(course_id)
+            requirement_groups = RequirementGroupService.get_requirement_group_by_course(course_id)
         else:
             raise ValueError("Either program_id or course_id must be provided")
 
@@ -58,8 +58,8 @@ class RequirementService:
             return True  # No requirements to check
 
         # Fetch student's completed courses
-        courses_taken = TakenCourseService.get_courses_taken_by_student(username)
-        courses_taken = {course.course_id for course in courses_taken} # Extract course_ids
+        courses_taken = CourseRecordService.get_past_course_records(username)
+        courses_taken = {course["course_info"]["course_id"] for course in courses_taken} # Extract course_ids
         if extra_courses:
             courses_taken.update(extra_courses)
         if not courses_taken:
@@ -74,7 +74,7 @@ class RequirementService:
 
         def check_group_fulfillment(group_id, courses_taken):
             """Recursively check if a student meets the requirements for a requirement group."""
-            group = DBService.get_requirement_group_by_id(group_id)
+            group = RequirementGroupService.get_requirement_group_by_id(group_id)
             if not group:
                 return True  # No requirements to fulfill
                 
@@ -90,7 +90,7 @@ class RequirementService:
                     return False
 
             # Recursively check child groups
-            child_groups = DBService.get_child_requirement_groups(group_id)
+            child_groups = RequirementGroupService.get_child_requirement_groups(group_id)
             if not child_groups:
                 return True # No child groups to check
             
@@ -119,13 +119,13 @@ class RequirementService:
             program = ProgramService.get_program(program_id)
             if not program:
                 raise ValueError(f"Program {program_id} not found")
-            requirement_groups = DBService.get_requirement_group_by_program(program_id)
+            requirement_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
         elif course_id:
             # Fetch requirement groups for a specific course
             course = CourseService.get_course_by_id(course_id)
             if not course:
                 raise ValueError(f"Course {course_id} not found")
-            requirement_groups = DBService.get_requirement_group_by_course(course_id)
+            requirement_groups = RequirementGroupService.get_requirement_group_by_course(course_id)
         else:
             raise ValueError("Either program_id or course_id must be provided")
 
@@ -133,17 +133,17 @@ class RequirementService:
             return []  # No requirements to check
 
         # Fetch student's completed courses
-        courses_taken = TakenCourseService.get_courses_taken_by_student(username)
+        courses_taken = CourseRecordService.get_past_course_records(username)
         if not courses_taken:
             courses_taken = set()
         else:
-            courses_taken = {course.course_id for course in courses_taken}  # Extract course_ids
+            courses_taken = {course["course_info"]["course_id"] for course in courses_taken}  # Extract course_ids
         
         missing_courses = set() # To track missing courses
         
         def check_missing_courses(group_id):
             """Recursive helper function to find missing courses."""
-            group = DBService.get_requirement_group_by_id(group_id)
+            group = RequirementGroupService.get_requirement_group_by_id(group_id)
             if not group or RequirementService.check_requirements_met(username, group_id=group_id):
                 return # No requirements to check or already met
             
@@ -179,7 +179,7 @@ class RequirementService:
                     needed -= len(valid_courses)
 
             # Recursively check child groups
-            child_groups = DBService.get_child_requirement_groups(group_id)
+            child_groups = RequirementGroupService.get_child_requirement_groups(group_id)
             if not child_groups:
                 return
             

@@ -1,7 +1,6 @@
 from services.program_service import ProgramService
 from services.user_service import UserService
 from db import db
-# from datetime import datetime
 from models.student_details import StudentDetails
 from models.program import Program
 from models.student_program import StudentProgram

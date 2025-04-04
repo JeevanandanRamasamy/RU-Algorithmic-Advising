@@ -21,7 +21,7 @@ class Section(db.Model):
     index_num = Column(CHAR(5), nullable=False)
     instructor = Column(String(50), nullable=False)
     __table_args__ = (
-        db.PrimaryKeyConstraint("schedule_id", "course_id", "section_num"),
+        db.PrimaryKeyConstraint("schedule_id", "course_id"),
     )
 
     def __repr__(self):
