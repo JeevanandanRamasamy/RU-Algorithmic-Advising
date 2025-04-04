@@ -1,4 +1,5 @@
-from models.planned_course import PlannedCourse
+# from models.planned_course import PlannedCourse
+from models.course_record import CourseRecord
 from utils.semesters import generate_semesters
 from db import db
 
@@ -114,20 +115,22 @@ class UserService:
             return f"Error retrieving student details: {str(e)}"
 
     @staticmethod
-    def update_student_details(username, enrolled_year, grad_year, gpa):
+    def update_student_details(username, enroll_year, grad_year, gpa):
         try:
-            if int(enrolled_year) >= int(grad_year):
+            if enroll_year >= grad_year:
                 return "Enrolled year can not be the same as graduate year"
             student_details = StudentDetails.query.filter_by(username=username).first()
+            print(enroll_year, grad_year)
+            print(student_details)
             if student_details:
-                student_details.enrolled_year = enrolled_year
-                student_details.grad_year = grad_year
-                student_details.gpa = gpa
-                semesters = generate_semesters(int(enrolled_year), grad_year)
-                valid_terms = {(s["term"], s["year"]) for s in semesters}
-                PlannedCourse.query.filter(
-                    tuple_(PlannedCourse.term, PlannedCourse.year).notin_(valid_terms)
+                semesters = generate_semesters(enroll_year, grad_year)
+                valid_terms = list({(s["term"], s["year"]) for s in semesters})
+                CourseRecord.query.filter(
+                    tuple_(CourseRecord.term, CourseRecord.year).notin_(valid_terms)
                 ).delete(synchronize_session=False)
+                student_details.enroll_year = enroll_year
+                student_details.grad_year = grad_year
+                student_details.gpa = float(gpa)
                 db.session.commit()
                 return student_details
             else:

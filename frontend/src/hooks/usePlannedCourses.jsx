@@ -21,7 +21,6 @@ const usePlannedCourses = () => {
 			if (!response.ok) throw new Error("Failed to fetch courses");
 
 			const data = await response.json();
-			console.log(data);
 			setPlannedCourses(data.planned_courses ? data.planned_courses : []);
 		} catch (err) {
 			setPlannedCoursesError(err.message);
@@ -36,8 +35,16 @@ const usePlannedCourses = () => {
 		}
 	}, []);
 
-	const handleAddPlannedCourse = async (courseId, term, year) => {
+	const handleAddCourse = async (courseId, term, year, type) => {
 		try {
+			const config = {
+				taken: {
+					setCourses: setTakenCourses
+				},
+				planned: {
+					setCourses: setPlannedCourses
+				}
+			};
 			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
@@ -48,12 +55,12 @@ const usePlannedCourses = () => {
 			});
 
 			const data = await response.json();
-			console.log(data);
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
-				setPlannedCoursesError(data.message);
+				plannedCoursesError(data.message);
 			} else {
-				setPlannedCourses(prevCourses => {
+				const setCourses = type ? setPlannedCourses : setTakenCourses;
+				setCourses(prevCourses => {
 					const courseIndex = prevCourses.findIndex(
 						course => course?.course_info?.course_id === courseId
 					);
@@ -66,7 +73,7 @@ const usePlannedCourses = () => {
 						};
 						return updatedCourses;
 					} else {
-						return [...prevCourses, data.planned_course];
+						return [...prevCourses, data.course_record];
 					}
 				});
 			}
@@ -76,7 +83,7 @@ const usePlannedCourses = () => {
 		}
 	};
 
-	const handleRemovePlannedCourse = async courseId => {
+	const handleRemoveCourse = async (courseId, type) => {
 		setPlannedCoursesLoading(true);
 
 		try {
@@ -101,7 +108,7 @@ const usePlannedCourses = () => {
 			const data = await response.json();
 			if (!response.ok) {
 				console.error("Error removing course:", data.message);
-				setPlannedCoursesError(data.message);
+				plannedCoursesError(data.message);
 				set;
 				// If there's an error, restore the previous state by re-fetching
 				// await fetchPlannedCourses();

@@ -2,15 +2,15 @@ import React from "react";
 import Dropdown from "../generic/Dropdown";
 
 const studentDetails = ({
-	enrolledYear,
-	handleEnrolledYearChange,
+	enrollYear,
+	handleEnrollYearChange,
 	gradYear,
 	handleGradYearChange,
 	classes,
 	gpa,
 	handleGpaChange
 }) => {
-	console.log(enrolledYear);
+	console.log(enrollYear);
 	return (
 		<div className="flex flex-col gap-3">
 			<div className="flex flex-row gap-5 items-center">
@@ -22,8 +22,8 @@ const studentDetails = ({
 				<input
 					type="text"
 					id="enrolled-year"
-					value={enrolledYear}
-					onChange={handleEnrolledYearChange}
+					value={enrollYear}
+					onChange={handleEnrollYearChange}
 					maxLength={4}
 					className="border border-gray-300 p-2 rounded w-8"
 				/>

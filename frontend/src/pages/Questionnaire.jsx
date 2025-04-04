@@ -20,14 +20,14 @@ const Questionnaire = () => {
 		classes,
 		gradYear,
 		setGradYear,
-		enrolledYear,
-		setEnrolledYear,
+		enrollYear,
+		setEnrollYear,
 		gpa,
 		setGpa,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,
-		handleEnrolledYearChange
+		handleEnrollYearChange
 	} = useStudentDetails(backendUrl, user, token);
 
 	const {
@@ -76,8 +76,8 @@ const Questionnaire = () => {
 					<div className="flex px-[10px] justify-evenly">
 						<StudentDetails
 							{...{
-								enrolledYear,
-								handleEnrolledYearChange,
+								enrollYear,
+								handleEnrollYearChange,
 								gradYear,
 								handleGradYearChange,
 								classes,
