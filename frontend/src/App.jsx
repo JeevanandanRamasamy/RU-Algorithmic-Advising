@@ -16,10 +16,9 @@ import { ToastWrapper } from "./components/toast/Toast";
 import "./css/index.css";
 
 function App() {
-	// return (
-	// <div>
-	{
-		/* <main className="main-content">
+	return (
+		<div>
+			<main className="main-content">
 				<Routes>
 					<Route
 						path="/"
@@ -48,54 +47,6 @@ function App() {
 								backend={HTML5Backend}
 								// autoScroll={true}
 							>
-								<Questionnaire />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/degree-planner"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<DegreePlanner />
-							</DndProvider>
-						}
-					/>
-				</Routes>
-			</main>
-		</div>
-	); */
-	}
-	return (
-		<div>
-			<main className="main-content">
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/reset_password"
-						element={<ResetPassword />}
-					/>
-					<Route
-						path="/home"
-						element={<Home />}
-					/>
-					<Route
-						path="/navbar"
-						element={<Navbar />}
-					/>
-					<Route
-						path="/questionnaire"
-						element={
-							<DndProvider backend={HTML5Backend}>
 								<Questionnaire />
 							</DndProvider>
 						}

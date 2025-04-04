@@ -13,7 +13,6 @@ from routes.login import login_bp
 from routes.verification import verification_bp
 from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
-from routes.reset_password import reset_password_bp
 
 from flask_cors import CORS
 
@@ -62,7 +61,6 @@ app.register_blueprint(users_bp)
 app.register_blueprint(users_programs_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
-app.register_blueprint(reset_password_bp)
 app.register_blueprint(verification_bp)
 
 
