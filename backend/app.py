@@ -1,14 +1,15 @@
 import os
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from services.user_service import UserService
+# from services.user_service import UserService
 from db import db
-from models import Account
+from models.account import Account
 from routes.courses_route import course_bp
 from routes.planned_courses_route import planned_courses_bp
 from routes.programs_route import programs_bp
 from routes.register_route import register_bp
 from routes.login import login_bp
+from routes.reset_password import reset_password_bp
 from routes.verification import verification_bp
 from routes.taken_courses_route import taken_courses_bp
 from routes.user_programs_route import users_programs_bp
@@ -16,12 +17,12 @@ from routes.users_route import users_bp
 from routes.reset_password import reset_password_bp
 
 from flask_cors import CORS
-from flask_jwt_extended import (
-    JWTManager,
-    create_access_token,
-    jwt_required,
-    get_jwt_identity,
-)
+#from flask_jwt_extended import (
+#    JWTManager,
+#    create_access_token,
+#    jwt_required,
+#    get_jwt_identity,
+#)
 from datetime import timedelta
 from jwt_helper import init_jwt
 
@@ -61,6 +62,7 @@ app.register_blueprint(users_bp)
 app.register_blueprint(users_programs_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
+app.register_blueprint(reset_password_bp)
 app.register_blueprint(verification_bp)
 app.register_blueprint(taken_courses_bp)
 app.register_blueprint(reset_password_bp)

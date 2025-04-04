@@ -1,20 +1,7 @@
 from db import db
-from datetime import datetime
-from models import (
-    Account,
-    StudentDetails,
-    Course,
-    CourseTaken,
-    Program,
-    StudentProgram,
-    RequirementGroup,
-    DegreePlan,
-    PlannedCourse,
-    SchedulePlan,
-    Section,
-)
+# from datetime import datetime
+from models.program import Program
 from sqlalchemy.exc import SQLAlchemyError
-
 
 class ProgramService:
     # ------------------ PROGRAM OPERATIONS ------------------

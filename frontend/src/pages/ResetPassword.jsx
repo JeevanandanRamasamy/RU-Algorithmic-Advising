@@ -29,7 +29,7 @@ function ResetPassword() {
         });
 
         const validateData = await validateResponse.json();
-        if (!validateData.valid) {
+        if (validateData.status !== "success") {
             setMessage("Invalid username. Account does not exist.");
             setLoading(false);
             return;
@@ -86,7 +86,7 @@ function ResetPassword() {
             const verifyResponse = await fetch(`${backendUrl}/api/verify-code`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, code, password }),
+                body: JSON.stringify({ username, code }),
             });
 
             const verifyData = await verifyResponse.json();
@@ -149,7 +149,7 @@ function ResetPassword() {
                     <h3>Enter Your Rutgers NetID</h3>
                     <input
                         type="text"
-                        placeholder="NetID (e.g., abc123)"
+                        placeholder="Enter your NetID (e.g., abc123)"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />

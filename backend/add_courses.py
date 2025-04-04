@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
 from services.db_service import DBService
-from models import RequirementGroup, Course
+from models.requirement_group import RequirementGroup
+from models.course import Course
 from db import db
 from app import app
 from services.course_service import CourseService

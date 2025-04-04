@@ -10,6 +10,9 @@ import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
 
+import ToastDemo from "./pages/ToastDemo";
+import { ToastWrapper } from "./components/toast/Toast";
+
 import "./css/index.css";
 
 function App() {
@@ -59,8 +62,15 @@ function App() {
 							</DndProvider>
 						}
 					/>
+          <Route 
+            path="/toast" 
+            element={
+              <ToastDemo />
+            } 
+          />
 				</Routes>
 			</main>
+      <ToastWrapper />
 		</div>
 	);
 }
