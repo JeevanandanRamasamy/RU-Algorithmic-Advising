@@ -3,6 +3,7 @@ const classes = ["freshman", "sophomore", "junior", "senior", "graduate"];
 import { useNavigate } from "react-router-dom";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
+import { showErrorToast, showSuccessToast } from "../components/toast/Toast";
 
 const useStudentDetails = () => {
 	const { user, token } = useAuth();
@@ -58,17 +59,9 @@ const useStudentDetails = () => {
 	}, [user]);
 
 	const saveStudentDetails = async () => {
-		console.log(
-			JSON.stringify(
-				Object.fromEntries(
-					Object.entries({
-						grad_year: gradYear,
-						enroll_year: enrollYear,
-						gpa: gpa
-					}).filter(([_, value]) => value !== "")
-				)
-			)
-		);
+		if (enrollYear > gradYear) {
+			showErrorToast("Enrollment year must be before grad year");
+		}
 		const response = await fetch(`${backendUrl}/api/users/details`, {
 			method: "PUT",
 			headers: {
@@ -84,6 +77,7 @@ const useStudentDetails = () => {
 		const data = await response.json();
 		console.log(data);
 		if (response.ok) {
+			showSuccessToast("Successfully saved student details");
 			// use toast to update
 			// navigate("/home");
 		} else {

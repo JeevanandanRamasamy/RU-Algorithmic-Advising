@@ -10,6 +10,7 @@ from routes.course_record_route import course_record_bp
 from routes.programs_route import programs_bp
 from routes.register_route import register_bp
 from routes.login import login_bp
+from routes.reset_password import reset_password_bp
 from routes.verification import verification_bp
 from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
