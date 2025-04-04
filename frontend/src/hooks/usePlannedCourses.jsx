@@ -6,12 +6,11 @@ const usePlannedCourses = (backendUrl, token) => {
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);
 
 	const [searchPlannedQuery, setSearchPlannedQuery] = useState("");
-	const [planId, setPlanId] = useState(null);
 
 	const fetchPlannedCourses = useCallback(async () => {
 		setPlannedCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/planned`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}
@@ -20,9 +19,6 @@ const usePlannedCourses = (backendUrl, token) => {
 
 			const data = await response.json();
 			setPlannedCourses(data.planned_courses ? data.planned_courses : []);
-			const planIdValue = data?.planned_courses[0]?.plan_id || planId || null;
-			console.log("Assigned planId:", planIdValue);
-			setPlanId(planIdValue);
 		} catch (err) {
 			setPlannedCoursesError(err.message);
 			console.error("Error fetching courses:", err);
@@ -38,7 +34,7 @@ const usePlannedCourses = (backendUrl, token) => {
 
 	const handleAddPlannedCourse = async courseId => {
 		try {
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -73,7 +69,7 @@ const usePlannedCourses = (backendUrl, token) => {
 				return;
 			}
 
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",

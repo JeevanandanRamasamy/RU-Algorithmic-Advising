@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from services.user_service import UserService
-# from services.db_service import DBService  # Assuming DBService is inside services
 
 login_bp = Blueprint("login", __name__)
 

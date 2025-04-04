@@ -9,8 +9,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.mysql import YEAR
 
-class CourseTaken(db.Model):
-    __tablename__ = "CourseTaken"
+class CourseRecord(db.Model):
+    __tablename__ = "CourseRecord"
     username = Column(
         String(6),
         ForeignKey("StudentDetails.username", ondelete="CASCADE"),
