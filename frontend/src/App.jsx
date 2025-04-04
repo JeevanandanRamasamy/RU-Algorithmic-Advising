@@ -62,13 +62,13 @@ function App() {
 							</DndProvider>
 						}
 					/>
-
 					<Route
 						path="/toast"
 						element={<ToastDemo />}
 					/>
 				</Routes>
 			</main>
+			<ToastWrapper />
 		</div>
 	);
 }
