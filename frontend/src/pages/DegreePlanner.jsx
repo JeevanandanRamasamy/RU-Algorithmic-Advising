@@ -13,7 +13,7 @@ import { useAuth } from "../context/AuthContext";
 
 function DragDrop() {
 	const { user, token } = useAuth();
-	const { courses, searchAvailable, setSearchAvailable } = useCourses();
+	const { courses } = useCourses();
 	// const {
 	// 	plannedCourses,
 	// 	plannedCoursesLoading,
@@ -42,8 +42,8 @@ function DragDrop() {
 			{/* <div className="fixed"> */}
 			<DraggableCourseList
 				title="Available Courses"
-				searchQuery={searchAvailable}
-				setSearchQuery={setSearchAvailable}
+				// searchQuery={searchAvailable}
+				// setSearchQuery={setSearchAvailable}
 				courses={courses}
 				excludedCourseIds={
 					courseRecords?.length > 0
