@@ -21,8 +21,8 @@ function Login() {
 		const data = await response.json();
 
 		if (response.ok) {
-			login(username, data.access_token); // Store username + token in AuthContext
-			localStorage.setItem("token", data.access_token); // Persist it
+			login(username, data.access_token, data.role); // Store username, token, and role in AuthContext
+			// localStorage.setItem("token", data.access_token); // Persist it
 			navigate("/home");
 		} else {
 			setMessage(data.message || "Something went wrong, please try again");
