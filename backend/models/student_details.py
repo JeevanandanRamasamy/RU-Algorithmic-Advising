@@ -30,7 +30,7 @@ class StudentDetails(db.Model):
     gpa = Column(Numeric(3, 2), CheckConstraint("gpa BETWEEN 0.00 AND 4.00"))
     credits_earned = Column(Numeric(4, 1), CheckConstraint("credits_earned >= 0"))
     gpa = Column(Numeric(3, 2), CheckConstraint("gpa BETWEEN 0.00 AND 4.00"))
-    class_year = Column(
+    """class_year = Column(
         Enum(
             "freshman",
             "sophomore",
@@ -40,7 +40,7 @@ class StudentDetails(db.Model):
             name="class_year_enum",
         ),
         nullable=False,
-    )
+    )"""
 
     def __repr__(self):
         return (
