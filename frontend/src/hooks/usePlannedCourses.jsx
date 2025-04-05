@@ -37,14 +37,6 @@ const usePlannedCourses = () => {
 
 	const handleAddCourse = async (courseId, term, year, type) => {
 		try {
-			const config = {
-				taken: {
-					setCourses: setTakenCourses
-				},
-				planned: {
-					setCourses: setPlannedCourses
-				}
-			};
 			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
