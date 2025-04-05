@@ -45,29 +45,6 @@ const Questionnaire = () => {
 		handleRemoveProgram
 	} = usePrograms(backendUrl, user, token);
 
-	// const {
-	// 	courses,
-	// 	coursesLoading,
-	// 	coursesError,
-	// 	fetchCourses,
-	// 	setCourses,
-	// 	searchAvailable,
-	// 	setSearchAvailable,
-	// 	filteredCourses,
-	// 	setFilteredCourses
-	// } = useCourses(backendUrl, token);
-	// const {
-	// 	takenCourses,
-	// 	takenCoursesLoading,
-	// 	takenCoursesError,
-	// 	fetchTakenCourses,
-	// 	setTakenCourses,
-	// 	handleRemoveTakenCourse,
-	// 	handleAddTakenCourse,
-	// 	searchTaken,
-	// 	setSearchTaken
-	// } = useTakenCourses(backendUrl, token, setCourses);
-
 	return (
 		<>
 			<div className="">
