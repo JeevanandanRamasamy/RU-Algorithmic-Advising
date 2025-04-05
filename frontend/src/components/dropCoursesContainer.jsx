@@ -10,15 +10,16 @@ const DropCoursesContainer = ({
 	loading,
 	term,
 	year,
-	courses,
+	courseRecords,
 	getCourse,
 	handleAddPlannedCourse,
 	handleRemovePlannedCourse,
 	semestersTillNow = { semestersTillNow }
 }) => {
-	const coursesBySemester = courses?.filter(
+	const coursesBySemester = courseRecords?.filter(
 		course => course?.term === term && course?.year === year
 	);
+
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {

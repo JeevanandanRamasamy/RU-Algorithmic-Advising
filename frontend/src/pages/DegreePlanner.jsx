@@ -4,25 +4,39 @@ import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
-import usePlannedCourses from "../hooks/usePlannedCourses";
 import SemesterPlanner from "../components/semesterPlanner";
 import DraggableCourseList from "../components/draggableCourseList";
 import Button from "../components/generic/Button";
+import useCourseRecords from "../hooks/useCourseRecords";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useAuth } from "../context/AuthContext";
 
 function DragDrop() {
+	const { user, token } = useAuth();
 	const { courses, searchAvailable, setSearchAvailable } = useCourses();
+	// const {
+	// 	plannedCourses,
+	// 	plannedCoursesLoading,
+	// 	plannedCoursesError,
+	// 	fetchPlannedCourses,
+	// 	setPlannedCourses,
+	// 	searchPlannedQuery,
+	// 	setSearchPlannedQuery,
+	// 	handleAddPlannedCourse,
+	// 	handleRemovePlannedCourse
+	// } = usePlannedCourses();
 	const {
-		plannedCourses,
-		plannedCoursesLoading,
-		plannedCoursesError,
-		fetchPlannedCourses,
-		setPlannedCourses,
-		searchPlannedQuery,
-		setSearchPlannedQuery,
-		handleAddPlannedCourse,
-		handleRemovePlannedCourse
-	} = usePlannedCourses();
+		courseRecords,
+		setCourseRecords,
+		coursesRecordsLoading,
+		setCoursesRecordsLoading,
+		coursesRecordsError,
+		setCourseRecordsError,
+		handleAddCourseRecord,
+		handleRemoveCourseRecord
+	} = useCourseRecords();
 	const [isOpen, setIsOpen] = useState(false);
+
 	return (
 		<>
 			{/* <div className="fixed"> */}
@@ -32,8 +46,8 @@ function DragDrop() {
 				setSearchQuery={setSearchAvailable}
 				courses={courses}
 				excludedCourseIds={
-					plannedCourses?.length > 0
-						? plannedCourses.map(plannedCourse => plannedCourse.course_info.course_id)
+					courseRecords?.length > 0
+						? courseRecords.map(course => course?.course_info.course_id)
 						: []
 				}
 				CourseComponent={AvailableCourses}
@@ -69,7 +83,7 @@ function DragDrop() {
 					CourseComponent={AvailableCourses}
 					/> */}
 					<SemesterPlanner
-						{...{ plannedCourses, handleAddPlannedCourse, handleRemovePlannedCourse }}
+						{...{ courseRecords, handleAddCourseRecord, handleRemoveCourseRecord }}
 					/>
 					{/* <DropCoursesContainer
 					term="fall"

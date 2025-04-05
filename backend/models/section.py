@@ -6,7 +6,10 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.dialects.mysql import CHAR
+from dataclasses import dataclass
 
+
+@dataclass
 class Section(db.Model):
     __tablename__ = "Section"
     schedule_id = Column(

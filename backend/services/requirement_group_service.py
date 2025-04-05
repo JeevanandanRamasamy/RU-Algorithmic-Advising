@@ -2,6 +2,7 @@ from db import db
 from models.requirement_group import RequirementGroup
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class RequirementGroupService:
     # ------------------ REQUIREMENT GROUP OPERATIONS ------------------
     @staticmethod

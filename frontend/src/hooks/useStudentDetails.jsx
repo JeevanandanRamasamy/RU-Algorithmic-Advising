@@ -6,31 +6,31 @@ import { useAuth } from "../context/AuthContext";
 
 const useStudentDetails = () => {
 	const { user, token } = useAuth();
+	const currentYear = new Date().getFullYear();
 	const [gradYear, setGradYear] = useState("");
-	const [enrolledYear, setEnrolledYear] = useState("");
+	const [enrollYear, setEnrollYear] = useState("");
 	const [gpa, setGpa] = useState(0);
-	const [classYear, setClassYear] = useState("");
 
 	const navigate = useNavigate();
 
 	const handleGpaChange = e => {
-		const value = e.target.value;
-		if (value === "" || /^(4(\.0{0,2})?|0?\.?\d{0,2}|[1-3](\.\d{0,2})?)$/.test(value)) {
-			setGpa(value);
+		let value = e.target.value;
+		if (/^(4(\.0{0,2})?|0?\.?\d{0,2}|[1-3](\.\d{0,2})?)$/.test(value)) {
+			setGpa(parseFloat(value));
 		}
 	};
+
 	const handleGradYearChange = event => {
-		const value = event.target.value;
-
+		let value = event.target.value;
 		if (/^\d{0,4}$/.test(value)) {
-			setGradYear(value);
+			setGradYear(parseInt(value, 10));
 		}
 	};
-	const handleEnrolledYearChange = event => {
-		const value = event.target.value;
 
+	const handleEnrollYearChange = event => {
+		let value = event.target.value;
 		if (/^\d{0,4}$/.test(value)) {
-			setEnrolledYear(value);
+			setEnrollYear(parseInt(value, 10));
 		}
 	};
 
@@ -46,17 +46,10 @@ const useStudentDetails = () => {
 					}
 				});
 				const data = await response.json();
-				const fields = {
-					grad_date: setGradYear,
-					enroll_date: setEnrolledYear,
-					gpa: setGpa,
-					class_year: setClassYear
-				};
-				Object.entries(fields).forEach(([key, setter]) => {
-					if (data.user_details[key]) {
-						setter(data.user_details[key]);
-					}
-				});
+				const userDetails = data.user_details || {};
+				setGradYear(userDetails.grad_year ?? currentYear + 4);
+				setEnrollYear(userDetails.enroll_year ?? currentYear);
+				setGpa(userDetails.gpa ?? "");
 			} catch (error) {
 				console.error("Error fetching programs:", error);
 			}
@@ -65,26 +58,34 @@ const useStudentDetails = () => {
 	}, [user]);
 
 	const saveStudentDetails = async () => {
+		console.log(
+			JSON.stringify(
+				Object.fromEntries(
+					Object.entries({
+						grad_year: gradYear,
+						enroll_year: enrollYear,
+						gpa: gpa
+					}).filter(([_, value]) => value !== "")
+				)
+			)
+		);
 		const response = await fetch(`${backendUrl}/api/users/details`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 				"Authorization": `Bearer ${token}`
 			},
-			body: JSON.stringify(
-				Object.fromEntries(
-					Object.entries({
-						grad_date: gradYear,
-						enroll_date: enrolledYear,
-						gpa: gpa,
-						class_year: classYear
-					}).filter(([_, value]) => value !== "")
-				)
-			)
+			body: JSON.stringify({
+				grad_year: gradYear,
+				enroll_year: enrollYear,
+				gpa: gpa
+			})
 		});
-		//TODO: redirect
+		const data = await response.json();
+		console.log(data);
 		if (response.ok) {
-			navigate("/home");
+			// use toast to update
+			// navigate("/home");
 		} else {
 		}
 	};
@@ -93,16 +94,14 @@ const useStudentDetails = () => {
 		classes,
 		gradYear,
 		setGradYear,
-		enrolledYear,
-		setEnrolledYear,
+		enrollYear,
+		setEnrollYear,
 		gpa,
 		setGpa,
-		classYear,
-		setClassYear,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,
-		handleEnrolledYearChange
+		handleEnrollYearChange
 	};
 };
 

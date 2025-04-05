@@ -5,6 +5,7 @@ from flask import Blueprint
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
 
+
 @register_bp.route("/api/check_username_exists", methods=["POST"])
 def validate_username():
     data = request.json
@@ -16,7 +17,7 @@ def validate_username():
     # Check if username already exists
     if UserService.check_account_exists(username):
         return jsonify({"message": "User already exists.", "status": "error"}), 409
-    
+
     return jsonify({"message": "Username is valid.", "status": "success"}), 200
 
 
@@ -81,8 +82,8 @@ def register():
 
     student_detail = {
         "username": username,
-        "grad_date": current_year + 4,
-        "enroll_date": current_year,
+        "grad_year": current_year + 4,
+        "enroll_year": current_year,
         "credits_earned": 0,
         "gpa": 0.00,
         "class_year": "Freshman",

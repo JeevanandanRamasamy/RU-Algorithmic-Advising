@@ -4,6 +4,7 @@ import json
 import time
 import requests
 import pandas as pd
+from services.requirement_group_service import RequirementGroupService
 from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
@@ -230,7 +231,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
             "list": [prerequisites],
             "parent_group_id": parent_group_id,
         }
-        result = DBService.insert_requirement_group(group)
+        result = RequirementGroupService.insert_requirement_group(group)
         if isinstance(result, RequirementGroup):
             print(f"Added group: {result}")
     else:
@@ -249,7 +250,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
         if "logic" not in str(requirements):
             # If there are no nested groups
             group["list"] = requirements
-        group_result = DBService.insert_requirement_group(group)
+        group_result = RequirementGroupService.insert_requirement_group(group)
         if not isinstance(group_result, RequirementGroup):
             return
         print(f"Added group: {group_result}")
@@ -280,7 +281,9 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 elif logic.startswith("ATLEAST"):
                     sub_group["num_required"] = int(logic.split(" ")[1])
 
-                sub_group_result = DBService.insert_requirement_group(sub_group)
+                sub_group_result = RequirementGroupService.insert_requirement_group(
+                    sub_group
+                )
                 if isinstance(sub_group_result, RequirementGroup):
                     print(f"Added sub-group: {sub_group_result}")
 

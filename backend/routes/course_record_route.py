@@ -7,6 +7,32 @@ course_record_bp = Blueprint(
     "course_record", __name__, url_prefix="/api/users/course_record"
 )
 
+
+@course_record_bp.route("", methods=["GET"])
+@jwt_required()
+def get_course_records():
+    try:
+        username = get_jwt_identity()
+        if not username:
+            return jsonify({"message": "Missing username"}), 400
+
+        course_records = CourseRecordService.get_course_records(username)
+        if isinstance(course_records, str):
+            return jsonify({"message", course_records}), 500
+
+        return (
+            jsonify(
+                {
+                    "message": f" Course Records retrieved for user {username}",
+                    "course_records": course_records,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
+
+
 @course_record_bp.route("taken", methods=["GET"])
 @jwt_required()
 def get_taken_courses():
@@ -14,11 +40,11 @@ def get_taken_courses():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        
+
         taken_courses = CourseRecordService.get_past_course_records(username)
         if isinstance(taken_courses, str):
             return jsonify({"message", taken_courses}), 500
-        
+
         return (
             jsonify(
                 {
@@ -31,6 +57,7 @@ def get_taken_courses():
     except Exception as e:
         return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
 
+
 @course_record_bp.route("planned", methods=["GET"])
 @jwt_required()
 def get_planned_courses():
@@ -38,11 +65,12 @@ def get_planned_courses():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        
+
         planned_courses = CourseRecordService.get_future_course_records(username)
+        print(planned_courses)
         if isinstance(planned_courses, str):
             return jsonify({"message", planned_courses}), 500
-        
+
         return (
             jsonify(
                 {
@@ -55,7 +83,8 @@ def get_planned_courses():
     except Exception as e:
         return jsonify({"message": f"Error fetching planned courses: {str(e)}"}), 500
 
-@course_record_bp.route("/api/course_record", methods=["POST"])
+
+@course_record_bp.route("", methods=["POST"])
 @jwt_required()
 def add_course_record():
     try:
@@ -69,13 +98,21 @@ def add_course_record():
         term = data.get("term")
         year = data.get("year")
         grade = data.get("grade") if "grade" in data else None
-        
+
         result = CourseRecordService.insert_course_record(
-            username, course_id, term, year, grade
+            {
+                "username": username,
+                "course_id": course_id,
+                "term": term,
+                "year": year,
+                "grade": grade,
+            }
         )
+        print(result)
         if isinstance(result, str):
+
             return jsonify({"message": result}), 500
-        
+
         return (
             jsonify(
                 {
@@ -99,9 +136,7 @@ def remove_course_record():
             return jsonify({"message": "Missing username or course_id"}), 400
         course_id = data.get("course_id")
 
-        course_record = CourseRecordService.delete_course_record(
-            username, course_id
-        )
+        course_record = CourseRecordService.delete_course_record(username, course_id)
         if isinstance(course_record, str):
             return jsonify({"message": course_record}), 500
 
@@ -123,18 +158,35 @@ def remove_course_record():
 def update_course_record():
     try:
         username = get_jwt_identity()
+
         data = request.get_json()
-        if not username or "course_id" not in data or "new_course_id" not in data:
+        if not username or "course_id" not in data:
+            return jsonify({"message": "Missing username or course_id"}), 400
+        course_id = data.get("course_id")
+        if "term" not in data or "year" not in data:
+            return jsonify({"message": "Missing term or year"}), 400
+        term = data.get("term")
+        year = data.get("year")
+        grade = data.get("grade") if "grade" in data else None
+        # data = request.get_json()
+
+        if not username or "course_id" not in data:
             return (
                 jsonify({"message": "Missing username, course_id, or new_course_id"}),
                 400,
             )
-        
-        course_id = data["course_id"]
-        new_course_id = data["new_course_id"]
+
+        # course_id = data["course_id"]
+        # new_course_id = data["new_course_id"]
 
         result = CourseRecordService.update_course_record(
-            username, course_id, new_course_id
+            username=username,
+            course_id=course_id,
+            new_data={
+                "term": term,
+                "year": year,
+                "grade": grade,
+            },
         )
         if isinstance(result, str):
             return jsonify({"message": result}), 500
@@ -142,7 +194,7 @@ def update_course_record():
         return (
             jsonify(
                 {
-                    "message": f"Course {course_id} updated to {new_course_id} for user {username}",
+                    "message": f"Course {course_id} updated  for user {username}",
                     "updated_course_record": result,
                 }
             ),

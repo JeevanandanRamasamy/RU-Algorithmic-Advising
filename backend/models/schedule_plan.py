@@ -8,7 +8,10 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.dialects.mysql import YEAR
+from dataclasses import dataclass
 
+
+@dataclass
 class SchedulePlan(db.Model):
     __tablename__ = "SchedulePlan"
     schedule_id = Column(Integer, primary_key=True, autoincrement=True)
