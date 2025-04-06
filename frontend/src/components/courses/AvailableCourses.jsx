@@ -3,15 +3,23 @@
 import CourseList from "./CourseList";
 import CourseItem from "./CourseItem";
 
-export const AvailableCourses = ({ courses, getCourse, isHorizontal = true, limit, height }) => {
+export const AvailableCourses = ({
+	courses,
+	getCourse,
+	isHorizontal = true,
+	showFilters,
+	limit
+}) => {
 	return (
-		<div className={`p-2 max-h-[500px]`}>
+		<div className={`p-2`}>
 			<div
-				className={`non-draggable border border-gray-200 rounded-md flex ${
+				className={`non-draggable border border-gray-200 rounded-md flex m-0 ${
 					isHorizontal
-						? "flex-row overflow-y-hidden overflow-x-auto"
-						: "flex-col overflow-x-hidden overflow-y-auto"
-				} gap-3 p-2`}>
+						? "flex-row overflow-y-hidden overflow-x-auto h-[200px] mx-2"
+						: `flex-col overflow-x-hidden overflow-y-auto px-2 ${
+								showFilters ? "h-[600px]" : "h-[726.4px]"
+						  }`
+				} gap-3`}>
 				<CourseList
 					courses={courses}
 					getCourse={getCourse}

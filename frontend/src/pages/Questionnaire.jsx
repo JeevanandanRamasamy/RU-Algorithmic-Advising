@@ -73,10 +73,13 @@ const Questionnaire = () => {
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
 	return (
 		<>
-			<div className="overflow-x-hidden">
+			<div className="p-5 mx-auto ml-[130px] overflow-x-hidden">
 				<Navbar />
-				<div className="ml-[110px] pt-[5px]">
-					<div className="flex px-[10px] justify-evenly">
+				<header className="app-header">
+					<h1>Course Planner</h1>
+				</header>
+				<div className="pt-[5px]">
+					<div className="flex px-[10px] pt-[10x] pb-[10px] gap-[30px] justify-between">
 						<StudentDetails
 							{...{
 								enrollYear,
@@ -101,33 +104,52 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					<div className="flex gap-[30px] w-full">
-						<div className=" bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 h-[1000px] max-h-[1000px] box-border">
+				</div>
+				<div className="w-full">
+					<div className="flex gap-[30px] w-full justify-between">
+						<div className=" bg-white shadow-lg rounded p-4 w-[650px] transition-all duration-200 box-border mx-auto flex items-center justify-center">
 							<CourseListContainer
 								title="Available Courses"
-								// searchQuery={searchAvailable}
-								// setSearchQuery={setSearchAvailable}
 								className="w-[600px]"
-								courses={courses}
-								excludedCourseIds={
-									takenCourses?.length > 0
-										? takenCourses.map(
-												takenCourse => takenCourse.course_info.course_id
-										  )
-										: []
-								}
+								courses={courses.slice(0, 10)}
+								excludedCourseIds={[
+									...(courseRecords?.length > 0
+										? courseRecords.map(course => course?.course_info.course_id)
+										: []),
+									...(takenCourses?.length > 0
+										? takenCourses.map(takenCourse => takenCourse.course_id)
+										: [])
+								]}
 								CourseComponent={AvailableCourses}
 								showFilters={showAvailableCourseFilters}
 								setShowFilters={setShowAvailableCourseFilters}
 								courseComponentProps={{
-									isHorizontal: false,
-									height: "500px"
+									isHorizontal: false
 								}}
+								isHorizontal={false}
+								padding="px-12"
 							/>
 						</div>
-						<div className=" bg-white shadow-lg rounded p-4 w-100 box-border">
+
+						<div className=" bg-white shadow-lg rounded p-4 w-[650px] transition-all duration-200 box-border mx-auto flex items-center justify-center">
 							<CourseListContainer
 								title="Taken Courses"
+								className="w-[600px]"
+								courses={courses}
+								CourseComponent={TakenCourses}
+								showFilters={showAvailableCourseFilters}
+								setShowFilters={setShowAvailableCourseFilters}
+								courseComponentProps={{
+									isHorizontal: false
+								}}
+								isHorizontal={false}
+								padding="px-12"
+							/>
+						</div>
+						{/* <div className=" bg-white shadow-lg rounded p-4 w-[650px] transition-all duration-200 box-border mx-auto flex items-center justify-center">
+							<CourseListContainer
+								title="Taken Courses"
+								className="w-[600px]"
 								courses={takenCourses}
 								getCourse={course => course.course_info}
 								CourseComponent={TakenCourses}
@@ -136,21 +158,21 @@ const Questionnaire = () => {
 									error: takenCoursesError,
 									onRemoveCourse: handleRemoveTakenCourse,
 									onAddCourse: handleAddTakenCourse,
-									height: "500px"
+									isHorizontal: false
 								}}
 								showFilters={showTakenCourseFilters}
 								setShowFilters={setShowTakenCourseFilters}
 								isHorizontal={false}
 							/>
-						</div>
+						</div> */}
 					</div>
-					<div className="flex justify-center mt-5">
-						<Button
-							className="bg-blue-500 text-white p-1 rounded w-20"
-							label="Save"
-							onClick={saveStudentDetails}
-						/>
-					</div>
+				</div>
+				<div className="flex justify-center my-5 ">
+					<Button
+						className="bg-blue-500 text-white p-1 rounded w-20"
+						label="Save"
+						onClick={saveStudentDetails}
+					/>
 				</div>
 			</div>
 		</>

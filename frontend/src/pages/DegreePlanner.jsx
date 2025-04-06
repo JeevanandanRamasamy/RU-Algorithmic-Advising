@@ -10,6 +10,7 @@ import Button from "../components/generic/Button";
 import useCourseRecords from "../hooks/useCourseRecords";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
+import useTakenCourses from "../hooks/useTakenCourses";
 
 function DragDrop() {
 	const { user, token } = useAuth();
@@ -35,6 +36,18 @@ function DragDrop() {
 		handleAddCourseRecord,
 		handleRemoveCourseRecord
 	} = useCourseRecords();
+
+	const {
+		takenCourses,
+		takenCoursesLoading,
+		takenCoursesError,
+		fetchTakenCourses,
+		setTakenCourses,
+		handleAddTakenCourse,
+		handleRemoveTakenCourse,
+		searchTaken,
+		setSearchTaken
+	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -45,11 +58,14 @@ function DragDrop() {
 				// searchQuery={searchAvailable}
 				// setSearchQuery={setSearchAvailable}
 				courses={courses}
-				excludedCourseIds={
-					courseRecords?.length > 0
+				excludedCourseIds={[
+					...(courseRecords?.length > 0
 						? courseRecords.map(course => course?.course_info.course_id)
-						: []
-				}
+						: []),
+					...(takenCourses?.length > 0
+						? takenCourses.map(takenCourse => takenCourse.course_id)
+						: [])
+				]}
 				CourseComponent={AvailableCourses}
 				isOpen={isOpen}
 				setIsOpen={setIsOpen}
@@ -57,7 +73,7 @@ function DragDrop() {
 			{/* </div> */}
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
-				<header className="app-header">
+				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Course Planner</h1>
 				</header>
 				<div className="pb-2 flex justify-end">

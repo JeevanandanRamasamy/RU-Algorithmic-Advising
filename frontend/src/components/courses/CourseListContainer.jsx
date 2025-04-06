@@ -11,7 +11,9 @@ const CourseListContainer = ({
 	CourseComponent,
 	courseComponentProps,
 	showFilters,
-	setShowFilters
+	setShowFilters,
+	isHorizontal = true,
+	padding = ""
 }) => {
 	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
 	const [schoolSearchQuery, setSchoolSearchQuery] = useState("");
@@ -50,10 +52,10 @@ const CourseListContainer = ({
 		: [];
 
 	return (
-		<section className=" bg-white border border-gray-300 rounded shadow-md flex flex-col h-[600px]">
+		<section className={` bg-white border border-gray-300 rounded shadow-md flex flex-col`}>
 			<h2 className="m-0 text-center">{title}</h2>
-			<div className="w-full max-w-md mx-auto">
-				{/* <div
+			<div className="mx-auto items-center justify-center">
+				<div
 					className="flex items-center justify-between cursor-pointer mb-2 px-2"
 					onClick={() => setShowFilters(prev => !prev)}>
 					<span className="text-lg font-medium">Filters</span>
@@ -89,12 +91,14 @@ const CourseListContainer = ({
 						onChange={e => setSubjectSearchQuery(e.target.value)}
 						options={subjects}
 					/>
-				</div> */}
+				</div>
 
 				<CourseComponent
 					courses={filteredCourses}
 					getCourse={getCourse}
 					limit={subjectSearchQuery || schoolSearchQuery ? undefined : 50}
+					isHorizontal={isHorizontal}
+					showFilters={showFilters}
 					{...courseComponentProps}
 				/>
 			</div>

@@ -76,11 +76,11 @@ const CourseItem = ({ course, isPlanned = false }) => {
 	return (
 		<div
 			ref={drag}
-			className={`course-item min-w-[200px] ${isDragging ? "dragging" : ""} ${
+			className={`course-item min-w-[200px] flex-1 ${isDragging ? "dragging" : ""} ${
 				isPlanned ? "planned" : ""
 			}`}
 			style={{ opacity: isDragging ? 0.5 : 1 }}>
-			<h3 className="course-title m-0 p-1 leading-6">
+			<h3 className="text-base m-0 p-1 leading-6">
 				<a
 					className="no-underline text-black hover:text-blue-500"
 					href={course.course_link}
@@ -91,13 +91,6 @@ const CourseItem = ({ course, isPlanned = false }) => {
 			</h3>
 			<p className="course-code m-0 p-1">ID: {course.course_id}</p>
 			<p className="course-credits m-0 p-1">{course.credits} credits</p>
-			{/* <a
-				className="course-link"
-				href={course.course_link}
-				target="_blank"
-				rel="noopener noreferrer">
-				Course Details
-			</a> */}
 		</div>
 	);
 };

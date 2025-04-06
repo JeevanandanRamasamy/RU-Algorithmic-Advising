@@ -1,25 +1,23 @@
 import React from "react";
 
-import Button from "../generic/Button";
-
 const TakenCourseItem = ({ course, onRemove }) => {
 	return (
-		<div className="bg-white border border-gray-300 rounded-md p-3 mb-2 transition-all duration-200 ease-in-out group">
+		<div className="bg-white border border-[#ddd] rounded px-1.5 py-1.5 group">
 			{/* <h3 className="font-semibold text-gray-800">{course.course_name}</h3>
 			<p className="font-bold text-gray-700">ID: {course.course_id}</p>
 			<p className="text-sm text-gray-600">{course.credits} credits</p> */}
 
 			{/* <div className="flex justify-between items-center"> */}
-			<h3 className="planned-course-name m-0">
+			<h3 className="text-base planned-course-name m-0">
 				<a
 					className="no-underline text-black hover:text-blue-500"
 					href={course.course_link}
 					target="_blank"
-					rel="noopener noreferrer">
+					rel="noopener noreferrer p-1">
 					{course.course_name}
 				</a>
 			</h3>
-			<p className="planned-course-code m-0">ID: {course.course_id}</p>
+			<p className="font-bold text-[#2c3e50] m-0 p-1">ID: {course.course_id}</p>
 			<div className="flex justify-between">
 				<p className="planned-course-credits m-0 text-center">{course.credits} credits</p>
 				<button

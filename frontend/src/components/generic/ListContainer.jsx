@@ -12,9 +12,8 @@ const ListContainer = ({
 	handleButtonClick,
 	excludedByKeys = []
 }) => {
-	console.log(excludedByKeys);
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="flex flex-col gap-3 bg-white">
 			<input
 				type="text"
 				value={query}
@@ -22,7 +21,7 @@ const ListContainer = ({
 				placeholder={searchText}
 				className="w-64 border border-gray-300 p-2 rounded"
 			/>
-			<div className="h-144 overflow-y-auto w-64 p-2 border border-black rounded-2xl">
+			<div className="h-[120px] overflow-y-auto w-[400px] p-2 border border-gray-200 rounded-2xl">
 				{values &&
 					values
 						.filter(value => !excludedByKeys.includes(value[key_field]))

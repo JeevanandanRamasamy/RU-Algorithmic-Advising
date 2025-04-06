@@ -47,7 +47,6 @@ const useTakenCourses = () => {
 			});
 
 			const data = await response.json();
-			console.log("data", data);
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
 				setTakenCoursesError(data.message);
