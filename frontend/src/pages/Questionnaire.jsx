@@ -104,8 +104,6 @@ const Questionnaire = () => {
 					<div className="flex gap-[30px] w-full">
 						<CourseListContainer
 							title="Available Courses"
-							// searchQuery={searchAvailable}
-							// setSearchQuery={setSearchAvailable}
 							className="w-[600px]"
 							courses={courses}
 							excludedCourseIds={

@@ -1,6 +1,12 @@
 import React from "react";
 
-const CourseList = ({ courses = [], getCourse, CourseItemComponent, courseItemProps, limit }) => {
+const CourseList = ({
+	courses = [],
+	getCourse = course => course,
+	CourseItemComponent,
+	courseItemProps,
+	limit
+}) => {
 	const visibleCourses = limit ? courses.slice(0, limit) : courses;
 	return (
 		<>

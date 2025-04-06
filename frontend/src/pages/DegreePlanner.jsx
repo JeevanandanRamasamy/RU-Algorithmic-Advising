@@ -42,8 +42,6 @@ function DragDrop() {
 			{/* <div className="fixed"> */}
 			<DraggableCourseList
 				title="Available Courses"
-				// searchQuery={searchAvailable}
-				// setSearchQuery={setSearchAvailable}
 				courses={courses}
 				excludedCourseIds={
 					courseRecords?.length > 0
