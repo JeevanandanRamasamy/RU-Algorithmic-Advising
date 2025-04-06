@@ -35,7 +35,6 @@ const DropCoursesContainer = ({
 		<div
 			className={`flex-1
 		${containsSemester(semestersTillNow, year, term) ? "bg-green-600" : "bg-blue-700"}
-
 		 rounded-lg shadow-md p-5 h-[400px] flex flex-col `}>
 			<div className="text-center h-[10%] text-white">
 				{term?.toUpperCase()} {year}

@@ -50,7 +50,7 @@ const CourseListContainer = ({
 		: [];
 
 	return (
-		<section className="h-full w-full bg-white border border-gray-300 rounded shadow-md flex flex-col">
+		<section className=" bg-white border border-gray-300 rounded shadow-md flex flex-col h-full">
 			<h2 className="m-0 text-center">{title}</h2>
 			<div className="w-full max-w-md mx-auto">
 				<div

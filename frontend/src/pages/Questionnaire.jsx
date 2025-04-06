@@ -102,44 +102,47 @@ const Questionnaire = () => {
 						/>
 					</div>
 					<div className="flex gap-[30px] w-full">
-						<CourseListContainer
-							title="Available Courses"
-							// searchQuery={searchAvailable}
-							// setSearchQuery={setSearchAvailable}
-							className="w-[600px]"
-							courses={courses}
-							excludedCourseIds={
-								takenCourses?.length > 0
-									? takenCourses.map(
-											takenCourse => takenCourse.course_info.course_id
-									  )
-									: []
-							}
-							CourseComponent={AvailableCourses}
-							showFilters={showAvailableCourseFilters}
-							setShowFilters={setShowAvailableCourseFilters}
-							courseComponentProps={{
-								isHorizontal: false
-							}}
-						/>
-						<CourseListContainer
-							title="Taken Courses"
-							// searchQuery={searchTaken}
-							// setSearchQuery={setSearchTaken}
-							courses={takenCourses}
-							getCourse={course => course.course_info}
-							CourseComponent={TakenCourses}
-							courseComponentProps={{
-								loading: takenCoursesLoading,
-								error: takenCoursesError,
-								onRemoveCourse: handleRemoveTakenCourse,
-								onAddCourse: handleAddTakenCourse,
-								isHorizontal: false
-							}}
-							showFilters={showTakenCourseFilters}
-							setShowFilters={setShowTakenCourseFilters}
-							isHorizontal={false}
-						/>
+						<div className=" bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 h-[1000px] max-h-[1000px] box-border">
+							<CourseListContainer
+								title="Available Courses"
+								// searchQuery={searchAvailable}
+								// setSearchQuery={setSearchAvailable}
+								className="w-[600px]"
+								courses={courses}
+								excludedCourseIds={
+									takenCourses?.length > 0
+										? takenCourses.map(
+												takenCourse => takenCourse.course_info.course_id
+										  )
+										: []
+								}
+								CourseComponent={AvailableCourses}
+								showFilters={showAvailableCourseFilters}
+								setShowFilters={setShowAvailableCourseFilters}
+								courseComponentProps={{
+									isHorizontal: false,
+									height: "500px"
+								}}
+							/>
+						</div>
+						<div className=" bg-white shadow-lg rounded p-4 w-100 box-border">
+							<CourseListContainer
+								title="Taken Courses"
+								courses={takenCourses}
+								getCourse={course => course.course_info}
+								CourseComponent={TakenCourses}
+								courseComponentProps={{
+									loading: takenCoursesLoading,
+									error: takenCoursesError,
+									onRemoveCourse: handleRemoveTakenCourse,
+									onAddCourse: handleAddTakenCourse,
+									height: "500px"
+								}}
+								showFilters={showTakenCourseFilters}
+								setShowFilters={setShowTakenCourseFilters}
+								isHorizontal={false}
+							/>
+						</div>
 					</div>
 					<div className="flex justify-center mt-5">
 						<Button

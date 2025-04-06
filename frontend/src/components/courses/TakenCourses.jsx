@@ -3,7 +3,15 @@ import { useDrop } from "react-dnd";
 import TakenCourseItem from "./TakenCourseItem";
 import CourseList from "./CourseList";
 
-const TakenCourses = ({ courses, getCourse, loading, error, onRemoveCourse, onAddCourse }) => {
+const TakenCourses = ({
+	courses,
+	getCourse,
+	loading,
+	error,
+	onRemoveCourse,
+	onAddCourse,
+	height = "200px"
+}) => {
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
@@ -17,29 +25,18 @@ const TakenCourses = ({ courses, getCourse, loading, error, onRemoveCourse, onAd
 	return (
 		<div
 			ref={drop}
-			className={`flex-1 overflow-y-auto border border-gray-200 rounded-md p-2.5 ${
+			className={`flex-1 ${
 				isOver ? "drag-over" : ""
-			}`}>
-			{loading ? (
-				<div>Loading taken courses...</div>
-			) : error ? (
-				<div className="bg-red-100 text-red-800 p-2.5 rounded-md mb-5 text-center">
-					{error}
-				</div>
-			) : courses?.length > 0 ? (
-				<div className="planned-courses-list">
-					<CourseList
-						courses={courses}
-						getCourse={getCourse}
-						CourseItemComponent={TakenCourseItem}
-						courseItemProps={{ onRemove: onRemoveCourse }}
-					/>
-				</div>
-			) : (
-				<div className="no-courses-message">
-					No courses planned. Drag and drop to add courses.
-				</div>
-			)}
+			} rounded-lg shadow-md p-5 flex flex-col`}>
+			<div
+				className={`bg-white flex-1 border border-gray-200 overflow-y-scroll rounded-md p-2.5`}>
+				<CourseList
+					courses={courses}
+					getCourse={getCourse}
+					CourseItemComponent={TakenCourseItem}
+					courseItemProps={{ onRemove: onRemoveCourse }}
+				/>
+			</div>
 		</div>
 	);
 };

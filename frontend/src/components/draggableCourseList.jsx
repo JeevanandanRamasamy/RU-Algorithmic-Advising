@@ -47,7 +47,7 @@ const DraggableCourseList = ({
 									className={`absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white  border-none cursor-pointer z-100`}>
 									X
 								</button>
-								<div className="fixed bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 cursor-move h-max-[500px] box-border">
+								<div className="fixed bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 cursor-move max-h-[500px] box-border">
 									<CourseListContainer
 										title={title}
 										// searchQuery={searchQuery}
