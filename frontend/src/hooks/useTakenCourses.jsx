@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const useTakenCourses = setAvailableCourses => {
+import { useAuth } from "../context/AuthContext";
+
+const useTakenCourses = () => {
+	const { user, token } = useAuth();
 	const [takenCourses, setTakenCourses] = useState([]);
 	const [takenCoursesLoading, setTakenCoursesLoading] = useState(false);
 	const [takenCoursesError, setTakenCoursesError] = useState(null);
@@ -10,7 +13,7 @@ const useTakenCourses = setAvailableCourses => {
 	const fetchTakenCourses = useCallback(async () => {
 		setTakenCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/course_record/taken`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/termless`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}
@@ -19,11 +22,6 @@ const useTakenCourses = setAvailableCourses => {
 
 			const data = await response.json();
 			setTakenCourses(data.taken_courses ? data.taken_courses : []);
-			setAvailableCourses(prevAvailableCourses =>
-				prevAvailableCourses.filter(
-					course => !takenCourses.some(taken => taken.course_id === course.course_id)
-				)
-			);
 		} catch (err) {
 			setTakenCoursesError(err.message);
 			console.error("Error fetching courses:", err);
@@ -54,7 +52,7 @@ const useTakenCourses = setAvailableCourses => {
 				console.error("Error adding course to the plan:", data.message);
 				setTakenCoursesError(data.message);
 			} else {
-				setTakenCourses(prevCourses => [...prevCourses, data.taken_course]);
+				setTakenCourses(prevCourses => [...prevCourses, data.course_record]);
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
@@ -82,7 +80,6 @@ const useTakenCourses = setAvailableCourses => {
 				setTakenCourses(prevTakenCourses =>
 					prevTakenCourses.filter(course => course.course_info.course_id !== courseId)
 				);
-				setPlanId(data?.taken_courses?.length > 0 ? data.taken_courses[0].plan_id : planId);
 			}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);

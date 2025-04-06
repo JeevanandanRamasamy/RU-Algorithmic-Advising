@@ -1,3 +1,4 @@
+import { useState } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
@@ -11,6 +12,7 @@ import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
 import DropCoursesContainer from "../components/dropCoursesContainer";
+import useCourseRecords from "../hooks/useCourseRecords";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -28,7 +30,7 @@ const Questionnaire = () => {
 		handleGpaChange,
 		handleGradYearChange,
 		handleEnrollYearChange
-	} = useStudentDetails(backendUrl, user, token);
+	} = useStudentDetails();
 
 	const {
 		selectedProgramsQuery,
@@ -43,34 +45,35 @@ const Questionnaire = () => {
 		setFilteredSelectedPrograms,
 		handleInsertProgram,
 		handleRemoveProgram
-	} = usePrograms(backendUrl, user, token);
+	} = usePrograms();
+	const { courses } = useCourses();
+	const {
+		takenCourses,
+		takenCoursesLoading,
+		takenCoursesError,
+		fetchTakenCourses,
+		setTakenCourses,
+		handleAddTakenCourse,
+		handleRemoveTakenCourse,
+		searchTaken,
+		setSearchTaken
+	} = useTakenCourses();
+	const {
+		courseRecords,
+		setCourseRecords,
+		coursesRecordsLoading,
+		setCoursesRecordsLoading,
+		coursesRecordsError,
+		setCourseRecordsError,
+		handleAddCourseRecord,
+		handleRemoveCourseRecord
+	} = useCourseRecords();
 
-	// const {
-	// 	courses,
-	// 	coursesLoading,
-	// 	coursesError,
-	// 	fetchCourses,
-	// 	setCourses,
-	// 	searchAvailable,
-	// 	setSearchAvailable,
-	// 	filteredCourses,
-	// 	setFilteredCourses
-	// } = useCourses(backendUrl, token);
-	// const {
-	// 	takenCourses,
-	// 	takenCoursesLoading,
-	// 	takenCoursesError,
-	// 	fetchTakenCourses,
-	// 	setTakenCourses,
-	// 	handleRemoveTakenCourse,
-	// 	handleAddTakenCourse,
-	// 	searchTaken,
-	// 	setSearchTaken
-	// } = useTakenCourses(backendUrl, token, setCourses);
-
+	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
+	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
 	return (
 		<>
-			<div className="">
+			<div className="overflow-x-hidden">
 				<Navbar />
 				<div className="ml-[110px] pt-[5px]">
 					<div className="flex px-[10px] justify-evenly">
@@ -98,11 +101,12 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					{/* <div className="flex gap-[30px]"> */}
-					{/* <CourseListContainer
+					<div className="flex gap-[30px] w-full">
+						<CourseListContainer
 							title="Available Courses"
-							searchQuery={searchAvailable}
-							setSearchQuery={setSearchAvailable}
+							// searchQuery={searchAvailable}
+							// setSearchQuery={setSearchAvailable}
+							className="w-[600px]"
 							courses={courses}
 							excludedCourseIds={
 								takenCourses?.length > 0
@@ -112,11 +116,16 @@ const Questionnaire = () => {
 									: []
 							}
 							CourseComponent={AvailableCourses}
-						/> */}
-					{/* <CourseListContainer
+							showFilters={showAvailableCourseFilters}
+							setShowFilters={setShowAvailableCourseFilters}
+							courseComponentProps={{
+								isHorizontal: false
+							}}
+						/>
+						<CourseListContainer
 							title="Taken Courses"
-							searchQuery={searchTaken}
-							setSearchQuery={setSearchTaken}
+							// searchQuery={searchTaken}
+							// setSearchQuery={setSearchTaken}
 							courses={takenCourses}
 							getCourse={course => course.course_info}
 							CourseComponent={TakenCourses}
@@ -124,10 +133,14 @@ const Questionnaire = () => {
 								loading: takenCoursesLoading,
 								error: takenCoursesError,
 								onRemoveCourse: handleRemoveTakenCourse,
-								onAddCourse: handleAddTakenCourse
+								onAddCourse: handleAddTakenCourse,
+								isHorizontal: false
 							}}
-						/> */}
-					{/* </div> */}
+							showFilters={showTakenCourseFilters}
+							setShowFilters={setShowTakenCourseFilters}
+							isHorizontal={false}
+						/>
+					</div>
 					<div className="flex justify-center mt-5">
 						<Button
 							className="bg-blue-500 text-white p-1 rounded w-20"

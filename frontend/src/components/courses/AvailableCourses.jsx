@@ -7,7 +7,8 @@ export const AvailableCourses = ({
 	// searchAvailable,
 	// setSearchAvailable,
 	courses,
-	getCourse
+	getCourse,
+	isHorizontal = true
 	// excludedCourseIds
 }) => {
 	// const filteredCourses = filteredCourses
@@ -15,7 +16,9 @@ export const AvailableCourses = ({
 	// 	: [];
 	return (
 		<div
-			className={`non-draggable h-full border border-gray-200 rounded-md p-2.5 flex flex-row gap-3 overflow-x-auto overflow-y-hidden`}>
+			className={`non-draggable h-full border border-gray-200 rounded-md p-2.5 flex ${
+				isHorizontal ? "flex-row" : "flex-col"
+			} gap-3 overflow-x-auto overflow-y-hidden`}>
 			<CourseList
 				courses={courses}
 				getCourse={getCourse}
