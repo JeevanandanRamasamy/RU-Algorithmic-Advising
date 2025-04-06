@@ -1,3 +1,19 @@
+export const schools = [
+	"01 - School of Arts & Sciences",
+	"03 - Military Science",
+	"04 - School of Communication & Info",
+	"05 - Graduate School of Education",
+	"07 - Mason Gross School of the Arts",
+	"09 - School of Social Work",
+	"10 - Bloustein School of Planning",
+	"11 - School of Environmental & Biological Sci",
+	"13 - Grad School of Applied & Prof Psych",
+	"14 - School of Engineering",
+	"30 - Ernest Mario School of Pharmacy",
+	"33 - Rutgers Business School- NB campus",
+	"37 - School of Management & Labor Rel",
+	"77 - School of Nursing - New Brunswick"
+];
 export const majors = [
 	"African, Middle Eastern & South Asian Languages & Literatures - Regional",
 	"Africana Studies",

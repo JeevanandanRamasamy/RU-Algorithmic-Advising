@@ -7,7 +7,7 @@ const useCourses = () => {
 	const [courses, setCourses] = useState([]);
 	const [coursesLoading, setCoursesLoading] = useState(false);
 	const [coursesError, setCoursesError] = useState(null);
-	const [searchAvailable, setSearchAvailable] = useState("");
+	// const [searchAvailable, setSearchAvailable] = useState("");
 
 	const fetchCourses = useCallback(async () => {
 		setCoursesLoading(true);
@@ -40,9 +40,9 @@ const useCourses = () => {
 		coursesLoading,
 		coursesError,
 		fetchCourses,
-		setCourses,
-		searchAvailable,
-		setSearchAvailable
+		setCourses
+		// searchAvailable,
+		// setSearchAvailable
 	};
 };
 
