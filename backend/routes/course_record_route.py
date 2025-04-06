@@ -58,6 +58,31 @@ def get_taken_courses():
         return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
 
 
+@course_record_bp.route("termless", methods=["GET"])
+@jwt_required()
+def get_termless_courses():
+    try:
+        username = get_jwt_identity()
+        if not username:
+            return jsonify({"message": "Missing username"}), 400
+
+        taken_courses = CourseRecordService.get_termless_course_records(username)
+        if isinstance(taken_courses, str):
+            return jsonify({"message", taken_courses}), 500
+
+        return (
+            jsonify(
+                {
+                    "message": f"Taken Courses retrieved for user {username}",
+                    "taken_courses": taken_courses,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
+
+
 @course_record_bp.route("planned", methods=["GET"])
 @jwt_required()
 def get_planned_courses():
@@ -93,8 +118,8 @@ def add_course_record():
         if not username or "course_id" not in data:
             return jsonify({"message": "Missing username or course_id"}), 400
         course_id = data.get("course_id")
-        if "term" not in data or "year" not in data:
-            return jsonify({"message": "Missing term or year"}), 400
+        # if "term" not in data or "year" not in data:
+        #     return jsonify({"message": "Missing term or year"}), 400
         term = data.get("term")
         year = data.get("year")
         grade = data.get("grade") if "grade" in data else None
