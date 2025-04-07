@@ -199,8 +199,8 @@ class CourseRecordService:
         try:
             courses = (
                 db.session.query(Course)
-                .join(CourseRecord, Course.course_id == CourseRecord.course_id)
                 .filter(CourseRecord.username == username, CourseRecord.term == None)
+                .join(CourseRecord, Course.course_id == CourseRecord.course_id)
                 .all()
             )
             return [course.to_dict() for course in courses]

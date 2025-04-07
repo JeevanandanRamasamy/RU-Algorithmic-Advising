@@ -52,6 +52,7 @@ def get_course_requirements():
         return jsonify({"message": f"Error fetching requirements : {str(e)}"}), 500
 
 
+# TODO: add validation logic
 # @requirements_bp.route("", methods=["POST"])
 # def validate_requirements():
 #     data = request.get_json()
