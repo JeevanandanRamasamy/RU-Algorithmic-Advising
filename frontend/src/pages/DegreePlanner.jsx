@@ -39,7 +39,6 @@ function DragDrop() {
 	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
-	console.log(requirementStrings);
 
 	return (
 		<>

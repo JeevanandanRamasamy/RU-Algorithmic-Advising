@@ -10,9 +10,6 @@ const CourseList = ({
 }) => {
 	const visibleCourses = limit ? courses.slice(0, limit) : courses;
 
-	visibleCourses.map(course => {
-		console.log(requirementStrings[getCourse(course).course_id] || "");
-	});
 	return (
 		<>
 			{visibleCourses.map(course => (

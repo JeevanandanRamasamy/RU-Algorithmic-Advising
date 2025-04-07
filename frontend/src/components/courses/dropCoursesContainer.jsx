@@ -24,7 +24,7 @@ const DropCoursesContainer = ({
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
-			console.log("Added course:", item, term, year);
+			// console.log("Added course:", item, term, year);
 			handleAddPlannedCourse(item.id, term, year);
 		},
 		collect: monitor => ({

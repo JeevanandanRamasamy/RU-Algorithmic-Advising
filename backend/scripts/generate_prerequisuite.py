@@ -8,9 +8,9 @@ import json
 class Prerequisuites:
     @staticmethod
     def generate_course_requirement_string(course_id):
-        prerequisuites = RequirementService.get_prerequisites_tree(course_id)
-        if prerequisuites:
-            return prerequisuites.requirement_str() if prerequisuites != "" else ""
+        prerequisites = RequirementService.get_prerequisites_tree(course_id)
+        if prerequisites:
+            return prerequisites.requirement_str() if prerequisites != "" else ""
         return ""
 
     @staticmethod

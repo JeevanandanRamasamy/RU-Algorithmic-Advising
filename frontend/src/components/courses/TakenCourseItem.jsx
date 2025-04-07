@@ -4,51 +4,6 @@ import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
 const TakenCourseItem = ({ course, onRemove, requirementString }) => {
-	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-	const [tooltipPosition, setTooltipPosition] = useState({});
-	const linkRef = useRef(null);
-	const tooltipRef = useRef(null);
-	const [tooltipTimeout, setTooltipTimeout] = useState(null);
-
-	const handleMouseEnter = () => {
-		if (tooltipTimeout) {
-			clearTimeout(tooltipTimeout);
-		}
-		const timeout = setTimeout(() => {
-			setIsTooltipVisible(true);
-		}, 500);
-		setTooltipTimeout(timeout);
-	};
-
-	const handleMouseLeave = () => {
-		setIsTooltipVisible(false);
-		if (tooltipTimeout) {
-			clearTimeout(tooltipTimeout);
-		}
-	};
-
-	useEffect(() => {
-		if (isTooltipVisible && tooltipRef.current && linkRef.current) {
-			const linkRect = linkRef.current.getBoundingClientRect();
-			const tooltipRect = tooltipRef.current.getBoundingClientRect();
-			const windowWidth = window.innerWidth;
-			const windowHeight = window.innerHeight;
-			console.log(linkRect, tooltipRect.height, windowHeight, windowWidth);
-
-			let top = linkRect.top;
-			let left = linkRect.right + window.scrollX + 8;
-
-			if (top + tooltipRect.height > windowHeight) {
-				top = linkRect.top - tooltipRect.height - 8;
-			}
-
-			if (left + tooltipRect.width > windowWidth) {
-				left = linkRect.left + window.scrollX - tooltipRect.width - 8;
-			}
-
-			setTooltipPosition({ top, left });
-		}
-	}, [isTooltipVisible]);
 	return (
 		<div
 			className={`bg-white border border-[#ddd] rounded px-1.5 py-1.5 group group-delete-${course.course_id}`}>
