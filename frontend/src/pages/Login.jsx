@@ -31,7 +31,7 @@ function Login() {
 			localStorage.setItem("token", data.access_token); // Persist it
 
 			if (data.role === "admin") {
-				navigate("/admin");
+				navigate("/admin/home");
 			} else {
 				navigate("/home");
 			}

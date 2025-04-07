@@ -26,22 +26,31 @@ def login():
     account = UserService.get_account_by_username(username)
 
 
-    # Check hashed password
-    if account and check_password_hash(account.password, password):
-        # Create JWT token
-        access_token = create_access_token(identity=username)
+    # Check if account exists
+    if account:
+        stored_pw = account.password
 
-        # Return token as part of the response
-        return (
-            jsonify(
-                {
+        if stored_pw.startswith("pbkdf2:"):
+            # Looks like a hashed password
+            password_valid = check_password_hash(stored_pw, password)
+        else:
+            # Fallback to plain text comparison
+            password_valid = stored_pw == password
+
+        # print(f"DB: {account.password}, Input: {password}")
+
+        if password_valid:
+            # Create JWT token
+            access_token = create_access_token(identity=username)
+            return (
+                jsonify({
                     "message": "Login successful",
                     "status": "success",
                     "role": account.role,
                     "access_token": access_token,
-                }
-            ),
-            200,
-        )
-    else:
-        return jsonify({"message": "Invalid credentials", "status": "error"}), 401
+                }),
+                200,
+            )
+
+    # If no account or password check failed
+    return jsonify({"message": "Invalid credentials", "status": "error"}), 401
