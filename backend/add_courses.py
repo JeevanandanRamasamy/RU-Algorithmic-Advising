@@ -259,7 +259,6 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 sub_group_result = RequirementGroupService.insert_requirement_group(
                     sub_group
                 )
-                sub_group_result = RequirementGroupService.insert_requirement_group(sub_group)
                 if isinstance(sub_group_result, RequirementGroup):
                     print(f"Added sub-group: {sub_group_result}")
 
