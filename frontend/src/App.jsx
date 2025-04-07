@@ -13,6 +13,8 @@ import Navbar from "./components/navbar/Navbar";
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
+import AdminDashboard from "./pages/AdminDashboard";
+
 import "./css/index.css";
 
 function App() {
@@ -68,7 +70,7 @@ function App() {
 					/>
 
 					<Route
-						path="/toast-demo"
+						path="/admin/home"
 						element={<AdminDashboard />}
 					/>
 				</Routes>
