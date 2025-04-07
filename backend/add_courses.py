@@ -1,14 +1,13 @@
 import os
 import re
 import json
-import time
 import requests
 import pandas as pd
 from services.requirement_group_service import RequirementGroupService
 from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
-from services.db_service import DBService
+from services.requirement_group_service import RequirementGroupService
 from models.requirement_group import RequirementGroup
 from models.course import Course
 from db import db
@@ -16,35 +15,11 @@ from app import app
 from services.course_service import CourseService
 
 load_dotenv()
-BRAVE_API_KEY = os.getenv("BRAVE_API_KEY")
-SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
-
 
 def get_json(url):
     """Fetches JSON data from a URL."""
     response = requests.get(url)
     return response.json()
-
-
-def search_course_url(courseID):
-    """Searches for the first course URL using Brave Search API."""
-    query = f'Rutgers "{courseID}"'
-    headers = {"Accept": "application/json", "X-Subscription-Token": BRAVE_API_KEY}
-    params = {"q": query, "count": 5}
-
-    # Make a GET request to the Brave Search API
-    response = requests.get(SEARCH_URL, headers=headers, params=params)
-    response.raise_for_status()  # Raises an error for bad responses
-    data = response.json()
-
-    # Extract the first search result URL
-    if "web" in data and "results" in data["web"]:
-        for result in data["web"]["results"][:5]:  # Check the first 5 results
-            if (
-                result["url"].find(courseID[7:]) != -1
-            ):  # Check if the course ID is in the URL
-                return data["web"]["results"][0]["url"]  # Get first result URL
-    return None
 
 
 def parse_and_simplify_prereqs(subject, pre_reqs):
@@ -284,6 +259,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 sub_group_result = RequirementGroupService.insert_requirement_group(
                     sub_group
                 )
+                sub_group_result = RequirementGroupService.insert_requirement_group(sub_group)
                 if isinstance(sub_group_result, RequirementGroup):
                     print(f"Added sub-group: {sub_group_result}")
 
@@ -315,57 +291,11 @@ def add_courses_to_database(filename):
                     )
             else:
                 print(f"Error adding course: {course}")
+                break
         print("Courses added to database successfully!")
-
-
-def add_course_urls(filename):
-    """Adds course URLs to the CSV file using the Brave Search API."""
-    df = pd.read_csv(filename)
-    dept_list = [
-        "013",
-        "014",
-        "016",
-        "050",
-        "070",
-        "082",
-        "090",
-        "136",
-        "160",
-        "185",
-        "189",
-        "192",
-        "198",
-        "220",
-        "355",
-        "390",
-        "547",
-        "640",
-        "650",
-        "700",
-        "730",
-        "750",
-        "790",
-        "830",
-        "920",
-        "960",
-        "966",
-    ]
-    df_filtered = df[df["course_id"].str[3:6].isin(dept_list)]
-
-    for i, row in df_filtered.iterrows():
-        course_id = row["course_id"]
-        course_link = row["course_link"]
-        # course_link = search_course_url(course_id)
-        if course_link:
-            df.at[i, "course_link"] = course_link
-        time.sleep(1)  # To avoid hitting the API too fast
-        print(f"Row {i}: {course_id} - {course_link}")
-    df.to_csv(filename, index=False)
-    print(f"Updated {filename} with {len(df_filtered)} course URLs.")
 
 
 if __name__ == "__main__":
     file_name = "course_list.csv"
     # get_course_list(file_name)
     add_courses_to_database(file_name)
-    # add_course_urls(file_name)
