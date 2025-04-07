@@ -11,7 +11,7 @@ from dataclasses import dataclass
 class Account(db.Model):
     __tablename__ = "Account"
     username = Column(String(6), primary_key=True)
-    password = Column(String(30))
+    password = Column(String(256))
     first_name = Column(String(50))
     last_name = Column(String(50))
     role = Column(

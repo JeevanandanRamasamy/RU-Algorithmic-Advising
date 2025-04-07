@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from services.user_service import UserService
 from flask import Blueprint
+from werkzeug.security import generate_password_hash  #pbkdf2:sha256 hashing method
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
 
@@ -57,10 +58,14 @@ def register():
     if UserService.check_account_exists(username):
         return jsonify({"message": "Username already taken."}), 409
 
+    hashed_password = generate_password_hash(password)
+    print("🔐 Hashed password:", hashed_password)
+    print("📏 Hash length:", len(hashed_password))
+
     # Insert into database
     account_data = {
         "username": username,
-        "password": password,  # No hashing for simplicity
+        "password": hashed_password,
         "first_name": first_name,
         "last_name": last_name,
         "role": role,

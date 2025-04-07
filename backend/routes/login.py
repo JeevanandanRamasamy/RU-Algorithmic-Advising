@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from services.user_service import UserService
+# from services.db_service import DBService  # Assuming DBService is inside services
+from werkzeug.security import check_password_hash
 
 login_bp = Blueprint("login", __name__)
 
@@ -20,9 +22,12 @@ def login():
             401,
         )
 
-    # Check if credentials match
+    # Fetch user record
     account = UserService.get_account_by_username(username)
-    if account and username == account.username and password == account.password:
+
+
+    # Check hashed password
+    if account and check_password_hash(account.password, password):
         # Create JWT token
         access_token = create_access_token(identity=username)
 

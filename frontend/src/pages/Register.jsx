@@ -1,234 +1,43 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import RegisterFlow from "../components/register/RegisterFlow";
+import logo from "../assets/minilogo.png"; // optional logo
+import { Link } from "react-router-dom";
+import React from "react";
+import backgroundImage from "../assets/welcome.jpg";
+import "../css/pages.css";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const Register = () => {
+  return (
+    <div className="h-screen flex items-center justify-center overflow-hidden">
+      {/* Left: Form */}
+      <div className="w-2/3 h-screen flex items-center justify-center">
+        <div className="w-full max-w-lg p-8 flex flex-col items-center">
+          <div className="mb-4">
+            <img src={logo} alt="Logo" className="w-32 h-32" />
+          </div>
+          <header className="mb-4 text-center">
+            <h1 className="text-2xl font-bold">Create Your Account</h1>
 
-function Register() {
-	const [step, setStep] = useState(1); // Step 1: Enter Email, Step 2: Verify OTP & Set Password
-	const [username, setUsername] = useState("");
-	const [code, setCode] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [firstName, setFirstName] = useState("");
-	const [lastName, setLastName] = useState("");
-	const [message, setMessage] = useState("");
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate(); // Redirect after successful registration
+            <p className="text-sm text-gray-500">
+              Start scheduling smarter today
+            </p>
+          </header>
+          <RegisterFlow />
+          <p className="text-sm text-gray-500">
+            Already have an account?
+            <Link to="/" className="text-blue-500 hover:underline">
+              Log in here.
+            </Link>
+          </p>
+        </div>
+      </div>
 
-	// Step 1: Send Verification Code
-	const handleSendVerification = async () => {
-		setMessage("");
-		if (!username) {
-            setMessage("Please enter your Rutgers NetID.");
-            return;
-        }
-		setLoading(true);
-
-		try {
-			const validateResponse = await fetch(`${backendUrl}/api/check_username_exists`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ username }),
-			});
-
-			const validateData = await validateResponse.json();
-			if (validateData.status !== "success") {
-				setMessage("Account already exists. Please login.");
-				setLoading(false);
-				return;
-			}
-
-			const response = await fetch(`${backendUrl}/api/send-verification`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ username }),
-			});
-
-			const data = await response.json();
-			if (data.success) {
-				setMessage("Verification code sent to your email!");
-				setStep(2); // Move to the next step
-			} else {
-				setMessage(data.message || "Error sending verification code.");
-			}
-		} catch (error) {
-			console.error("Error:", error);
-			setMessage("Network error. Please try again later.");
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	// Step 2: Verify Code & Register User
-	const handleVerifyAndRegister = async () => {
-		setMessage("");
-
-		console.log("Starting verification process...");
-
-		if (!code) {
-			console.log("No code entered.");
-			setMessage("Please enter the verification code.");
-			return;
-		}
-
-		if (!password || !confirmPassword || !firstName || !lastName) {
-			console.log("Missing required fields.");
-			setMessage("All fields are required.");
-			return;
-		}
-
-		if (password !== confirmPassword) {
-			console.log("Passwords do not match.");
-			setMessage("Passwords do not match.");
-			return;
-		}
-
-		setLoading(true);
-
-		try {
-			console.log("Sending verification request to backend...");
-
-			// Step 1: Verify OTP
-			const verifyResponse = await fetch(`${backendUrl}/api/verify-code`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ username, code }),
-			});
-
-			const verifyData = await verifyResponse.json();
-			console.log("OTP Verification Response:", verifyData);
-
-			if (!verifyData.success) {
-				console.log("OTP verification failed.");
-				setMessage("Invalid verification code, please try again.");
-				return;
-			}
-
-			console.log("OTP verified successfully! Proceeding with registration...");
-
-			// Step 2: Register User
-			const registerResponse = await fetch(`${backendUrl}/api/register`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					username,
-					password,
-					first_name: firstName,
-					last_name: lastName
-				})
-			});
-
-			const registerData = await registerResponse.json();
-			console.log("Registration Response:", registerData);
-
-			if (
-				registerData.status === "success" ||
-				registerData.message === "Registration successful"
-			) {
-				console.log("Registration successful! Updating message and scheduling redirect...");
-
-				setMessage("Registration successful! Redirecting to login...");
-
-				// Ensure the message is updated before redirecting
-				setTimeout(() => {
-					console.log("Redirecting to login...");
-
-					navigate("/"); // Redirect after showing the message
-				}, 2000);
-			} else {
-				console.log("Registration failed.");
-				setMessage(registerData.message || "Registration failed.");
-			}
-		} catch (error) {
-			console.error("Error:", error);
-			setMessage("Network error. Please try again later.");
-		} finally {
-			console.log("Process complete. Resetting loading state.");
-			setLoading(false);
-		}
-	};
-
-	return (
-		<div>
-			<h2>Register</h2>
-
-			{step === 1 && (
-				<div>
-					<h3>Enter Your Rutgers NetID</h3>
-					<input
-						type="text"
-						placeholder="Enter your NetID (e.g., abc123)"
-						value={username}
-						onChange={e => setUsername(e.target.value)}
-					/>
-					<button
-						onClick={handleSendVerification}
-						disabled={loading}>
-						{loading ? "Sending..." : "Send Code"}
-					</button>
-				</div>
-			)}
-
-			{step === 2 && (
-				<div>
-					<h3>Verify Code & Set Password</h3>
-					<input
-						type="text"
-						placeholder="Enter Verification Code"
-						value={code}
-						onChange={e => setCode(e.target.value)}
-					/>
-					<br />
-					<input
-						type="text"
-						value={username}
-						disabled
-					/>{" "}
-					{/* Auto-filled username */}
-					<input
-						type="text"
-						placeholder="First Name"
-						value={firstName}
-						onChange={e => setFirstName(e.target.value)}
-					/>
-					<br />
-					<input
-						type="text"
-						placeholder="Last Name"
-						value={lastName}
-						onChange={e => setLastName(e.target.value)}
-					/>
-					<br />
-					<input
-						type="password"
-						placeholder="Create Password"
-						value={password}
-						onChange={e => setPassword(e.target.value)}
-					/>
-					<br />
-					<input
-						type="password"
-						placeholder="Confirm Password"
-						value={confirmPassword}
-						onChange={e => setConfirmPassword(e.target.value)}
-					/>
-					<br />
-					<button
-						onClick={handleVerifyAndRegister}
-						disabled={loading}>
-						{loading ? "Registering..." : "Register"}
-					</button>
-				</div>
-			)}
-
-			{message && <p>{message}</p>}
-
-			<p>
-				Go back to
-				<Link to={"/"}>Login</Link>
-			</p>
-		</div>
-	);
-}
+      {/* Right: Design placeholder */}
+      <div className="w-1/3 h-screen bg-red-500 flex items-center justify-center text-white registration-bg">
+        {/* You could use this space for an image, graphic, or quote */}
+        <p className="text-xl font-semibold">RU Super Scheduler</p>
+      </div>
+    </div>
+  );
+};
 
 export default Register;
