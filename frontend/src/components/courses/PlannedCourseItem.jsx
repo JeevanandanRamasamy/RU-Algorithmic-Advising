@@ -1,8 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
-import { useState } from "react";
+import {} from "react";
 
-const PlannedCourseItem = ({ course, onRemove }) => {
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip } from "react-tooltip";
+
+const PlannedCourseItem = ({ course, onRemove, requirementString }) => {
 	const [scrolling, setScrolling] = useState(false);
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",
@@ -61,6 +64,22 @@ const PlannedCourseItem = ({ course, onRemove }) => {
 					Remove
 				</button>
 			</div>
+
+			{requirementString && (
+				<>
+					<a
+						data-tooltip-id={`tooltip-${course.course_id}`}
+						className="cursor-pointer text-blue-500 underline"
+						data-tooltip-place="bottom">
+						requirements
+					</a>
+					<Tooltip
+						id={`tooltip-${course.course_id}`}
+						className="bg-black">
+						<pre className="text-sm z-10000">{requirementString}</pre>
+					</Tooltip>
+				</>
+			)}
 		</div>
 	);
 };

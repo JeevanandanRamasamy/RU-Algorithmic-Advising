@@ -33,9 +33,7 @@ const usePrograms = () => {
 						"Authorization": `Bearer ${token}`
 					}
 				});
-				console.log(response);
 				const data = await response.json();
-				console.log(data);
 				setSelectedPrograms(data.student_program);
 			} catch (error) {
 				console.error("Error fetching programs:", error);

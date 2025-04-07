@@ -12,7 +12,7 @@ const useCourseRecords = () => {
 	const fetchCourseRecords = async () => {
 		setCoursesRecordsLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/course_record`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/terms`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}

@@ -16,7 +16,6 @@ def validate_username():
     # Validation
     if not UserService.check_account_exists(username):
         return jsonify({"message": "User not found.", "status": "error"}), 404
-    print("here")
 
     return jsonify({"message": "Username is valid.", "status": "success"}), 200
 

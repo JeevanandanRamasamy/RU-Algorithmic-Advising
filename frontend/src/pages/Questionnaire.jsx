@@ -2,7 +2,6 @@ import { useState } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
-import AvailableCourses from "../components/courses/AvailableCourses";
 import { useAuth } from "../context/AuthContext";
 import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
@@ -11,8 +10,11 @@ import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
-import DropCoursesContainer from "../components/dropCoursesContainer";
 import useCourseRecords from "../hooks/useCourseRecords";
+import CourseList from "../components/courses/CourseList";
+import CourseItem from "../components/courses/CourseItem";
+import AvailableCourses from "../components/courses/AvailableCourses";
+import useRequirements from "../hooks/useRequirements";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -71,12 +73,17 @@ const Questionnaire = () => {
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
+	const { requirementStrings, validateSchedule } = useRequirements();
+
 	return (
 		<>
-			<div className="overflow-x-hidden">
+			<div className="p-5 ml-[130px] mr-auto h-auto overflow-x-hidden">
+				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
+					<h1>Questionnaire</h1>
+				</header>
 				<Navbar />
-				<div className="ml-[110px] pt-[5px]">
-					<div className="flex px-[10px] justify-evenly">
+				<div className="">
+					<div className="flex justify-between pb-5">
 						<StudentDetails
 							{...{
 								enrollYear,
@@ -101,44 +108,32 @@ const Questionnaire = () => {
 							}}
 						/>
 					</div>
-					<div className="flex gap-[30px] w-full">
+					<div className="flex gap-[30px]">
 						<CourseListContainer
 							title="Available Courses"
-							// searchQuery={searchAvailable}
-							// setSearchQuery={setSearchAvailable}
-							className="w-[600px]"
 							courses={courses}
-							excludedCourseIds={
-								takenCourses?.length > 0
-									? takenCourses.map(
-											takenCourse => takenCourse.course_info.course_id
-									  )
-									: []
-							}
+							excludedCourseIds={[
+								...(courseRecords?.length > 0
+									? courseRecords.map(course => course?.course_info.course_id)
+									: []),
+								...(takenCourses?.length > 0
+									? takenCourses.map(takenCourse => takenCourse.course_id)
+									: [])
+							]}
 							CourseComponent={AvailableCourses}
-							showFilters={showAvailableCourseFilters}
-							setShowFilters={setShowAvailableCourseFilters}
-							courseComponentProps={{
-								isHorizontal: false
-							}}
+							requirementStrings={requirementStrings}
 						/>
 						<CourseListContainer
 							title="Taken Courses"
-							// searchQuery={searchTaken}
-							// setSearchQuery={setSearchTaken}
 							courses={takenCourses}
-							getCourse={course => course.course_info}
 							CourseComponent={TakenCourses}
 							courseComponentProps={{
 								loading: takenCoursesLoading,
 								error: takenCoursesError,
 								onRemoveCourse: handleRemoveTakenCourse,
-								onAddCourse: handleAddTakenCourse,
-								isHorizontal: false
+								onAddCourse: handleAddTakenCourse
 							}}
-							showFilters={showTakenCourseFilters}
-							setShowFilters={setShowTakenCourseFilters}
-							isHorizontal={false}
+							requirementStrings={requirementStrings}
 						/>
 					</div>
 					<div className="flex justify-center mt-5">

@@ -1,29 +1,48 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-import Button from "../generic/Button";
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip } from "react-tooltip";
 
-const TakenCourseItem = ({ course, onRemove }) => {
+const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 	return (
-		<div className="bg-white border border-gray-300 rounded-md p-3 mb-2 cursor-grab transition-all duration-200 ease-in-out group">
-			<h3 className="font-semibold text-gray-800">{course.course_name}</h3>
-			<p className="font-bold text-gray-700">ID: {course.course_id}</p>
-			<p className="text-sm text-gray-600">{course.credits} credits</p>
-
-			<div className="flex justify-between items-center">
+		<div
+			className={`bg-white border border-[#ddd] rounded px-1.5 py-1.5 group group-delete-${course.course_id}`}>
+			<h3 className="text-base planned-course-name m-0">
 				<a
-					className="text-blue-500 hover:underline"
+					className="no-underline text-black hover:text-blue-500"
 					href={course.course_link}
 					target="_blank"
-					rel="noopener noreferrer">
-					Course Details
+					rel="noopener noreferrer p-1">
+					{course.course_name}
 				</a>
-				<Button
-					onClick={() => onRemove(course.course_id)}
+			</h3>
+			<p className="font-bold text-[#2c3e50] m-0 p-1">ID: {course.course_id}</p>
+
+			{requirementString && (
+				<>
+					<a
+						data-tooltip-id={`tooltip-${course.course_id}`}
+						className="cursor-pointer text-blue-500 underline"
+						data-tooltip-place="left">
+						requirements
+					</a>
+					<Tooltip
+						id={`tooltip-${course.course_id}`}
+						className="bg-black">
+						<pre className="text-sm z-10000">{requirementString}</pre>
+					</Tooltip>
+				</>
+			)}
+			<div className="flex justify-between">
+				<p className="planned-course-credits m-0 text-center">{course.credits} credits</p>
+				<button
 					className="bg-[#f44336] text-white border-none px-2.5 py-1 rounded cursor-pointer invisible group-hover:visible transition-opacity duration-200 hover:bg-[#d32f2f]"
-					label="Remove"
-				/>
+					onClick={() => onRemove(course.course_id)}>
+					Remove
+				</button>
 			</div>
 		</div>
+		// </div>
 	);
 };
 
