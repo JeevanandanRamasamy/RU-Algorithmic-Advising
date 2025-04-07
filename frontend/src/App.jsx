@@ -66,6 +66,11 @@ function App() {
 						path="/toast"
 						element={<ToastDemo />}
 					/>
+
+					<Route
+						path="/toast-demo"
+						element={<AdminDashboard />}
+					/>
 				</Routes>
 			</main>
 			<ToastWrapper />
