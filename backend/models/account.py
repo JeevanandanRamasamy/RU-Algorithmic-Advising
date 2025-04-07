@@ -4,7 +4,10 @@ from sqlalchemy import (
     String,
     Enum,
 )
+from dataclasses import dataclass
 
+
+@dataclass
 class Account(db.Model):
     __tablename__ = "Account"
     username = Column(String(6), primary_key=True)

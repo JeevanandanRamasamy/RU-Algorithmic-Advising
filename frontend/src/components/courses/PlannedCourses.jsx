@@ -12,7 +12,8 @@ const PlannedCourses = ({ courses, getCourse, loading, error, onRemoveCourse, on
 		},
 		collect: monitor => ({
 			isOver: !!monitor.isOver()
-		})
+		}),
+		canDrag: !isPlanned // Disable drag when the course is already planned
 	}));
 
 	return (

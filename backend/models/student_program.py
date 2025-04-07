@@ -5,7 +5,10 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     ForeignKey,
 )
+from dataclasses import dataclass
 
+
+@dataclass
 class StudentProgram(db.Model):
     __tablename__ = "StudentProgram"
     username: str
@@ -19,7 +22,7 @@ class StudentProgram(db.Model):
         String(7), ForeignKey("Program.program_id", ondelete="CASCADE"), nullable=False
     )
     __table_args__ = (PrimaryKeyConstraint("username", "program_id"),)
-    
+
     def __repr__(self):
         return (
             f"<StudentProgram(username={self.username}, program_id={self.program_id})>"

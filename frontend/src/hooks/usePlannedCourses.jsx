@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const usePlannedCourses = (backendUrl, token) => {
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+const usePlannedCourses = () => {
+	const { user, token } = useAuth();
 	const [plannedCourses, setPlannedCourses] = useState([]);
 	const [plannedCoursesLoading, setPlannedCoursesLoading] = useState(false);
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);
-
 	const [searchPlannedQuery, setSearchPlannedQuery] = useState("");
-	const [planId, setPlanId] = useState(null);
 
-	const fetchPlannedCourses = useCallback(async () => {
+	const fetchPlannedCourses = async () => {
 		setPlannedCoursesLoading(true);
 		try {
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record/planned`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("token")}`
 				}
@@ -20,42 +22,52 @@ const usePlannedCourses = (backendUrl, token) => {
 
 			const data = await response.json();
 			setPlannedCourses(data.planned_courses ? data.planned_courses : []);
-			const planIdValue = data?.planned_courses[0]?.plan_id || planId || null;
-			console.log("Assigned planId:", planIdValue);
-			setPlanId(planIdValue);
 		} catch (err) {
 			setPlannedCoursesError(err.message);
 			console.error("Error fetching courses:", err);
 		} finally {
 			setPlannedCoursesLoading(false);
 		}
-	}, [backendUrl, token]);
+	};
 	useEffect(() => {
 		if (token) {
 			fetchPlannedCourses();
 		}
-	}, [token, fetchPlannedCourses]);
+	}, []);
 
-	const handleAddPlannedCourse = async courseId => {
+	const handleAddCourse = async (courseId, term, year, type) => {
 		try {
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${localStorage.getItem("token")}`
+					"Authorization": `Bearer ${token}`
 				},
-				body: JSON.stringify({ course_id: courseId })
+				body: JSON.stringify({ course_id: courseId, term: term, year: year })
 			});
 
 			const data = await response.json();
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
-				setPlannedCoursesError(data.message);
+				plannedCoursesError(data.message);
 			} else {
-				setPlannedCourses(prevCourses => [...prevCourses, data.planned_course]);
-				if (data?.plannedCourses?.length > 0) {
-					setPlanId(data.planned_courses[0].plan_id);
-				}
+				const setCourses = type ? setPlannedCourses : setTakenCourses;
+				setCourses(prevCourses => {
+					const courseIndex = prevCourses.findIndex(
+						course => course?.course_info?.course_id === courseId
+					);
+					if (courseIndex !== -1) {
+						const updatedCourses = [...prevCourses];
+						updatedCourses[courseIndex] = {
+							...updatedCourses[courseIndex],
+							term: term,
+							year: year
+						};
+						return updatedCourses;
+					} else {
+						return [...prevCourses, data.course_record];
+					}
+				});
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
@@ -63,32 +75,32 @@ const usePlannedCourses = (backendUrl, token) => {
 		}
 	};
 
-	const handleRemovePlannedCourse = async courseId => {
+	const handleRemoveCourse = async (courseId, type) => {
 		setPlannedCoursesLoading(true);
 
 		try {
-			if (!planId) {
-				console.log(planId);
-				console.error("Plan ID is missing!");
-				return;
-			}
+			// if (!planId) {
+			// 	// console.log(planId);
+			// 	console.error("Plan ID is missing!");
+			// 	return;
+			// }
 
-			const response = await fetch(`${backendUrl}/api/users/planned_courses`, {
+			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
-					"Authorization": `Bearer ${localStorage.getItem("token")}`
+					"Authorization": `Bearer ${token}`
 				},
 				body: JSON.stringify({
-					course_id: courseId,
-					plan_id: planId
+					course_id: courseId
+					// plan_id: planId
 				})
 			});
 
 			const data = await response.json();
 			if (!response.ok) {
 				console.error("Error removing course:", data.message);
-				setPlannedCoursesError(data.message);
+				plannedCoursesError(data.message);
 				set;
 				// If there's an error, restore the previous state by re-fetching
 				// await fetchPlannedCourses();
@@ -97,9 +109,9 @@ const usePlannedCourses = (backendUrl, token) => {
 					prevPlannedCourses.filter(course => course.course_info.course_id !== courseId)
 				);
 
-				setPlanId(
-					data?.planned_courses?.length > 0 ? data.planned_courses[0].plan_id : planId
-				); // Only update if new plan_id is returned
+				// setPlanId(
+				// 	data?.planned_courses?.length > 0 ? data.planned_courses[0].plan_id : planId
+				// ); // Only update if new plan_id is returned
 			} //else {
 			//console.log("Course removed successfully");
 			// No need to refetch if the operation was successful

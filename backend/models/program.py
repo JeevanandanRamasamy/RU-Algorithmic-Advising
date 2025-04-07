@@ -7,13 +7,19 @@ from sqlalchemy import (
     Enum,
 )
 
+from dataclasses import dataclass
+
+
+@dataclass
 class Program(db.Model):
     __tablename__ = "Program"
+
     program_id: str
     program_name: str
     program_type: str
     is_credit_intensive: bool
     additional_details: str
+
     program_id = Column(String(7), primary_key=True)
     program_name = Column(String(200), nullable=False)
     program_type = Column(

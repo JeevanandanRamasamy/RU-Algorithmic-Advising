@@ -37,6 +37,7 @@ def login():
                 {
                     "message": "Login successful",
                     "status": "success",
+                    "role": account.role,
                     "access_token": access_token,
                 }
             ),

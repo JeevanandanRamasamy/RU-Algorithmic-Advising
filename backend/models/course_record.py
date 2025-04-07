@@ -8,9 +8,18 @@ from sqlalchemy import (
     CheckConstraint,
 )
 from sqlalchemy.dialects.mysql import YEAR
+from dataclasses import dataclass
 
-class CourseTaken(db.Model):
-    __tablename__ = "CourseTaken"
+
+@dataclass
+class CourseRecord(db.Model):
+    __tablename__ = "CourseRecord"
+
+    username: str
+    course_id: str
+    term: str
+    year: int
+    grade: str
     username = Column(
         String(6),
         ForeignKey("StudentDetails.username", ondelete="CASCADE"),
@@ -27,7 +36,7 @@ class CourseTaken(db.Model):
             "grade IN ('A', 'B+', 'B', 'C+', 'C', 'D', 'F', 'PA', 'NC', 'W')"
         ),
     )
-    __table_args__ = (PrimaryKeyConstraint("username", "course_id", "term", "year"),)
+    __table_args__ = (PrimaryKeyConstraint("username", "course_id"),)
 
     def __repr__(self):
-        return f"<CourseTaken(username={self.username}, course_id={self.course_id}, term={self.term}, year={self.year})>"
+        return f"<CourseRecord(username={self.username}, course_id={self.course_id}, term={self.term}, year={self.year})>"
