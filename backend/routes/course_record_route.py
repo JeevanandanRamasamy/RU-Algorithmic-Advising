@@ -18,7 +18,7 @@ def get_course_records():
 
         course_records = CourseRecordService.get_course_records(username)
         if isinstance(course_records, str):
-            return jsonify({"message", course_records}), 500
+            return jsonify({"message": course_records}), 500
 
         return (
             jsonify(

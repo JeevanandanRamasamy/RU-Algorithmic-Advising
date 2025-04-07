@@ -39,7 +39,6 @@ def get_course_requirements():
     try:
         course_id = request.args.get("course_id")
         prerequisuites = RequirementService.get_prerequisites_tree(course_id)
-        print(prerequisuites.requirement_str())
         return (
             jsonify(
                 {
@@ -51,17 +50,6 @@ def get_course_requirements():
         )
     except Exception as e:
         return jsonify({"message": f"Error fetching requirements : {str(e)}"}), 500
-    # prerequisuites = RequirementService.get_all_prerequisites(course_id, visited=None)
-    # print(prerequisuites)
-    # return (
-    #     jsonify(
-    #         {
-    #             "message": "success retrieve course requirements",
-    #             "course_requirements": list(prerequisuites),
-    #         }
-    #     ),
-    #     200,
-    # )
 
 
 @requirements_bp.route("", methods=["POST"])

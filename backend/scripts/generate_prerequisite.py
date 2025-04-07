@@ -5,7 +5,7 @@ from services.requirement_service import RequirementService
 import json
 
 
-class Prerequisuites:
+class Prerequisites:
     @staticmethod
     def generate_course_requirement_string(course_id):
         prerequisites = RequirementService.get_prerequisites_tree(course_id)
@@ -23,7 +23,7 @@ class Prerequisuites:
             for course in all_courses:
                 course_id = course.course_id
                 course_requirements_string = (
-                    Prerequisuites.generate_course_requirement_string(course_id)
+                    Prerequisites.generate_course_requirement_string(course_id)
                 )
                 if course_requirements_string:
                     course_requirements[course_id] = course_requirements_string
@@ -33,4 +33,4 @@ class Prerequisuites:
 
 
 if __name__ == "__main__":
-    Prerequisuites.generate_all_course_requirements()
+    Prerequisites.generate_all_course_requirements()
