@@ -52,15 +52,15 @@ def get_course_requirements():
         return jsonify({"message": f"Error fetching requirements : {str(e)}"}), 500
 
 
-@requirements_bp.route("", methods=["POST"])
-def validate_requirements():
-    data = request.get_json()
+# @requirements_bp.route("", methods=["POST"])
+# def validate_requirements():
+#     data = request.get_json()
 
-    courses_to_check = data.get("courses_to_be_validated", [])
-    taken_courses = data.get("taken_courses", [])
+#     courses_to_check = data.get("courses_to_be_validated", [])
+#     taken_courses = data.get("taken_courses", [])
 
-    invalid_ids = RequirementService.validate(
-        course_ids=courses_to_check, taken_ids=taken_courses
-    )
+#     invalid_ids = RequirementService.validate(
+#         course_ids=courses_to_check, taken_ids=taken_courses
+#     )
 
-    return jsonify({"invalid_ids": invalid_ids})
+#     return jsonify({"invalid_ids": invalid_ids})
