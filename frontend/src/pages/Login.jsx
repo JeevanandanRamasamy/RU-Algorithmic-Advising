@@ -23,7 +23,12 @@ function Login() {
 		if (response.ok) {
 			login(username, data.access_token); // Store username + token in AuthContext
 			localStorage.setItem("token", data.access_token); // Persist it
-			navigate("/home");
+
+			if (data.role === "admin") {
+				navigate("/admin");
+			} else {
+				navigate("/home");
+			}
 		} else {
 			setMessage(data.message || "Something went wrong, please try again");
 		}
