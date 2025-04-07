@@ -47,11 +47,12 @@ const useTakenCourses = () => {
 			});
 
 			const data = await response.json();
+			console.log(data);
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
 				setTakenCoursesError(data.message);
 			} else {
-				setTakenCourses(prevCourses => [...prevCourses, data.course_record]);
+				setTakenCourses(prevCourses => [...prevCourses, data.course_record.course_info]);
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
@@ -77,7 +78,7 @@ const useTakenCourses = () => {
 				setTakenCoursesError(data.message);
 			} else {
 				setTakenCourses(prevTakenCourses =>
-					prevTakenCourses.filter(course => course.course_info.course_id !== courseId)
+					prevTakenCourses.filter(course => course.course_id !== courseId)
 				);
 			}
 		} catch (error) {

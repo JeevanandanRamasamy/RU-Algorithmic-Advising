@@ -19,9 +19,9 @@ const ListContainer = ({
 				value={query}
 				onChange={handleQueryChange}
 				placeholder={searchText}
-				className="w-64 border border-gray-300 p-2 rounded"
+				className="w-[400px] border border-gray-300 p-2 rounded"
 			/>
-			<div className="h-[120px] overflow-y-auto w-[400px] p-2 border border-gray-200 rounded-2xl">
+			<div className="h-[130px] overflow-y-auto w-[400px] p-2 border border-gray-200 rounded-2xl">
 				{values &&
 					values
 						.filter(value => !excludedByKeys.includes(value[key_field]))

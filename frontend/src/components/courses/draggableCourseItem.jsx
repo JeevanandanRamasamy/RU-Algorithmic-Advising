@@ -4,26 +4,25 @@ import { useDrag } from "react-dnd";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
-const CourseItem = ({ course, isPlanned = false, requirementString }) => {
+const DraggableCourseItem = ({ course, isPlanned = false, requirementString }) => {
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",
 		item: { id: course.course_id },
 		collect: monitor => ({
 			isDragging: !!monitor.isDragging()
 		}),
-		canDrag: !isPlanned // Disable drag when the course is already planned
+		canDrag: !isPlanned
 	}));
 
-	// Log the course ID when the drag starts
 	useEffect(() => {
 		if (isDragging) {
 			console.log(`Dragging course: ${course.course_name} (ID: ${course.course_id})`);
 		}
 	}, [isDragging, course]);
 
-	// const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 	// const [tooltipPosition, setTooltipPosition] = useState({});
-	// const linkRef = useRef(null);
+	const linkRef = useRef(null);
 	// const tooltipRef = useRef(null);
 	// const [tooltipTimeout, setTooltipTimeout] = useState(null);
 
@@ -45,28 +44,38 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 	// };
 
 	// useEffect(() => {
-	// 	if (isTooltipVisible && tooltipRef.current && linkRef.current) {
-	// 		const linkRect = linkRef.current.getBoundingClientRect();
-	// 		const tooltipRect = tooltipRef.current.getBoundingClientRect();
-	// 		const windowWidth = window.innerWidth;
-	// 		const windowHeight = window.innerHeight;
-	// 		console.log(linkRect, tooltipRect.height, windowHeight, windowWidth);
+	// 	if (isTooltipVisible) {
+	// 		const frame = requestAnimationFrame(() => {
+	// 			if (!tooltipRef.current || !linkRef.current) return;
 
-	// 		let top = linkRect.top;
-	// 		let left = linkRect.right + window.scrollX + 8;
+	// 			const linkRect = linkRef.current.getBoundingClientRect();
+	// 			const tooltipRect = tooltipRef.current.getBoundingClientRect();
 
-	// 		if (top + tooltipRect.height > windowHeight) {
-	// 			top = linkRect.top - tooltipRect.height - 8;
-	// 		}
+	// 			const windowWidth = window.innerWidth;
+	// 			const windowHeight = window.innerHeight;
 
-	// 		if (left + tooltipRect.width > windowWidth) {
-	// 			left = linkRect.left + window.scrollX - tooltipRect.width - 8;
-	// 		}
+	// 			let top = linkRect.bottom + 8;
+	// 			let left = linkRect.right - 6 * tooltipRect.height;
 
-	// 		setTooltipPosition({ top, left });
+	// 			if (top + tooltipRect.height > windowHeight) {
+	// 				top = linkRect.top - tooltipRect.height - 8;
+	// 			}
+	// 			if (left + tooltipRect.width > windowWidth) {
+	// 				left = windowWidth - tooltipRect.width - 8;
+	// 			}
+	// 			if (left < 0) {
+	// 				left = 8;
+	// 			}
+
+	// 			setTooltipPosition({
+	// 				top: top + window.scrollY,
+	// 				left: left + window.scrollX
+	// 			});
+	// 		});
+
+	// 		return () => cancelAnimationFrame(frame);
 	// 	}
 	// }, [isTooltipVisible]);
-
 	return (
 		<div
 			ref={drag}
@@ -85,35 +94,12 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 			</h3>
 			<p className="course-code m-0 p-1">ID: {course.course_id}</p>
 			<p className="course-credits m-0 p-1">{course.credits} credits</p>
-			{/* {requirementString && (
-				<span className={`relative group group-requirement-${course.course_id}`}>
-					<span
-						ref={linkRef}
-						className="cursor-pointer text-blue-500 underline"
-						onMouseEnter={handleMouseEnter}
-						onMouseLeave={handleMouseLeave}>
-						requirements
-					</span>
-					{isTooltipVisible && (
-						<pre
-							ref={tooltipRef}
-							className="fixed px-4 py-3 text-sm bg-gray-800 text-white rounded-md opacity-100 transition-opacity z-50 shadow-lg max-w-none"
-							style={{
-								top: `${tooltipPosition?.top}px`,
-								left: `${tooltipPosition?.left}px`
-							}}>
-							{requirementString}
-						</pre>
-					)}
-				</span>
-			)} */}
-
 			{requirementString && (
 				<>
 					<a
 						data-tooltip-id={`tooltip-${course.course_id}`}
 						className="cursor-pointer text-blue-500 underline"
-						data-tooltip-place="right">
+						data-tooltip-place="bottom">
 						requirements
 					</a>
 					<Tooltip
@@ -127,4 +113,4 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 	);
 };
 
-export default CourseItem;
+export default DraggableCourseItem;

@@ -1,11 +1,19 @@
-import useStudentDetails from "../hooks/useStudentDetails";
-import DropCoursesContainer from "../components/dropCoursesContainer";
-import { generateSemesters, generateSemestersTillNow } from "../helpers/semesters";
+import useStudentDetails from "../../hooks/useStudentDetails";
+import DropCoursesContainer from "../courses/dropCoursesContainer";
+import { generateSemesters, generateSemestersTillNow } from "../../helpers/semesters";
 
-const SemesterPlanner = ({ courseRecords, handleAddCourseRecord, handleRemoveCourseRecord }) => {
+const SemesterPlanner = ({
+	courses,
+	courseRecords,
+	handleAddCourseRecord,
+	handleRemoveCourseRecord,
+	takenCourses,
+	requirementStrings
+}) => {
 	const { enrollYear, gradYear } = useStudentDetails();
 	const semesters = generateSemesters(enrollYear, gradYear);
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
+	// validateSchedule(semesters, courseRecords, takenCourses);
 
 	return (
 		<>
@@ -21,6 +29,7 @@ const SemesterPlanner = ({ courseRecords, handleAddCourseRecord, handleRemoveCou
 							handleAddPlannedCourse={handleAddCourseRecord}
 							handleRemovePlannedCourse={handleRemoveCourseRecord}
 							semestersTillNow={semestersTillNow}
+							requirementStrings={requirementStrings}
 						/>
 					);
 				})}

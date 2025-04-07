@@ -1,10 +1,10 @@
 import React from "react";
-import useSemester from "../hooks/useSemester";
+import useSemester from "../../hooks/useSemester";
 import { useDrop } from "react-dnd";
-import CourseList from "./courses/CourseList";
-import CourseItem from "./courses/CourseItem";
-import PlannedCourseItem from "./courses/PlannedCourseItem";
-import { containsSemester } from "../helpers/semesters";
+import CourseList from "./CourseList";
+import CourseItem from "./CourseItem";
+import PlannedCourseItem from "./PlannedCourseItem";
+import { containsSemester } from "../../helpers/semesters";
 
 const DropCoursesContainer = ({
 	loading,
@@ -14,7 +14,8 @@ const DropCoursesContainer = ({
 	getCourse,
 	handleAddPlannedCourse,
 	handleRemovePlannedCourse,
-	semestersTillNow = { semestersTillNow }
+	semestersTillNow = { semestersTillNow },
+	requirementStrings
 }) => {
 	const coursesBySemester = courseRecords?.filter(
 		course => course?.term === term && course?.year === year
@@ -51,6 +52,7 @@ const DropCoursesContainer = ({
 						courses={coursesBySemester}
 						getCourse={getCourse}
 						CourseItemComponent={PlannedCourseItem}
+						requirementStrings={requirementStrings}
 						courseItemProps={{ onRemove: handleRemovePlannedCourse }}
 					/>
 				)}

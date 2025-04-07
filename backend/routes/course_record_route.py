@@ -33,6 +33,31 @@ def get_course_records():
         return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
 
 
+@course_record_bp.route("terms", methods=["GET"])
+@jwt_required()
+def get_course_records_with_terms():
+    try:
+        username = get_jwt_identity()
+        if not username:
+            return jsonify({"message": "Missing username"}), 400
+
+        course_records = CourseRecordService.get_course_records_with_terms(username)
+        if isinstance(course_records, str):
+            return jsonify({"message", course_records}), 500
+
+        return (
+            jsonify(
+                {
+                    "message": f" Course Records retrieved for user {username}",
+                    "course_records": course_records,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return jsonify({"message": f"Error fetching taken courses: {str(e)}"}), 500
+
+
 @course_record_bp.route("taken", methods=["GET"])
 @jwt_required()
 def get_taken_courses():

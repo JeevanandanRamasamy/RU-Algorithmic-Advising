@@ -53,6 +53,24 @@ class CourseRecordService:
             return f"Error: {str(e)}"
 
     @staticmethod
+    def get_course_records_with_terms(username):
+        """Retrieve all course records from a user's degree plan."""
+        try:
+            courses = (
+                db.session.query(CourseRecord, Course)
+                .filter(CourseRecord.username == username, CourseRecord.term != None)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+                .all()
+            )
+
+            return CourseRecordService.convert_courses_to_dict(courses)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving course records: {str(e)}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    @staticmethod
     def get_course_record_by_course_id(username, course_id):
         """Retrieve a course record by its username and course_id."""
         try:

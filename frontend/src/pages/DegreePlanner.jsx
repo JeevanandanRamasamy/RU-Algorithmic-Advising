@@ -2,30 +2,19 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
-import AvailableCourses from "../components/courses/AvailableCourses";
-import CourseListContainer from "../components/courses/CourseListContainer";
-import SemesterPlanner from "../components/semesterPlanner";
-import DraggableCourseList from "../components/draggableCourseList";
+import SemesterPlanner from "../components/courses/semesterPlanner";
+import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
 import useCourseRecords from "../hooks/useCourseRecords";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
 import useTakenCourses from "../hooks/useTakenCourses";
+import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
+import useRequirements from "../hooks/useRequirements";
 
 function DragDrop() {
 	const { user, token } = useAuth();
 	const { courses } = useCourses();
-	// const {
-	// 	plannedCourses,
-	// 	plannedCoursesLoading,
-	// 	plannedCoursesError,
-	// 	fetchPlannedCourses,
-	// 	setPlannedCourses,
-	// 	searchPlannedQuery,
-	// 	setSearchPlannedQuery,
-	// 	handleAddPlannedCourse,
-	// 	handleRemovePlannedCourse
-	// } = usePlannedCourses();
 	const {
 		courseRecords,
 		setCourseRecords,
@@ -49,14 +38,13 @@ function DragDrop() {
 		setSearchTaken
 	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
+	const { requirementStrings, validateSchedule } = useRequirements();
+	console.log(requirementStrings);
 
 	return (
 		<>
-			{/* <div className="fixed"> */}
 			<DraggableCourseList
 				title="Available Courses"
-				// searchQuery={searchAvailable}
-				// setSearchQuery={setSearchAvailable}
 				courses={courses}
 				excludedCourseIds={[
 					...(courseRecords?.length > 0
@@ -66,17 +54,22 @@ function DragDrop() {
 						? takenCourses.map(takenCourse => takenCourse.course_id)
 						: [])
 				]}
-				CourseComponent={AvailableCourses}
+				CourseComponent={HorizontalAvailableCourses}
 				isOpen={isOpen}
 				setIsOpen={setIsOpen}
+				requirementStrings={requirementStrings}
 			/>
-			{/* </div> */}
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Course Planner</h1>
 				</header>
-				<div className="pb-2 flex justify-end">
+				<div className="pb-2 flex justify-end gap-2">
+					<Button
+						onClick={() => {}}
+						className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
+						label="Validate Schedule"
+					/>
 					<Button
 						onClick={() => setIsOpen(!isOpen)}
 						className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
@@ -84,73 +77,16 @@ function DragDrop() {
 					/>
 				</div>
 				<main className="gap-8 flex flex-col">
-					{/* <CourseListContainer
-					title="Available Courses"
-					searchQuery={searchAvailable}
-					setSearchQuery={setSearchAvailable}
-					courses={courses}
-					excludedCourseIds={
-						plannedCourses?.length > 0
-							? plannedCourses.map(
-									plannedCourse => plannedCourse.course_info.course_id
-							  )
-							: []
-					}
-					CourseComponent={AvailableCourses}
-					/> */}
 					<SemesterPlanner
-						{...{ courseRecords, handleAddCourseRecord, handleRemoveCourseRecord }}
+						{...{
+							courses,
+							courseRecords,
+							handleAddCourseRecord,
+							handleRemoveCourseRecord,
+							takenCourses,
+							requirementStrings
+						}}
 					/>
-					{/* <DropCoursesContainer
-					term="fall"
-					year={2022}
-					courses={plannedCourses}
-					getCourse={course => course.course_info}
-					handleAddPlannedCourse={handleAddPlannedCourse}
-					handleRemovePlannedCourse={handleRemovePlannedCourse}
-				/>
-				<DropCoursesContainer
-					term="spring"
-					year={2023}
-					courses={plannedCourses}
-					getCourse={course => course.course_info}
-					handleAddPlannedCourse={handleAddPlannedCourse}
-					handleRemovePlannedCourse={handleRemovePlannedCourse}
-					/> */}
-					{/* <DropCoursesContainer
-					term="Fall"
-					year={1995}
-				/>
-				<DropCoursesContainer
-					term="Spring"
-					year={1995}
-				/>
-				<DropCoursesContainer
-					term="Fall"
-					year={1995}
-				/>
-				<DropCoursesContainer
-					term="Spring"
-					year={1995}
-				/>
-				<DropCoursesContainer
-					term="Fall"
-					year={1995}
-						/> */}
-					{/* <CourseListContainer
-					title="Planned Courses"
-					searchQuery={searchPlannedQuery}
-					setSearchQuery={setSearchPlannedQuery}
-					courses={plannedCourses}
-					getCourse={course => course.course_info}
-					CourseComponent={PlannedCourses}
-					courseComponentProps={{
-						loading: plannedCoursesLoading,
-						error: plannedCoursesError,
-						onRemoveCourse: handleRemovePlannedCourse,
-						onAddCourse: handleAddPlannedCourse
-					}}
-		/> */}
 				</main>
 			</div>
 		</>

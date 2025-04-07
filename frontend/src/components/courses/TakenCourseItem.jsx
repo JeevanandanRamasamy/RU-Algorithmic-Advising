@@ -1,13 +1,57 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-const TakenCourseItem = ({ course, onRemove }) => {
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip } from "react-tooltip";
+
+const TakenCourseItem = ({ course, onRemove, requirementString }) => {
+	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+	const [tooltipPosition, setTooltipPosition] = useState({});
+	const linkRef = useRef(null);
+	const tooltipRef = useRef(null);
+	const [tooltipTimeout, setTooltipTimeout] = useState(null);
+
+	const handleMouseEnter = () => {
+		if (tooltipTimeout) {
+			clearTimeout(tooltipTimeout);
+		}
+		const timeout = setTimeout(() => {
+			setIsTooltipVisible(true);
+		}, 500);
+		setTooltipTimeout(timeout);
+	};
+
+	const handleMouseLeave = () => {
+		setIsTooltipVisible(false);
+		if (tooltipTimeout) {
+			clearTimeout(tooltipTimeout);
+		}
+	};
+
+	useEffect(() => {
+		if (isTooltipVisible && tooltipRef.current && linkRef.current) {
+			const linkRect = linkRef.current.getBoundingClientRect();
+			const tooltipRect = tooltipRef.current.getBoundingClientRect();
+			const windowWidth = window.innerWidth;
+			const windowHeight = window.innerHeight;
+			console.log(linkRect, tooltipRect.height, windowHeight, windowWidth);
+
+			let top = linkRect.top;
+			let left = linkRect.right + window.scrollX + 8;
+
+			if (top + tooltipRect.height > windowHeight) {
+				top = linkRect.top - tooltipRect.height - 8;
+			}
+
+			if (left + tooltipRect.width > windowWidth) {
+				left = linkRect.left + window.scrollX - tooltipRect.width - 8;
+			}
+
+			setTooltipPosition({ top, left });
+		}
+	}, [isTooltipVisible]);
 	return (
-		<div className="bg-white border border-[#ddd] rounded px-1.5 py-1.5 group">
-			{/* <h3 className="font-semibold text-gray-800">{course.course_name}</h3>
-			<p className="font-bold text-gray-700">ID: {course.course_id}</p>
-			<p className="text-sm text-gray-600">{course.credits} credits</p> */}
-
-			{/* <div className="flex justify-between items-center"> */}
+		<div
+			className={`bg-white border border-[#ddd] rounded px-1.5 py-1.5 group group-delete-${course.course_id}`}>
 			<h3 className="text-base planned-course-name m-0">
 				<a
 					className="no-underline text-black hover:text-blue-500"
@@ -18,6 +62,22 @@ const TakenCourseItem = ({ course, onRemove }) => {
 				</a>
 			</h3>
 			<p className="font-bold text-[#2c3e50] m-0 p-1">ID: {course.course_id}</p>
+
+			{requirementString && (
+				<>
+					<a
+						data-tooltip-id={`tooltip-${course.course_id}`}
+						className="cursor-pointer text-blue-500 underline"
+						data-tooltip-place="left">
+						requirements
+					</a>
+					<Tooltip
+						id={`tooltip-${course.course_id}`}
+						className="bg-black">
+						<pre className="text-sm z-10000">{requirementString}</pre>
+					</Tooltip>
+				</>
+			)}
 			<div className="flex justify-between">
 				<p className="planned-course-credits m-0 text-center">{course.credits} credits</p>
 				<button
