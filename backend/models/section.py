@@ -32,3 +32,12 @@ class Section(db.Model):
             f"<Section(schedule_id={self.schedule_id}, course_id={self.course_id}, section_num={self.section_num}, "
             f"index_num={self.index_num}, instructor={self.instructor})>"
         )
+    
+    def to_dict(self):
+        return {
+            "schedule_id": self.course_id,
+            "course_id": self.course_id,
+            "section_num": self.section_num,
+            "index_num": self.index_num,
+            "instructor": self.instructor
+        }

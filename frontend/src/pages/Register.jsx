@@ -224,8 +224,7 @@ function Register() {
 			{message && <p>{message}</p>}
 
 			<p>
-				Go back to
-				<Link to={"/"}>Login</Link>
+				Go back to <Link to={"/"}>Login</Link>
 			</p>
 		</div>
 	);

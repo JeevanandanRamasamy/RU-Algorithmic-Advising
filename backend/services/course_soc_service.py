@@ -52,7 +52,8 @@ class RutgersCourseAPI:
                         }
                         for meeting in section.get('meetingTimes', [])
                     ],
-                    'open_status': section.get('openStatus')
+                    'open_status': section.get('openStatus'),
+                    'index': section.get('index')
                 }
                 for section in course.get('sections', [])
             ]
