@@ -64,7 +64,7 @@ def add_planned_course():
 @planned_courses_bp.route("/api/planned_courses/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
 def drop_planned_course():
-    print("dpc")
+    # print("dpc")
     data = request.get_json()
     username = data.get("username")
     course_id = data.get("course_id")
