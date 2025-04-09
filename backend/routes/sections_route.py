@@ -59,7 +59,7 @@ def get_course_sections():
              "index": section.get("index")}
             for section in course["sections"]
         ]
-        print(course)
+        # print(course)
         # Return the desired information, such as the course title
         return jsonify({"sections": section_info})
 

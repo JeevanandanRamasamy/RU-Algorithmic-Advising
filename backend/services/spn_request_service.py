@@ -59,6 +59,28 @@ class SPNRequestService:
             return f"Error updating SPN request: {str(e)}"
         
     @staticmethod
+    def insert_spn_requests_best_effort(spn_request_list): # For inserting multiple at a time
+        successful = []
+        failed = []
+
+        try:
+            db.session.add_all(spn_request_list)
+            db.session.commit()
+            return {"success": spn_request_list, "failed": []}
+        except SQLAlchemyError:
+            db.session.rollback()
+            # Retry individually
+            for req in spn_request_list:
+                try:
+                    db.session.add(req)
+                    db.session.commit()
+                    successful.append(req)
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    failed.append({"request": req, "error": str(e)})
+            return {"success": successful, "failed": failed}
+        
+    @staticmethod
     def delete_spn_request(spn_request_id):
         """Delete a SPN request by its spn_request_id."""
         try:

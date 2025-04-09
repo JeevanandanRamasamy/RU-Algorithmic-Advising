@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from models.spn_request import SPNRequest
 from services.spn_request_service import SPNRequestService
 
 # Define a Blueprint for course records
@@ -7,7 +8,7 @@ spn_request_bp = Blueprint(
     "spn_request", __name__, url_prefix="/api/spn"
 )
 
-@spn_request_bp.rout("/", methods=["GET"])
+@spn_request_bp.route("/", methods=["GET"])
 @jwt_required
 def get_all_spn():
     all_spns = SPNRequestService.get_spn_requests()
@@ -43,47 +44,37 @@ def add_planned_course():
     username = data.get("username")
     course_id = data.get("course_id")
     semester = data.get("semester")
-    season = semester.get("season")
+    season = semester.get("season").lower()
     year = semester.get("year")
     sections = data.get("sections")
     reason = data.get("reason")
 
-    if season == "spring":
-        season = "1"
-    elif season == "fall":
-        season = "9"
-    elif season == "winter":
-        season = "0"
-    elif season == "summer":
-        season = "7"
-    else:
-        return jsonify({"error": f"Invalid semester: {semester}"})
-
     if not username or not course_id or len(sections) < 1:
         return jsonify({"message": "Missing required fields"}), 400
+    print(data)
+    try:
+        spn_requests = [SPNRequest(
+            student_id=username,
+            course_id=course_id,
+            section_num=section.get("section_number"),
+            index_num=section.get("index"),
+            term=season,
+            year=year,
+            reason=reason,
+        ) for section in sections]
 
-    try: #TODO: Handle SPN request for multiple sections at once.
-        # Call the service function to add the course to the user's requests
-        for section in sections:
-            section_num = section.get("section_num")
-            index = section.get("index")
-            spn_request = SPNRequestService.insert_spn_request(
-                username, course_id, section_num, index, season, year, reason
-            )
-
-        if isinstance(spn_request, str):
-            return jsonify({"message", spn_request}), 500
-        return jsonify(
-            {"message": f"SPN request inserted", "spn_request": spn_request}
-        )
+        result = SPNRequestService.insert_spn_requests_best_effort(spn_requests)
+        return jsonify({
+            "message": "SPN request processing complete.",
+            "inserted": "All" if len(result["failed"]) == 0 else len(result["success"]),
+            "skipped": len(result["failed"]),
+        })
     except Exception as e:
-        return jsonify({"message": f"Error adding SPN request: {str(e)}"}), 500
-
+        return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
 
 @spn_request_bp.route("/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
-def drop_planned_course():
-    print("dpc")
+def drop_request():
     data = request.get_json()
     username = data.get("username")
     course_id = data.get("course_id")

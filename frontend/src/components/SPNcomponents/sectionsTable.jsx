@@ -20,11 +20,15 @@ const SectionsTable = ({ sections, selectedSections, onCheckboxChange }) => {
                 {/* Render index (or any other data) */}
                 <td className="border-b px-4 py-2 text-center">{section.index}</td>{/* Render index here */}
                 <td className="border-b px-4 py-2 text-center">
-                  <input
+                <input
                     type="checkbox"
-                    checked={selectedSections.includes(section.section_number)}  // Check if section_number is in selectedSections
-                    onChange={() => onCheckboxChange(section.section_number)}  // Pass section_number on change
-                  />
+                    checked={selectedSections.some(
+                        (s) =>
+                        s.section_num === section.section_num &&
+                        s.index === section.index
+                    )}
+                    onChange={() => onCheckboxChange(section)} // Pass the full section object
+                    />
                 </td>
               </tr>
             ))}

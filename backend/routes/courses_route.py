@@ -59,7 +59,7 @@ def get_db_courses():
 def get_course_by_id(course_id):
     try:
 
-        print(f"Received course_id: {course_id}")  # Log the course_id to the console
+        # print(f"Received course_id: {course_id}")  # Log the course_id to the console
 
         if not course_id:
             return jsonify({"message": "Course ID is required"}), 400
