@@ -19,21 +19,25 @@ import { useAuth } from "../context/AuthContext";
 import DataTable from "../components/generic/DataTable"; // Adjust the import path
 
 function SPN() {
-    const { user, token, role } = useAuth();
+    const { role } = useAuth();
     const columns = [
-        { header: "Course Name", accessor: "course_name" },
+        { header: "Student ID", accessor: "student_id" },
         { header: "Course ID", accessor: "course_id" },
-        { header: "Credits", accessor: "credits" },
-      ];
-    
-      const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/courses`;
-    const { courses } = useCourses();
-    const {
-        courseRecords
-    } = useCourseRecords();
+        { header: "Section Number", accessor: "section_num" },
+        { header: "Index", accessor: "index_num" },
+        { header: "Semester", accessor: "term" },
+        { header: "Year", accessor: "year" },
+        { header: "Reason", accessor: "reason" },
+        { header: "Status", accessor: "status" },
+        { header: "Time Requested", accessor: "timestamp" },
+        { header: "Admin ID", accessor: "admin_id" },
+    ];
+    const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/spn/`;
     const [isOpen, setIsOpen] = useState(false);
 
     if (role === "student") {
+        const { courses } = useCourses();
+        const { courseRecords } = useCourseRecords();
         return (
             <>
                 {/* <div className="fixed"> */}
@@ -51,6 +55,12 @@ function SPN() {
                 />
                 <div className="app h-auto overflow-x-hidden">
                     <Navbar />
+                    <header className="app-header">
+                        <h1>Outstanding Requests</h1>
+                    </header>
+                    <main className="gap8 flex flex-col">
+                        <DataTable apiUrl={apiUrl} updateApiUrl={apiUrl} columns={columns} />
+                    </main>
                     <header className="app-header">
                         <h1>Request SPN</h1>
                     </header>
@@ -75,7 +85,7 @@ function SPN() {
                         <h1>Outstanding Requests</h1>
                     </header>
                     <main className="gap-8 flex flex-col">
-                        
+                        <DataTable apiUrl={apiUrl} updateApiUrl={apiUrl} columns={columns} />
                     </main>
                     <header className="app-header">
                         <h1>Closed Requests</h1>

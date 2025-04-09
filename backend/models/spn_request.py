@@ -52,3 +52,17 @@ class SPNRequest(db.Model):
             f"index_num={self.index_num}, term={self.term}, year={self.year}, reason={self.reason}, "
             f"status={self.status}, timestamp={self.timestamp}, admin_id={self.admin_id})>"
         )
+    
+    def to_dict(self):
+        return {
+            "student_id": self.student_id,
+            "course_id": self.course_id,
+            "section_num": self.section_num,
+            "index_num": self.index_num,
+            "term": self.term,
+            "year": self.year,
+            "reason": self.reason,
+            "status": self.status,
+            "timestamp": self.timestamp,
+            "admin_id": self.admin_id,
+        }

@@ -9,32 +9,32 @@ spn_request_bp = Blueprint(
 )
 
 @spn_request_bp.route("/", methods=["GET"])
-@jwt_required
 def get_all_spn():
     all_spns = SPNRequestService.get_spn_requests()
-    return jsonify(all_spns)
+    spn_list = [
+        spn.to_dict()
+        for spn in all_spns
+    ]
+    return jsonify(spn_list), 200
 
 @spn_request_bp.route("/<student_id>", methods=["GET"])
 @jwt_required()
-def get_student_spn_requests(student_id):
+def get_student_spn():
     try:
-        username = get_jwt_identity()
-        if not username:
-            return jsonify({"message": "Missing username"}), 400
-        
-        students_requests = SPNRequestService.get_spn_requests_by_student_id(student_id)
+        requests = SPNRequestService.get_spn_requests_by_student_id(get_jwt_identity())
 
-        return (
-            jsonify(
-                {
-                    "message": f"SPN requests retrieved for user {student_id}",
-                    "course_records": students_requests,
-                }
-            ),
-            200,
-        )
+        course_list = [
+            {
+                "course_id": course.course_id,
+                "course_name": course.course_name,
+                "credits": course.credits,
+                "course_link": course.course_link,
+            }
+            for request in requests
+        ]
+        return jsonify(requests), 200
     except Exception as e:
-        return jsonify({"message": f"Error fetching requests: {str(e)}"}), 500
+        return jsonify({"message": f"Error fetching courses: {e}"}), 500
 
 # Add course to the user's planned courses
 @spn_request_bp.route("/add", methods=["POST"])

@@ -42,12 +42,7 @@ def get_db_courses():
             courses = Course.query.all()
 
         course_list = [
-            {
-                "course_id": course.course_id,
-                "course_name": course.course_name,
-                "credits": course.credits,
-                "course_link": course.course_link,
-            }
+            course.to_dict()
             for course in courses
         ]
         return jsonify(course_list), 200
