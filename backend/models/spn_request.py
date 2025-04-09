@@ -29,7 +29,7 @@ class SPNRequest(db.Model):
     year = Column(YEAR, nullable=False)
     reason = Column(String(255), nullable=False)
     status = Column(
-        Enum("Pending", "Approved", "Denied"), nullable=False, default="Pending"
+        Enum("pending", "approved", "denied"), nullable=False, default="pending"
     )
     timestamp = Column(
         DateTime, default=datetime.utcnow, nullable=False
