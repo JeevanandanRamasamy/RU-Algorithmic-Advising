@@ -25,15 +25,15 @@ const PlannedCourses = ({ courses, getCourse, loading, error, onRemoveCourse, on
 			) : error ? (
 				<div className="error-message">{error}</div>
 			) : courses?.length > 0 ? (
-				<div className="planned-courses-list">
-					<CourseList
-						courses={courses}
-						getCourse={getCourse}
-						CourseItemComponent={PlannedCourseItem}
-						courseItemProps={{ onRemove: onRemoveCourse }}
-					/>
-				</div>
+				// <div className="planned-courses-list">
+				<CourseList
+					courses={courses}
+					getCourse={getCourse}
+					CourseItemComponent={PlannedCourseItem}
+					courseItemProps={{ onRemove: onRemoveCourse }}
+				/>
 			) : (
+				// </div>
 				<div className="no-courses-message">
 					No courses planned. Drag and drop to add courses.
 				</div>

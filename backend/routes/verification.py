@@ -38,7 +38,7 @@ def send_email(email, code):
 def send_verification():
     data = request.json
     netid = data.get("username")
-
+    
     if not netid:
         return jsonify({"success": False, "message": "Invalid NetID"}), 400
     email = f"{netid}@scarletmail.rutgers.edu"

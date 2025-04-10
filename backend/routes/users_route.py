@@ -1,4 +1,4 @@
-from utils.semesters import generate_semesters
+from services.semesters_service import Semesters
 from flask import request
 from services.user_service import UserService
 from flask import Blueprint, jsonify

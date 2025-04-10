@@ -1,0 +1,7 @@
+.registration-bg {
+  background: url(../assets/welcome.jpg) no-repeat right fixed;
+  background-size: 75%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+}

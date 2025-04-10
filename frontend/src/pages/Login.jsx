@@ -2,14 +2,20 @@ import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import logo from "../assets/minilogo.png";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../components/toast/Toast";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [message, setMessage] = useState("");
-	const { login } = useAuth();
-	const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
@@ -19,12 +25,19 @@ function Login() {
 			body: JSON.stringify({ username, password })
 		});
 
-		const data = await response.json();
+
+    const data = await response.json();
 
 		if (response.ok) {
 			login(username, data.access_token, data.role); // Store username, token, and role in AuthContext
 			// localStorage.setItem("token", data.access_token); // Persist it
 			navigate("/home");
+
+			if (data.role === "admin") {
+				navigate("/admin/home");
+			} else {
+				navigate("/home");
+			}
 		} else {
 			setMessage(data.message || "Something went wrong, please try again");
 		}
@@ -37,11 +50,7 @@ function Login() {
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
 					{/* Logo Section */}
 					<div className="mb-4">
-						<img
-							src={logo}
-							alt="Logo"
-							className="w-32 h-32"
-						/>
+						<img src={logo} alt="Logo" className="w-32 h-32" />
 					</div>
 					<header className="mb-0">
 						<h1>Welcome!</h1>
@@ -50,6 +59,7 @@ function Login() {
 						Need an account? <Link to="/register">Create an Account</Link>
 					</p>
 					<form onSubmit={handleLogin} className="flex flex-col items-center">
+
 					<input
 						type="text"
 						placeholder="Username"
@@ -78,12 +88,12 @@ function Login() {
 				</div>
 			</div>
 
-			<div className="w-1/3 h-screen bg-red-500 flex items-center justify-center">
-				{/* Replace with an image if needed */}
-				{/* <img src="your-image-url.jpg" alt="Description" className="w-full h-full object-cover" /> */}
-			</div>
-		</div>
-	);
+      <div className="w-1/3 h-screen bg-red-500 flex items-center justify-center">
+        {/* Replace with an image if needed */}
+        {/* <img src="your-image-url.jpg" alt="Description" className="w-full h-full object-cover" /> */}
+      </div>
+    </div>
+  );
 }
 
 export default Login;

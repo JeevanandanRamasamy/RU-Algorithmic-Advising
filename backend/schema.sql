@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS RequirementGroup;
 DROP TABLE IF EXISTS StudentProgram;
 DROP TABLE IF EXISTS Program;
 DROP TABLE IF EXISTS CourseRecord;
+DROP TABLE IF EXISTS SPNRequest;
 DROP TABLE IF EXISTS Course;
 DROP TABLE IF EXISTS StudentDetails;
 DROP TABLE IF EXISTS Account;
@@ -19,7 +20,7 @@ DROP TABLE IF EXISTS Account;
 -- ========================================
 CREATE TABLE Account (
     username VARCHAR(6) PRIMARY KEY,  -- Unique identifier for each user (NetID)
-    password VARCHAR(30),  -- User password (set during registration)
+    password VARCHAR(256),  -- User password (set during registration)
     first_name VARCHAR(50),  -- First name of user
     last_name VARCHAR(50),  -- Last name of user
     role ENUM ('student', 'admin') NOT NULL DEFAULT 'student'  -- Defines role type

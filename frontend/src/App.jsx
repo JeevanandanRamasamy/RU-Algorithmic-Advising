@@ -14,6 +14,8 @@ import SPN from "./pages/SPN";
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
+import AdminDashboard from "./pages/AdminDashboard";
+
 import "./css/index.css";
 
 function App() {
@@ -77,6 +79,11 @@ function App() {
 					<Route
 						path="/toast"
 						element={<ToastDemo />}
+					/>
+
+					<Route
+						path="/admin/home"
+						element={<AdminDashboard />}
 					/>
 				</Routes>
 			</main>

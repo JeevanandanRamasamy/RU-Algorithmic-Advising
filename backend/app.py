@@ -16,6 +16,7 @@ from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
 from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
+from routes.requirements_route import requirements_bp
 
 from flask_cors import CORS
 
@@ -67,6 +68,7 @@ app.register_blueprint(login_bp)
 app.register_blueprint(verification_bp)
 app.register_blueprint(section_bp)
 app.register_blueprint(spn_request_bp)
+app.register_blueprint(requirements_bp)
 
 username = os.getenv("DB_USERNAME")
 password = os.getenv("DB_PASSWORD")

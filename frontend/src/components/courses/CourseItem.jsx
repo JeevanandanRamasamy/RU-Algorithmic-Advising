@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDrag } from "react-dnd";
-import { useState } from "react";
 
-const CourseItem = ({ course, isPlanned = false }) => {
+import "react-tooltip/dist/react-tooltip.css";
+import { Tooltip } from "react-tooltip";
+
+const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",
 		item: { id: course.course_id },
@@ -19,68 +21,60 @@ const CourseItem = ({ course, isPlanned = false }) => {
 		}
 	}, [isDragging, course]);
 
-	// Enable scroll when dragging
-	// useEffect(() => {
-	// 	const handleWheel = e => {
-	// 		if (!isDragging) return; // Only allow scroll during dragging
+	// const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+	// const [tooltipPosition, setTooltipPosition] = useState({});
+	// const linkRef = useRef(null);
+	// const tooltipRef = useRef(null);
+	// const [tooltipTimeout, setTooltipTimeout] = useState(null);
 
-	// 		const container = containerRef.current;
-	// 		if (!container) return;
-
-	// 		const scrollSpeed = 30; // scroll speed in pixels
-	// 		const buffer = 50; // pixels from the edge to trigger scrolling
-
-	// 		const { clientX, clientY } = e;
-
-	// 		// Scroll if near the edges
-	// 		if (clientY < buffer) {
-	// 			container.scrollTop -= scrollSpeed; // Scroll up
-	// 		} else if (clientY > container.clientHeight - buffer) {
-	// 			container.scrollTop += scrollSpeed; // Scroll down
-	// 		}
-
-	// 		if (clientX < buffer) {
-	// 			container.scrollLeft -= scrollSpeed; // Scroll left
-	// 		} else if (clientX > container.clientWidth - buffer) {
-	// 			container.scrollLeft += scrollSpeed; // Scroll right
-	// 		}
-
-	// 		e.preventDefault(); // Prevent default wheel action
-	// 	};
-
-	// 	if (isDragging) {
-	// 		window.addEventListener("wheel", handleWheel, { passive: false });
-	// 	} else {
-	// 		window.removeEventListener("wheel", handleWheel);
+	// const handleMouseEnter = () => {
+	// 	if (tooltipTimeout) {
+	// 		clearTimeout(tooltipTimeout);
 	// 	}
+	// 	const timeout = setTimeout(() => {
+	// 		setIsTooltipVisible(true);
+	// 	}, 500);
+	// 	setTooltipTimeout(timeout);
+	// };
 
-	// 	return () => {
-	// 		window.removeEventListener("wheel", handleWheel);
-	// 	};
-	// }, [isDragging]);
+	// const handleMouseLeave = () => {
+	// 	setIsTooltipVisible(false);
+	// 	if (tooltipTimeout) {
+	// 		clearTimeout(tooltipTimeout);
+	// 	}
+	// };
 
 	// useEffect(() => {
-	// 	const handleMouseMove = e => {
-	// 		if (isDragging) {
-	// 			window.scrollBy(0, e.movementY); // Scroll the page based on mouse movement
+	// 	if (isTooltipVisible && tooltipRef.current && linkRef.current) {
+	// 		const linkRect = linkRef.current.getBoundingClientRect();
+	// 		const tooltipRect = tooltipRef.current.getBoundingClientRect();
+	// 		const windowWidth = window.innerWidth;
+	// 		const windowHeight = window.innerHeight;
+	// 		console.log(linkRect, tooltipRect.height, windowHeight, windowWidth);
+
+	// 		let top = linkRect.top;
+	// 		let left = linkRect.right + window.scrollX + 8;
+
+	// 		if (top + tooltipRect.height > windowHeight) {
+	// 			top = linkRect.top - tooltipRect.height - 8;
 	// 		}
-	// 	};
 
-	// 	window.addEventListener("mousemove", handleMouseMove);
+	// 		if (left + tooltipRect.width > windowWidth) {
+	// 			left = linkRect.left + window.scrollX - tooltipRect.width - 8;
+	// 		}
 
-	// 	return () => {
-	// 		window.removeEventListener("mousemove", handleMouseMove);
-	// 	};
-	// }, [isDragging]);
+	// 		setTooltipPosition({ top, left });
+	// 	}
+	// }, [isTooltipVisible]);
 
 	return (
 		<div
 			ref={drag}
-			className={`course-item min-w-[200px] ${isDragging ? "dragging" : ""} ${
-				isPlanned ? "planned" : ""
-			}`}
+			className={`bg-white border border-[#ddd] rounded px-1.5 py-1.5 ${
+				isDragging ? "dragging" : ""
+			} ${isPlanned ? "planned" : ""}`}
 			style={{ opacity: isDragging ? 0.5 : 1 }}>
-			<h3 className="course-title m-0 p-1 leading-6">
+			<h3 className="text-base m-0 p-1 leading-6">
 				<a
 					className="no-underline text-black hover:text-blue-500"
 					href={course.course_link}
@@ -91,13 +85,44 @@ const CourseItem = ({ course, isPlanned = false }) => {
 			</h3>
 			<p className="course-code m-0 p-1">ID: {course.course_id}</p>
 			<p className="course-credits m-0 p-1">{course.credits} credits</p>
-			{/* <a
-				className="course-link"
-				href={course.course_link}
-				target="_blank"
-				rel="noopener noreferrer">
-				Course Details
-			</a> */}
+			{/* {requirementString && (
+				<span className={`relative group group-requirement-${course.course_id}`}>
+					<span
+						ref={linkRef}
+						className="cursor-pointer text-blue-500 underline"
+						onMouseEnter={handleMouseEnter}
+						onMouseLeave={handleMouseLeave}>
+						requirements
+					</span>
+					{isTooltipVisible && (
+						<pre
+							ref={tooltipRef}
+							className="fixed px-4 py-3 text-sm bg-gray-800 text-white rounded-md opacity-100 transition-opacity z-50 shadow-lg max-w-none"
+							style={{
+								top: `${tooltipPosition?.top}px`,
+								left: `${tooltipPosition?.left}px`
+							}}>
+							{requirementString}
+						</pre>
+					)}
+				</span>
+			)} */}
+
+			{requirementString && (
+				<>
+					<a
+						data-tooltip-id={`tooltip-${course.course_id}`}
+						className="cursor-pointer text-blue-500 underline"
+						data-tooltip-place="right">
+						requirements
+					</a>
+					<Tooltip
+						id={`tooltip-${course.course_id}`}
+						className="bg-black">
+						<pre className="text-sm z-10000">{requirementString}</pre>
+					</Tooltip>
+				</>
+			)}
 		</div>
 	);
 };

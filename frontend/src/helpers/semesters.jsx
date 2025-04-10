@@ -1,15 +1,15 @@
-const encodeSemester = (term, year) => {
+function encodeSemester(term, year) {
 	const termOffset = {
-		winter: 0,
-		spring: 1,
-		summer: 2,
-		fall: 3
+		spring: 0,
+		summer: 1,
+		fall: 2,
+		winter: 3
 	};
 	return year * 4 + termOffset[term];
-};
+}
 
 const decodeSemester = encoded => {
-	const terms = ["winter", "spring", "summer", "fall"];
+	const terms = ["spring", "summer", "fall", "winter"];
 	const year = Math.floor(encoded / 4);
 	const term = terms[encoded % 4];
 	return { term, year };
@@ -26,11 +26,21 @@ const generateSemesters = (enrollYear, gradYear) => {
 };
 
 const getCurrentSemester = () => {
-	const date = new Date();
-	const month = date.getMonth() + 1;
-	const year = date.getFullYear();
+	const now = new Date();
+	const month = now.getMonth() + 1; // getMonth() returns 0-11, so we add 1 to get 1-12
+	const year = now.getFullYear();
 
-	const term = month >= 9 ? "fall" : month >= 6 ? "summer" : "spring";
+	let term;
+	if (month === 12) {
+		term = "winter";
+	} else if (month >= 9) {
+		term = "fall";
+	} else if (month >= 6) {
+		term = "summer";
+	} else {
+		term = "spring";
+	}
+
 	return { term, year };
 };
 
