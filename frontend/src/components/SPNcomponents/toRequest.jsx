@@ -148,10 +148,10 @@ const ToRequest = () => {
                     setSelectedSections([]); // Clear selected sections
                     setReason("");
                     if (data.inserted != 0){
-                        showSuccessToast(`${data.inserted} sections were added!`)
+                        showSuccessToast(`${data.inserted} section(s) were added!`)
                     }
                     if (data.skipped != 0) {
-                        showWarningToast(`${data.skipped} sections were skipped.`)
+                        showWarningToast(`${data.skipped} section(s) were skipped.`)
                     }
                 } else {
                     // Handle error

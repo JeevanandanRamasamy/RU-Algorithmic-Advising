@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.spn_request import SPNRequest
 from services.spn_request_service import SPNRequestService
+from datetime import datetime
 
 # Define a Blueprint for course records
 spn_request_bp = Blueprint(
@@ -9,32 +10,30 @@ spn_request_bp = Blueprint(
 )
 
 @spn_request_bp.route("/", methods=["GET"])
-def get_all_spn():
-    all_spns = SPNRequestService.get_spn_requests()
-    spn_list = [
-        spn.to_dict()
-        for spn in all_spns
-    ]
-    return jsonify(spn_list), 200
-
-@spn_request_bp.route("/<student_id>", methods=["GET"])
 @jwt_required()
-def get_student_spn():
-    try:
-        requests = SPNRequestService.get_spn_requests_by_student_id(get_jwt_identity())
+def get_spn_requests():
+    student_id = request.args.get("student_id")
+    pending_param = request.args.get("pending_param")
 
-        course_list = [
-            {
-                "course_id": course.course_id,
-                "course_name": course.course_name,
-                "credits": course.credits,
-                "course_link": course.course_link,
-            }
-            for request in requests
+    try:
+        if student_id:
+            # Get SPNs for the specific student
+            requests = SPNRequestService.get_spn_requests_by_student_id(student_id)
+        elif pending_param is not None:
+            pending = pending_param.lower() == "true" # Lowercases pending_param, compares it to "true" and returns boolean
+            requests = SPNRequestService.get_spn_pending(pending)
+        else:
+            # Get all SPNs
+            requests = SPNRequestService.get_spn_requests()
+
+        spn_list = [
+            spn.to_dict()
+            for spn in requests
         ]
-        return jsonify(requests), 200
+
+        return jsonify(spn_list), 200
     except Exception as e:
-        return jsonify({"message": f"Error fetching courses: {e}"}), 500
+        return jsonify({"message": f"Error fetching SPNs: {e}"}), 500
 
 # Add course to the user's planned courses
 @spn_request_bp.route("/add", methods=["POST"])
@@ -51,7 +50,6 @@ def add_planned_course():
 
     if not username or not course_id or len(sections) < 1:
         return jsonify({"message": "Missing required fields"}), 400
-    print(data)
     try:
         spn_requests = [SPNRequest(
             student_id=username,
@@ -72,6 +70,27 @@ def add_planned_course():
     except Exception as e:
         return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
 
+@spn_request_bp.route("/update", methods=["PUT"])
+
+def update_spn_request():
+    data = request.get_json()
+    data["timestamp"] = datetime.utcnow()
+    identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
+    identifier = {key: data.get(key) for key in identifier_keys}
+    
+    try:
+        # Call the service method to update the SPN request
+        updated_spn = SPNRequestService.update_spn_request(identifier, data)
+
+        if updated_spn == "SPN request not found":
+            return jsonify({"message": "SPN request not found"}), 404
+        else:
+            return jsonify({"message": "SPN request updated successfully", "success": "successful"}), 200
+
+    except Exception as e:
+        return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
+
+""" # Is there a need to delete SPNs?
 @spn_request_bp.route("/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
 def drop_request():
@@ -93,3 +112,4 @@ def drop_request():
             return jsonify({"message": response}), 500  # Error message
     except Exception as e:
         return jsonify({"message": f"Error removing planned course: {str(e)}"}), 500
+        """

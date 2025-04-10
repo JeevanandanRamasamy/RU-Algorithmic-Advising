@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { showErrorToast } from "../toast/Toast";
+import { showErrorToast, showSuccessToast } from "../toast/Toast";
 import { useAuth } from "../../context/AuthContext";
 
 const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data available." }) => {
-  const { role, token } = useAuth();
+  const { user, role, token } = useAuth();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -76,14 +76,18 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 
   const handleCellEdit = (rowIndex, columnAccessor, newValue) => {
     const updatedData = [...data];
-    updatedData[rowIndex][columnAccessor] = newValue;
+    const row = { ...updatedData[rowIndex] };
+    // Update the edited cell
+    row[columnAccessor] = newValue;
+    row["admin_id"] = user;
+    updatedData[rowIndex] = row;
     setData(updatedData);
     updateDatabase(updatedData[rowIndex]);
   };
 
   const updateDatabase = async (updatedRow) => {
     try {
-      const response = await fetch(`${updateApiUrl}/${updatedRow.id}`, {
+      const response = await fetch(`${updateApiUrl}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -95,15 +99,14 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
       if (!response.ok || !result.success) {
         throw new Error("Update failed.");
       }
-
-      showErrorToast("Data successfully updated.");
+      showSuccessToast("Data successfully updated.");
     } catch {
       showErrorToast("Error updating data.");
     }
   };
 
   const renderEditableCell = (rowIndex, column, value) => {
-    if (column.accessor === "status") {
+    if (column.accessor === "status" && role !== "student") {
       return (
         <select
           value={value}

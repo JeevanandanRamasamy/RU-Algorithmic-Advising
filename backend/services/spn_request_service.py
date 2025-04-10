@@ -20,7 +20,19 @@ class SPNRequestService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving SPN requests: {str(e)}"
-    
+        
+    @staticmethod
+    def get_spn_pending(pending):
+        """Retrieve all pending requests if true, otherwise all non-pending requests"""
+        try:
+            if pending:
+                return SPNRequest.query.filter_by(status='pending').all()
+            # Using notin_ for clearer exclusion logic
+            return SPNRequest.query.filter(SPNRequest.status.notin_(['pending'])).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving SPN requests: {str(e)}"
+
     @staticmethod
     def get_spn_request_by_course_id(course_id):
         """Retrieve SPN request by course_id."""
@@ -43,10 +55,10 @@ class SPNRequestService:
             return f"Error inserting SPN request: {str(e)}"
         
     @staticmethod
-    def update_spn_request(spn_request_id, spn_request_data):
+    def update_spn_request(identifier: dict, spn_request_data: dict):
         """Update an existing SPN request."""
         try:
-            spn_request = SPNRequest.query.filter_by(spn_request_id=spn_request_id).first()
+            spn_request = SPNRequest.query.filter_by(**identifier).first()
             if spn_request:
                 for key, value in spn_request_data.items():
                     setattr(spn_request, key, value)

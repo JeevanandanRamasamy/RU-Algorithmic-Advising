@@ -19,7 +19,7 @@ import { useAuth } from "../context/AuthContext";
 import DataTable from "../components/generic/DataTable"; // Adjust the import path
 
 function SPN() {
-    const { role } = useAuth();
+    const { user, role } = useAuth();
     const columns = [
         { header: "Student ID", accessor: "student_id" },
         { header: "Course ID", accessor: "course_id" },
@@ -33,11 +33,13 @@ function SPN() {
         { header: "Admin ID", accessor: "admin_id" },
     ];
     const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/spn/`;
-    const [isOpen, setIsOpen] = useState(false);
 
     if (role === "student") {
         const { courses } = useCourses();
         const { courseRecords } = useCourseRecords();
+        const [isOpen, setIsOpen] = useState(false);
+        let url = apiUrl + `?student_id=${encodeURIComponent(user)}`;
+
         return (
             <>
                 {/* <div className="fixed"> */}
@@ -56,10 +58,10 @@ function SPN() {
                 <div className="app h-auto overflow-x-hidden">
                     <Navbar />
                     <header className="app-header">
-                        <h1>Outstanding Requests</h1>
+                        <h1>My Requests</h1>
                     </header>
                     <main className="gap8 flex flex-col">
-                        <DataTable apiUrl={apiUrl} updateApiUrl={apiUrl} columns={columns} />
+                        <DataTable apiUrl={url} columns={columns} />
                     </main>
                     <header className="app-header">
                         <h1>Request SPN</h1>
@@ -78,6 +80,9 @@ function SPN() {
             </>
         );
     } else {
+        let pendingUrl = apiUrl + `?pending_param=true`;
+        let notPendingUrl = apiUrl + `?pending_param=false`;
+        let updateUrl = apiUrl + '/update';
         return (
             <div className="app h-auto overflow-x-hidden">
                     <Navbar />
@@ -85,13 +90,13 @@ function SPN() {
                         <h1>Outstanding Requests</h1>
                     </header>
                     <main className="gap-8 flex flex-col">
-                        <DataTable apiUrl={apiUrl} updateApiUrl={apiUrl} columns={columns} />
+                        <DataTable apiUrl={pendingUrl} updateApiUrl={updateUrl} columns={columns} />
                     </main>
                     <header className="app-header">
                         <h1>Closed Requests</h1>
                     </header>
                     <main className="gap-8 flex flex-col">
-                        <DataTable apiUrl={apiUrl} updateApiUrl={apiUrl} columns={columns} />
+                        <DataTable apiUrl={notPendingUrl} updateApiUrl={updateUrl} columns={columns} />
                     </main>
                 </div>
         );
