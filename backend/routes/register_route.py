@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from services.user_service import UserService
 from flask import Blueprint
-from werkzeug.security import generate_password_hash  #pbkdf2:sha256 hashing method
+from werkzeug.security import generate_password_hash  # pbkdf2:sha256 hashing method
 
 register_bp = Blueprint("register", __name__)  # Create a Blueprint object
 
@@ -91,7 +91,6 @@ def register():
         "enroll_year": current_year,
         "credits_earned": 0,
         "gpa": 0.00,
-        "class_year": "Freshman",
     }
 
     result = UserService.add_student_details(student_detail)
