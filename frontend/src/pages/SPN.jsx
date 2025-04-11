@@ -11,7 +11,7 @@ import Navbar from "../components/navbar/Navbar";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import ToRequest from "../components/SPNcomponents/toRequest";
-import DraggableCourseList from "../components/draggableCourseList";
+import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
 import useCourseRecords from "../hooks/useCourseRecords";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;

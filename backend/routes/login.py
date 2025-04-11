@@ -49,7 +49,6 @@ def login():
                     "status": "success",
                     "role": account.role,
                     "access_token": access_token,
-                    "role": account.role
                 }
             ),
             200,
