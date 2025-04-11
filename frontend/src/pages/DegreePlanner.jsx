@@ -11,6 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import useTakenCourses from "../hooks/useTakenCourses";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 import useRequirements from "../hooks/useRequirements";
+import useCourseRequirements from "../hooks/useCourseRequirements";
 
 function DragDrop() {
 	const { user, token } = useAuth();
@@ -39,6 +40,7 @@ function DragDrop() {
 	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
+	const a = useCourseRequirements();
 
 	return (
 		<>

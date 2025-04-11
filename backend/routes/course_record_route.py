@@ -117,7 +117,6 @@ def get_planned_courses():
             return jsonify({"message": "Missing username"}), 400
 
         planned_courses = CourseRecordService.get_future_course_records(username)
-        print(planned_courses)
         if isinstance(planned_courses, str):
             return jsonify({"message", planned_courses}), 500
 
@@ -158,7 +157,6 @@ def add_course_record():
                 "grade": grade,
             }
         )
-        print(result)
         if isinstance(result, str):
 
             return jsonify({"message": result}), 500

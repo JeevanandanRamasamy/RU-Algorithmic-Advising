@@ -1,4 +1,5 @@
-from collections import deque
+from collections import defaultdict, deque
+from services.semesters_service import SemestersService
 from models.requirement_group_node import RequirementGroupNode
 from models.requirement_group import RequirementGroup
 from services.requirement_group_service import RequirementGroupService
@@ -77,30 +78,38 @@ class RequirementService:
         return prerequisites
 
     @staticmethod
-    def validate_course_requirements(courses_to_check, taken_courses):
-        invalid_courses = set()
-        math_courses = {
-            course for course in taken_courses if course.startswith("01:640:")
-        }
-        math_prereqs = set()
-        for course in math_courses:
-            math_prereqs.update(RequirementService.get_all_prerequisites(course))
-        taken_courses.update(math_prereqs)
-
-        for course_id in courses_to_check:
-            course = CourseService.get_course_by_id(course_id)
-            if not course:
-                return False
-            requirement_groups = (
-                RequirementGroupService.get_requirement_group_by_course(course_id)
+    def validate_course_requirements_semester_by_semester_for_user(student_details):
+        username, enroll_year, grad_year = (
+            student_details.username,
+            int(student_details.enroll_year),
+            int(student_details.grad_year),
+        )
+        semesters = SemestersService.generate_semesters(
+            enroll_year=enroll_year, grad_year=grad_year
+        )
+        res = {}
+        extra_courses = set()
+        for semester in semesters:
+            term, year = semester["term"], semester["year"]
+            course_records = CourseRecordService.get_course_record_by_term(
+                username=username, term=term, year=year
             )
-
-            for group in requirement_groups:
-                if not RequirementService.check_group_fulfillment(
-                    group.group_id, taken_courses
-                ):
-                    invalid_courses.add(course_id)
-        return list(invalid_courses)
+            for course_record in course_records:
+                course_id = course_record["course_info"]["course_id"]
+                # print(course_id)
+                missing_requirements = RequirementService.get_missing_requirements(
+                    username,
+                    program_id=None,
+                    course_id=course_id,
+                    extra_courses=extra_courses,
+                )
+                if missing_requirements:
+                    res[course_id] = missing_requirements
+                print(res)
+            extra_courses.update(
+                {course["course_info"]["course_id"] for course in course_records}
+            )
+        return res
 
     @staticmethod
     def check_requirements_met(
@@ -208,7 +217,9 @@ class RequirementService:
         return True  # All requirements for this group are met
 
     @staticmethod
-    def get_missing_requirements(username, program_id=None, course_id=None):
+    def get_missing_requirements(
+        username, program_id=None, course_id=None, extra_courses=None
+    ):
         """Return a list of courses the student still needs to complete."""
         if program_id:
             # Fetch program requirement groups
@@ -241,11 +252,15 @@ class RequirementService:
                 course["course_info"]["course_id"] for course in courses_taken
             }  # Extract course_ids
 
+        if extra_courses:
+            courses_taken.update(extra_courses)
+        print(courses_taken)
         missing_courses = set()  # To track missing courses
 
         def check_missing_courses(group_id):
             """Recursive helper function to find missing courses."""
             group = RequirementGroupService.get_requirement_group_by_id(group_id)
+            print(group)
             if not group or RequirementService.check_requirements_met(
                 username, group_id=group_id
             ):
@@ -256,6 +271,7 @@ class RequirementService:
             print(
                 f"Checking group {group_id}: required_courses={required_courses}, num_required={num_required}"
             )
+            print(num_required, required_courses)
 
             # Find missing courses
             if num_required == 0:
@@ -268,6 +284,7 @@ class RequirementService:
             elif num_required > 0 and required_courses:
                 # Need at least `num_required` courses from the list
                 taken_in_group = required_courses.intersection(courses_taken)
+                print(taken_in_group)
                 needed = num_required - len(taken_in_group)
                 while needed > 0:
                     # Sort by first 2 digits then by last 3 digits
@@ -281,6 +298,7 @@ class RequirementService:
                             username, course_id=course, extra_courses=missing_courses
                         )
                     ]
+                    print(valid_courses)
                     if not valid_courses:
                         for course in options:
                             if CourseService.get_course_by_id(course):
@@ -295,6 +313,7 @@ class RequirementService:
             child_groups = RequirementGroupService.get_child_requirement_groups(
                 group_id
             )
+            print(child_groups)
             if not child_groups:
                 return
 

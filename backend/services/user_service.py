@@ -1,6 +1,6 @@
 # from models.planned_course import PlannedCourse
 from models.course_record import CourseRecord
-from services.semesters_service import Semesters
+from services.semesters_service import SemestersService
 from db import db
 
 # from datetime import datetime
@@ -121,7 +121,7 @@ class UserService:
                 return "Enrolled year can not be the same as graduate year"
             student_details = StudentDetails.query.filter_by(username=username).first()
             if student_details:
-                semesters = Semesters.generate_semesters(enroll_year, grad_year)
+                semesters = SemestersService.generate_semesters(enroll_year, grad_year)
                 valid_terms = list({(s["term"], s["year"]) for s in semesters})
                 CourseRecord.query.filter(
                     tuple_(CourseRecord.term, CourseRecord.year).notin_(valid_terms)

@@ -144,7 +144,9 @@ class CourseRecordService:
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
-            return CourseRecordService.convert_courses_to_dict(courses)
+            return CourseRecordService.convert_courses_to_dict(
+                courses
+            ) + CourseRecordService.get_termless_course_records_joined(username)
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving past course records: {str(e)}"
@@ -204,6 +206,23 @@ class CourseRecordService:
                 .all()
             )
             return [course.to_dict() for course in courses]
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving termless course records: {str(e)}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    @staticmethod
+    def get_termless_course_records_joined(username):
+        """Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits)."""
+        try:
+            courses = (
+                db.session.query(CourseRecord, Course)
+                .filter(CourseRecord.username == username, CourseRecord.term == None)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+                .all()
+            )
+            return CourseRecordService.convert_courses_to_dict(courses)
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving termless course records: {str(e)}"
