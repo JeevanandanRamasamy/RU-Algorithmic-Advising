@@ -2,6 +2,7 @@ from db import db
 from models.section import Section
 from models.schedule_plan import SchedulePlan
 from sqlalchemy.exc import SQLAlchemyError
+import datetime
 
 class SectionService:
     @staticmethod
@@ -75,3 +76,12 @@ class SectionService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error updating section: {str(e)}"
+        
+    @staticmethod
+    def get_sections_by_course_ids(course_ids):
+        """Retrieve courses by their course_ids."""
+        try:
+            return Section.query.filter(Section.course_id.in_(course_ids)).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving courses: {str(e)}"

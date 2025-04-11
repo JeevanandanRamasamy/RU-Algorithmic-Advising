@@ -17,18 +17,21 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    const response = await fetch(`${backendUrl}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		const response = await fetch(`${backendUrl}/api/login`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ username, password })
+		});
+
 
     const data = await response.json();
 
 		if (response.ok) {
-			login(username, data.access_token); // Store username + token in AuthContext
-			localStorage.setItem("token", data.access_token); // Persist it
+			login(username, data.access_token, data.role); // Store username, token, and role in AuthContext
+			// localStorage.setItem("token", data.access_token); // Persist it
+			navigate("/home");
 
 			if (data.role === "admin") {
 				navigate("/admin/home");
@@ -40,45 +43,47 @@ function Login() {
 		}
 	};
 
-  return (
-    <div className="h-screen flex items-center justify-center overflow-hidden">
-      <></>
-      <div className="w-2/3 h-screen flex items-center mb-0 justify-center">
-        <div className="w-full max-w-lg p-8 flex flex-col items-center">
-          {/* Logo Section */}
-          <div className="mb-4">
-            <img src={logo} alt="Logo" className="w-32 h-32" />
-          </div>
-          <header className="mb-0">
-            <h1>Welcome!</h1>
-          </header>
-          <p>
-            Need an account? <Link to="/register">Create an Account</Link>
-          </p>
+	return (
+		<div className="h-screen flex items-center justify-center overflow-hidden">
+			<></>
+			<div className="w-2/3 h-screen flex items-center mb-0 justify-center">
+				<div className="w-full max-w-lg p-8 flex flex-col items-center">
+					{/* Logo Section */}
+					<div className="mb-4">
+						<img src={logo} alt="Logo" className="w-32 h-32" />
+					</div>
+					<header className="mb-0">
+						<h1>Welcome!</h1>
+					</header>
+					<p>
+						Need an account? <Link to="/register">Create an Account</Link>
+					</p>
+					<form onSubmit={handleLogin} className="flex flex-col items-center">
 
 					<input
 						type="text"
 						placeholder="Username"
 						value={username}
 						onChange={e => setUsername(e.target.value)}
-						className="border rounded-md p-2 mb-4"
+						className="border rounded-md p-2 mb-4 block"
 					/>
 					<input
 						type="password"
 						placeholder="Password"
 						value={password}
 						onChange={e => setPassword(e.target.value)}
-						className="border rounded-md p-2 mb-0"
+						className="border rounded-md p-2 mb-0 block"
 					/>
 					<br />
+					<button
+						onClick={handleLogin}
+						className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 ">
+						Login
+					</button>
+					</form>
 					<p>
 						<Link to="/reset-password">Forgot password?</Link>
 					</p>
-					<button
-						onClick={handleLogin}
-						className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500">
-						Login
-					</button>
 					<p>{message}</p>
 				</div>
 			</div>
