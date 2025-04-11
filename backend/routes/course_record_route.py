@@ -206,7 +206,6 @@ def remove_course_record():
 def update_course_record():
     try:
         username = get_jwt_identity()
-
         data = request.get_json()
         if not username or "course_id" not in data:
             return jsonify({"message": "Missing username or course_id"}), 400
@@ -216,16 +215,11 @@ def update_course_record():
         term = data.get("term")
         year = data.get("year")
         grade = data.get("grade") if "grade" in data else None
-        # data = request.get_json()
-
         if not username or "course_id" not in data:
             return (
                 jsonify({"message": "Missing username, course_id, or new_course_id"}),
                 400,
             )
-
-        # course_id = data["course_id"]
-        # new_course_id = data["new_course_id"]
 
         result = CourseRecordService.update_course_record(
             username=username,

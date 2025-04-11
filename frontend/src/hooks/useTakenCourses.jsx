@@ -3,7 +3,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 import { useAuth } from "../context/AuthContext";
 
-const useTakenCourses = () => {
+const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 	const { user, token } = useAuth();
 	const [takenCourses, setTakenCourses] = useState([]);
 	const [takenCoursesLoading, setTakenCoursesLoading] = useState(false);
@@ -53,6 +53,7 @@ const useTakenCourses = () => {
 				setTakenCoursesError(data.message);
 			} else {
 				setTakenCourses(prevCourses => [...prevCourses, data.course_record.course_info]);
+				fetchPlannedCoursesWithMissingRequirements();
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
@@ -80,6 +81,7 @@ const useTakenCourses = () => {
 				setTakenCourses(prevTakenCourses =>
 					prevTakenCourses.filter(course => course.course_id !== courseId)
 				);
+				fetchPlannedCoursesWithMissingRequirements();
 			}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);

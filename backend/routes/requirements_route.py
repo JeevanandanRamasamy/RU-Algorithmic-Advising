@@ -61,13 +61,39 @@ def get_missing_requirements_for_planned_courses():
     if isinstance(student_details, str):
         return jsonify({"message": student_details}), 500
 
-    requirements_missing_for_courses = (
-        RequirementService.validate_course_requirements_semester_by_semester_for_user(
-            student_details
-        )
+    courses_missing_requirements = (
+        RequirementService.fetch_courses_missing_requirements(student_details)
     )
 
     return (
-        jsonify({"requirements_missing_for_courses": requirements_missing_for_courses}),
+        jsonify(
+            {
+                "message": "Successfully fetched courses with missing requirements",
+                "courses_missing_requirements": courses_missing_requirements,
+            }
+        ),
+        200,
+    )
+
+
+@requirements_bp.route("/planned-courses/group", methods=["GET"])
+@jwt_required()
+def get_requirements_for_planned_courses():
+    username = get_jwt_identity()
+    student_details = UserService.get_student_details(username=username)
+    if isinstance(student_details, str):
+        return jsonify({"message": student_details}), 500
+
+    courses_missing_requirements = (
+        RequirementService.fetch_courses_missing_requirements(student_details)
+    )
+
+    return (
+        jsonify(
+            {
+                "message": "Successfully fetched courses with missing requirements",
+                "courses_missing_requirements": courses_missing_requirements,
+            }
+        ),
         200,
     )

@@ -15,7 +15,8 @@ const DropCoursesContainer = ({
 	handleAddPlannedCourse,
 	handleRemovePlannedCourse,
 	semestersTillNow = { semestersTillNow },
-	requirementStrings
+	requirementStrings,
+	coursesWithMissingRequirements
 }) => {
 	const coursesBySemester = courseRecords?.filter(
 		course => course?.term === term && course?.year === year
@@ -53,7 +54,10 @@ const DropCoursesContainer = ({
 						getCourse={getCourse}
 						CourseItemComponent={PlannedCourseItem}
 						requirementStrings={requirementStrings}
-						courseItemProps={{ onRemove: handleRemovePlannedCourse }}
+						courseItemProps={{
+							onRemove: handleRemovePlannedCourse,
+							coursesWithMissingRequirements: coursesWithMissingRequirements
+						}}
 					/>
 				)}
 			</div>

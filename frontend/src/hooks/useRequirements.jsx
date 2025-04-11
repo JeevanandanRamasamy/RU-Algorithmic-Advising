@@ -29,31 +29,31 @@ const useRequirements = () => {
 		getRequirementsStrings();
 	}, []);
 
-	const validateSchedule = async (semesters, courseRecords, takenCourses) => {
-		const invalidIds = new Set();
-		const takenSoFar = new Set(
-			takenCourses ? takenCourses.map(takenCourse => takenCourse.course_id) : []
-		);
-		const groupedCourses = groupCoursesBySemester(courseRecords);
-		for (const semester of semesters) {
-			const key = `${semester.term}:${semester.year}`;
-			const coursesThisSemester = groupedCourses.get(key) || [];
-			const response = await fetch("/api/users/requirements", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": `Bearer ${token}`
-				},
-				body: JSON.stringify({
-					courses_to_check: coursesThisSemester,
-					taken_courses: Array.from(takenSoFar)
-				})
-			});
-			// const data = await response.json();
-			//TODO: push all invalids ids to invalidsIDs
-			//TODO: update takenSoFar by coursesThisSemesters
-		}
-	};
+	// const validateSchedule = async (semesters, courseRecords, takenCourses) => {
+	// 	const invalidIds = new Set();
+	// 	const takenSoFar = new Set(
+	// 		takenCourses ? takenCourses.map(takenCourse => takenCourse.course_id) : []
+	// 	);
+	// 	const groupedCourses = groupCoursesBySemester(courseRecords);
+	// 	for (const semester of semesters) {
+	// 		const key = `${semester.term}:${semester.year}`;
+	// 		const coursesThisSemester = groupedCourses.get(key) || [];
+	// 		const response = await fetch("/api/users/requirements", {
+	// 			method: "POST",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 				"Authorization": `Bearer ${token}`
+	// 			},
+	// 			body: JSON.stringify({
+	// 				courses_to_check: coursesThisSemester,
+	// 				taken_courses: Array.from(takenSoFar)
+	// 			})
+	// 		});
+	// 		// const data = await response.json();
+	// 		//TODO: push all invalids ids to invalidsIDs
+	// 		//TODO: update takenSoFar by coursesThisSemesters
+	// 	}
+	// };
 
 	const groupCoursesBySemester = courseRecords => {
 		const grouped = new Map();
@@ -64,7 +64,7 @@ const useRequirements = () => {
 		}
 		return grouped;
 	};
-	return { requirementStrings, validateSchedule };
+	return { requirementStrings };
 };
 
 export default useRequirements;

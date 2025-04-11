@@ -233,6 +233,7 @@ class CourseRecordService:
     def insert_course_record(course_record_data):
         """Insert a course record into a user's degree plan."""
         try:
+            print(course_record_data)
 
             new_course = CourseRecord(**course_record_data)
             db.session.add(new_course)
@@ -253,17 +254,17 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
+            print(course_record)
             if course_record:
                 for key, value in new_data.items():
                     if hasattr(course_record, key):
                         setattr(course_record, key, value)
-
                     else:
                         return f"Invalid field: {key}"
-                    db.session.commit()
-                    return CourseRecordService.get_course_record_by_course_id(
-                        username, course_id
-                    )
+                db.session.commit()
+                return CourseRecordService.get_course_record_by_course_id(
+                    username, course_id
+                )
             else:
                 return "Course record not found"
         except SQLAlchemyError as e:

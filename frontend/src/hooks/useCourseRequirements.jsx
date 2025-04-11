@@ -5,9 +5,8 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const useCourseRequirements = () => {
 	const { user, token } = useAuth();
-	const [missingRequirementsForPlannedCourses, setMissingRequirementsForPlannedCourses] =
-		useState({});
-	const fetchMissingRequirementsForPlannedCourses = async () => {
+	const [coursesWithMissingRequirements, setCoursesWithMissingRequirements] = useState({});
+	const fetchPlannedCoursesWithMissingRequirements = async () => {
 		try {
 			const response = await fetch(
 				`${backendUrl}/api/users/requirements/planned-courses/missing`,
@@ -19,14 +18,20 @@ const useCourseRequirements = () => {
 					}
 				}
 			);
-			console.log(response);
+			const data = await response.json();
+			setCoursesWithMissingRequirements(data.courses_missing_requirements);
 		} catch (error) {
 			console.error("Error fetching missing requirements for planned courses", error);
 		}
 	};
-	// fetchMissingRequirementsForPlannedCourses();
+	useEffect(() => {
+		fetchPlannedCoursesWithMissingRequirements();
+	}, []);
 
-	return <div>useCourseRequirements</div>;
+	return {
+		coursesWithMissingRequirements,
+		fetchPlannedCoursesWithMissingRequirements
+	};
 };
 
 export default useCourseRequirements;

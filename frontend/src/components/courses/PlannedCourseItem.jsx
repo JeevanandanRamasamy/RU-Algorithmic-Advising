@@ -5,7 +5,12 @@ import {} from "react";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
-const PlannedCourseItem = ({ course, onRemove, requirementString }) => {
+const PlannedCourseItem = ({
+	course,
+	onRemove,
+	requirementString,
+	coursesWithMissingRequirements
+}) => {
 	const [scrolling, setScrolling] = useState(false);
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",
@@ -40,12 +45,17 @@ const PlannedCourseItem = ({ course, onRemove, requirementString }) => {
 			window.removeEventListener("wheel", handleWheel);
 		};
 	}, [isDragging, scrolling]);
+	const courseInfo = coursesWithMissingRequirements?.[String(course.course_id)];
+	console.log(courseInfo);
+	const updatedRequirementString = courseInfo?.requirement_string ?? requirementString;
+	const isRed = courseInfo && courseInfo?.requirements_fulfilled === false;
+	console.log(updatedRequirementString);
 	return (
 		<div
 			ref={drag}
-			className={`planned-course-item bg-white group ${
-				isDragging ? "dragging" : ""
-			} planned`}>
+			className={`border border-gray-300 rounded p-1.5 cursor-grab transition-all duration-200 ease-linear ${
+				isRed ? "bg-red-400" : "bg-white"
+			} ${isDragging ? "dragging" : ""} planned group`}>
 			<h3 className="planned-course-name m-0">
 				<a
 					className="no-underline text-black hover:text-blue-500"
@@ -69,14 +79,19 @@ const PlannedCourseItem = ({ course, onRemove, requirementString }) => {
 				<>
 					<a
 						data-tooltip-id={`tooltip-${course.course_id}`}
-						className="cursor-pointer text-blue-500 underline"
+						className="cursor-pointer text-blue-600 underline"
 						data-tooltip-place="bottom">
 						requirements
 					</a>
 					<Tooltip
 						id={`tooltip-${course.course_id}`}
 						className="bg-black">
-						<pre className="text-sm z-10000">{requirementString}</pre>
+						<pre
+							className="text-sm z-10000"
+							dangerouslySetInnerHTML={{
+								__html: updatedRequirementString
+							}}
+						/>
 					</Tooltip>
 				</>
 			)}
