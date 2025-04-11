@@ -14,6 +14,8 @@ from routes.reset_password import reset_password_bp
 from routes.verification import verification_bp
 from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
+from routes.sections_route import section_bp
+from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
 
 from flask_cors import CORS
