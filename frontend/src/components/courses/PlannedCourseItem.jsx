@@ -46,10 +46,8 @@ const PlannedCourseItem = ({
 		};
 	}, [isDragging, scrolling]);
 	const courseInfo = coursesWithMissingRequirements?.[String(course.course_id)];
-	console.log(courseInfo);
 	const updatedRequirementString = courseInfo?.requirement_string ?? requirementString;
 	const isRed = courseInfo && courseInfo?.requirements_fulfilled === false;
-	console.log(updatedRequirementString);
 	return (
 		<div
 			ref={drag}

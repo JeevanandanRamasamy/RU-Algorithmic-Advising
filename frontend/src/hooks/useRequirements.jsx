@@ -13,10 +13,8 @@ const useRequirements = () => {
 				}
 			});
 			const data = await response.json();
-			console.log(data);
 			if (response.ok) {
 				setRequirementStrings(data.course_requirements_string);
-				console.log(data); // You can log the data for debugging
 			} else {
 				console.error("Failed to fetch requirements.");
 			}
