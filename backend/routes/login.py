@@ -29,12 +29,12 @@ def login():
     # Check if account exists
     if account:
         stored_pw = account.password
-
-        if stored_pw.startswith("pbkdf2:"):
-            # Looks like a hashed password
+        
+        try:
+            # Attempt to validate using hash checker
             password_valid = check_password_hash(stored_pw, password)
-        else:
-            # Fallback to plain text comparison
+        except Exception:
+            # If it fails, fallback to plain text comparison
             password_valid = stored_pw == password
 
         # print(f"DB: {account.password}, Input: {password}")
