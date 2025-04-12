@@ -1,3 +1,4 @@
+from services.semesters_service import Semesters
 from flask import request
 from services.user_service import UserService
 from flask import Blueprint, jsonify
@@ -38,13 +39,17 @@ def update_user_details():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        fields = ["grad_date", "enroll_date", "gpa", "class_year"]
+        print(data)
+        enroll_year = data.get("enroll_year")
+        grad_year = data.get("grad_year")
+        gpa = data.get("gpa")
 
-        new_data = {
-            field: data.get(field) for field in fields if data.get(field) is not None
-        }
+        if not enroll_year or not grad_year:
+            return jsonify({"message": f"Missing grad year or enroll year"}), 400
 
-        updated_user_details = UserService.update_student_details(username, new_data)
+        updated_user_details = UserService.update_student_details(
+            username=username, enroll_year=enroll_year, grad_year=grad_year, gpa=gpa
+        )
         if isinstance(updated_user_details, str):
             return jsonify({"message": updated_user_details}), 500
         return (

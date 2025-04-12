@@ -42,12 +42,7 @@ def get_db_courses():
             courses = Course.query.all()
 
         course_list = [
-            {
-                "course_id": course.course_id,
-                "course_name": course.course_name,
-                "credits": course.credits,
-                "course_link": course.course_link,
-            }
+            course.to_dict()
             for course in courses
         ]
         return jsonify(course_list), 200
@@ -59,7 +54,7 @@ def get_db_courses():
 def get_course_by_id(course_id):
     try:
 
-        print(f"Received course_id: {course_id}")  # Log the course_id to the console
+        # print(f"Received course_id: {course_id}")  # Log the course_id to the console
 
         if not course_id:
             return jsonify({"message": "Course ID is required"}), 400

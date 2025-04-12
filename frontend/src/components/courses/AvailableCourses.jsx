@@ -1,38 +1,27 @@
-// import React, { useState, useEffect, useCallback } from "react";
-// import "../css/DragDrop.css";
 import CourseList from "./CourseList";
 import CourseItem from "./CourseItem";
+import TakenCourseItem from "./TakenCourseItem";
 
 export const AvailableCourses = ({
-	// searchAvailable,
-	// setSearchAvailable,
 	courses,
-	getCourse
-	// excludedCourseIds
+	getCourse,
+	limit,
+	showFilters,
+	requirementStrings
 }) => {
-	// const filteredCourses = filteredCourses
-	// 	? filteredCourses.filter(course => !excludedCourseIds.includes(course.course_id))
-	// 	: [];
 	return (
-		// <section className="available-courses">
-		// 	<h2>Available Courses</h2>
-		// 	<div className="search-container">
-		// 		<input
-		// 			type="text"
-		// 			id="search-courses"
-		// 			placeholder="Search courses"
-		// 			value={searchAvailable}
-		// 			onChange={e => {
-		// 				setSearchAvailable(e.target.value);
-		// 			}}
-		// 		/>
-		// 	</div>
-		<CourseList
-			courses={courses}
-			getCourse={getCourse}
-			CourseItemComponent={CourseItem}
-		/>
-		// </section>
+		<div
+			className={`p-2 overflow-y-scroll border border-gray-200 rounded-md ${
+				showFilters ? "h-[600px]" : "h-[726.4px]"
+			}`}>
+			<CourseList
+				courses={courses}
+				getCourse={getCourse}
+				CourseItemComponent={CourseItem}
+				requirementStrings={requirementStrings}
+				limit={limit}
+			/>
+		</div>
 	);
 };
 

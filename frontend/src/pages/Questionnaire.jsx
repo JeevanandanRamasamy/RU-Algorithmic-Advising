@@ -1,7 +1,7 @@
+import { useState } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
-import AvailableCourses from "../components/courses/AvailableCourses";
 import { useAuth } from "../context/AuthContext";
 import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
@@ -10,6 +10,11 @@ import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
+import useCourseRecords from "../hooks/useCourseRecords";
+import CourseList from "../components/courses/CourseList";
+import CourseItem from "../components/courses/CourseItem";
+import AvailableCourses from "../components/courses/AvailableCourses";
+import useRequirements from "../hooks/useRequirements";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -19,17 +24,15 @@ const Questionnaire = () => {
 		classes,
 		gradYear,
 		setGradYear,
-		enrolledYear,
-		setEnrolledYear,
+		enrollYear,
+		setEnrollYear,
 		gpa,
 		setGpa,
-		classYear,
-		setClassYear,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,
-		handleEnrolledYearChange
-	} = useStudentDetails(backendUrl, user, token);
+		handleEnrollYearChange
+	} = useStudentDetails();
 
 	const {
 		selectedProgramsQuery,
@@ -44,46 +47,50 @@ const Questionnaire = () => {
 		setFilteredSelectedPrograms,
 		handleInsertProgram,
 		handleRemoveProgram
-	} = usePrograms(backendUrl, user, token);
-
-	const {
-		courses,
-		coursesLoading,
-		coursesError,
-		fetchCourses,
-		setCourses,
-		searchAvailable,
-		setSearchAvailable,
-		filteredCourses,
-		setFilteredCourses
-	} = useCourses(backendUrl, token);
+	} = usePrograms();
+	const { courses } = useCourses();
 	const {
 		takenCourses,
 		takenCoursesLoading,
 		takenCoursesError,
 		fetchTakenCourses,
 		setTakenCourses,
-		handleRemoveTakenCourse,
 		handleAddTakenCourse,
+		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses(backendUrl, token, setCourses);
+	} = useTakenCourses();
+	const {
+		courseRecords,
+		setCourseRecords,
+		coursesRecordsLoading,
+		setCoursesRecordsLoading,
+		coursesRecordsError,
+		setCourseRecordsError,
+		handleAddCourseRecord,
+		handleRemoveCourseRecord
+	} = useCourseRecords();
+
+	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
+	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
+	const { requirementStrings, validateSchedule } = useRequirements();
 
 	return (
 		<>
-			<div className="">
+			<div className="p-5 ml-[130px] mr-auto h-auto overflow-x-hidden">
+				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
+					<h1>Questionnaire</h1>
+				</header>
 				<Navbar />
-				<div className="ml-[110px] pt-[5px]">
-					<div className="flex px-[10px] justify-evenly">
+				<div className="">
+					<div className="flex justify-between pb-5">
 						<StudentDetails
 							{...{
-								enrolledYear,
-								handleEnrolledYearChange,
+								enrollYear,
+								handleEnrollYearChange,
 								gradYear,
 								handleGradYearChange,
 								classes,
-								classYear,
-								setClassYear,
 								gpa,
 								handleGpaChange
 							}}
@@ -104,24 +111,21 @@ const Questionnaire = () => {
 					<div className="flex gap-[30px]">
 						<CourseListContainer
 							title="Available Courses"
-							searchQuery={searchAvailable}
-							setSearchQuery={setSearchAvailable}
 							courses={courses}
-							excludedCourseIds={
-								takenCourses?.length > 0
-									? takenCourses.map(
-											takenCourse => takenCourse.course_info.course_id
-									  )
-									: []
-							}
+							excludedCourseIds={[
+								...(courseRecords?.length > 0
+									? courseRecords.map(course => course?.course_info.course_id)
+									: []),
+								...(takenCourses?.length > 0
+									? takenCourses.map(takenCourse => takenCourse.course_id)
+									: [])
+							]}
 							CourseComponent={AvailableCourses}
+							requirementStrings={requirementStrings}
 						/>
 						<CourseListContainer
 							title="Taken Courses"
-							searchQuery={searchTaken}
-							setSearchQuery={setSearchTaken}
 							courses={takenCourses}
-							getCourse={course => course.course_info}
 							CourseComponent={TakenCourses}
 							courseComponentProps={{
 								loading: takenCoursesLoading,
@@ -129,6 +133,7 @@ const Questionnaire = () => {
 								onRemoveCourse: handleRemoveTakenCourse,
 								onAddCourse: handleAddTakenCourse
 							}}
+							requirementStrings={requirementStrings}
 						/>
 					</div>
 					<div className="flex justify-center mt-5">

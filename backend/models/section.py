@@ -6,7 +6,10 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.dialects.mysql import CHAR
+from dataclasses import dataclass
 
+
+@dataclass
 class Section(db.Model):
     __tablename__ = "Section"
     schedule_id = Column(
@@ -21,7 +24,7 @@ class Section(db.Model):
     index_num = Column(CHAR(5), nullable=False)
     instructor = Column(String(50), nullable=False)
     __table_args__ = (
-        db.PrimaryKeyConstraint("schedule_id", "course_id", "section_num"),
+        db.PrimaryKeyConstraint("schedule_id", "course_id"),
     )
 
     def __repr__(self):
@@ -29,3 +32,12 @@ class Section(db.Model):
             f"<Section(schedule_id={self.schedule_id}, course_id={self.course_id}, section_num={self.section_num}, "
             f"index_num={self.index_num}, instructor={self.instructor})>"
         )
+    
+    def to_dict(self):
+        return {
+            "schedule_id": self.course_id,
+            "course_id": self.course_id,
+            "section_num": self.section_num,
+            "index_num": self.index_num,
+            "instructor": self.instructor
+        }

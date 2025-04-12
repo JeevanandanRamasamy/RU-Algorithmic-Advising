@@ -1,8 +1,9 @@
-/* * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  } */
+/* *{
+    box-sizing: border-box; */
+    /* margin: 0; */
+    /* padding: 0; */
+/* } */
+
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -12,9 +13,9 @@
   }
 
   .app {
-    max-width: 1200px;
+    /* max-width: 1200px; */
     padding: 20px;
-    margin: 0 auto 0 110px;
+    margin: 0 auto 0 130px;
   }
 
   .app-header {
@@ -111,8 +112,8 @@
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 12px;
-    margin-bottom: 10px;
+    padding: 6px;
+    /* margin-bottom: 10px; */
     cursor: grab;
     transition: all 0.2s ease;
   }
@@ -130,13 +131,13 @@
   .planned-course-code {
     font-weight: bold;
     color: #2c3e50;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
   }
 
   .course-title,
   .planned-course-title {
     font-size: 16px;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
   }
 
   .course-credits,

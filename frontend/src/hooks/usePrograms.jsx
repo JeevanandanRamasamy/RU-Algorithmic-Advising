@@ -1,7 +1,9 @@
-import React from "react";
 import { useState, useEffect } from "react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useAuth } from "../context/AuthContext";
 
-const usePrograms = (backendUrl, user, token) => {
+const usePrograms = () => {
+	const { user, token } = useAuth();
 	const [selectedProgramsQuery, setSelectedProgramsQuery] = useState("");
 	const [programs, setPrograms] = useState([]);
 	const [programsQuery, setProgramsQuery] = useState("");
@@ -31,9 +33,7 @@ const usePrograms = (backendUrl, user, token) => {
 						"Authorization": `Bearer ${token}`
 					}
 				});
-				console.log(response);
 				const data = await response.json();
-				console.log(data);
 				setSelectedPrograms(data.student_program);
 			} catch (error) {
 				console.error("Error fetching programs:", error);
