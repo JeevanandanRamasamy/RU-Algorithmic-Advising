@@ -134,6 +134,7 @@ const Questionnaire = () => {
 								onAddCourse: handleAddTakenCourse
 							}}
 							requirementStrings={requirementStrings}
+							hasCredits={true}
 						/>
 					</div>
 					<div className="flex justify-center mt-5">

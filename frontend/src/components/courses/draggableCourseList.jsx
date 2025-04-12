@@ -3,7 +3,7 @@ import Draggable from "react-draggable";
 import useDraggableCourses from "../../hooks/useDraggableCourses";
 import CourseList from "./CourseList";
 import DraggableCourseItem from "./draggableCourseItem";
-import DropdownItem from "../temp/DropdownItem";
+import DropdownItem from "../generic/DropdownItem";
 import { schools, subjects } from "../../data/sas";
 import useFilterCourses from "../../hooks/useFilterCourses";
 import Button from "../generic/Button";
@@ -17,6 +17,7 @@ const DraggableCourseList = ({
 	setIsOpen,
 	requirementStrings
 }) => {
+	console.log(excludedCourseIds);
 	const nodeRef = useRef(null);
 	const {
 		bounds,

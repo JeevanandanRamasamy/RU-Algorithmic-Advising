@@ -58,6 +58,25 @@ const useSemesterInfo = () => {
 		return semesters;
 	};
 
+	const getCurrentAndNextSemester = gradYear => {
+		const graduationSemester = encodeSemester("summer", gradYear);
+		const current = getCurrentSemester();
+		const currentEncoded = encodeSemester(current.term, current.year);
+		const nextEncoded = currentEncoded + 1;
+
+		const result = [];
+
+		if (currentEncoded <= graduationSemester) {
+			result.push(current);
+		}
+
+		if (nextEncoded <= graduationSemester) {
+			result.push(decodeSemester(nextEncoded));
+		}
+
+		return result;
+	};
+
 	const containsSemester = (semestersTillNow, year, term) => {
 		return semestersTillNow.some(semester => semester.year === year && semester.term === term);
 	};
@@ -67,7 +86,8 @@ const useSemesterInfo = () => {
 		generateSemesters,
 		getCurrentSemester,
 		generateSemestersTillNow,
-		containsSemester
+		containsSemester,
+		getCurrentAndNextSemester
 	};
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import DropdownItem from "../temp/DropdownItem";
+import DropdownItem from "../generic/DropdownItem";
 import { schools, subjects } from "../../data/sas";
-import DropdownWithSearch from "../temp/DropdownWithSearch";
+import DropdownWithSearch from "../generic/DropdownWithSearch";
 import useFilterCourses from "../../hooks/useFilterCourses";
 
 const CourseListContainer = ({
@@ -11,7 +11,8 @@ const CourseListContainer = ({
 	getCourse = course => course,
 	CourseComponent,
 	courseComponentProps,
-	requirementStrings
+	requirementStrings,
+	hasCredits = false
 }) => {
 	const {
 		subjectSearchQuery,
@@ -28,7 +29,19 @@ const CourseListContainer = ({
 
 	return (
 		<section className="flex-1 bg-white rounded-lg shadow-md p-5 h-[600px] flex flex-col">
-			<h2 className="m-0 text-center">{title}</h2>
+			<h2 className="m-0 text-center">
+				{title}
+				{hasCredits && (
+					<>
+						{" "}
+						(
+						{filterCourses(courses, excludedCourseIds)
+							.map(getCourse)
+							.reduce((sum, course) => sum + parseInt(course?.credits || 0, 10), 0)}
+						)
+					</>
+				)}
+			</h2>
 			<div className="py-2">
 				<div
 					className="flex items-center justify-between cursor-pointer mb-2"

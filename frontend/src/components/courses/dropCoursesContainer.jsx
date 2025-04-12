@@ -16,7 +16,8 @@ const DropCoursesContainer = ({
 	handleRemovePlannedCourse,
 	semestersTillNow = { semestersTillNow },
 	requirementStrings,
-	coursesWithMissingRequirements
+	coursesWithMissingRequirements,
+	hasCredits = false
 }) => {
 	const coursesBySemester = courseRecords?.filter(
 		course => course?.term === term && course?.year === year
@@ -41,6 +42,16 @@ const DropCoursesContainer = ({
 		 rounded-lg shadow-md p-5 h-[400px] flex flex-col `}>
 			<div className="text-center h-[10%] text-white">
 				{term?.toUpperCase()} {year}
+				{hasCredits && (
+					<>
+						{" "}
+						(
+						{coursesBySemester
+							.map(getCourse)
+							.reduce((sum, course) => sum + parseInt(course?.credits || 0, 10), 0)}
+						)
+					</>
+				)}
 			</div>
 			<div
 				ref={drop}

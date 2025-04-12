@@ -33,6 +33,7 @@ const SemesterPlanner = ({
 							semestersTillNow={semestersTillNow}
 							requirementStrings={requirementStrings}
 							coursesWithMissingRequirements={coursesWithMissingRequirements}
+							hasCredits={true}
 						/>
 					);
 				})}

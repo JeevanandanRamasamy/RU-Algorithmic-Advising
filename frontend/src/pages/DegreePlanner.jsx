@@ -65,7 +65,7 @@ function DragDrop() {
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
-					<h1>Course Planner</h1>
+					<h1>Degree Planner</h1>
 				</header>
 				<div className="pb-2 flex justify-end gap-2">
 					<Button
