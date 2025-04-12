@@ -16,10 +16,6 @@ PREREQUISITES_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "..", "data", "prerequisites.json"
 )
 
-COURSE_STRINGS_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "data", "course_strings.json"
-)
-
 
 class RequirementService:
 
@@ -116,9 +112,6 @@ class RequirementService:
         with open(PREREQUISITES_FILE_PATH, "r") as json_file:
             course_requirements = json.load(json_file)
 
-        with open(COURSE_STRINGS_FILE_PATH, "r") as json_file:
-            course_strings = json.load(json_file)
-
         for semester in semesters:
             term, year = semester["term"], semester["year"]
             course_records = CourseRecordService.get_course_record_by_term(
@@ -136,7 +129,6 @@ class RequirementService:
                 updated_string = RequirementService.validate_prerequisite_string(
                     prerequisite_string=course_requirements[course_id],
                     prerequisite=prerequisite,
-                    course_strings=course_strings,
                     taken_courses=courses_taken,
                 )
 
@@ -158,12 +150,10 @@ class RequirementService:
         return res
 
     @staticmethod
-    def validate_prerequisite_string(
-        prerequisite_string, prerequisite, course_strings, taken_courses
-    ):
+    def validate_prerequisite_string(prerequisite_string, prerequisite, taken_courses):
         output = prerequisite_string
         for course_id in prerequisite:
-            escaped_course = re.escape(course_strings[course_id])
+            escaped_course = re.escape(CourseService.get_course_string(course_id))
             color = "#32CD32" if course_id in taken_courses else "#FF6347"
             pattern = rf"\b({escaped_course})\b"
             output = re.sub(pattern, rf'<span style="color:{color};">\1</span>', output)

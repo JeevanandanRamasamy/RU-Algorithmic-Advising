@@ -151,6 +151,8 @@ def create_app():
     app.register_blueprint(login_bp)
     app.register_blueprint(verification_bp)
     app.register_blueprint(requirements_bp)
+    app.register_blueprint(spn_request_bp)
+    app.register_blueprint(section_bp)
 
     @app.before_request
     def handle_options_request():
@@ -169,16 +171,16 @@ def create_app():
     def home():
         return "Welcome to the RU Algorithmic Advising Web Server!"
 
-    @app.route("/check_db")
-    def check_db_connection():
-        try:
-            test_account = Account.query.first()
-            if test_account:
-                return f"Database connected successfully! First user: {test_account.username}"
-            else:
-                return "Database connected, but no users found."
-        except Exception as e:
-            return f"Database connection failed: {e}"
+    # @app.route("/check_db")
+    # def check_db_connection():
+    #     try:
+    #         test_account = Account.query.first()
+    #         if test_account:
+    #             return f"Database connected successfully! First user: {test_account.username}"
+    #         else:
+    #             return "Database connected, but no users found."
+    #     except Exception as e:
+    #         return f"Database connection failed: {e}"
 
     return app
 
