@@ -64,7 +64,7 @@ function SPN() {
 					<header className="app-header">
 						<h1>My Requests</h1>
 					</header>
-					<main className="gap-8 flex flex-col -z-10">
+					<main className="gap-8 flex flex-col -z-5">
 						<DataTable
 							apiUrl={url}
 							columns={columns}
