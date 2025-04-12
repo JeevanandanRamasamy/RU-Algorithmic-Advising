@@ -4,7 +4,7 @@ import { useDrop } from "react-dnd";
 import CourseList from "./CourseList";
 import CourseItem from "./CourseItem";
 import PlannedCourseItem from "./PlannedCourseItem";
-import { containsSemester } from "../../helpers/semesters";
+import useSemesterInfo from "../../hooks/useSemesterInfo";
 
 const DropCoursesContainer = ({
 	loading,
@@ -21,6 +21,7 @@ const DropCoursesContainer = ({
 	const coursesBySemester = courseRecords?.filter(
 		course => course?.term === term && course?.year === year
 	);
+	const { containsSemester } = useSemesterInfo();
 
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",

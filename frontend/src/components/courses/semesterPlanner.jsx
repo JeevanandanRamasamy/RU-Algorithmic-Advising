@@ -1,7 +1,7 @@
 import useStudentDetails from "../../hooks/useStudentDetails";
 import DropCoursesContainer from "../courses/dropCoursesContainer";
-import { generateSemesters, generateSemestersTillNow } from "../../helpers/semesters";
 import useCourseRequirements from "../../hooks/useCourseRequirements";
+import useSemesterInfo from "../../hooks/useSemesterInfo";
 
 const SemesterPlanner = ({
 	courses,
@@ -13,6 +13,7 @@ const SemesterPlanner = ({
 	coursesWithMissingRequirements
 }) => {
 	const { enrollYear, gradYear } = useStudentDetails();
+	const { generateSemesters, generateSemestersTillNow } = useSemesterInfo();
 	const semesters = generateSemesters(enrollYear, gradYear);
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
 

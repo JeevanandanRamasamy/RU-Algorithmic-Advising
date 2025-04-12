@@ -69,11 +69,6 @@ function DragDrop() {
 				</header>
 				<div className="pb-2 flex justify-end gap-2">
 					<Button
-						onClick={() => {}}
-						className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
-						label="Validate Schedule"
-					/>
-					<Button
 						onClick={() => setIsOpen(!isOpen)}
 						className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
 						label={isOpen ? "Close Available Courses" : "Open Available Courses"}

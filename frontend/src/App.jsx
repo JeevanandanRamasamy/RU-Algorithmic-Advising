@@ -17,6 +17,7 @@ import { ToastWrapper } from "./components/toast/Toast";
 import AdminDashboard from "./pages/AdminDashboard";
 
 import "./css/index.css";
+import CoursePlanner from "./pages/CoursePlanner";
 
 function App() {
 	return (
@@ -57,10 +58,7 @@ function App() {
 					<Route
 						path="/degree-planner"
 						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
+							<DndProvider backend={HTML5Backend}>
 								<DegreePlanner />
 							</DndProvider>
 						}
@@ -68,11 +66,17 @@ function App() {
 					<Route
 						path="/request-spn"
 						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
+							<DndProvider backend={HTML5Backend}>
 								<SPN />
+							</DndProvider>
+						}
+					/>
+
+					<Route
+						path="/course-planner"
+						element={
+							<DndProvider backend={HTML5Backend}>
+								<CoursePlanner />
 							</DndProvider>
 						}
 					/>

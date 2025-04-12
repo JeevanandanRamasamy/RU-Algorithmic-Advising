@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
-import {} from "react";
-
+import Button from "../generic/Button";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
