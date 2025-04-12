@@ -16,79 +16,54 @@ import { ToastWrapper } from "./components/toast/Toast";
 
 import AdminDashboard from "./pages/AdminDashboard";
 
+import { AuthProvider } from "./context/AuthContext"; // <- 👈 import AuthProvider
+import AuthWatcher from "./context/AuthWatcher"; // <- 👈 import the watcher
 import "./css/index.css";
 
 function App() {
 	return (
-		<div>
-			<main className="main-content">
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/reset-password"
-						element={<ResetPassword />}
-					/>
-					<Route
-						path="/home"
-						element={<Home />}
-					/>
-					<Route
-						path="/navbar"
-						element={<Navbar />}
-					/>
-					<Route
-						path="/questionnaire"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<Questionnaire />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/degree-planner"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<DegreePlanner />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/request-spn"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<SPN />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/toast"
-						element={<ToastDemo />}
-					/>
+		<AuthProvider>
+			<AuthWatcher /> {/* 👈 Auto-logout when token expires */}
 
-					<Route
-						path="/admin/home"
-						element={<AdminDashboard />}
-					/>
-				</Routes>
-			</main>
-			<ToastWrapper />
-		</div>
+			<div>
+				<main className="main-content">
+					<Routes>
+						<Route path="/" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+						<Route path="/reset-password" element={<ResetPassword />} />
+						<Route path="/home" element={<Home />} />
+						<Route path="/navbar" element={<Navbar />} />
+						<Route
+							path="/questionnaire"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<Questionnaire />
+								</DndProvider>
+							}
+						/>
+						<Route
+							path="/degree-planner"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<DegreePlanner />
+								</DndProvider>
+							}
+						/>
+						<Route
+							path="/request-spn"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<SPN />
+								</DndProvider>
+							}
+						/>
+						<Route path="/toast" element={<ToastDemo />} />
+						<Route path="/admin/home" element={<AdminDashboard />} />
+					</Routes>
+				</main>
+				<ToastWrapper />
+			</div>
+		</AuthProvider>
 	);
 }
 
