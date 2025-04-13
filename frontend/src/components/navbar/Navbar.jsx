@@ -53,31 +53,31 @@ const Navbar = () => {
 				<div className="nav-middle">
 					<li className="nav-link">
 						<Link to="/home">
-							<i className="bx bx-home icon"></i>
+							<i className="bx bx-grid-alt icon"></i>
 							<span className="text nav-text">Dashboard</span>
 						</Link>
 					</li>
 					<li className="nav-link">
 						<Link to="/degree-planner">
-							<i className="bx bx-bar-chart-alt-2 icon"></i>
+							<i className="bx bx-spreadsheet icon"></i>
 							<span className="text nav-text">Degree Planner</span>
 						</Link>
 					</li>
 					<li className="nav-link">
 						<Link to="/course-planner">
-							<i className="bx bxs-paper-plane icon"></i>
+							<i className="bx bx-calendar icon"></i>
 							<span className="text nav-text">Course Planner</span>
 						</Link>
 					</li>
 					<li className="nav-link">
 						<Link to="/request-spn">
-							<i className="bx bx-bell icon"></i>
+							<i className="bx bx-envelope icon"></i>
 							<span className="text nav-text">Request SPN</span>
 						</Link>
 					</li>
 					<li className="nav-link">
 						<Link to="/questionnaire">
-							<i className="bx bx-question-mark icon"></i>
+							<i className="bx bx-edit-alt icon"></i>
 							<span className="text nav-text">Questionnaire</span>
 						</Link>
 					</li>
