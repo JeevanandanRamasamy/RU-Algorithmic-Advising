@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
-import Home from "./pages/Home";
+import StudentDashboard from "./pages/StudentDashboard";
 import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
@@ -28,11 +28,36 @@ function App() {
 			<div>
 				<main className="main-content">
 					<Routes>
-						<Route path="/" element={<Login />} />
-						<Route path="/register" element={<Register />} />
-						<Route path="/reset-password" element={<ResetPassword />} />
-						<Route path="/home" element={<Home />} />
-						<Route path="/navbar" element={<Navbar />} />
+						<Route 
+							path="/" 
+							element={
+								<Login />
+							} 
+						/>
+						<Route 
+							path="/register" 
+							element={
+								<Register />
+							} 
+						/>
+						<Route 
+							path="/reset-password" 
+							element={
+								<ResetPassword />
+							} 
+						/>
+						<Route 
+							path="/student/home" 
+							element={
+								<StudentDashboard />
+							} 
+						/>
+						<Route 
+							path="/navbar" 
+							element={
+								<Navbar />
+							} 
+						/>
 						<Route
 							path="/questionnaire"
 							element={
@@ -57,8 +82,18 @@ function App() {
 								</DndProvider>
 							}
 						/>
-						<Route path="/toast" element={<ToastDemo />} />
-						<Route path="/admin/home" element={<AdminDashboard />} />
+						<Route
+							path="/toast"
+							element={
+								<ToastDemo />
+							}
+						/>
+						<Route
+							path="/admin/home"
+							element={
+								<AdminDashboard />
+							}
+						/>
 					</Routes>
 				</main>
 				<ToastWrapper />

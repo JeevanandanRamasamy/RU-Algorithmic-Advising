@@ -8,7 +8,7 @@ import { showSuccessToast } from "../toast/Toast"; // Import toast function
 const Navbar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(true); // Manages navbar state
 
-	const { user, logout } = useAuth(); // Get auth state and logout function
+	const { user, role, logout } = useAuth(); // Get auth state and logout function
 	const navigate = useNavigate();
 
 	const toggleNavbar = () => {
@@ -50,38 +50,51 @@ const Navbar = () => {
 			</div>
 
 			<div className="menu-bar">
-				<div className="nav-middle">
-					<li className="nav-link">
-						<Link to="/home">
-							<i className="bx bx-grid-alt icon"></i>
-							<span className="text nav-text">Dashboard</span>
-						</Link>
-					</li>
-					<li className="nav-link">
-						<Link to="/degree-planner">
-							<i className="bx bx-spreadsheet icon"></i>
-							<span className="text nav-text">Degree Planner</span>
-						</Link>
-					</li>
-					<li className="nav-link">
-						<Link to="/course-planner">
-							<i className="bx bx-calendar icon"></i>
-							<span className="text nav-text">Course Planner</span>
-						</Link>
-					</li>
-					<li className="nav-link">
-						<Link to="/request-spn">
-							<i className="bx bx-envelope icon"></i>
-							<span className="text nav-text">Request SPN</span>
-						</Link>
-					</li>
-					<li className="nav-link">
-						<Link to="/questionnaire">
-							<i className="bx bx-edit-alt icon"></i>
-							<span className="text nav-text">Questionnaire</span>
-						</Link>
-					</li>
-				</div>
+					{role === "student" && (
+						<div className="nav-middle">
+							<li className="nav-link">
+								<Link to="/student/home">
+									<i className="bx bx-grid-alt icon"></i>
+									<span className="text nav-text">Dashboard</span>
+								</Link>
+							</li>
+							<li className="nav-link">
+								<Link to="/degree-planner">
+									<i className="bx bx-spreadsheet icon"></i>
+									<span className="text nav-text">Degree Planner</span>
+								</Link>
+							</li>
+							<li className="nav-link">
+								<Link to="/course-planner">
+									<i className="bx bx-calendar icon"></i>
+									<span className="text nav-text">Course Planner</span>
+								</Link>
+							</li>
+							<li className="nav-link">
+								<Link to="/request-spn">
+									<i className="bx bx-envelope icon"></i>
+									<span className="text nav-text">Request SPN</span>
+								</Link>
+							</li>
+							<li className="nav-link">
+								<Link to="/questionnaire">
+									<i className="bx bx-edit-alt icon"></i>
+									<span className="text nav-text">Questionnaire</span>
+								</Link>
+							</li>
+						</div>
+					)}
+
+					{role === "admin" && (
+						<div className="nav-middle">
+							<li className="nav-link">
+								<Link to="/admin/home">
+									<i className="bx bx-grid-alt icon"></i>
+									<span className="text nav-text">Admin Dashboard</span>
+								</Link>
+							</li>
+						</div>
+					)}
 				<div className="nav-bottom">
 					<li className="nav-link">
 						<a
