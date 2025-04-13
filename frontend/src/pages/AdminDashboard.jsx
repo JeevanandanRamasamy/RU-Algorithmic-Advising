@@ -18,8 +18,7 @@ function AdminDashboard() {
 			navigate("/"); // Redirect to login if not authenticated
 		}
 		if (role === "student") {
-			navigate("/student/home"); // Redirect to admin dashboard if user is admin
-		}
+			navigate("/student/home"); // Redirect to student home page if user is a student
 	}, [user, navigate]); // Runs whenever user changes
 
   return (
