@@ -3,6 +3,7 @@ import "./style.css"; // Ensure styles are imported
 import logo from "../../assets/minilogo.png";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../../context/AuthContext"; // Import authentication context
+import { showSuccessToast } from "../toast/Toast"; // Import toast function
 
 const Navbar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(true); // Manages navbar state
@@ -49,41 +50,48 @@ const Navbar = () => {
 			</div>
 
 			<div className="menu-bar">
-				<li className="nav-link">
-					<Link to="/home">
-						<i className="bx bx-home icon"></i>
-						<span className="text nav-text">Dashboard</span>
-					</Link>
-				</li>
-				<li className="nav-link">
-					<Link to="/degree-planner">
-						<i className="bx bx-bar-chart-alt-2 icon"></i>
-						<span className="text nav-text">Degree Planner</span>
-					</Link>
-				</li>
-				<li className="nav-link">
-					<Link to="/course-planner">
-						<i className="bx bxs-paper-plane icon"></i>
-						<span className="text nav-text">Course Planner</span>
-					</Link>
-				</li>
-				<li className="nav-link">
-					<Link to="/request-spn">
-						<i className="bx bx-bell icon"></i>
-						<span className="text nav-text">Request SPN</span>
-					</Link>
-				</li>
-				<li className="nav-link">
-					<Link to="/questionnaire">
-						<i className="bx bx-question-mark icon"></i>
-						<span className="text nav-text">Questionnaire</span>
-					</Link>
-				</li>
+				<div className="nav-middle">
+					<li className="nav-link">
+						<Link to="/home">
+							<i className="bx bx-home icon"></i>
+							<span className="text nav-text">Dashboard</span>
+						</Link>
+					</li>
+					<li className="nav-link">
+						<Link to="/degree-planner">
+							<i className="bx bx-bar-chart-alt-2 icon"></i>
+							<span className="text nav-text">Degree Planner</span>
+						</Link>
+					</li>
+					<li className="nav-link">
+						<Link to="/course-planner">
+							<i className="bx bxs-paper-plane icon"></i>
+							<span className="text nav-text">Course Planner</span>
+						</Link>
+					</li>
+					<li className="nav-link">
+						<Link to="/request-spn">
+							<i className="bx bx-bell icon"></i>
+							<span className="text nav-text">Request SPN</span>
+						</Link>
+					</li>
+					<li className="nav-link">
+						<Link to="/questionnaire">
+							<i className="bx bx-question-mark icon"></i>
+							<span className="text nav-text">Questionnaire</span>
+						</Link>
+					</li>
+				</div>
 				<div className="nav-bottom">
 					<li className="nav-link">
 						<a
 							href=""
-							onClick={logout}>
+							onClick={(e) => {
+								e.preventDefault(); // prevent default anchor behavior
+								logout(); // your logout function
+								showSuccessToast("You have been logged out successfully!");
+							}}
+						>
 							<i className="bx bx-log-out icon"></i>
 							<span className="text nav-text">Logout</span>
 						</a>
