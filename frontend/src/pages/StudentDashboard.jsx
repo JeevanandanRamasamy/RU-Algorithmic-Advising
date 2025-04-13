@@ -20,7 +20,7 @@ function StudentDashboard() {
 		if (role === "admin") {
 			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
 		}
-	}, [user, navigate]); // Runs whenever user changes
+	}, [user, role, navigate]); // Runs whenever user changes
 
 	return (
 		<div className="flex justify-end items-center h-screen pr-5">

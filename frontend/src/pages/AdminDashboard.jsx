@@ -6,11 +6,11 @@ import useAccount from "../hooks/useAccount";
 import "../css/home.css";
 
 function AdminDashboard() {
-  const { user, role } = useAuth(); // Get user
+	const { user, role } = useAuth(); // Get user
 	const navigate = useNavigate();
-	const { 
-		firstName, 
-		lastName 
+	const {
+		firstName,
+		lastName
 	} = useAccount();
 
 	useEffect(() => {
@@ -20,15 +20,15 @@ function AdminDashboard() {
 		if (role === "student") {
 			navigate("/student/home"); // Redirect to admin dashboard if user is admin
 		}
-	}, [user, navigate]); // Runs whenever user changes
+	}, [user, role, navigate]); // Runs whenever user changes
 
-  return (
-    <div className="admin-dashboard">
-      <Navbar />
-      <h1>Welcome {firstName} {lastName} (Admin)!</h1>
-      <p>This is the admin dashboard page. More functionality coming soon!</p>
-    </div>
-  );
+	return (
+		<div className="admin-dashboard">
+			<Navbar />
+			<h1>Welcome {firstName} {lastName} (Admin)!</h1>
+			<p>This is the admin dashboard page. More functionality coming soon!</p>
+		</div>
+	);
 }
 
 export default AdminDashboard;
