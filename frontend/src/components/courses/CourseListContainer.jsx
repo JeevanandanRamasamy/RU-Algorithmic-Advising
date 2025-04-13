@@ -12,7 +12,8 @@ const CourseListContainer = ({
 	CourseComponent,
 	courseComponentProps,
 	requirementStrings,
-	hasCredits = false
+	hasCredits = false,
+	coursesWithMissingRequirements
 }) => {
 	const {
 		subjectSearchQuery,

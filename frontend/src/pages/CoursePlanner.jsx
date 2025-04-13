@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -18,12 +18,19 @@ import Button from "../components/generic/Button";
 
 import DropCoursesContainer from "../components/courses/dropCoursesContainer";
 import CheckboxDropdownTable from "../components/generic/CheckBoxDropdownTable";
+import CourseListContainer from "../components/courses/CourseListContainer";
+import TakenCourses from "../components/courses/TakenCourses";
+import AvailableCourses from "../components/courses/AvailableCourses";
+import useTakenCourses from "../hooks/useTakenCourses";
+import PlannedCourses from "../components/courses/PlannedCourses";
+import currentSemesterCourses from "../components/courses/currentSemesterCourses";
+import { useSections } from "../hooks/useSections";
 
 const CoursePlanner = () => {
 	const { courses } = useCourses();
 	const { getCurrentAndNextSemester } = useSemesterInfo();
 	const { enrollYear, gradYear } = useStudentDetails();
-	// const semesters = getCurrentAndNextSemester(gradYear);
+
 	const semesters = [
 		{ term: "summer", year: 2025 },
 		{ term: "fall", year: 2025 }
@@ -32,34 +39,19 @@ const CoursePlanner = () => {
 	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
 		useCourseRequirements();
 
-	const {
-		courseRecords,
-		setCourseRecords,
-		coursesRecordsLoading,
-		setCoursesRecordsLoading,
-		coursesRecordsError,
-		setCourseRecordsError,
-		handleAddCourseRecord,
-		handleRemoveCourseRecord
-	} = useCourseRecords(fetchPlannedCoursesWithMissingRequirements);
+	const { courseRecords, handleAddCourseRecord, handleRemoveCourseRecord } = useCourseRecords(
+		fetchPlannedCoursesWithMissingRequirements
+	);
 
 	const [selectedSemesterTabIndex, setSelectedSemesterTabIndex] = useState(0);
-	const [isOpen, setIsOpen] = useState(false);
-	const { requirementStrings, validateSchedule } = useRequirements();
-
-	const currentSemester = semesters[selectedSemesterTabIndex];
-
-	const { generateSemesters, generateSemestersTillNow } = useSemesterInfo();
+	const [selectedViewTabIndex, setSelectedViewTabIndex] = useState(0);
+	const { requirementStrings } = useRequirements();
+	const { generateSemestersTillNow } = useSemesterInfo();
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
-	console.log(courseRecords, currentSemester);
-	console.log(
-		courseRecords
-			.filter(
-				course =>
-					course?.term === currentSemester.term && course?.year === currentSemester.year
-			)
-			.map(course => course?.course_info.course_id)
-	);
+
+	const { takenCourses } = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
+	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
+
 	const categories = [
 		{
 			key: "fruits",
@@ -81,93 +73,113 @@ const CoursePlanner = () => {
 		}
 	];
 
+	const handleOnAddCourse = courseId => {
+		handleAddCourseRecord(courseId, currentSemester.term, currentSemester.year);
+	};
+
+	const currentSemester = useMemo(() => {
+		return semesters[selectedSemesterTabIndex];
+	}, [semesters, selectedSemesterTabIndex]);
+	const currentCourseIds = useMemo(() => {
+		if (!courseRecords || !currentSemester) return [];
+
+		return courseRecords
+			.filter(
+				courseRecord =>
+					courseRecord.term === currentSemester.term &&
+					courseRecord.year === currentSemester.year
+			)
+			.map(course => course?.course_info.course_id);
+	}, [courseRecords, currentSemester]);
+	const { fetchSections } = useSections(
+		currentCourseIds,
+		currentSemester.term,
+		currentSemester.year
+	);
+
 	return (
 		<>
-			<DraggableCourseList
-				title="Available Courses"
-				courses={courses}
-				excludedCourseIds={[
-					...(courseRecords?.length > 0
-						? courseRecords
-								.filter(
-									course =>
-										course?.term === currentSemester.term &&
-										course?.year === currentSemester.year
-								)
-								.map(course => course?.course_info.course_id)
-						: [])
-				]}
-				CourseComponent={HorizontalAvailableCourses}
-				isOpen={isOpen}
-				setIsOpen={setIsOpen}
-				requirementStrings={requirementStrings}
-			/>
-
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Course Planner</h1>
 				</header>
-
-				<div className="pb-2 flex justify-end gap-2">
-					<Button
-						onClick={() => setIsOpen(!isOpen)}
-						className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
-						label={isOpen ? "Close Available Courses" : "Open Available Courses"}
-					/>
-				</div>
-
 				{semesters.length > 0 ? (
-					<Tabs
-						selectedIndex={selectedSemesterTabIndex}
-						onSelect={index => setSelectedTabIndex(index)}>
-						<TabList>
-							{semesters.map((semester, index) => (
-								<Tab key={index}>
-									{semester.term.charAt(0).toUpperCase() + semester.term.slice(1)}{" "}
-									{semester.year}
-								</Tab>
-							))}
-						</TabList>
+					<>
+						<Tabs
+							selectedIndex={selectedSemesterTabIndex}
+							onSelect={setSelectedSemesterTabIndex}>
+							<TabList>
+								{semesters.map((semester, index) => (
+									<Tab key={index}>
+										{semester.term.charAt(0).toUpperCase() +
+											semester.term.slice(1)}{" "}
+										{semester.year}
+									</Tab>
+								))}
+							</TabList>
+						</Tabs>
+						<Tabs
+							selectedIndex={selectedViewTabIndex}
+							onSelect={setSelectedViewTabIndex}>
+							<TabList>
+								{views.map((view, index) => (
+									<Tab key={index}>{view}</Tab>
+								))}
+							</TabList>
 
-						{semesters.map((semester, index) => {
-							const { term, year } = semester;
+							{views.map((view, viewIndex) => (
+								<TabPanel key={viewIndex}>
+									{view === "Select Courses" && (
+										<div className="flex gap-[30px]">
+											<CourseListContainer
+												title="Available Courses"
+												courses={courses}
+												excludedCourseIds={[
+													...currentCourseIds,
+													...(takenCourses?.length > 0
+														? takenCourses.map(
+																takenCourse => takenCourse.course_id
+														  )
+														: [])
+												]}
+												CourseComponent={AvailableCourses}
+												requirementStrings={requirementStrings}
+											/>
+											<CourseListContainer
+												title={`${currentSemester.term.toUpperCase()} ${
+													currentSemester.year
+												}`}
+												courses={courseRecords
+													.filter(
+														courseRecord =>
+															courseRecord.term ==
+																currentSemester.term &&
+															courseRecord.year == courseRecord.year
+													)
+													.map(course => course?.course_info)}
+												CourseComponent={currentSemesterCourses}
+												courseComponentProps={{
+													onRemoveCourse: handleRemoveCourseRecord,
+													onAddCourse: handleOnAddCourse,
+													coursesWithMissingRequirements:
+														coursesWithMissingRequirements
+												}}
+												requirementStrings={requirementStrings}
+												hasCredits={true}
+											/>
+										</div>
+									)}
 
-							// const courseIdsThisSemester =
-							// 	courseRecords?.length > 0
-							// 		? courseRecords
-							// 				.filter(
-							// 					course =>
-							// 						course?.semester.term === term &&
-							// 						course?.semester.year === year
-							// 				)
-							// 				.map(course => course?.course_info.course_id)
-							// 		: [];
-
-							return (
-								<TabPanel key={index}>
-									<>
-										<DropCoursesContainer
-											key={`${term} ${year}`}
-											term={term}
-											year={year}
-											courseRecords={courseRecords}
-											getCourse={course => course.course_info}
-											handleAddPlannedCourse={handleAddCourseRecord}
-											handleRemovePlannedCourse={handleRemoveCourseRecord}
-											semestersTillNow={semestersTillNow}
-											requirementStrings={requirementStrings}
-											coursesWithMissingRequirements={
-												coursesWithMissingRequirements
-											}
-											hasCredits={true}
-										/>
+									{view === "Select Sections" && (
 										<CheckboxDropdownTable categories={categories} />
-									</>
+									)}
+
+									{view === "Build Schedule" && <div>Settings UI</div>}
 								</TabPanel>
-							);
-						})}
-					</Tabs>
+							))}
+						</Tabs>
+					</>
 				) : (
 					<p>
 						There are no valid schedules to choose from. Please change your graduation

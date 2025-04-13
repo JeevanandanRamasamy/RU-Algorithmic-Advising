@@ -15,6 +15,7 @@ import CourseList from "../components/courses/CourseList";
 import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import useRequirements from "../hooks/useRequirements";
+import useCourseRequirements from "../hooks/useCourseRequirements";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -49,6 +50,20 @@ const Questionnaire = () => {
 		handleRemoveProgram
 	} = usePrograms();
 	const { courses } = useCourses();
+
+	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
+		useCourseRequirements();
+	const {
+		courseRecords,
+		setCourseRecords,
+		coursesRecordsLoading,
+		setCoursesRecordsLoading,
+		coursesRecordsError,
+		setCourseRecordsError,
+		handleAddCourseRecord,
+		handleRemoveCourseRecord
+	} = useCourseRecords(fetchPlannedCoursesWithMissingRequirements);
+
 	const {
 		takenCourses,
 		takenCoursesLoading,
@@ -59,17 +74,7 @@ const Questionnaire = () => {
 		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses();
-	const {
-		courseRecords,
-		setCourseRecords,
-		coursesRecordsLoading,
-		setCoursesRecordsLoading,
-		coursesRecordsError,
-		setCourseRecordsError,
-		handleAddCourseRecord,
-		handleRemoveCourseRecord
-	} = useCourseRecords();
+	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
