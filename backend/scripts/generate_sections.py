@@ -17,7 +17,7 @@ def generate_all_courses_with_sections():
     semesters = ["72025", "92025"]
     # semesters = ["72025"]
     campus = "NB"
-    level = "level", "UG"
+    level = "UG"
     course_with_sections = {}
     subject_codes = {subject["code"] for subject in department_list["subjects"]}
     for semester in semesters:
@@ -25,7 +25,7 @@ def generate_all_courses_with_sections():
             api = RutgersCourseAPI(
                 subject=subject, semester=semester, campus=campus, level=level
             )
-            api.get_courses(subject, course_with_sections)
+            api.get_courses(course_with_sections)
             # print(courses)
             # course_list.extend(courses)
 
@@ -37,6 +37,8 @@ def generate_all_courses_with_sections():
 
 
 if __name__ == "__main__":
-    app = create_app()  # you might have a different function that initializes your Flask app
+    app = (
+        create_app()
+    )  # you might have a different function that initializes your Flask app
     with app.app_context():
         generate_all_courses_with_sections()
