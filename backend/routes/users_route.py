@@ -6,6 +6,32 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
+@users_bp.route("/account", methods=["GET"])
+@jwt_required()
+def get_account():
+    try:
+        username = get_jwt_identity()
+        if not username:
+            return jsonify({"message": "Missing username"}), 400
+        account = UserService.get_account_by_username(username)
+        if isinstance(account, str):
+            return jsonify({"message": account}), 500
+        return (
+            jsonify(
+                {
+                    "message": f"Account for {username} successfully retrieved",
+                    "account": {
+                        "first_name": account.first_name,
+                        "last_name": account.last_name
+                    },
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500
+
 
 @users_bp.route("/details", methods=["GET"])
 @jwt_required()

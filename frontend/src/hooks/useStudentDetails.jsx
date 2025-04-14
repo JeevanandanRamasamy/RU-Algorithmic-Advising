@@ -52,7 +52,7 @@ const useStudentDetails = () => {
 				setEnrollYear(userDetails.enroll_year ?? currentYear);
 				setGpa(userDetails.gpa ?? "");
 			} catch (error) {
-				console.error("Error fetching programs:", error);
+				console.error("Error fetching student details:", error);
 			}
 		};
 		fetchUserDetails();
