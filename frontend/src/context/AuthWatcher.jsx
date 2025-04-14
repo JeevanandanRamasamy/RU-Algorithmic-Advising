@@ -10,7 +10,9 @@ const AuthWatcher = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!token) return;
+		if (!token) {
+			return;
+		}
 
 		let logoutTimeoutId;
 		let warningTimeoutId;

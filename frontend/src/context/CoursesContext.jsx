@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "./AuthContext";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const CoursesContext = createContext();
 
 export const CoursesProvider = ({ children }) => {
@@ -8,8 +10,6 @@ export const CoursesProvider = ({ children }) => {
 	const [courses, setCourses] = useState([]);
 	const [coursesLoading, setCoursesLoading] = useState(false);
 	const [coursesError, setCoursesError] = useState(null);
-
-	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 	const fetchCourses = useCallback(async () => {
 		setCoursesLoading(true);

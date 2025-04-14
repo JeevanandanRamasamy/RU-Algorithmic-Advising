@@ -1,21 +1,21 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useCourses } from "../context/CoursesContext";
+import { useTakenCourses } from "../context/TakenCoursesContext";
+import { useStudentDetails } from "../context/StudentDetailsContext";
+import { usePrograms } from "../context/ProgramsContext";
+import { useCourseRequirements } from "../context/CourseRequirementContext";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
-import { useAuth } from "../context/AuthContext";
-import useCourses from "../hooks/useCourses";
-import useTakenCourses from "../hooks/useTakenCourses";
 import Navbar from "../components/navbar/Navbar";
-import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
-import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
-import useCourseRecords from "../hooks/useCourseRecords";
 import CourseList from "../components/courses/CourseList";
 import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
-import useRequirements from "../hooks/useRequirements";
-import useCourseRequirements from "../hooks/useCourseRequirements";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -51,8 +51,12 @@ const Questionnaire = () => {
 	} = usePrograms();
 	const { courses } = useCourses();
 
-	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
-		useCourseRequirements();
+	const {
+		coursesWithMissingRequirements,
+		fetchPlannedCoursesWithMissingRequirements,
+		requirementStrings
+	} = useCourseRequirements();
+
 	const {
 		courseRecords,
 		setCourseRecords,
@@ -78,7 +82,6 @@ const Questionnaire = () => {
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
-	const { requirementStrings, validateSchedule } = useRequirements();
 
 	return (
 		<>

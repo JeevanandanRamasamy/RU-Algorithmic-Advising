@@ -1,24 +1,27 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import SemesterPlanner from "../components/courses/semesterPlanner";
 import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
-import useCourseRecords from "../hooks/useCourseRecords";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
-import useTakenCourses from "../hooks/useTakenCourses";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
-import useRequirements from "../hooks/useRequirements";
-import useCourseRequirements from "../hooks/useCourseRequirements";
+
+import { useTakenCourses } from "../context/TakenCoursesContext";
+import { useCourses } from "../context/CoursesContext";
+import { useCourseRequirements } from "../context/CourseRequirementContext";
+import { useCourseRecords } from "../context/CourseRecordsContext";
 
 function DragDrop() {
 	const { user, token } = useAuth();
 	const { courses } = useCourses();
 
-	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
-		useCourseRequirements();
+	const {
+		coursesWithMissingRequirements,
+		fetchPlannedCoursesWithMissingRequirements,
+		requirementStrings
+	} = useCourseRequirements();
 	const {
 		courseRecords,
 		setCourseRecords,
@@ -40,9 +43,8 @@ function DragDrop() {
 		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
+	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
-	const { requirementStrings, validateSchedule } = useRequirements();
 
 	return (
 		<>

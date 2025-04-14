@@ -1,10 +1,17 @@
 import React from "react";
 
 import useFilterCourses from "../../hooks/useFilterCourses";
+
 import DropdownItem from "../generic/DropdownItem";
+import ListItem from "../generic/ListItem";
 
 import { schools, subjects } from "../../data/sas";
-const SelectCourses = ({ courseRecords, requirementStrings, handleRemoveCourse }) => {
+import { useCourseRecords } from "../../context/CourseRecordsContext";
+import { useCourseRequirements } from "../../context/CourseRequirementContext";
+import DropdownTable from "../generic/DropdownTable";
+const SelectCourses = ({ courseRecords, handleOnAddCourse, sections }) => {
+	console.log(sections);
+	const { handleRemoveCourseRecord } = useCourseRecords();
 	const {
 		subjectSearchQuery,
 		setSubjectSearchQuery,
@@ -15,6 +22,25 @@ const SelectCourses = ({ courseRecords, requirementStrings, handleRemoveCourse }
 		filterCourses,
 		limit
 	} = useFilterCourses();
+
+	const categories = [
+		{
+			key: "cs",
+			label: "Computer Science",
+			options: [
+				{ value: "cs111", label: "Intro to CS" },
+				{ value: "cs112", label: "Data Structures" }
+			]
+		},
+		{
+			key: "math",
+			label: "Mathematics",
+			options: [
+				{ value: "calc1", label: "Calculus I" },
+				{ value: "linear", label: "Linear Algebra" }
+			]
+		}
+	];
 	return (
 		<>
 			<input
@@ -39,16 +65,17 @@ const SelectCourses = ({ courseRecords, requirementStrings, handleRemoveCourse }
 				options={subjects}
 			/>
 
+			<DropdownTable sections={sections} />
 			<div className="p-2 border border-gray-200 rounded-md bg-white">
 				<div className="h-[130px] overflow-y-auto w-[400px] p-2 border border-gray-200 rounded-2xl">
 					{courseRecords &&
 						courseRecords.map(courseRecord => (
 							<ListItem
-								key={courseRecord[course_id]}
-								id={courseRecord[course_id]}
-								value={requirementStrings[courseRecord[course_id]]}
-								onClick={handleButtonClick}
-								buttonType={buttonType}
+								key={courseRecord["course_id"]}
+								id={courseRecord["course_id"]}
+								value={`${courseRecord["course_id"]} ${courseRecord["course_name"]}`}
+								onClick={handleRemoveCourseRecord}
+								buttonType="Remove"
 							/>
 						))}
 				</div>

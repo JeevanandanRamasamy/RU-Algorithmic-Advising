@@ -4,6 +4,7 @@ import { showErrorToast } from "../components/toast/Toast";
 import { useSections } from "./SectionsContext";
 import { useCourseRequirements } from "./CourseRequirementContext";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const CourseRecordsContext = createContext();
 
 export const CourseRecordsProvider = ({ children }) => {
@@ -14,8 +15,6 @@ export const CourseRecordsProvider = ({ children }) => {
 	const [coursesRecordsLoading, setCoursesRecordsLoading] = useState(false);
 	const [coursesRecordsError, setCourseRecordsError] = useState(null);
 	const courseRecordsRef = useRef(courseRecords);
-
-	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 	const fetchCourseRecords = useCallback(async () => {
 		setCoursesRecordsLoading(true);
@@ -129,4 +128,4 @@ export const CourseRecordsProvider = ({ children }) => {
 	);
 };
 
-export const useCourseRecordsContext = () => useContext(CourseRecordsContext);
+export const useCourseRecords = () => useContext(CourseRecordsContext);

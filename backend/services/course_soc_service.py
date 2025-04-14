@@ -1,5 +1,7 @@
 import requests
 
+from services.timeService import TimeService
+
 
 class RutgersCourseAPI:
     BASE_URL = "https://sis.rutgers.edu/oldsoc/courses.json"
@@ -50,6 +52,9 @@ class RutgersCourseAPI:
                             "day": meeting.get("meetingDay"),
                             "start_time": meeting.get("startTime"),
                             "end_time": meeting.get("endTime"),
+                            "formatted-meeting-times": TimeService.formatTime(
+                                meeting.get("startTime"), meeting.get("endTime")
+                            ),
                             "campus": meeting.get("campusName"),
                             "building": meeting.get("buildingCode"),
                             "room": meeting.get("roomNumber"),

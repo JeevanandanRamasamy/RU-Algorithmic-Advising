@@ -17,102 +17,88 @@ import { ToastWrapper } from "./components/toast/Toast";
 import AdminDashboard from "./pages/AdminDashboard";
 
 import { AuthProvider } from "./context/AuthContext";
-import AuthWatcher from "./context/AuthWatcher";
 import "./css/index.css";
 import CoursePlanner from "./pages/CoursePlanner";
-import { CoursesProvider } from "./context/CourseContext";
-import { CourseRecordsProvider } from "./context/CourseRecordsContext";
-import { CourseRequirementsProvider } from "./context/CourseRequirementContext";
-import { SectionsProvider } from "./context/SectionsContext";
-import { TakenCoursesProvider } from "./context/TakenCourseContext";
+import AuthLayout from "./components/protectedRoutes/AuthLayout";
+import AuthWatcher from "./context/AuthWatcher";
 
 function App() {
 	return (
-		<div>
-			<main className="main-content">
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/reset-password"
-						element={<ResetPassword />}
-					/>
-				</Routes>
+		<AuthProvider>
+			<AuthWatcher />
+			<div>
+				<main className="main-content">
+					<Routes>
+						<Route
+							path="/"
+							element={<Login />}
+						/>
+						<Route
+							path="/register"
+							element={<Register />}
+						/>
+						<Route
+							path="/reset-password"
+							element={<ResetPassword />}
+						/>
+						<Route
+							path=""
+							element={<AuthLayout />}>
+							<Route
+								path="/home"
+								element={<Home />}
+							/>
+							<Route
+								path="/navbar"
+								element={<Navbar />}
+							/>
+							<Route
+								path="/questionnaire"
+								element={
+									<DndProvider backend={HTML5Backend}>
+										<Questionnaire />
+									</DndProvider>
+								}
+							/>
+							<Route
+								path="/degree-planner"
+								element={
+									<DndProvider backend={HTML5Backend}>
+										<DegreePlanner />
+									</DndProvider>
+								}
+							/>
+							<Route
+								path="/request-spn"
+								element={
+									<DndProvider backend={HTML5Backend}>
+										<SPN />
+									</DndProvider>
+								}
+							/>
 
-				<AuthProvider>
-					<AuthWatcher>
-						<CoursesProvider>
-							<CourseRequirementsProvider>
-								<SectionsProvider>
-									<TakenCoursesProvider>
-										<CourseRecordsProvider>
-											<Routes>
-												<Route
-													path="/home"
-													element={<Home />}
-												/>
-												<Route
-													path="/navbar"
-													element={<Navbar />}
-												/>
-												<Route
-													path="/questionnaire"
-													element={
-														<DndProvider backend={HTML5Backend}>
-															<Questionnaire />
-														</DndProvider>
-													}
-												/>
-												<Route
-													path="/degree-planner"
-													element={
-														<DndProvider backend={HTML5Backend}>
-															<DegreePlanner />
-														</DndProvider>
-													}
-												/>
-												<Route
-													path="/request-spn"
-													element={
-														<DndProvider backend={HTML5Backend}>
-															<SPN />
-														</DndProvider>
-													}
-												/>
-
-												<Route
-													path="/course-planner"
-													element={
-														<DndProvider backend={HTML5Backend}>
-															<CoursePlanner />
-														</DndProvider>
-													}
-												/>
-												<Route
-													path="/toast"
-													element={<ToastDemo />}
-												/>
-												<Route
-													path="/admin/home"
-													element={<AdminDashboard />}
-												/>
-											</Routes>
-										</CourseRecordsProvider>
-									</TakenCoursesProvider>
-								</SectionsProvider>
-							</CourseRequirementsProvider>
-						</CoursesProvider>
-					</AuthWatcher>
-				</AuthProvider>
-			</main>
-			<ToastWrapper />
-		</div>
+							<Route
+								path="/course-planner"
+								element={
+									<DndProvider backend={HTML5Backend}>
+										<CoursePlanner />
+									</DndProvider>
+								}
+							/>
+							<Route
+								path="/toast"
+								element={<ToastDemo />}
+							/>
+							<Route
+								path="/admin/home"
+								element={<AdminDashboard />}
+							/>
+						</Route>
+					</Routes>
+				</main>
+				<ToastWrapper />
+			</div>
+		</AuthProvider>
 	);
 }
 

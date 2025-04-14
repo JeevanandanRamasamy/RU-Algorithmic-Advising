@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "./AuthContext";
 import { useCourseRequirements } from "./CourseRequirementContext";
 
 const TakenCoursesContext = createContext();
@@ -103,4 +103,4 @@ export const TakenCoursesProvider = ({ children }) => {
 	);
 };
 
-export const useTakenCoursesContext = () => useContext(TakenCoursesContext);
+export const useTakenCourses = () => useContext(TakenCoursesContext);

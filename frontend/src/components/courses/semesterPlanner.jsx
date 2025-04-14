@@ -1,6 +1,7 @@
-import useStudentDetails from "../../hooks/useStudentDetails";
+import { useStudentDetails } from "../../context/StudentDetailsContext";
+import { useCourseRequirements } from "../../context/CourseRequirementContext";
+
 import DropCoursesContainer from "../courses/dropCoursesContainer";
-import useCourseRequirements from "../../hooks/useCourseRequirements";
 import useSemesterInfo from "../../hooks/useSemesterInfo";
 
 const SemesterPlanner = ({

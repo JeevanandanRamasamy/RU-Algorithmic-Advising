@@ -156,15 +156,11 @@ class RequirementService:
     @staticmethod
     def validate_prerequisite_string(prerequisite_string, prerequisite, taken_courses):
         output = prerequisite_string
-        print(prerequisite)
         for course_id in prerequisite:
-            print(course_id)
             escaped_course = re.escape(CourseService.get_course_string(course_id))
-            print(escaped_course)
             color = "#32CD32" if course_id in taken_courses else "#FF6347"
             pattern = rf"\b({escaped_course})\b"
             output = re.sub(pattern, rf'<span style="color:{color};">\1</span>', output)
-        print(output)
         return output
 
     @staticmethod

@@ -4,6 +4,8 @@ import { showInfoToast, clearToast, showSuccessToast } from "../components/toast
 
 const SectionsContext = createContext(null);
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 export const SectionsProvider = ({ children }) => {
 	const validSemesters = [
 		{ term: "summer", year: 2025 },
@@ -15,10 +17,24 @@ export const SectionsProvider = ({ children }) => {
 	const sectionsMapRef = useRef({});
 	const loadingRef = useRef(true);
 
+	const getSemesterNumber = (term, year) => {
+		if (term === "spring") {
+			return "1" + year;
+		} else if (term === "fall") {
+			return "9" + year;
+		} else if (term === "winter") {
+			return "0" + year;
+		} else if (term === "summer") {
+			return "7" + year;
+		}
+	};
+
 	const fetchSections = async (term, year) => {
 		try {
-			const res = await fetch(`/api/sections/all?term=${term}&year=${year}`);
-			const data = await res.json();
+			const sectionResponse = await fetch(
+				`${backendUrl}/api/sections/all?term=${term}&year=${year}`
+			);
+			const data = await sectionResponse.json();
 			return data.courses_with_sections || [];
 		} catch (error) {
 			console.error(`Error fetching sections for ${term} ${year}:`, error);
@@ -29,7 +45,7 @@ export const SectionsProvider = ({ children }) => {
 
 	useEffect(() => {
 		const loadSections = async () => {
-			showInfoToast("loading courses", "loading-sections");
+			// showInfoToast("loading courses", "loading-sections");
 			const resultMap = {};
 
 			for (const semester of validSemesters) {
@@ -42,7 +58,7 @@ export const SectionsProvider = ({ children }) => {
 			clearToast("loading-sections");
 			setSectionsMap(resultMap);
 			setLoading(false);
-			showSuccessToast("Finished loading courses", "completed-loading-courses");
+			// showSuccessToast("Finished loading courses", "completed-loading-courses");
 		};
 
 		loadSections();
@@ -84,7 +100,15 @@ export const SectionsProvider = ({ children }) => {
 
 	return (
 		<SectionsContext.Provider
-			value={{ sectionsMap, courseOfferedThisSemester, loading, error }}>
+			value={{
+				sectionsMap,
+				courseOfferedThisSemester,
+				getSemesterNumber,
+				loading,
+				error,
+				sectionsMapRef,
+				loadingRef
+			}}>
 			{children}
 		</SectionsContext.Provider>
 	);
