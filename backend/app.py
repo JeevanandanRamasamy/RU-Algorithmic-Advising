@@ -96,19 +96,26 @@ def home():
     return "Welcome to  the RU Algorithmic Advising Web Server!"
 
 
-@app.route("/check_db")
+@app.route("/api/db_check", methods=["GET"])
 def check_db_connection():
+    """
+    Check the database connection and return a message.
+    """
     try:
         test_account = Account.query.first()
         if test_account:
-            return (
-                f"Database connected successfully! First user: {test_account.username}"
-            )
+            return jsonify({"status": "ok"}), 200
         else:
-            return "Database connected, but no users found."
+            return jsonify({"status": "error", "message": "No accounts found"}), 500
     except Exception as e:
-        return f"Database connection failed: {e}"
+        return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    """
+    Health check endpoint to verify the server is running.
+    """
+    return jsonify({"status": "ok"}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
