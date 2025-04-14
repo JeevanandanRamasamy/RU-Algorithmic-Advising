@@ -1,3 +1,4 @@
+from services.user_service import UserService
 from services.requirement_service import RequirementService
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -52,16 +53,47 @@ def get_course_requirements():
         return jsonify({"message": f"Error fetching requirements : {str(e)}"}), 500
 
 
-# TODO: add validation logic
-# @requirements_bp.route("", methods=["POST"])
-# def validate_requirements():
-#     data = request.get_json()
+@requirements_bp.route("/planned-courses/missing", methods=["GET"])
+@jwt_required()
+def get_missing_requirements_for_planned_courses():
+    username = get_jwt_identity()
+    student_details = UserService.get_student_details(username=username)
+    if isinstance(student_details, str):
+        return jsonify({"message": student_details}), 500
 
-#     courses_to_check = data.get("courses_to_be_validated", [])
-#     taken_courses = data.get("taken_courses", [])
+    courses_missing_requirements = (
+        RequirementService.fetch_courses_missing_requirements(student_details)
+    )
 
-#     invalid_ids = RequirementService.validate(
-#         course_ids=courses_to_check, taken_ids=taken_courses
-#     )
+    return (
+        jsonify(
+            {
+                "message": "Successfully fetched courses with missing requirements",
+                "courses_missing_requirements": courses_missing_requirements,
+            }
+        ),
+        200,
+    )
 
-#     return jsonify({"invalid_ids": invalid_ids})
+
+@requirements_bp.route("/planned-courses/group", methods=["GET"])
+@jwt_required()
+def get_requirements_for_planned_courses():
+    username = get_jwt_identity()
+    student_details = UserService.get_student_details(username=username)
+    if isinstance(student_details, str):
+        return jsonify({"message": student_details}), 500
+
+    courses_missing_requirements = (
+        RequirementService.fetch_courses_missing_requirements(student_details)
+    )
+
+    return (
+        jsonify(
+            {
+                "message": "Successfully fetched courses with missing requirements",
+                "courses_missing_requirements": courses_missing_requirements,
+            }
+        ),
+        200,
+    )

@@ -6,6 +6,7 @@ import DraggableCourseItem from "./draggableCourseItem";
 import DropdownItem from "../temp/DropdownItem";
 import { schools, subjects } from "../../data/sas";
 import useFilterCourses from "../../hooks/useFilterCourses";
+import Button from "../generic/Button";
 
 const DraggableCourseList = ({
 	title,
@@ -41,7 +42,7 @@ const DraggableCourseList = ({
 	return (
 		<>
 			{isOpen && (
-				<div className="fixed w-full h-full pointer-events-none">
+				<div className="fixed w-full h-full pointer-events-none z-50">
 					<Draggable
 						axis="both"
 						nodeRef={nodeRef}
@@ -56,13 +57,13 @@ const DraggableCourseList = ({
 							}}
 							className="relative pt-4 pl-4 pointer-events-auto">
 							<>
-								<button
+								<Button
 									onClick={() => setIsOpen(prev => !prev)}
-									className={`absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white  border-none cursor-pointer z-100`}>
-									X
-								</button>
-								<div className="fixed bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 cursor-move h-max-[500px] box-border">
-									<section className="h-full w-full bg-white border border-gray-300 rounded shadow-md flex flex-col">
+									className={`absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white  border-none cursor-pointer z-50 opacity-100`}
+									label="X"
+								/>
+								<div className="fixed bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 cursor-move h-max-[500px] box-border z-40 opacity-100">
+									<section className="h-full w-full bg-white border border-gray-300 rounded shadow-md flex flex-col ">
 										<h2 className="m-0 text-center">{title}</h2>
 										<div className="w-full max-w-md mx-auto">
 											<div

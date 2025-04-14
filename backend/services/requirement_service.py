@@ -1,4 +1,7 @@
-from collections import deque
+from collections import defaultdict, deque
+import os
+import re
+from services.semesters_service import SemestersService
 from models.requirement_group_node import RequirementGroupNode
 from models.requirement_group import RequirementGroup
 from services.requirement_group_service import RequirementGroupService
@@ -6,6 +9,12 @@ from services.program_service import ProgramService
 from services.course_service import CourseService
 from services.course_record_service import CourseRecordService
 from services.user_program_service import UserProgramService
+import json
+
+
+PREREQUISITES_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "prerequisites.json"
+)
 
 
 class RequirementService:
@@ -77,30 +86,78 @@ class RequirementService:
         return prerequisites
 
     @staticmethod
-    def validate_course_requirements(courses_to_check, taken_courses):
-        invalid_courses = set()
+    def fetch_courses_missing_requirements(student_details):
+        username, enroll_year, grad_year = (
+            student_details.username,
+            int(student_details.enroll_year),
+            int(student_details.grad_year),
+        )
+        semesters = SemestersService.generate_future_semesters(grad_year=grad_year)
+        res = {}
+
+        extra_courses = set()
+        courses_taken = CourseRecordService.get_past_course_records(username)
+        courses_taken = {course["course_info"]["course_id"] for course in courses_taken}
+        if extra_courses:
+            courses_taken.update(extra_courses)
         math_courses = {
-            course for course in taken_courses if course.startswith("01:640:")
+            course for course in courses_taken if course.startswith("01:640:")
         }
         math_prereqs = set()
+
         for course in math_courses:
             math_prereqs.update(RequirementService.get_all_prerequisites(course))
-        taken_courses.update(math_prereqs)
+        courses_taken.update(math_prereqs)
 
-        for course_id in courses_to_check:
-            course = CourseService.get_course_by_id(course_id)
-            if not course:
-                return False
-            requirement_groups = (
-                RequirementGroupService.get_requirement_group_by_course(course_id)
+        with open(PREREQUISITES_FILE_PATH, "r") as json_file:
+            course_requirements = json.load(json_file)
+
+        for semester in semesters:
+            term, year = semester["term"], semester["year"]
+            course_records = CourseRecordService.get_course_record_by_term(
+                username=username, term=term, year=year
             )
 
-            for group in requirement_groups:
-                if not RequirementService.check_group_fulfillment(
-                    group.group_id, taken_courses
-                ):
-                    invalid_courses.add(course_id)
-        return list(invalid_courses)
+            if extra_courses:
+                courses_taken.update(extra_courses)
+
+            for course_record in course_records:
+                course_id = course_record["course_info"]["course_id"]
+                prerequisite = RequirementService.get_all_prerequisites(
+                    course_id, visited=None
+                )
+                updated_string = RequirementService.validate_prerequisite_string(
+                    prerequisite_string=course_requirements[course_id],
+                    prerequisite=prerequisite,
+                    taken_courses=courses_taken,
+                )
+
+                if extra_courses:
+                    courses_taken.update(extra_courses)
+
+                requirements_fulfilled = RequirementService.check_requirements_met(
+                    username,
+                    course_id=course_id,
+                    extra_courses=extra_courses,
+                )
+                res[course_id] = {
+                    "requirements_fulfilled": requirements_fulfilled,
+                    "requirement_string": updated_string,
+                }
+            extra_courses.update(
+                {course["course_info"]["course_id"] for course in course_records}
+            )
+        return res
+
+    @staticmethod
+    def validate_prerequisite_string(prerequisite_string, prerequisite, taken_courses):
+        output = prerequisite_string
+        for course_id in prerequisite:
+            escaped_course = re.escape(CourseService.get_course_string(course_id))
+            color = "#32CD32" if course_id in taken_courses else "#FF6347"
+            pattern = rf"\b({escaped_course})\b"
+            output = re.sub(pattern, rf'<span style="color:{color};">\1</span>', output)
+        return output
 
     @staticmethod
     def check_requirements_met(
@@ -208,7 +265,9 @@ class RequirementService:
         return True  # All requirements for this group are met
 
     @staticmethod
-    def get_missing_requirements(username, program_id=None, course_id=None):
+    def get_missing_requirements(
+        username, program_id=None, course_id=None, extra_courses=None
+    ):
         """Return a list of courses the student still needs to complete."""
         if program_id:
             # Fetch program requirement groups
@@ -241,6 +300,8 @@ class RequirementService:
                 course["course_info"]["course_id"] for course in courses_taken
             }  # Extract course_ids
 
+        if extra_courses:
+            courses_taken.update(extra_courses)
         missing_courses = set()  # To track missing courses
 
         def check_missing_courses(group_id):

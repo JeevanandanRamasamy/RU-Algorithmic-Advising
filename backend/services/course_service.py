@@ -2,8 +2,18 @@ from db import db
 from models.course import Course
 from sqlalchemy.exc import SQLAlchemyError
 
+
 class CourseService:
     # ------------------ COURSE OPERATIONS ------------------
+    @staticmethod
+    def get_course_string(course_id):
+        try:
+            course = CourseService.get_course_by_id(course_id)
+            return f"{course_id} {course.course_name}"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving course: {str(e)}"
+
     @staticmethod
     def get_course_by_id(course_id):
         """Retrieve a course by its course_id."""
@@ -12,7 +22,7 @@ class CourseService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving course: {str(e)}"
-    
+
     @staticmethod
     def get_courses_by_ids(course_ids):
         """Retrieve courses by their course_ids."""

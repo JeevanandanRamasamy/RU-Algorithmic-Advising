@@ -11,10 +11,14 @@ import { useAuth } from "../context/AuthContext";
 import useTakenCourses from "../hooks/useTakenCourses";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 import useRequirements from "../hooks/useRequirements";
+import useCourseRequirements from "../hooks/useCourseRequirements";
 
 function DragDrop() {
 	const { user, token } = useAuth();
 	const { courses } = useCourses();
+
+	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
+		useCourseRequirements();
 	const {
 		courseRecords,
 		setCourseRecords,
@@ -24,7 +28,7 @@ function DragDrop() {
 		setCourseRecordsError,
 		handleAddCourseRecord,
 		handleRemoveCourseRecord
-	} = useCourseRecords();
+	} = useCourseRecords(fetchPlannedCoursesWithMissingRequirements);
 
 	const {
 		takenCourses,
@@ -36,7 +40,7 @@ function DragDrop() {
 		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses();
+	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 	const [isOpen, setIsOpen] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
 
@@ -83,7 +87,8 @@ function DragDrop() {
 							handleAddCourseRecord,
 							handleRemoveCourseRecord,
 							takenCourses,
-							requirementStrings
+							requirementStrings,
+							coursesWithMissingRequirements
 						}}
 					/>
 				</main>

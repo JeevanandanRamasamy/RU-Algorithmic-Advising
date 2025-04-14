@@ -35,11 +35,11 @@ const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 			)}
 			<div className="flex justify-between">
 				<p className="planned-course-credits m-0 text-center">{course.credits} credits</p>
-				<button
+				<Button
 					className="bg-[#f44336] text-white border-none px-2.5 py-1 rounded cursor-pointer invisible group-hover:visible transition-opacity duration-200 hover:bg-[#d32f2f]"
-					onClick={() => onRemove(course.course_id)}>
-					Remove
-				</button>
+					onClick={() => onRemove(course.course_id)}
+					label="Remove"
+				/>
 			</div>
 		</div>
 		// </div>
