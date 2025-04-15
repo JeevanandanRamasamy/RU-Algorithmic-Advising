@@ -133,8 +133,8 @@ const usePlannedCourses = () => {
 		setPlannedCourses,
 		searchPlannedQuery,
 		setSearchPlannedQuery,
-		handleAddPlannedCourse,
-		handleRemovePlannedCourse
+		handleAddCourse,
+		handleRemoveCourse
 	};
 };
 
