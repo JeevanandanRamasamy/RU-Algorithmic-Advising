@@ -11,38 +11,29 @@ const Navbar = () => {
 		const stored = localStorage.getItem("navbar-collapsed");
 		return stored === null ? true : stored === "true"; // default: collapsed
 	});
-	const [isColorFlipped, setIsColorFlipped] = useState(false);
+
+	const [isColorFlipped, setIsColorFlipped] = useState(() => {
+		const stored = localStorage.getItem("color-flipped");
+		return stored === "true"; // default: false
+	});
 
 	const { user, role, logout } = useAuth(); // Get auth state and logout function
 	const navigate = useNavigate();
-	const toastCooldownRef = useRef(false);
 
 	const toggleColors = () => {
-		setIsColorFlipped((prev) => !prev);
-		const root = document.documentElement;
+		setIsColorFlipped((prev) => {
+			const newValue = !prev;
+			localStorage.setItem("color-flipped", newValue);
+			return newValue;
+		});
 
-		const currentPrimary = getComputedStyle(root).getPropertyValue('--primary-color').trim();
-		const currentSidebar = getComputedStyle(root).getPropertyValue('--sidebar-color').trim();
+		const now = Date.now();
+		const lastToast = parseInt(localStorage.getItem("last-toast-time") || "0", 10);
+		const cooldown = 6000;
 
-		// Swap the primary and sidebar colors
-		root.style.setProperty('--primary-color', currentSidebar);
-		root.style.setProperty('--sidebar-color', currentPrimary);
-
-		if (!isColorFlipped) {
-			root.style.setProperty('--title-color', '#fcf8d7');
-			root.style.setProperty('--hover-text-color', '#000');
-		} else {
-			root.style.setProperty('--title-color', '#000');
-			root.style.setProperty('--hover-text-color', '#fff');
-		}
-
-		// Show toast with throttle
-		if (!toastCooldownRef.current) {
+		if (now - lastToast > cooldown) {
 			showSuccessToast("Theme colors flipped!");
-			toastCooldownRef.current = true;
-			setTimeout(() => {
-				toastCooldownRef.current = false;
-			}, 5000);
+			localStorage.setItem("last-toast-time", now.toString());
 		}
 	};
 
@@ -59,7 +50,19 @@ const Navbar = () => {
 		if (!user) {
 			navigate("/"); // Redirect to login if user is not found
 		}
-	}, [user, navigate]);
+		const root = document.documentElement;
+		if (isColorFlipped) {
+			root.style.setProperty('--primary-color', '#fcf8d7');
+			root.style.setProperty('--sidebar-color', '#cc0033');
+			root.style.setProperty('--title-color', '#fcf8d7');
+			root.style.setProperty('--hover-text-color', '#000');
+		} else {
+			root.style.setProperty('--primary-color', '#cc0033');
+			root.style.setProperty('--sidebar-color', '#fcf8d7');
+			root.style.setProperty('--title-color', '#000');
+			root.style.setProperty('--hover-text-color', '#fff');
+		}
+	}, [user, navigate, isColorFlipped]);
 
 	return (
 		<nav className={`sidebar ${isCollapsed ? "close" : ""} z-100`}>
