@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./style.css"; // Ensure styles are imported
 import logo from "../../assets/minilogo.png";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
@@ -11,9 +11,40 @@ const Navbar = () => {
 		const stored = localStorage.getItem("navbar-collapsed");
 		return stored === null ? true : stored === "true"; // default: collapsed
 	});
+	const [isColorFlipped, setIsColorFlipped] = useState(false);
 
 	const { user, role, logout } = useAuth(); // Get auth state and logout function
 	const navigate = useNavigate();
+	const toastCooldownRef = useRef(false);
+
+	const toggleColors = () => {
+		setIsColorFlipped((prev) => !prev);
+		const root = document.documentElement;
+
+		const currentPrimary = getComputedStyle(root).getPropertyValue('--primary-color').trim();
+		const currentSidebar = getComputedStyle(root).getPropertyValue('--sidebar-color').trim();
+
+		// Swap the primary and sidebar colors
+		root.style.setProperty('--primary-color', currentSidebar);
+		root.style.setProperty('--sidebar-color', currentPrimary);
+
+		if (!isColorFlipped) {
+			root.style.setProperty('--title-color', '#fcf8d7');
+			root.style.setProperty('--hover-text-color', '#000');
+		} else {
+			root.style.setProperty('--title-color', '#000');
+			root.style.setProperty('--hover-text-color', '#fff');
+		}
+
+		// Show toast with throttle
+		if (!toastCooldownRef.current) {
+			showSuccessToast("Theme colors flipped!");
+			toastCooldownRef.current = true;
+			setTimeout(() => {
+				toastCooldownRef.current = false;
+			}, 5000);
+		}
+	};
 
 	const toggleNavbar = () => {
 		setIsCollapsed(prev => {
@@ -38,7 +69,8 @@ const Navbar = () => {
 						<img
 							src={logo}
 							alt="Logo"
-							className="w-16 h-16"
+							className="w-16 h-16 cursor-pointer transition-transform duration-300 hover:rotate-12"
+							onClick={toggleColors}
 						/>
 					</span>
 					<div className="header-text text">
@@ -107,7 +139,7 @@ const Navbar = () => {
 					<li className="nav-link">
 						<a href="/account-settings">
 							<i className="bx bx-user-circle icon"></i>
-							<span className="text nav-text">Account</span>
+							<span className="text nav-text">Account Settings</span>
 						</a>
 					</li>
 					<li className="nav-link">

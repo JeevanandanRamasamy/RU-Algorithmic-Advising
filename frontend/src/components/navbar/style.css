@@ -10,11 +10,13 @@
 :root {
   /* Colors */
   --body-color: #e4e9f7;
-  --sidebar-color: #fffce0;
+  --sidebar-color: #fcf8d7;
   --primary-color: #cc0033;
   --primary-color-light: #f6f5ff;
   --toggle-color: #ddd;
+  --title-color: #000;
   --text-color: #707070;
+  --hover-text-color: #fff;
   --color-white: #fff;
 
   /* Transition */
@@ -90,6 +92,7 @@
   font-size: 20px;
   white-space: nowrap;
   overflow: hidden;
+  color: var(--title-color);
 }
 
 .sidebar .nav-top .header .header-text .name {
@@ -118,6 +121,11 @@
   background: var(--color-white);
 }
 
+.sidebar li.nav-link {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
 .sidebar li .icon {
   display: flex;
   align-items: center;
@@ -132,7 +140,6 @@
   width: 100%;
   display: flex;
   align-items: center;
-  border-radius: 6px;
   transition: var(--tran-04);
   color: var(--text-color);
 }
@@ -143,7 +150,7 @@
 
 .sidebar li a:hover .icon,
 .sidebar li a:hover .text {
-  color: var(--color-white);
+  color: var(--hover-text-color);
 }
 
 .sidebar .nav-text {
