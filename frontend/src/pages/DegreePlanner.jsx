@@ -14,7 +14,7 @@ import useRequirements from "../hooks/useRequirements";
 import useCourseRequirements from "../hooks/useCourseRequirements";
 
 function DragDrop() {
-	const { user, token } = useAuth();
+	const { user, token, role } = useAuth();
 	const { courses } = useCourses();
 
 	const { coursesWithMissingRequirements, fetchPlannedCoursesWithMissingRequirements } =
@@ -43,6 +43,15 @@ function DragDrop() {
 	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 	const [isOpen, setIsOpen] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
+
+	useEffect(() => {
+		if (!user) {
+			navigate("/"); // Redirect to login if not authenticated
+		}
+		if (role === "admin") {
+			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
+		}
+	}, [user, role, navigate]); // Runs whenever user changes
 
 	return (
 		<>

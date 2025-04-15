@@ -50,52 +50,58 @@ const Navbar = () => {
 			</div>
 
 			<div className="menu-bar">
-					{role === "student" && (
-						<div className="nav-middle">
-							<li className="nav-link">
-								<Link to="/student/home">
-									<i className="bx bx-grid-alt icon"></i>
-									<span className="text nav-text">Dashboard</span>
-								</Link>
-							</li>
-							<li className="nav-link">
-								<Link to="/degree-planner">
-									<i className="bx bx-spreadsheet icon"></i>
-									<span className="text nav-text">Degree Planner</span>
-								</Link>
-							</li>
-							<li className="nav-link">
-								<Link to="/course-planner">
-									<i className="bx bx-calendar icon"></i>
-									<span className="text nav-text">Course Planner</span>
-								</Link>
-							</li>
-							<li className="nav-link">
-								<Link to="/request-spn">
-									<i className="bx bx-envelope icon"></i>
-									<span className="text nav-text">Request SPN</span>
-								</Link>
-							</li>
-							<li className="nav-link">
-								<Link to="/questionnaire">
-									<i className="bx bx-edit-alt icon"></i>
-									<span className="text nav-text">Questionnaire</span>
-								</Link>
-							</li>
-						</div>
-					)}
+				{role === "student" && (
+					<div className="nav-middle">
+						<li className="nav-link">
+							<Link to="/student/home">
+								<i className="bx bx-grid-alt icon"></i>
+								<span className="text nav-text">Dashboard</span>
+							</Link>
+						</li>
+						<li className="nav-link">
+							<Link to="/degree-planner">
+								<i className="bx bx-spreadsheet icon"></i>
+								<span className="text nav-text">Degree Planner</span>
+							</Link>
+						</li>
+						<li className="nav-link">
+							<Link to="/course-planner">
+								<i className="bx bx-calendar icon"></i>
+								<span className="text nav-text">Course Planner</span>
+							</Link>
+						</li>
+						<li className="nav-link">
+							<Link to="/request-spn">
+								<i className="bx bx-envelope icon"></i>
+								<span className="text nav-text">Request SPN</span>
+							</Link>
+						</li>
+						<li className="nav-link">
+							<Link to="/questionnaire">
+								<i className="bx bx-edit-alt icon"></i>
+								<span className="text nav-text">Questionnaire</span>
+							</Link>
+						</li>
+					</div>
+				)}
 
-					{role === "admin" && (
-						<div className="nav-middle">
-							<li className="nav-link">
-								<Link to="/admin/home">
-									<i className="bx bx-grid-alt icon"></i>
-									<span className="text nav-text">Admin Dashboard</span>
-								</Link>
-							</li>
-						</div>
-					)}
+				{role === "admin" && (
+					<div className="nav-middle">
+						<li className="nav-link">
+							<Link to="/admin/home">
+								<i className="bx bx-grid-alt icon"></i>
+								<span className="text nav-text">Admin Dashboard</span>
+							</Link>
+						</li>
+					</div>
+				)}
 				<div className="nav-bottom">
+					<li className="nav-link">
+						<a href="/account-settings">
+							<i className="bx bx-user-circle icon"></i>
+							<span className="text nav-text">Account</span>
+						</a>
+					</li>
 					<li className="nav-link">
 						<a
 							href=""
@@ -111,7 +117,7 @@ const Navbar = () => {
 					</li>
 				</div>
 			</div>
-		</nav>
+		</nav >
 	);
 };
 

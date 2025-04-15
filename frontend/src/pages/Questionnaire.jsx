@@ -19,7 +19,7 @@ import useRequirements from "../hooks/useRequirements";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Questionnaire = () => {
-	const { user, token } = useAuth();
+	const { user, token, role } = useAuth();
 	const {
 		classes,
 		gradYear,
@@ -74,6 +74,15 @@ const Questionnaire = () => {
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
+
+	useEffect(() => {
+		if (!user) {
+			navigate("/"); // Redirect to login if not authenticated
+		}
+		if (role === "admin") {
+			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
+		}
+	}, [user, role, navigate]); // Runs whenever user changes
 
 	return (
 		<>
