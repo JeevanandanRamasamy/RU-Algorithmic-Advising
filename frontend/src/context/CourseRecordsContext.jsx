@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
-import { showErrorToast } from "../components/toast/Toast";
-import { useSections } from "./SectionsContext";
+import { showErrorToast, showInfoToast, clearToast } from "../components/toast/Toast";
 import { useCourseRequirements } from "./CourseRequirementContext";
+import useSections from "../hooks/useSections";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const CourseRecordsContext = createContext();
@@ -15,6 +15,7 @@ export const CourseRecordsProvider = ({ children }) => {
 	const [coursesRecordsLoading, setCoursesRecordsLoading] = useState(false);
 	const [coursesRecordsError, setCourseRecordsError] = useState(null);
 	const courseRecordsRef = useRef(courseRecords);
+	const { courseAvailableThisSemester } = useSections();
 
 	const fetchCourseRecords = useCallback(async () => {
 		setCoursesRecordsLoading(true);
@@ -42,14 +43,15 @@ export const CourseRecordsProvider = ({ children }) => {
 	}, [courseRecords]);
 
 	const handleAddCourseRecord = async (courseId, term, year) => {
-		if (!courseOfferedThisSemester?.(term, year, courseId)) {
+		const isAvailable = await courseAvailableThisSemester(courseId, term, year);
+		clearToast(`checking-${courseId}-${term}-${year}`);
+		if (!isAvailable) {
 			showErrorToast(
 				`${courseId} is not offered ${term} ${year}`,
 				`${courseId}-${term}-${year}`
 			);
 			return;
 		}
-
 		const existingCourse = courseRecordsRef.current.find(
 			c => c?.course_info?.course_id === courseId
 		);

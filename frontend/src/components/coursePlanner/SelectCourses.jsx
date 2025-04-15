@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState, useEffect } from "react";
 
 import useFilterCourses from "../../hooks/useFilterCourses";
 
@@ -9,41 +9,51 @@ import { schools, subjects } from "../../data/sas";
 import { useCourseRecords } from "../../context/CourseRecordsContext";
 import { useCourseRequirements } from "../../context/CourseRequirementContext";
 import DropdownTable from "../generic/DropdownTable";
-const SelectCourses = ({ courseRecords, handleOnAddCourse, sections }) => {
-	console.log(sections);
+import { useTakenCourses } from "../../context/TakenCoursesContext";
+const SelectCourses = ({
+	courseRecords,
+	handleOnAddCourse,
+	fetchSectionsBySubject,
+	term,
+	year,
+	searchedSections,
+	setSearchedSections
+}) => {
 	const { handleRemoveCourseRecord } = useCourseRecords();
-	const {
-		subjectSearchQuery,
-		setSubjectSearchQuery,
-		schoolSearchQuery,
-		setSchoolSearchQuery,
-		searchQuery,
-		setSearchQuery,
-		filterCourses,
-		limit
-	} = useFilterCourses();
+	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
+	const { takenCourses } = useTakenCourses();
 
-	const categories = [
-		{
-			key: "cs",
-			label: "Computer Science",
-			options: [
-				{ value: "cs111", label: "Intro to CS" },
-				{ value: "cs112", label: "Data Structures" }
-			]
-		},
-		{
-			key: "math",
-			label: "Mathematics",
-			options: [
-				{ value: "calc1", label: "Calculus I" },
-				{ value: "linear", label: "Linear Algebra" }
-			]
+	const excludedCourseIds = useMemo(() => {
+		const courseRecordIds = courseRecords?.map(course => course.course_id) || [];
+		const takenCourseIds = takenCourses?.map(course => course.course_id) || [];
+		return [...new Set([...courseRecordIds, ...takenCourseIds])];
+	}, [courseRecords, takenCourses]);
+
+	useEffect(() => {
+		setSubjectSearchQuery("");
+		setSearchedSections({});
+	}, [term, year]);
+
+	useEffect(() => {
+		const match = subjectSearchQuery?.match(/\((\d+)\)/);
+		const subjectCode = match ? match[1] : "";
+		if (subjectSearchQuery && subjectCode) {
+			fetchSectionsBySubject(subjectCode, term, year);
 		}
-	];
+	}, [subjectSearchQuery]);
+	const filteredSections = useMemo(() => {
+		return Object.values(searchedSections).filter(
+			section => !excludedCourseIds.includes(section.course_id)
+		);
+	}, [searchedSections, excludedCourseIds]);
+
+	// const limit = useMemo(() => {
+	// 	return subjectSearchQuery || schoolSearchQuery ? 200 : 50;
+	// }, [subjectSearchQuery, schoolSearchQuery]);
+
 	return (
 		<>
-			<input
+			{/* <input
 				className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
 				type="text"
 				id="search-courses"
@@ -57,7 +67,7 @@ const SelectCourses = ({ courseRecords, handleOnAddCourse, sections }) => {
 				selectedValue={schoolSearchQuery}
 				onChange={e => setSchoolSearchQuery(e.target.value)}
 				options={schools}
-			/>
+			/> */}
 			<DropdownItem
 				placeholder="Search by subject code"
 				selectedValue={subjectSearchQuery}
@@ -65,8 +75,25 @@ const SelectCourses = ({ courseRecords, handleOnAddCourse, sections }) => {
 				options={subjects}
 			/>
 
-			<DropdownTable sections={sections} />
+			<DropdownTable
+				sections={filteredSections}
+				handleOnAddCourse={handleOnAddCourse}
+			/>
 			<div className="p-2 border border-gray-200 rounded-md bg-white">
+				<h2 className="m-0 text-center">
+					Selected Courses
+					{
+						<>
+							{" "}
+							(
+							{courseRecords.reduce(
+								(sum, course) => sum + parseInt(course?.credits || 0, 10),
+								0
+							)}
+							)
+						</>
+					}
+				</h2>
 				<div className="h-[130px] overflow-y-auto w-[400px] p-2 border border-gray-200 rounded-2xl">
 					{courseRecords &&
 						courseRecords.map(courseRecord => (
@@ -75,7 +102,7 @@ const SelectCourses = ({ courseRecords, handleOnAddCourse, sections }) => {
 								id={courseRecord["course_id"]}
 								value={`${courseRecord["course_id"]} ${courseRecord["course_name"]}`}
 								onClick={handleRemoveCourseRecord}
-								buttonType="Remove"
+								buttonType=" Remove "
 							/>
 						))}
 				</div>

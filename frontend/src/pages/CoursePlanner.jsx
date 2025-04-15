@@ -12,8 +12,8 @@ import { useStudentDetails } from "../context/StudentDetailsContext";
 import { useCourseRequirements } from "../context/CourseRequirementContext";
 import { useCourseRecords } from "../context/CourseRecordsContext";
 import { useTakenCourses } from "../context/TakenCoursesContext";
-import { useSections } from "../context/SectionsContext";
 
+import useSections from "../hooks/useSections";
 import Button from "../components/generic/Button";
 import DropCoursesContainer from "../components/courses/dropCoursesContainer";
 import CheckboxDropdownTable from "../components/generic/CheckBoxDropdownTable";
@@ -52,27 +52,6 @@ const CoursePlanner = () => {
 
 	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
 
-	const categories = [
-		{
-			key: "fruits",
-			label: "Fruits",
-			options: [
-				{ value: "apple", label: "🍎 Apple" },
-				{ value: "banana", label: "🍌 Banana" },
-				{ value: "orange", label: "🍊 Orange" }
-			]
-		},
-		{
-			key: "vegetables",
-			label: "Vegetables",
-			options: [
-				{ value: "carrot", label: "🥕 Carrot" },
-				{ value: "spinach", label: "🥬 Spinach" },
-				{ value: "broccoli", label: "🥦 Broccoli" }
-			]
-		}
-	];
-
 	const handleOnAddCourse = courseId => {
 		handleAddCourseRecord(courseId, currentSemester.term, currentSemester.year);
 	};
@@ -80,6 +59,7 @@ const CoursePlanner = () => {
 	const currentSemester = useMemo(() => {
 		return semesters[selectedSemesterTabIndex];
 	}, [semesters, selectedSemesterTabIndex]);
+
 	const currentCourseRecords = useMemo(() => {
 		if (!courseRecords || !currentSemester) return [];
 
@@ -91,11 +71,22 @@ const CoursePlanner = () => {
 			)
 			.map(course => course?.course_info);
 	}, [courseRecords, currentSemester]);
-	const { sectionsMap, getSemesterNumber } = useSections();
-	const currentCourseSections = useMemo(
-		() => sectionsMap?.[getSemesterNumber(currentSemester.term, currentSemester.year)] ?? {},
-		[currentSemester, sectionsMap]
-	);
+	// const excludedCourseIds = useMemo(() => {
+	// 	return courseRecords?.map(courseRecord => courseRecord.course_id) || [];
+	// }, [courseRecords]);
+
+	// const { sectionsMap, getSemesterNumber } = useSections();
+	//
+	const {
+		fetchSectionsBySubject,
+		getSemesterNumber,
+		fetchSectionsByCourse,
+		courseAvailableThisSemester,
+		searchedSections,
+		setSearchedSections,
+		selectedSections,
+		setSelectedSections
+	} = useSections();
 
 	return (
 		<>
@@ -134,11 +125,21 @@ const CoursePlanner = () => {
 										<SelectCourses
 											courseRecords={currentCourseRecords}
 											handleOnAddCourse={handleOnAddCourse}
-											sections={currentCourseSections}
+											fetchSectionsBySubject={fetchSectionsBySubject}
+											term={currentSemester.term}
+											year={currentSemester.year}
+											searchedSections={searchedSections}
+											setSearchedSections={setSearchedSections}
 										/>
 									)}
 									{view === "Select Sections" && (
-										<CheckboxDropdownTable categories={categories} />
+										<SelectSections
+											courseRecords={currentCourseRecords}
+											term={currentSemester.term}
+											year={currentSemester.year}
+											selectedSections={selectedSections}
+											setSelectedSections={setSelectedSections}
+										/>
 									)}
 
 									{view === "Build Schedule" && <BuildSchedule />}

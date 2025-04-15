@@ -12,8 +12,6 @@ const useStudentDetails = () => {
 	const [enrollYear, setEnrollYear] = useState("");
 	const [gpa, setGpa] = useState(0);
 
-	const navigate = useNavigate();
-
 	const handleGpaChange = e => {
 		let value = e.target.value;
 		if (/^(4(\.0{0,2})?|0?\.?\d{0,2}|[1-3](\.\d{0,2})?)$/.test(value)) {
@@ -75,7 +73,6 @@ const useStudentDetails = () => {
 			})
 		});
 		const data = await response.json();
-		console.log(data);
 		if (response.ok) {
 			showSuccessToast("Successfully saved student details");
 			// use toast to update
