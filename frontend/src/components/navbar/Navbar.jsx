@@ -6,13 +6,21 @@ import { useAuth } from "../../context/AuthContext"; // Import authentication co
 import { showSuccessToast } from "../toast/Toast"; // Import toast function
 
 const Navbar = () => {
-	const [isCollapsed, setIsCollapsed] = useState(true); // Manages navbar state
+	const [isCollapsed, setIsCollapsed] = useState(() => {
+		// Read from localStorage on first render
+		const stored = localStorage.getItem("navbar-collapsed");
+		return stored === null ? true : stored === "true"; // default: collapsed
+	});
 
 	const { user, role, logout } = useAuth(); // Get auth state and logout function
 	const navigate = useNavigate();
 
 	const toggleNavbar = () => {
-		setIsCollapsed(prev => !prev);
+		setIsCollapsed(prev => {
+			const newState = !prev;
+			localStorage.setItem("navbar-collapsed", newState); // Save on toggle
+			return newState;
+		});
 	};
 
 	// Redirect to login page if not authenticated

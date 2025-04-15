@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Navbar from "../components/navbar/Navbar";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +52,7 @@ const AccountSettings = () => {
 
     return (
 		<div className="p-4 max-w-md mx-auto">
+			<Navbar />
 			<h2 className="text-xl font-bold mb-4">Account Settings</h2>
 			<form onSubmit={handleSubmit} className="flex flex-col gap-3">
 				<input type="text" name="first_name" value={form.first_name} onChange={handleChange} placeholder="First Name" className="border p-2 rounded" />

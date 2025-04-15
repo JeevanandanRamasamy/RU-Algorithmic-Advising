@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
@@ -15,6 +15,7 @@ import CourseList from "../components/courses/CourseList";
 import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import useRequirements from "../hooks/useRequirements";
+import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -74,6 +75,7 @@ const Questionnaire = () => {
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!user) {

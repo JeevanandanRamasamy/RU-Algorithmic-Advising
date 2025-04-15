@@ -12,6 +12,7 @@ import useTakenCourses from "../hooks/useTakenCourses";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 import useRequirements from "../hooks/useRequirements";
 import useCourseRequirements from "../hooks/useCourseRequirements";
+import { useNavigate } from "react-router-dom";
 
 function DragDrop() {
 	const { user, token, role } = useAuth();
@@ -43,6 +44,7 @@ function DragDrop() {
 	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 	const [isOpen, setIsOpen] = useState(false);
 	const { requirementStrings, validateSchedule } = useRequirements();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!user) {
