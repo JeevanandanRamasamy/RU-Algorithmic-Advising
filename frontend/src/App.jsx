@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
-
+import DegreePlannerPage from "./pages/DegreePlannerPage";
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
@@ -18,66 +18,47 @@ import AdminDashboard from "./pages/AdminDashboard";
 import "./css/index.css";
 
 function App() {
-	return (
-		<div>
-			<main className="main-content">
-				<Routes>
-					<Route
-						path="/"
-						element={<Login />}
-					/>
-					<Route
-						path="/register"
-						element={<Register />}
-					/>
-					<Route
-						path="/reset-password"
-						element={<ResetPassword />}
-					/>
-					<Route
-						path="/home"
-						element={<Home />}
-					/>
-					<Route
-						path="/navbar"
-						element={<Navbar />}
-					/>
-					<Route
-						path="/questionnaire"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<Questionnaire />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/degree-planner"
-						element={
-							<DndProvider
-								backend={HTML5Backend}
-								// autoScroll={true}
-							>
-								<DegreePlanner />
-							</DndProvider>
-						}
-					/>
-					<Route
-						path="/toast"
-						element={<ToastDemo />}
-					/>
+  return (
+    <div>
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/navbar" element={<Navbar />} />
+          <Route
+            path="/questionnaire"
+            element={
+              <DndProvider
+                backend={HTML5Backend}
+                // autoScroll={true}
+              >
+                <Questionnaire />
+              </DndProvider>
+            }
+          />
+          <Route
+            path="/degree-planner"
+            element={
+              <DndProvider
+                backend={HTML5Backend}
+                // autoScroll={true}
+              >
+                <DegreePlanner />
+              </DndProvider>
+            }
+          />
+          <Route path="/toast" element={<ToastDemo />} />
 
-					<Route
-						path="/admin/home"
-						element={<AdminDashboard />}
-					/>
-				</Routes>
-			</main>
-			<ToastWrapper />
-		</div>
-	);
+          <Route path="/admin/home" element={<AdminDashboard />} />
+
+          <Route path="/dp" element={<DegreePlannerPage />} />
+        </Routes>
+      </main>
+      <ToastWrapper />
+    </div>
+  );
 }
 
 export default App;

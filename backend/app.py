@@ -15,6 +15,7 @@ from routes.verification import verification_bp
 from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
 from routes.requirements_route import requirements_bp
+from routes.degree_planner_route import degree_planner_bp
 
 from flask_cors import CORS
 
@@ -65,6 +66,7 @@ app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(verification_bp)
 app.register_blueprint(requirements_bp)
+app.register_blueprint(degree_planner_bp)
 
 
 username = os.getenv("DB_USERNAME")
