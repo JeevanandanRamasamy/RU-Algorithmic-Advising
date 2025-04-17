@@ -140,14 +140,14 @@ const Navbar = () => {
 				)}
 				<div className="nav-bottom">
 					<li className="nav-link">
-						<a href="/account-settings">
+						<Link to="/account-settings">
 							<i className="bx bx-user-circle icon"></i>
 							<span className="text nav-text">Account Settings</span>
-						</a>
+						</Link>
 					</li>
 					<li className="nav-link">
 						<a
-							href=""
+							href="/"
 							onClick={(e) => {
 								e.preventDefault(); // prevent default anchor behavior
 								logout(); // your logout function

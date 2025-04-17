@@ -63,7 +63,6 @@ class UserService:
             if account:
                 db.session.delete(account)
                 db.session.commit()
-                return f"Account {username} deleted successfully"
             else:
                 return "Account not found"
         except SQLAlchemyError as e:
