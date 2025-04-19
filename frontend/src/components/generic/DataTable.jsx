@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { showErrorToast, showSuccessToast } from "../toast/Toast";
 import { useAuth } from "../../context/AuthContext";
 
-const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data available." }) => {
+const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage = "No data available.", allowDelete = false, deleteRoles = ["admin"] }) => {
 	const { user, role, token } = useAuth();
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +13,9 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 	const tableRef = useRef(null);
 	const ROW_HEIGHT = 40;
 	const BUFFER_SIZE = 5; // Extra rows to render above and below visible area
+	
+	// Check if user has delete permission
+	const canDelete = allowDelete && deleteRoles.includes(role);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -104,6 +107,45 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 			showErrorToast("Error updating data.");
 		}
 	};
+	
+	// Handle row deletion
+	const handleDeleteRow = async (rowIndex) => {
+		if (!canDelete) return;
+		
+		const rowToDelete = data[rowIndex];
+		
+		// Get the ID field - assumes each row has an 'id' field
+		// Modify this based on your actual ID field name
+		const idField = 'id'; 
+		const idToDelete = rowToDelete[idField];
+		
+		try {
+			const response = await fetch(`${deleteApiUrl}/${idToDelete}`, {
+				method: "DELETE",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+			
+			if (!response.ok) {
+				throw new Error("Failed to delete row");
+			}
+			
+			// Remove row from local data
+			const updatedData = [...data];
+			updatedData.splice(rowIndex, 1);
+			setData(updatedData);
+			
+			// Recalculate visible rows
+			calculateVisibleRows(scrollTop, updatedData);
+			
+			showSuccessToast("Row successfully deleted.");
+		} catch (error) {
+			showErrorToast("Error deleting row.");
+			console.error("Delete error:", error);
+		}
+	};
 
 	const renderEditableCell = (rowIndex, column, value) => {
 		if (column.accessor === "status" && role !== "student") {
@@ -124,7 +166,9 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 
 	// Calculate column widths
 	const columnWidth = 150;
-	const tableWidth = columns.length * columnWidth;
+	// Add space for delete button column if needed
+	const effectiveColumns = canDelete ? columns.length + 1 : columns.length;
+	const tableWidth = effectiveColumns * columnWidth;
 	
 	// Calculate table height based on data length
 	const tableHeight = Math.min(450, Math.max(data.length * ROW_HEIGHT + 40, 150));
@@ -133,7 +177,7 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 	if (error) return <p>{error}</p>;
 
 	return (
-		<div className="w-full border border-gray-200 rounded">
+		<div className="w-full border border-gray-200 rounded"> {/* z-[-4] makes it so the table could not be scrolled*/}
 			{/* Main container with dynamic height */}
 			<div
 				className="overflow-auto relative"
@@ -159,6 +203,15 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 							{column.header}
 						</div>
 						))}
+						
+						{/* Delete column header (if applicable) */}
+						{canDelete && (
+							<div
+								className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100"
+								style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
+								Actions
+							</div>
+						)}
 					</div>
 					</div>
 
@@ -187,6 +240,19 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 											</div>
 										);
 									})}
+									
+									{/* Delete button cell (if applicable) */}
+									{canDelete && (
+										<div
+											className="px-4 py-2 border-b border-r flex items-center"
+											style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
+											<button
+												onClick={() => handleDeleteRow(rowIndex)}
+												className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
+												Remove
+											</button>
+										</div>
+									)}
 								</div>
 							);
 						})}

@@ -67,7 +67,10 @@ function SPN() {
 					<main className="gap-8 flex flex-col -z-5">
 						<DataTable
 							apiUrl={url}
+							deleteApiUrl={url}
 							columns={columns}
+							allowDelete={true}
+							deleteRoles={"student"}
 						/>
 					</main>
 					<header className="app-header">
