@@ -13,16 +13,32 @@ const ToRequest = () => {
     const [sections, setSections] = useState([]); // Store sections related to the course
     const [isLoading, setIsLoading] = useState(false); // Track loading state
     const [selectedSections, setSelectedSections] = useState([]); // Track selected sections
-    const [semester, setSemester] = useState({ year: "", season: "" });
+    // const [semester, setSemester] = useState({ year: "", season: "" });
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
 
+    const currentYear = new Date().getFullYear();
+
+    const getNextTerm = () => {
+        const month = new Date().getMonth();
+        if (month < 2) return "Spring";
+        if (month < 5) return "Summer";
+        if (month < 8) return "Fall";
+        currentYear += 1;
+        return "Winter";
+      };
+
+    const nextTerm = getNextTerm();
+
+    const semester = { year: currentYear, season: nextTerm };
+
+    /*
     const handleSemesterSelection = (year, season) => {
         // Only update if the values change
         if (year !== semester.year || season !== semester.season) {
         setSemester({ year, season });
         }
-    };
+    };*/
 
     // Handle course drop: When a course is dropped, fetch its details and sections.
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -177,7 +193,10 @@ const ToRequest = () => {
         }`}
         >
         <h3 className="text-lg font-bold">Drop Courses Here</h3>
-        <SemesterSelector onSemesterSelect={handleSemesterSelection} />
+        {/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
+        <div>
+            <label className="block mb-1 font-bold">{nextTerm} {currentYear}</label>
+        </div>
         {isLoading && <p>Loading course details...</p>}
         {droppedCourse ? (
             <div className="mt-2">

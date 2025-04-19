@@ -27,7 +27,7 @@ function SPN() {
 		{ header: "Course ID", accessor: "course_id" },
 		{ header: "Section Number", accessor: "section_num" },
 		{ header: "Index", accessor: "index_num" },
-		{ header: "Semester", accessor: "term" },
+		{ header: "Term", accessor: "term" },
 		{ header: "Year", accessor: "year" },
 		{ header: "Reason", accessor: "reason" },
 		{ header: "Status", accessor: "status" },
@@ -86,7 +86,7 @@ function SPN() {
 				</div>
 			</>
 		);
-	} else {
+	} else if (role === "admin"){ {/* Needed because will try to run this after logout without the check */}
 		let pendingUrl = apiUrl + `?pending_param=true`;
 		let notPendingUrl = apiUrl + `?pending_param=false`;
 		let updateUrl = apiUrl + "/update";
