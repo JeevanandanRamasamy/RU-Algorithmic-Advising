@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import useCourses from "../hooks/useCourses";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/notifications";
 import SemesterPlanner from "../components/courses/semesterPlanner";
 import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
@@ -75,6 +76,7 @@ function DragDrop() {
 			/>
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
+				<NotificationsButton />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Course Planner</h1>
 				</header>

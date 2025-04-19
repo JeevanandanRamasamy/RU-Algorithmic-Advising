@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import useCourses from "../hooks/useCourses";
 import useTakenCourses from "../hooks/useTakenCourses";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/notifications";
 import useStudentDetails from "../hooks/useStudentDetails";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import usePrograms from "../hooks/usePrograms";
@@ -93,6 +94,7 @@ const Questionnaire = () => {
 					<h1>Questionnaire</h1>
 				</header>
 				<Navbar />
+				<NotificationsButton />
 				<div className="">
 					<div className="flex justify-between pb-5">
 						<StudentDetails

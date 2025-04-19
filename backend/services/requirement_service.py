@@ -265,6 +265,138 @@ class RequirementService:
         return True  # All requirements for this group are met
 
     @staticmethod
+    def get_num_requirements(program_id=None, course_id=None):
+        """Return number of total courses needed to complete a program or course."""
+        if program_id:
+            # Fetch program requirement groups
+            program = ProgramService.get_program(program_id)
+            if not program:
+                raise ValueError(f"Program {program_id} not found")
+            requirement_groups = (
+                RequirementGroupService.get_requirement_group_by_program(program_id)
+            )
+        elif course_id:
+            # Fetch requirement groups for a specific course
+            course = CourseService.get_course_by_id(course_id)
+            if not course:
+                raise ValueError(f"Course {course_id} not found")
+            requirement_groups = (
+                RequirementGroupService.get_requirement_group_by_course(course_id)
+            )
+        else:
+            raise ValueError("Either program_id or course_id must be provided")
+
+        if not requirement_groups:
+            return 0 # No requirements to check
+        
+        total_requirements = 0  # To track the total number of requirements
+        
+        def count_requirements(group_id):
+            """Recursively count the number of required courses in a group and its child groups."""
+            group = RequirementGroupService.get_requirement_group_by_id(group_id)
+
+            # Get the number of required courses in the current group
+            required_courses = set(group.list) if group.list else set()
+            num_required = group.num_required
+
+            # If the group has child groups, handle child requirements recursively
+            child_groups = RequirementGroupService.get_child_requirement_groups(group_id)
+
+            total_count = 0
+            if not child_groups:
+                # If no child groups, count the required courses in this group
+                if num_required == 0:
+                    total_count = len(required_courses)
+                else:
+                    total_count = num_required
+            
+            else:
+                # If there are child groups, count how many courses are needed from child groups
+                child_count = 0
+                for child in child_groups:
+                    child_count += count_requirements(child.group_id)
+                
+                # Now check the parent group itself
+                if num_required > 0:
+                    # Parent group needs at least `num_required` courses
+                    total_count = max(num_required, child_count)
+                else:
+                    # Parent group needs all courses from the list
+                    total_count = len(required_courses) + child_count
+            return total_count
+        
+        # Check all top-level groups
+        for group in requirement_groups:
+            total_requirements += count_requirements(group.group_id)
+
+        return total_requirements
+
+    @staticmethod
+    def get_num_courses_taken(username, program_id=None, course_id=None):
+        """Return number of courses taken by a student in a program or course."""
+        if program_id:
+            # Fetch program requirement groups
+            program = ProgramService.get_program(program_id)
+            if not program:
+                raise ValueError(f"Program {program_id} not found")
+            requirement_groups = (
+                RequirementGroupService.get_requirement_group_by_program(program_id)
+            )
+        elif course_id:
+            # Fetch requirement groups for a specific course
+            course = CourseService.get_course_by_id(course_id)
+            if not course:
+                raise ValueError(f"Course {course_id} not found")
+            requirement_groups = (
+                RequirementGroupService.get_requirement_group_by_course(course_id)
+            )
+        else:
+            raise ValueError("Either program_id or course_id must be provided")
+
+        if not requirement_groups:
+            return 0
+        
+        # Fetch student's completed courses
+        courses_taken = CourseRecordService.get_past_course_records(username)
+        if not courses_taken:
+            return 0  # No courses taken means no requirements met
+        else:
+            courses_taken = {
+                course["course_info"]["course_id"] for course in courses_taken
+            }
+        
+        counted_courses = set()
+
+        def count_courses_in_group(group_id):
+            """Recursively count taken courses from this group."""
+            group = RequirementGroupService.get_requirement_group_by_id(group_id)
+            if not group:
+                return 0
+
+            count = 0
+
+            # Count matching courses in the list
+            if group.list:
+                for course_id in group.list:
+                    if course_id in courses_taken and course_id not in counted_courses:
+                        counted_courses.add(course_id)
+                        count += 1
+
+            # Recurse into child groups
+            child_groups = RequirementGroupService.get_child_requirement_groups(group_id)
+            for child in child_groups:
+                count += count_courses_in_group(child.group_id)
+
+            return count
+        
+        total_count = 0
+        for group in requirement_groups:
+            total_count += count_courses_in_group(group.group_id)
+
+        return total_count
+
+
+    @staticmethod
     def get_missing_requirements(
         username, program_id=None, course_id=None, extra_courses=None
     ):
@@ -314,10 +446,7 @@ class RequirementService:
 
             required_courses = set(group.list) if group.list else set()
             num_required = group.num_required
-            print(
-                f"Checking group {group_id}: required_courses={required_courses}, num_required={num_required}"
-            )
-
+            
             # Find missing courses
             if num_required == 0:
                 # All courses in the list must be taken
