@@ -17,7 +17,7 @@ const ToRequest = () => {
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
 
-    const currentYear = new Date().getFullYear();
+    let currentYear = new Date().getFullYear();
 
     const getNextTerm = () => {
         const month = new Date().getMonth();
@@ -44,7 +44,6 @@ const ToRequest = () => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: "COURSE",
         drop: (item) => {
-        setIsLoading(true); // Start loading
         setCourseId(item.id); // Set course_id state
         },
         collect: (monitor) => ({
@@ -56,6 +55,7 @@ const ToRequest = () => {
     // Function to fetch course details
     const fetchCourseDetails = async (course_id) => {
         try {
+        setIsLoading(true); // Start loading
         const response = await fetch(`${backendUrl}/api/courses/${course_id}`);
         if (!response.ok) {
             showErrorToast("Failed to fetch course details.");
@@ -118,6 +118,8 @@ const ToRequest = () => {
         setSections([]); // Clear sections data
         setSelectedSections([]); // Clear selected sections
         setReason("");
+        setIsLoading(false); // Reset loading state
+        setCourseId(null); // Remove courseId
     };
 
     // Function to handle checkbox selection
