@@ -125,35 +125,44 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 	// Calculate column widths
 	const columnWidth = 150;
 	const tableWidth = columns.length * columnWidth;
+	
+	// Calculate table height based on data length
+	const tableHeight = Math.min(450, Math.max(data.length * ROW_HEIGHT + 40, 150));
 
 	if (isLoading) return <p>Loading...</p>;
 	if (error) return <p>{error}</p>;
 
 	return (
-		<div className="w-full border border-gray-200 rounded z-[-4]">
-			{/* Single scrollable container */}
+		<div className="w-full border border-gray-200 rounded">
+			{/* Main container with dynamic height */}
 			<div
-				className="overflow-auto -z-4"
-				style={{ height: "450px", width: "100%" }}
+				className="overflow-auto relative"
+				style={{ height: `${tableHeight}px`, width: "100%" }}
 				onScroll={handleScroll}
 				ref={tableRef}>
 				<div style={{ width: `${tableWidth}px`, minWidth: "100%" }}>
-					{/* Header - uses sticky position (Breaks too much if its sticky) */}
-					<div className="top-0 -z-4 bg-gray-100">
-						<div className="flex">
-							{columns.map(column => (
-								<div
-									key={column.accessor}
-									className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis"
-									style={{ width: `${columnWidth}px`, flexShrink: 0 }}
-									title={column.header}>
-									{column.header}
-								</div>
-							))}
+					{/* Header - using position sticky with full width background */}
+					<div 
+					className="sticky top-0 bg-gray-100 z-10" 
+					style={{ 
+						width: `${tableWidth}px`, 
+						minWidth: "100%",
+						boxShadow: "0 2px 4px rgba(0,0,0,0.1)" // Optional shadow for visual separation
+					}}>
+					<div className="flex">
+						{columns.map(column => (
+						<div
+							key={column.accessor}
+							className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100" // Added bg-gray-100 to each cell
+							style={{ width: `${columnWidth}px`, flexShrink: 0 }}
+							title={column.header}>
+							{column.header}
 						</div>
+						))}
+					</div>
 					</div>
 
-					{/* Spacer for virtualization */}
+					{/* Data rows container */}
 					<div style={{ height: `${data.length * ROW_HEIGHT}px`, position: "relative" }}>
 						{/* Only render visible rows */}
 						{visibleRows.map(rowIndex => {
