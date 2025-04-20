@@ -14,11 +14,6 @@ const SelectSections = ({
 	handleSelectAll,
 	isAllSectionsSelected
 }) => {
-	// console.log(selectedCourses);
-	// useEffect(() => {
-	// 	setSelectedSections({});
-	// }, [term, year]);
-
 	return (
 		<CheckboxDropdownTable
 			courseRecords={courseRecords}

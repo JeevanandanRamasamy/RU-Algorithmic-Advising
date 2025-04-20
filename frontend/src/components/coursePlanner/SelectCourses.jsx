@@ -36,7 +36,7 @@ const SelectCourses = ({
 	}, [term, year]);
 
 	useEffect(() => {
-		showInfoToast("Applying filter", "search");
+		showInfoToast("Loading", "search");
 		const match = subjectSearchQuery?.match(/\((\d+)\)/);
 		const subjectCode = match ? match[1] : "";
 		if (subjectSearchQuery && subjectCode) {
@@ -46,33 +46,9 @@ const SelectCourses = ({
 		}
 		clearToast("search");
 	}, [subjectSearchQuery]);
-	// const filteredSections = useMemo(() => {
-	// 	return Object.values(searchedSections).filter(
-	// 		section => !excludedCourseIds.includes(section.course_id)
-	// 	);
-	// }, [searchedSections, excludedCourseIds]);
-
-	// const limit = useMemo(() => {
-	// 	return subjectSearchQuery || schoolSearchQuery ? 200 : 50;
-	// }, [subjectSearchQuery, schoolSearchQuery]);
 
 	return (
 		<>
-			{/* <input
-				className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
-				type="text"
-				id="search-courses"
-				placeholder="Search courses by name or course code"
-				value={searchQuery}
-				onChange={e => setSearchQuery(e.target.value)}
-			/>
-
-			<DropdownItem
-				placeholder="Search by School code"
-				selectedValue={schoolSearchQuery}
-				onChange={e => setSchoolSearchQuery(e.target.value)}
-				options={schools}
-			/> */}
 			<DropdownItem
 				placeholder="Search by subject code"
 				selectedValue={subjectSearchQuery}

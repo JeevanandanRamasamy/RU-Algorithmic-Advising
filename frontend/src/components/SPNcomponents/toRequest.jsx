@@ -41,10 +41,10 @@ const ToRequest = () => {
 	const fetchCourseDetails = async course_id => {
 		try {
 			const response = await fetch(`${backendUrl}/api/courses/${course_id}`);
-			if (!response.ok) {
-				showErrorToast("Failed to fetch course details.");
-				return;
-			}
+			// if (!response.ok) {
+			// 	showErrorToast("Failed to fetch course details.");
+			// 	return;
+			// }
 			const data = await response.json();
 			if (data.course) {
 				setDroppedCourse(data.course); // Update the state with the course data
@@ -64,18 +64,25 @@ const ToRequest = () => {
 		if (courseId && semester.year && semester.season) {
 			try {
 				const sectionResponse = await fetch(
-					`${backendUrl}/api/sections?course_id=${courseId}&semester=${semester.season}&year=${semester.year}`
-				);
-				if (sectionResponse.ok) {
-					const sectionData = await sectionResponse.json();
-					if (sectionData.sections) {
-						setSections(sectionData.sections); // Update the state with section data
-					} else {
-						showErrorToast("No sections exist for this course.");
+					`${backendUrl}/api/sections?course_id=${courseId}&term=${semester.season}&year=${semester.year}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
+						}
 					}
+				);
+				// if (sectionResponse.ok) {
+				const sectionData = await sectionResponse.json();
+				if (sectionData.sections) {
+					setSections(sectionData.sections); // Update the state with section data
 				} else {
-					showErrorToast("Failed to fetch sections.");
+					showErrorToast("No sections exist for this course.");
 				}
+				// } else {
+				// 	showErrorToast("Failed to fetch sections.");
+				// }
 			} catch (error) {
 				console.error("Error fetching sections:", error);
 				showErrorToast("Failed to fetch sections.");

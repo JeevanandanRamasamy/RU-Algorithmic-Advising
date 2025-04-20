@@ -153,7 +153,7 @@ def get_course_sections_expanded():
         return jsonify({"error": str(e)}), 500
 
 
-@section_bp.route("/", methods=["GET"])
+@section_bp.route("", methods=["GET"])
 def get_course_sections():
 
     course_id = request.args.get("course_id")

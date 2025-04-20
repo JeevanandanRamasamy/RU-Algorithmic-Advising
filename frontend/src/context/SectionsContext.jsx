@@ -97,7 +97,7 @@ export const SectionsProvider = ({ children }) => {
 		}
 		try {
 			const sectionResponse = await fetch(
-				`${backendUrl}/api/sections/subject?subject=${subject}&semester=${term}&year=${year}`,
+				`${backendUrl}/api/sections/subject?subject=${subject}&term=${term}&year=${year}`,
 				{
 					method: "GET",
 					headers: {

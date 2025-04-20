@@ -26,8 +26,6 @@ class SemestersService:
 
         return semesters
 
-    from datetime import datetime
-
     @staticmethod
     def get_current_semester():
         month = datetime.now().month

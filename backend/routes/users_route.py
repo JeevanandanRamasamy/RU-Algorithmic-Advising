@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
+
 @users_bp.route("/account", methods=["GET"])
 @jwt_required()
 def get_account():
@@ -21,7 +22,7 @@ def get_account():
                     "message": f"Account for {username} successfully retrieved",
                     "account": {
                         "first_name": account.first_name,
-                        "last_name": account.last_name
+                        "last_name": account.last_name,
                     },
                 }
             ),
@@ -64,7 +65,6 @@ def update_user_details():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        print(data)
         enroll_year = data.get("enroll_year")
         grad_year = data.get("grad_year")
         gpa = data.get("gpa")
