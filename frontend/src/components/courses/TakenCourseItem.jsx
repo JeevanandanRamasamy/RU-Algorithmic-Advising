@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Button from "@/components/generic/button";
 
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";

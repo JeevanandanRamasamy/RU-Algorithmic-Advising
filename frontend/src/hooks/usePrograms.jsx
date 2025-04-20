@@ -109,6 +109,8 @@ const usePrograms = () => {
 		// TODO: handle errors
 	};
 	return {
+		selectedPrograms,
+		setSelectedPrograms,
 		selectedProgramsQuery,
 		setSelectedProgramsQuery,
 		programsQuery,

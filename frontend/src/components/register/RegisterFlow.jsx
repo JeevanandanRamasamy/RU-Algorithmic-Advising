@@ -180,7 +180,7 @@ export default function RegisterFlow() {
         registerData.status === "success" ||
         registerData.message === "Registration successful"
       ) {
-        setMessage("Registration successful! Redirecting...");
+        setMessage("");
         showSuccessToast("Registration successful! Redirecting...");
         setTimeout(() => navigate("/"), 2000);
       } else {

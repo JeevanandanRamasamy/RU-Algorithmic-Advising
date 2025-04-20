@@ -9,7 +9,6 @@ VALUES ('admin1', 'adminpassword123', 'John', 'Doe', 'admin');
 INSERT INTO Program (program_id, program_name, program_type, is_credit_intensive, additional_details)
 VALUES ('01', 'The SAS Core Curriculum', 'sas_core', FALSE,
 	'The SAS Core Curriculum is required for all students in the School of Arts and Sciences at Rutgers University.'),
-	('NB001J', 'Undeclared', 'major', FALSE, 'You are a Liberal Arts student who has not yet declared your major.'),
 	('NB198SJ', 'Major in Computer Science - B.S.', 'major', TRUE,
 	'No more than 1 course with a grade equal to D may be used to satisfy the requirements of the major.'),
 	('NB198J', 'Major in Computer Science - B.A.', 'major', TRUE,
