@@ -14,11 +14,6 @@ def client():
             yield client
 
 
-def get_auth_headers(username="test_user"):
-    token = create_access_token(identity=username)
-    return {"Authorization": f"Bearer {token}"}
-
-
 @pytest.fixture
 def register_user(client):
     client.post(
@@ -30,10 +25,16 @@ def register_user(client):
             "last_name": "Doe",
         },
     )
+    yield
+    access_token = create_access_token(identity="test")
+    client.delete(
+        "/api/users/details",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
 
 
+# T02
 def test_update_user_details_success(client, register_user):
-    register_user
     access_token = create_access_token(identity="test")
 
     response = client.put(
@@ -47,3 +48,66 @@ def test_update_user_details_success(client, register_user):
     assert data["updated_user_details"]["enroll_year"] == 2020
     assert data["updated_user_details"]["grad_year"] == 2024
     assert data["updated_user_details"]["gpa"] == "3.90"
+
+
+@pytest.mark.parametrize(
+    "payload,missing_field",
+    [
+        # T03: Missing enroll_year
+        (
+            {"enroll_year": None, "grad_year": 2024, "gpa": 3.9},
+            {
+                "field": "enroll_year",
+                "expected_json": {"message": "Missing grad year or enroll year"},
+            },
+        ),
+        # T04: Missing grad_year
+        (
+            {"enroll_year": 2020, "grad_year": None, "gpa": 3.9},
+            {
+                "field": "grad_year",
+                "expected_json": {"message": "Missing grad year or enroll year"},
+            },
+        ),
+        # T05: Empty payload
+        (
+            {},
+            {
+                "field": "all fields",
+                "expected_json": {"message": "Missing grad year or enroll year"},
+            },
+        ),
+    ],
+)
+def test_update_user_details_with_null_fields(
+    client, payload, missing_field, register_user
+):
+    access_token = create_access_token(identity="test")
+
+    response = client.put(
+        "/api/users/details",
+        json=payload,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    data = response.get_json()
+    assert response.status_code == 400
+    assert data == missing_field["expected_json"]
+
+
+# T06
+def test_update_user_details_missing_gpa(client, register_user):
+    access_token = create_access_token(identity="test")
+
+    response = client.put(
+        "/api/users/details",
+        json={"enroll_year": 2020, "grad_year": 2024, "gpa": None},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    data = response.get_json()
+
+    assert response.status_code == 201
+    assert data["updated_user_details"]["enroll_year"] == 2020
+    assert data["updated_user_details"]["grad_year"] == 2024
+    assert data["updated_user_details"]["gpa"] == "0.00"

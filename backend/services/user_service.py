@@ -169,7 +169,8 @@ class UserService:
                 ).delete(synchronize_session=False)
                 student_details.enroll_year = enroll_year
                 student_details.grad_year = grad_year
-                student_details.gpa = float(gpa)
+                if gpa:
+                    student_details.gpa = float(gpa)
                 db.session.commit()
                 return student_details
             else:
