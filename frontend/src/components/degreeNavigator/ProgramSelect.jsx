@@ -10,7 +10,7 @@ const ProgramSelect = ({ onSelect }) => {
     const fetchPrograms = async () => {
       try {
         const res = await fetch(
-          `${backendUrl}/api/degree_planner/programs/with-requirements`
+          `${backendUrl}/api/degree_navigator/programs/with-requirements`
         );
         const data = await res.json();
         setPrograms(data);

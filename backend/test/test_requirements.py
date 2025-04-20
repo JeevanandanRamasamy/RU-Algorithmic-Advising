@@ -12,16 +12,33 @@ from services.requirement_group_service import RequirementGroupService
 from services.requirement_service import RequirementService
 
 
-# Function to show all requirements for a given program
 def show_all_requirements(program_id):  
     top_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
-    print(len(top_groups), "Top Level Groups")
-    for group in top_groups:
-        print(f"{group.group_id} - {group.group_name} (Num Required: {group.num_required})")
+
+    def print_group_tree(group, prefix, indent=0):
+        if indent == 0:
+            # Top-level group with "R1." label
+            print(f"R{prefix} {group.group_name} (Num Required: {group.num_required})")
+        else:
+            # Indented child group with "R1.1" label
+            spacing = "  " * indent
+            print(f"{spacing}{prefix} {group.group_name} (Num Required: {group.num_required})")
+
+        if group.list:
+            spacing = "  " * (indent + 1)
+            print(f"{spacing}Courses: {group.list}")
+
         children = RequirementGroupService.get_child_requirement_groups(group.group_id)
-        print(f"  {len(children)} Child Groups")
-        for child in children:
-            print(f"  Child {child.group_id} - {child.group_name} (List: {child.list})")
+        for i, child in enumerate(children, 1):
+            child_prefix = f"{prefix}.{i}" if indent == 0 else f"{prefix}.{i}"
+            print_group_tree(child, child_prefix, indent + 1)
+
+    top_level = [g for g in top_groups if g.parent_group_id is None]
+
+    for i, group in enumerate(top_level, 1):
+        print_group_tree(group, str(i))
+
+
 
 # Function to test get_requirement_group_by_id
 def test_get_group_by_id(group_id):
@@ -34,6 +51,7 @@ def test_get_group_by_id(group_id):
     else:
         print(f"❌ No group found with ID {group_id}")
 
+#Not needed because show_all_requirements already shows the tree
 def display_requirement_tree(program_id):
     trees = RequirementService.get_program_requirement_tree(program_id)
     if not trees:
@@ -56,8 +74,8 @@ if __name__ == "__main__":
         # Show all requirements for the CS program
         show_all_requirements("NB198SJ")
 
-        print("\n--- Testing get_requirement_group_by_id ---")
-        test_get_group_by_id(1) 
+        # print("\n--- Testing get_requirement_group_by_id ---")
+        # test_get_group_by_id(1) 
 
-        print("\n--- Testing tree building ---")
-        display_requirement_tree("NB198SJ") 
+        # print("\n--- Testing tree building ---")
+        # display_requirement_tree("NB198SJ") 

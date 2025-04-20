@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
-import DegreePlannerPage from "./pages/DegreePlannerPage";
+import DegreeNavigator from "./pages/DegreeNavigator";
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
@@ -53,7 +53,7 @@ function App() {
 
           <Route path="/admin/home" element={<AdminDashboard />} />
 
-          <Route path="/dp" element={<DegreePlannerPage />} />
+          <Route path="/degree-nav" element={<DegreeNavigator />} />
         </Routes>
       </main>
       <ToastWrapper />
