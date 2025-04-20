@@ -1,4 +1,3 @@
-// context/StudentDetailsContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
@@ -14,30 +13,34 @@ export const StudentDetailsProvider = ({ children }) => {
 	const [gradYear, setGradYear] = useState("");
 	const [enrollYear, setEnrollYear] = useState("");
 	const [gpa, setGpa] = useState(0);
-	const classes = ["freshman", "sophomore", "junior", "senior", "graduate"];
+	const [creditsEarned, setCreditsEarned] = useState(0);
 
 	const navigate = useNavigate();
 
+	const fetchUserDetails = async () => {
+		try {
+			console.log("here");
+			if (!user) return;
+			const response = await fetch(`${backendUrl}/api/users/details`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+				}
+			});
+			const data = await response.json();
+			const userDetails = data.user_details || {};
+			setGradYear(userDetails.grad_year ?? currentYear + 4);
+			setEnrollYear(userDetails.enroll_year ?? currentYear);
+			setGpa(userDetails.gpa ?? "");
+			setCreditsEarned(userDetails.credits_earned ?? 0);
+			console.log(userDetails.credits_earned);
+		} catch (error) {
+			console.error("Error fetching student details:", error);
+		}
+	};
+
 	useEffect(() => {
-		const fetchUserDetails = async () => {
-			try {
-				if (!user) return;
-				const response = await fetch(`${backendUrl}/api/users/details`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-						"Authorization": `Bearer ${token}`
-					}
-				});
-				const data = await response.json();
-				const userDetails = data.user_details || {};
-				setGradYear(userDetails.grad_year ?? currentYear + 4);
-				setEnrollYear(userDetails.enroll_year ?? currentYear);
-				setGpa(userDetails.gpa ?? "");
-			} catch (error) {
-				console.error("Error fetching student details:", error);
-			}
-		};
 		fetchUserDetails();
 	}, [user]);
 
@@ -92,7 +95,6 @@ export const StudentDetailsProvider = ({ children }) => {
 	return (
 		<StudentDetailsContext.Provider
 			value={{
-				classes,
 				gradYear,
 				setGradYear,
 				enrollYear,
@@ -102,7 +104,10 @@ export const StudentDetailsProvider = ({ children }) => {
 				saveStudentDetails,
 				handleGpaChange,
 				handleGradYearChange,
-				handleEnrollYearChange
+				handleEnrollYearChange,
+				creditsEarned,
+				setCreditsEarned,
+				fetchUserDetails
 			}}>
 			{children}
 		</StudentDetailsContext.Provider>

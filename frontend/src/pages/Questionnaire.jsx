@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useCourses } from "../context/CoursesContext";
 import { useTakenCourses } from "../context/TakenCoursesContext";
@@ -7,20 +6,19 @@ import { usePrograms } from "../context/ProgramsContext";
 import { useCourseRequirements } from "../context/CourseRequirementContext";
 import { useCourseRecords } from "../context/CourseRecordsContext";
 
+import { useState, useEffect } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/notifications";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
-import CourseList from "../components/courses/CourseList";
-import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useNavigate } from "react-router-dom";
 
 const Questionnaire = () => {
-	const { user, token } = useAuth();
+	const { user, token, role } = useAuth();
 	const {
 		classes,
 		gradYear,
@@ -82,6 +80,16 @@ const Questionnaire = () => {
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (!user) {
+			navigate("/");
+		}
+		if (role === "admin") {
+			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
+		}
+	}, [user, role, navigate]); // Runs whenever user changes
 
 	return (
 		<>
@@ -90,6 +98,7 @@ const Questionnaire = () => {
 					<h1>Questionnaire</h1>
 				</header>
 				<Navbar />
+				<NotificationsButton />
 				<div className="">
 					<div className="flex justify-between pb-5">
 						<StudentDetails

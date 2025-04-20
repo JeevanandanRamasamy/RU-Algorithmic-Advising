@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/minilogo.png";
 import {
 	showErrorToast,
@@ -14,8 +14,18 @@ function Login() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [message, setMessage] = useState("");
-	const { login } = useAuth();
+	const { login, user, role } = useAuth();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user) {
+			if (role === "admin") {
+				navigate("/admin/home");
+			} else {
+				navigate("/student/home");
+			}
+		}
+	}, [user, role, navigate]);
 
 	const handleLogin = async (e) => {
 		e.preventDefault();

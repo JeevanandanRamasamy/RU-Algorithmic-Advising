@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/notifications";
 import SemesterPlanner from "../components/courses/semesterPlanner";
 import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
+import { useNavigate } from "react-router-dom";
 
 import { useTakenCourses } from "../context/TakenCoursesContext";
 import { useCourses } from "../context/CoursesContext";
@@ -14,7 +16,7 @@ import { useCourseRequirements } from "../context/CourseRequirementContext";
 import { useCourseRecords } from "../context/CourseRecordsContext";
 
 function DragDrop() {
-	const { user, token } = useAuth();
+	const { user, token, role } = useAuth();
 	const { courses } = useCourses();
 
 	const {
@@ -45,6 +47,16 @@ function DragDrop() {
 		setSearchTaken
 	} = useTakenCourses();
 	const [isOpen, setIsOpen] = useState(false);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (!user) {
+			navigate("/");
+		}
+		if (role === "admin") {
+			navigate("/admin/home");
+		}
+	}, [user, role, navigate]);
 
 	return (
 		<>
@@ -66,6 +78,7 @@ function DragDrop() {
 			/>
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
+				<NotificationsButton />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Degree Planner</h1>
 				</header>

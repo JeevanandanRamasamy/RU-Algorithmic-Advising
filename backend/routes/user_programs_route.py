@@ -50,7 +50,6 @@ def insert_program_for_student():
         student_program = UserProgramService.insert_program_for_student(
             username, program_id
         )
-        print(student_program)
         if isinstance(student_program, str):
             return jsonify({"message": student_program}), 500
 

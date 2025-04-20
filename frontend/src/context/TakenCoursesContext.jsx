@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "./AuthContext";
 import { useCourseRequirements } from "./CourseRequirementContext";
+import { useStudentDetails } from "../context/StudentDetailsContext";
 
 const TakenCoursesContext = createContext();
 
@@ -12,6 +13,7 @@ export const TakenCoursesProvider = ({ children }) => {
 	const [takenCoursesLoading, setTakenCoursesLoading] = useState(false);
 	const [takenCoursesError, setTakenCoursesError] = useState(null);
 	const [searchTaken, setSearchTaken] = useState("");
+	const { fetchUserDetails } = useStudentDetails();
 
 	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -54,6 +56,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			} else {
 				setTakenCourses(prev => [...prev, data.course_record.course_info]);
 				fetchPlannedCoursesWithMissingRequirements?.();
+				fetchUserDetails();
 			}
 		} catch (err) {
 			console.error("Error adding course:", err);
@@ -77,6 +80,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			} else {
 				setTakenCourses(prev => prev.filter(c => c.course_id !== courseId));
 				fetchPlannedCoursesWithMissingRequirements?.();
+				fetchUserDetails();
 			}
 		} catch (err) {
 			console.error("Error removing course:", err);

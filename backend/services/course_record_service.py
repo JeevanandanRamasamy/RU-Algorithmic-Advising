@@ -233,16 +233,12 @@ class CourseRecordService:
     def insert_course_record(course_record_data):
         """Insert a course record into a user's degree plan."""
         try:
-            print(course_record_data)
-
             new_course = CourseRecord(**course_record_data)
             db.session.add(new_course)
             db.session.commit()
             return CourseRecordService.get_course_record_by_course_id(
                 course_record_data["username"], course_record_data["course_id"]
             )
-
-            # return new_course
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error inserting course record: {str(e)}"

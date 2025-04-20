@@ -23,6 +23,7 @@ class StudentDetails(db.Model):
     enroll_year: int
     credits_earned: str
     gpa: str
+    
     username = Column(
         String(6), ForeignKey("Account.username", ondelete="CASCADE"), primary_key=True
     )

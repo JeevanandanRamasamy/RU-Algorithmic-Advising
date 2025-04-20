@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useCourses } from "../context/CoursesContext";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/notifications";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import ToRequest from "../components/SPNcomponents/toRequest";
@@ -62,6 +63,7 @@ function SPN() {
 				/>
 				<div className="app h-auto overflow-x-hidden">
 					<Navbar />
+					<NotificationsButton />
 					<header className="app-header">
 						<h1>My Requests</h1>
 					</header>
@@ -94,6 +96,7 @@ function SPN() {
 		return (
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
+				<NotificationsButton />
 				<header className="app-header">
 					<h1>Outstanding Requests</h1>
 				</header>

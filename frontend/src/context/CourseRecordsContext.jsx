@@ -3,6 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { showErrorToast, showInfoToast, clearToast } from "../components/toast/Toast";
 import { useCourseRequirements } from "./CourseRequirementContext";
 import { useSections } from "../context/SectionsContext";
+import isEqual from "lodash/isEqual";
+import { useStudentDetails } from "../context/StudentDetailsContext";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const CourseRecordsContext = createContext();
@@ -16,6 +18,32 @@ export const CourseRecordsProvider = ({ children }) => {
 	const [coursesRecordsError, setCourseRecordsError] = useState(null);
 	const courseRecordsRef = useRef(courseRecords);
 	const { courseAvailableThisSemester } = useSections();
+	const [plannedCourses, setPlannedCourses] = useState([]);
+	const { fetchUserDetails } = useStudentDetails();
+
+	const fetchPlannedCourses = async () => {
+		try {
+			const response = await fetch(`${backendUrl}/api/users/course_record/planned`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("token")}`
+				}
+			});
+			if (!response.ok) throw new Error("Failed to fetch courses");
+
+			const data = await response.json();
+
+			setPlannedCourses(prev =>
+				isEqual(prev, data.planned_courses ?? []) ? prev : data.planned_courses ?? []
+			);
+		} catch (err) {
+			console.error("Error fetching courses:", err);
+		}
+	};
+	useEffect(() => {
+		if (token) {
+			fetchPlannedCourses();
+		}
+	}, [courseRecords]);
 
 	const fetchCourseRecords = useCallback(async () => {
 		setCoursesRecordsLoading(true);
@@ -80,6 +108,7 @@ export const CourseRecordsProvider = ({ children }) => {
 					return [...prev, data.course_record];
 				});
 				fetchPlannedCoursesWithMissingRequirements?.();
+				fetchUserDetails();
 			}
 		} catch (err) {
 			setCourseRecordsError(err.message);
@@ -104,6 +133,7 @@ export const CourseRecordsProvider = ({ children }) => {
 			} else {
 				setCourseRecords(prev => prev.filter(c => c.course_info.course_id !== courseId));
 				fetchPlannedCoursesWithMissingRequirements?.();
+				fetchUserDetails();
 			}
 		} catch (err) {
 			console.error("Error removing course record:", err);
@@ -115,6 +145,8 @@ export const CourseRecordsProvider = ({ children }) => {
 	return (
 		<CourseRecordsContext.Provider
 			value={{
+				plannedCourses,
+				setPlannedCourses,
 				courseRecords,
 				setCourseRecords,
 				coursesRecordsLoading,
