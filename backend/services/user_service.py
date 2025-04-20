@@ -135,3 +135,17 @@ class UserService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error updating account: {str(e)}"
+        
+    @staticmethod
+    def update_student_credits(username, change):
+        try:
+            student_details = StudentDetails.query.filter_by(username=username).first()
+            if student_details:
+                student_details.credits_earned += change
+                db.session.commit()
+                return student_details
+            else:
+                return "StudentDetails not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating account: {str(e)}"

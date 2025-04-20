@@ -9,10 +9,11 @@ import usePrograms from "../hooks/usePrograms";
 import useProgramRequirements from "../hooks/useProgramRequirements";
 import useTakenCourses from "../hooks/useTakenCourses";
 import usePlannedCourses from "../hooks/usePlannedCourses";
-import Card, { CardContent } from "../components/generic/card";
+import Card, { CardContent } from "../components/generic/Card";
+import GraduationForecastCard from "../components/widgets/GraduationForecast";
 import Progress from "../components/generic/progress";
 import { Circle } from "rc-progress";
-import { Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import "../css/home.css";
 
 function StudentDashboard() {
@@ -36,9 +37,7 @@ function StudentDashboard() {
 	const [programStats, setProgramStats] = useState({});
 	const { takenCourses } = useTakenCourses();
 	const { plannedCourses } = usePlannedCourses();
-
 	const totalCredits = 120;
-	const semestersLeft = Math.ceil((totalCredits - creditsEarned) / 15);
 
 	useEffect(() => {
 		if (!user) {
@@ -122,25 +121,10 @@ function StudentDashboard() {
 					</Card>
 
 					{/* Graduation Progress */}
-					<Card>
-						<CardContent className="p-6 flex flex-col items-center justify-center text-center">
-							<p className="text-xl font-semibold mb-2"> 
-								Graduation Forecast 
-							</p>
-							<p className="text-me text-gray-700 mb-1"> 
-								You’re on track to graduate in 
-							</p>
-							<p className="text-5xl font-bold text-primary leading-none tracking-tight m-4">
-								{semestersLeft}
-							</p>
-							<p className="text-me font-medium text-gray-700">
-								semester{semestersLeft > 1 ? "s" : ""}
-							</p>
-							<p className="mt-3 text-sm text-gray-500"> 
-								Keep it up! You're making solid progress. 🎓
-							</p>
-						</CardContent>
-					</Card>
+					<GraduationForecastCard
+						totalCredits={120}
+						creditsEarned={creditsEarned}
+					/>
 
 					{/* Enrolled Programs */}
 					<Card className="col-span-1 md:col-span-3">
@@ -151,8 +135,12 @@ function StudentDashboard() {
 							{selectedPrograms.map((program) => {
 								const stats = programStats[program.program_id];
 								const percent =
-									stats && stats.total > 0 ? ((stats.taken) / stats.total) * 100 : 0;
-
+									stats && stats.needed === 0
+										? 100
+										: stats && stats.total > 0
+											? (stats.taken / stats.total) * 100
+											: 0;
+								
 								return (
 									<div key={program.program_id} className="mb-4">
 										<p className="text-sm font-medium text-gray-700 mb-1">

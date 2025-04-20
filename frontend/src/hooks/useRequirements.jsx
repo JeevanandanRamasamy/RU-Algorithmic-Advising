@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+// import { useAuth } from "../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const useRequirements = () => {
+	// const { token } = useAuth();
 	const [requirementStrings, setRequirementStrings] = useState({});
 
 	const getRequirementsStrings = async () => {
@@ -23,8 +25,28 @@ const useRequirements = () => {
 		}
 	};
 
+	// const getNumberOfSemesters = async () => {
+	// 	try {
+	// 		const response = await fetch(`${backendUrl}/api/users/requirements/course-plan?max_credits=${15}`, {
+	// 			method: "GET",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 				"Authorization": `Bearer ${token}`
+	// 			},
+	// 		});
+	// 		const data = await response.json();
+	// 		if (response.ok) {
+	// 			return data.course_plan_size;
+	// 		}
+	// 		console.error("Failed to fetch number of semesters.");
+	// 	} catch (error) {
+	// 		console.error("Error fetching number of semesters:", error);
+	// 	}
+	// };
+
 	useEffect(() => {
 		getRequirementsStrings();
+		// getNumberOfSemesters();
 	}, []);
 
 	// const validateSchedule = async (semesters, courseRecords, takenCourses) => {
@@ -62,7 +84,10 @@ const useRequirements = () => {
 		}
 		return grouped;
 	};
-	return { requirementStrings };
+	return {
+		requirementStrings, 
+		// getNumberOfSemesters,
+	};
 };
 
 export default useRequirements;

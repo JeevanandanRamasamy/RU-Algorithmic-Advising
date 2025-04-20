@@ -11,6 +11,7 @@ from services.course_record_service import CourseRecordService
 from services.user_program_service import UserProgramService
 import json
 
+ALWAYS_TAKEN_COURSES = {"01:640:112", "01:356:156"}
 
 PREREQUISITES_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "..", "data", "prerequisites.json"
@@ -98,8 +99,8 @@ class RequirementService:
         extra_courses = set()
         courses_taken = CourseRecordService.get_past_course_records(username)
         courses_taken = {course["course_info"]["course_id"] for course in courses_taken}
-        if extra_courses:
-            courses_taken.update(extra_courses)
+        courses_taken.update(extra_courses or set())
+        courses_taken.update(ALWAYS_TAKEN_COURSES)
         math_courses = {
             course for course in courses_taken if course.startswith("01:640:")
         }
@@ -118,8 +119,7 @@ class RequirementService:
                 username=username, term=term, year=year
             )
 
-            if extra_courses:
-                courses_taken.update(extra_courses)
+            courses_taken.update(extra_courses or set())
 
             for course_record in course_records:
                 course_id = course_record["course_info"]["course_id"]
@@ -132,8 +132,7 @@ class RequirementService:
                     taken_courses=courses_taken,
                 )
 
-                if extra_courses:
-                    courses_taken.update(extra_courses)
+                courses_taken.update(extra_courses or set())
 
                 requirements_fulfilled = RequirementService.check_requirements_met(
                     username,
@@ -196,8 +195,8 @@ class RequirementService:
         courses_taken = {
             course["course_info"]["course_id"] for course in courses_taken
         }  # Extract course_ids
-        if extra_courses:
-            courses_taken.update(extra_courses)
+        courses_taken.update(extra_courses or set())
+        courses_taken.update(ALWAYS_TAKEN_COURSES)
         if not courses_taken:
             return False  # No courses taken means requirements are not met
 
@@ -432,8 +431,8 @@ class RequirementService:
                 course["course_info"]["course_id"] for course in courses_taken
             }  # Extract course_ids
 
-        if extra_courses:
-            courses_taken.update(extra_courses)
+        courses_taken.update(extra_courses or set())
+        courses_taken.update(ALWAYS_TAKEN_COURSES)
         missing_courses = set()  # To track missing courses
 
         def check_missing_courses(group_id):
@@ -516,12 +515,12 @@ class RequirementService:
         return list(missing_courses)
 
     @staticmethod
-    def get_suggested_courses(username, max_credits=20.5):
+    def get_suggested_courses(username, max_credits=20.5, extra_courses=set()):
         """Suggest courses for a student based on their current credits and requirements."""
         # Fetch programs associated with the student
         programs = UserProgramService.get_student_programs(username)
-        if not programs:
-            return "No programs found for the student"
+        if not programs or isinstance(programs, str):
+            return {"error": "No programs found for the student"}
         program_ids = [program.program_id for program in programs]
 
         # Fetch missing requirements for each program
@@ -529,7 +528,7 @@ class RequirementService:
         for program_id in program_ids:
             missing_courses.update(
                 RequirementService.get_missing_requirements(
-                    username, program_id=program_id
+                    username, program_id=program_id, extra_courses=extra_courses
                 )
             )
 
@@ -541,7 +540,7 @@ class RequirementService:
         for course in math_courses:
             if (
                 not highest_math_course or course > highest_math_course
-            ) and RequirementService.check_requirements_met(username, course_id=course):
+            ) and RequirementService.check_requirements_met(username, course_id=course, extra_courses=extra_courses):
                 highest_math_course = course
         if highest_math_course:
             for course in math_courses:
@@ -555,21 +554,46 @@ class RequirementService:
         # Step 1: Identify missing prerequisites for the courses
         for course in missing_courses:
             if not RequirementService.check_requirements_met(
-                username, course_id=course
+                username, course_id=course, extra_courses=extra_courses
             ):
                 missing_prereqs = RequirementService.get_missing_requirements(
-                    username, course_id=course
+                    username, course_id=course, extra_courses=missing_courses
                 )
                 priority.update(missing_prereqs)
+        priority.difference_update(extra_courses)
+        
+        # Remove redundant math courses in the priority list
+        math_priority = {
+            course for course in priority if course.startswith("01:640:")
+        }
+        highest_math_priority = None
+        for course in extra_courses:
+            if (
+                not highest_math_priority
+                or course > highest_math_priority
+            ) and RequirementService.check_requirements_met(username, course_id=course, extra_courses=extra_courses):
+                highest_math_priority = course
+        for course in math_priority:
+            if (
+                not highest_math_priority
+                or course > highest_math_priority
+            ) and RequirementService.check_requirements_met(username, course_id=course, extra_courses=extra_courses):
+                highest_math_priority = course
+        if highest_math_priority:
+            for course in math_priority:
+                if course < highest_math_priority:
+                    priority.discard(course)
 
         # Step 2: Add the missing prerequisites to the suggested courses
         print("Priority courses (missing prerequisites):", priority)
         for prereq in priority:
-            if RequirementService.check_requirements_met(username, course_id=prereq):
-                total_credits += CourseService.get_course_by_id(prereq).credits
-                if total_credits <= max_credits:
+            if RequirementService.check_requirements_met(username, course_id=prereq, extra_courses=extra_courses):
+                additional_credits = CourseService.get_course_by_id(prereq).credits
+                if additional_credits + total_credits <= max_credits:
                     suggested_courses.add(prereq)
+                    total_credits += additional_credits
                 else:
+                    # Stop suggesting courses if adding this one exceeds max credits
                     break
 
         # Step 3: If there's still space for more credits, suggest remaining courses
@@ -577,7 +601,7 @@ class RequirementService:
             remaining_courses = missing_courses - priority
             for course in remaining_courses:
                 if RequirementService.check_requirements_met(
-                    username, course_id=course
+                    username, course_id=course, extra_courses=extra_courses
                 ):
                     additional_credits = CourseService.get_course_by_id(course).credits
                     if additional_credits + total_credits <= max_credits:
@@ -587,4 +611,26 @@ class RequirementService:
                         # Stop suggesting courses if adding this one exceeds max credits
                         break
 
-        return suggested_courses, total_credits
+        return {"courses": suggested_courses, "credits": total_credits}
+
+    @staticmethod
+    def create_course_plan(username, max_credits=20.5):
+        """
+        Create a course plan for a student based on their current credits and requirements.
+        """
+        course_plan = []
+        taken = ALWAYS_TAKEN_COURSES.copy()
+        while True:
+            result = RequirementService.get_suggested_courses(
+                username=username, max_credits=max_credits, extra_courses=taken
+            )
+            if "error" in result:
+                return result
+            suggested_courses = result["courses"]
+            if not suggested_courses:
+                break
+
+            course_plan.append(suggested_courses)
+            taken = taken.union(suggested_courses)
+            
+        return {"plan": course_plan}
