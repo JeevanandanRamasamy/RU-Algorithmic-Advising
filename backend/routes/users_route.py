@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash
 
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
+
 @users_bp.route("/account", methods=["GET"])
 @jwt_required()
 def get_account():
@@ -27,7 +28,7 @@ def get_account():
                     "message": f"Account for {username} successfully retrieved",
                     "account": {
                         "first_name": account.first_name,
-                        "last_name": account.last_name
+                        "last_name": account.last_name,
                     },
                 }
             ),
@@ -36,7 +37,7 @@ def get_account():
 
     except Exception as e:
         return jsonify({"message": f"Internal server error: {str(e)}"}), 500
-    
+
 
 @users_bp.route("/account", methods=["PUT"])
 @jwt_required()
@@ -51,13 +52,12 @@ def update_account():
         last_name = data.get("last_name")
         password = data.get("password")
 
-        new_account = {"first_name":first_name, "last_name":last_name}
+        new_account = {"first_name": first_name, "last_name": last_name}
         if password and len(password) >= 6:
             new_account["password"] = generate_password_hash(password)
 
         updated_account = UserService.update_account(
-            username=username,
-            new_data=new_account
+            username=username, new_data=new_account
         )
         if isinstance(updated_account, str):
             return jsonify({"message": updated_account}), 500
@@ -67,7 +67,7 @@ def update_account():
                     "message": f"Account for {username} successfully updated",
                     "updated_account": {
                         "first_name": updated_account.first_name,
-                        "last_name": updated_account.last_name
+                        "last_name": updated_account.last_name,
                     },
                 }
             ),
@@ -139,7 +139,6 @@ def update_user_details():
         username = get_jwt_identity()
         if not username:
             return jsonify({"message": "Missing username"}), 400
-        print(data)
         enroll_year = data.get("enroll_year")
         grad_year = data.get("grad_year")
         gpa = data.get("gpa")
@@ -164,3 +163,18 @@ def update_user_details():
 
     except Exception as e:
         return jsonify({"message": f"Internal server error: {str(e)}"}), 500
+
+
+@users_bp.route("/details", methods=["DELETE"])
+@jwt_required()
+def delete_user_account():
+    """Delete the account of the currently logged-in user."""
+    username = get_jwt_identity()
+    result = UserService.delete_account(username)
+
+    if result is None:
+        return jsonify({"message": "Account successfully deleted."}), 200
+    elif result == "Account not found":
+        return jsonify({"error": result}), 404
+    else:
+        return jsonify({"error": result}), 500

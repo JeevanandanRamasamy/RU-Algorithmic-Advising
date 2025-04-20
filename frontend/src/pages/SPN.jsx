@@ -5,7 +5,7 @@ import {
 	showInfoToast
 } from "../components/toast/Toast";
 import { useState, useEffect, useCallback, useRef } from "react";
-import useCourses from "../hooks/useCourses";
+import { useCourses } from "../context/CoursesContext";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import NotificationsButton from "../components/widgets/notifications";
@@ -14,11 +14,12 @@ import CourseListContainer from "../components/courses/CourseListContainer";
 import ToRequest from "../components/SPNcomponents/toRequest";
 import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
-import useCourseRecords from "../hooks/useCourseRecords";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
 import DataTable from "../components/generic/DataTable"; // Adjust the import path
-import useRequirements from "../hooks/useRequirements";
+import { useCourseRequirements } from "../context/CourseRequirementContext";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 
 function SPN() {
@@ -43,7 +44,7 @@ function SPN() {
 		const [isOpen, setIsOpen] = useState(false);
 		let url = apiUrl + `?student_id=${encodeURIComponent(user)}`;
 
-		const { requirementStrings, validateSchedule } = useRequirements();
+		const { requirementStrings } = useCourseRequirements();
 		return (
 			<>
 				{/* <div className="fixed"> */}
@@ -66,7 +67,7 @@ function SPN() {
 					<header className="app-header">
 						<h1>My Requests</h1>
 					</header>
-					<main className="gap-8 flex flex-col -z-5">
+					<main className="gap-8 flex flex-col z-5">
 						<DataTable
 							apiUrl={url}
 							columns={columns}

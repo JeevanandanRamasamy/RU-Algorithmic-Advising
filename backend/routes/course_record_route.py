@@ -1,3 +1,4 @@
+from services.semesters_service import SemestersService
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.course_record_service import CourseRecordService
@@ -162,13 +163,12 @@ def add_course_record():
         )
         if isinstance(result, str):
             return jsonify({"message": result}), 500
-        
+
         course = CourseService.get_course_by_id(course_id)
         if isinstance(course, str):
             return jsonify({"message": course}), 500
-        credits = course.credits
-        if isinstance(credits, decimal.Decimal):
-            UserService.update_student_credits(username=username, change=credits)
+
+        UserService.update_taken_credits(username)
 
         return (
             jsonify(
@@ -196,13 +196,12 @@ def remove_course_record():
         course_record = CourseRecordService.delete_course_record(username, course_id)
         if isinstance(course_record, str):
             return jsonify({"message": course_record}), 500
-        
+
         course = CourseService.get_course_by_id(course_id)
         if isinstance(course, str):
             return jsonify({"message": course}), 500
-        credits = course.credits
-        if isinstance(credits, decimal.Decimal):
-            UserService.update_student_credits(username=username, change=-credits)
+
+        UserService.update_taken_credits(username)
 
         return (
             jsonify(
@@ -246,8 +245,11 @@ def update_course_record():
                 "grade": grade,
             },
         )
+
         if isinstance(result, str):
             return jsonify({"message": result}), 500
+
+        UserService.update_taken_credits(username)
 
         return (
             jsonify(

@@ -6,8 +6,13 @@ const useFilterCourses = () => {
 	const [schoolSearchQuery, setSchoolSearchQuery] = useState("");
 	const [searchQuery, setSearchQuery] = useState("");
 
-	const schoolCode = schoolSearchQuery ? schoolSearchQuery.split(" ")[0] : "";
-	const subjectCode = subjectSearchQuery ? subjectSearchQuery.match(/\((\d+)\)/) : "";
+	const schoolCode = useMemo(() => {
+		return schoolSearchQuery ? schoolSearchQuery.split(" ")[0] : "";
+	}, [schoolSearchQuery]);
+	const subjectCode = useMemo(() => {
+		const match = subjectSearchQuery?.match(/\((\d+)\)/);
+		return match ? match[1] : "";
+	}, [subjectSearchQuery]);
 	const limit = useMemo(() => {
 		return subjectSearchQuery || schoolSearchQuery ? 200 : 50;
 	}, [subjectSearchQuery, schoolSearchQuery]);

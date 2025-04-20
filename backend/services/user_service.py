@@ -1,4 +1,5 @@
-# from models.planned_course import PlannedCourse
+from decimal import Decimal
+from models.course import Course
 from models.course_record import CourseRecord
 from services.semesters_service import SemestersService
 from db import db
@@ -12,6 +13,47 @@ from sqlalchemy import tuple_
 
 class UserService:
     # ------------------ ACCOUNT OPERATIONS ------------------
+    @staticmethod
+    def update_taken_credits(username):
+        try:
+            student_details = UserService.get_student_details(username)
+            grad_year = student_details.grad_year
+
+            future_semesters = SemestersService.generate_future_semesters(grad_year)
+            future_semester_set = {
+                (sem["term"], sem["year"]) for sem in future_semesters
+            }
+
+            # Get all course records for the student
+            course_records = (
+                db.session.query(CourseRecord).filter_by(username=username).all()
+            )
+
+            total_credits = Decimal(0)
+
+            for record in course_records:
+                # Skip if it's a future course
+                if (
+                    record.term
+                    and record.year
+                    and (record.term, record.year) in future_semester_set
+                ):
+                    continue
+
+                course = db.session.get(Course, record.course_id)
+                if not course:
+                    continue
+
+                credits = course.credits
+                if isinstance(credits, Decimal):
+                    total_credits += credits
+
+            student_details.credits_earned = total_credits
+            db.session.commit()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating account: {str(e)}"
+
     @staticmethod
     def get_account_by_username(username):
         try:
@@ -127,7 +169,8 @@ class UserService:
                 ).delete(synchronize_session=False)
                 student_details.enroll_year = enroll_year
                 student_details.grad_year = grad_year
-                student_details.gpa = float(gpa)
+                if gpa:
+                    student_details.gpa = float(gpa)
                 db.session.commit()
                 return student_details
             else:
@@ -135,7 +178,7 @@ class UserService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error updating account: {str(e)}"
-        
+
     @staticmethod
     def update_student_credits(username, change):
         try:

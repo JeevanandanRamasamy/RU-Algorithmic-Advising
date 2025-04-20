@@ -6,7 +6,6 @@ const studentDetails = ({
 	handleEnrollYearChange,
 	gradYear,
 	handleGradYearChange,
-	classes,
 	gpa,
 	handleGpaChange
 }) => {

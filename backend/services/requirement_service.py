@@ -126,10 +126,14 @@ class RequirementService:
                 prerequisite = RequirementService.get_all_prerequisites(
                     course_id, visited=None
                 )
-                updated_string = RequirementService.validate_prerequisite_string(
-                    prerequisite_string=course_requirements[course_id],
-                    prerequisite=prerequisite,
-                    taken_courses=courses_taken,
+                updated_string = (
+                    RequirementService.validate_prerequisite_string(
+                        prerequisite_string=course_requirements[course_id],
+                        prerequisite=prerequisite,
+                        taken_courses=courses_taken,
+                    )
+                    if course_id in course_requirements
+                    else ""
                 )
 
                 courses_taken.update(extra_courses or set())

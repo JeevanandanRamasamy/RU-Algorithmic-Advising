@@ -130,7 +130,7 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 	if (error) return <p>{error}</p>;
 
 	return (
-		<div className="w-full border border-gray-200 rounded z-[-4]">
+		<div className="w-full border border-gray-200 rounded z-[4]">
 			{/* Single scrollable container */}
 			<div
 				className="overflow-auto -z-4"
@@ -139,7 +139,7 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 				ref={tableRef}>
 				<div style={{ width: `${tableWidth}px`, minWidth: "100%" }}>
 					{/* Header - uses sticky position (Breaks too much if its sticky) */}
-					<div className="top-0 -z-4 bg-gray-100">
+					<div className="top-0 z-4 bg-gray-100">
 						<div className="flex">
 							{columns.map(column => (
 								<div
