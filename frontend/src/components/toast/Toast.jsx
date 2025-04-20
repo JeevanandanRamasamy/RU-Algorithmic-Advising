@@ -2,71 +2,37 @@
 import { toast, ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const defaultToastOptions = {
+	position: "top-center",
+	autoClose: 5000,
+	hideProgressBar: false,
+	closeOnClick: false,
+	pauseOnHover: true,
+	draggable: true,
+	progress: undefined,
+	theme: "dark",
+	transition: Bounce
+};
+
+const withOptionalId = (options, id) => (id ? { ...options, toastId: id } : options);
+
+// Reusable toast functions with optional id
+export const showSuccessToast = (message, id) =>
+	toast.success(message, withOptionalId(defaultToastOptions, id));
+
+export const showWarningToast = (message, id) =>
+	toast.warn(message, withOptionalId(defaultToastOptions, id));
+
+export const showErrorToast = (message, id) =>
+	toast.error(message, withOptionalId(defaultToastOptions, id));
+
+export const showInfoToast = (message, id) =>
+	toast.info(message, withOptionalId(defaultToastOptions, id));
+
 // Function to clear toast by ID
 export const clearToast = id => {
 	toast.dismiss(id);
 };
 
-// Exporting reusable functions with id parameter
-export const showSuccessToast = (message, id) => {
-	toast.success(message, {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: false,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
-		theme: "dark",
-		transition: Bounce,
-		toastId: id // Adding id to the toast
-	});
-};
-
-export const showWarningToast = (message, id) => {
-	toast.warn(message, {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: false,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
-		theme: "dark",
-		transition: Bounce,
-		toastId: id // Adding id to the toast
-	});
-};
-
-export const showErrorToast = (message, id) => {
-	toast.error(message, {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: false,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
-		theme: "dark",
-		transition: Bounce,
-		toastId: id // Adding id to the toast
-	});
-};
-
-export const showInfoToast = (message, id) => {
-	toast.info(message, {
-		position: "top-center",
-		autoClose: 5000,
-		hideProgressBar: false,
-		closeOnClick: false,
-		pauseOnHover: true,
-		draggable: true,
-		progress: undefined,
-		theme: "dark",
-		transition: Bounce,
-		toastId: id // Adding id to the toast
-	});
-};
-
-// Include ToastContainer once in your root app
+// ToastContainer wrapper (used once in root component)
 export const ToastWrapper = () => <ToastContainer />;

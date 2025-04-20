@@ -5,7 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
-import Home from "./pages/Home";
+import StudentDashboard from "./pages/StudentDashboard";
 import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
@@ -29,7 +29,7 @@ function App() {
 			<div>
 				<main className="main-content">
 					<Routes>
-						<Route
+						{/* <Route
 							path="/"
 							element={<Login />}
 						/>
@@ -42,11 +42,81 @@ function App() {
 							element={<ResetPassword />}
 						/>
 						<Route
+							path="/student/home"
+							element={<StudentDashboard />}
+						/>
+						<Route
+							path="/navbar"
+							element={<Navbar />}
+						/>
+						<Route
+							path="/questionnaire"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<Questionnaire />
+								</DndProvider>
+							}
+						/>
+						<Route
+							path="/degree-planner"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<DegreePlanner />
+								</DndProvider>
+							}
+						/>
+						<Route
+							path="/request-spn"
+							element={
+								<DndProvider backend={HTML5Backend}>
+									<SPN />
+								</DndProvider>
+							}
+						/>
+						<Route
+							path="/toast"
+							element={<ToastDemo />}
+						/>
+						<Route
+							path="/admin/home"
+							element={<AdminDashboard />}
+						/>
+						<Route
+							path="/"
+							element={<Login />}
+						/>
+						<Route
+							path="/register"
+							element={<Register />}
+						/>
+						<Route
+							path="/reset-password"
+							element={<ResetPassword />}
+						/> */}
+
+						<Route
+							path="/"
+							element={<Login />}
+						/>
+						<Route
+							path="/register"
+							element={<Register />}
+						/>
+						<Route
+							path="/reset-password"
+							element={<ResetPassword />}
+						/>
+
+						<Route
+							path="/admin/home"
+							element={<AdminDashboard />}
+						/>
+						<Route
 							path=""
 							element={<AuthLayout />}>
 							<Route
-								path="/home"
-								element={<Home />}
+								path="/student/home"
+								element={<StudentDashboard />}
 							/>
 							<Route
 								path="/navbar"

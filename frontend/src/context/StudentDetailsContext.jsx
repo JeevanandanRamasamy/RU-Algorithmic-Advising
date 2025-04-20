@@ -35,7 +35,7 @@ export const StudentDetailsProvider = ({ children }) => {
 				setEnrollYear(userDetails.enroll_year ?? currentYear);
 				setGpa(userDetails.gpa ?? "");
 			} catch (error) {
-				console.error("Error fetching user details:", error);
+				console.error("Error fetching student details:", error);
 			}
 		};
 		fetchUserDetails();
