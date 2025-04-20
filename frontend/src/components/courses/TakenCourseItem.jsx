@@ -39,7 +39,7 @@ const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 				<Button
 					className="bg-blue-500 text-white border-none px-2.5 py-1 rounded cursor-pointer invisible group-hover:visible transition-opacity duration-200 hover:bg-blue-700"
 					onClick={() => onRemove(course.course_id)}
-					label="Remove"
+					label="-"
 				/>
 			</div>
 		</div>

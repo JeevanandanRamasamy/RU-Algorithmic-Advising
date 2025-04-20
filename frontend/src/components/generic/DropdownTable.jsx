@@ -2,8 +2,14 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "./Button";
 
-const DropdownTable = ({ sections, limit, handleOnAddCourse }) => {
-	const visibleSections = limit ? sections.slice(0, limit) : sections;
+const DropdownTable = ({
+	courses,
+	limit,
+	handleOnAddCourse,
+	handleOnRemoveCourse,
+	addedCourseIds
+}) => {
+	const visibleCourses = limit ? courses.slice(0, limit) : courses;
 	const [openCourses, setOpenCourses] = useState([]);
 
 	const toggleOpen = key => {
@@ -14,13 +20,18 @@ const DropdownTable = ({ sections, limit, handleOnAddCourse }) => {
 		e.stopPropagation();
 		handleOnAddCourse(course_id);
 	};
+	const handleRemove = (e, course_id) => {
+		e.stopPropagation();
+		handleOnRemoveCourse(course_id);
+	};
 
 	return (
 		<div className="w-full max-w-md border rounded-xl shadow overflow-hidden">
-			{visibleSections &&
-				Object.values(visibleSections).map(
+			{visibleCourses &&
+				Object.values(visibleCourses).map(
 					({ course_id, course_name, credits, sections }) => {
 						const isOpen = openCourses.includes(course_id);
+						const isAdded = addedCourseIds.includes(course_id);
 
 						return (
 							<div
@@ -30,9 +41,13 @@ const DropdownTable = ({ sections, limit, handleOnAddCourse }) => {
 									className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
 									onClick={() => toggleOpen(course_id)}>
 									<Button
-										onClick={e => handleAdd(e, course_id)}
+										onClick={
+											isAdded
+												? e => handleRemove(e, course_id)
+												: e => handleAdd(e, course_id)
+										}
 										className="bg-blue-500 hover:bg-blue-700 text-white p-1 rounded"
-										label="Add"
+										label={`${isAdded ? "-" : "+"}`}
 									/>
 									<div className="flex-1 mx-4 flex justify-between items-center">
 										<span className="font-medium">

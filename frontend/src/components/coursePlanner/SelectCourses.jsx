@@ -10,20 +10,21 @@ import { useCourseRecords } from "../../context/CourseRecordsContext";
 import { useCourseRequirements } from "../../context/CourseRequirementContext";
 import DropdownTable from "../generic/DropdownTable";
 import { useTakenCourses } from "../../context/TakenCoursesContext";
+import { showInfoToast, clearToast } from "../toast/Toast";
 const SelectCourses = ({
 	courseRecords,
 	handleOnAddCourse,
 	fetchSectionsBySubject,
 	term,
 	year,
-	searchedSections,
-	setSearchedSections
+	searchedCourses,
+	setSearchedCourses
 }) => {
 	const { handleRemoveCourseRecord } = useCourseRecords();
 	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
 	const { takenCourses } = useTakenCourses();
 
-	const excludedCourseIds = useMemo(() => {
+	const addedCourseIds = useMemo(() => {
 		const courseRecordIds = courseRecords?.map(course => course.course_id) || [];
 		const takenCourseIds = takenCourses?.map(course => course.course_id) || [];
 		return [...new Set([...courseRecordIds, ...takenCourseIds])];
@@ -31,21 +32,25 @@ const SelectCourses = ({
 
 	useEffect(() => {
 		setSubjectSearchQuery("");
-		setSearchedSections({});
+		setSearchedCourses({});
 	}, [term, year]);
 
 	useEffect(() => {
+		showInfoToast("Applying filter", "search");
 		const match = subjectSearchQuery?.match(/\((\d+)\)/);
 		const subjectCode = match ? match[1] : "";
 		if (subjectSearchQuery && subjectCode) {
 			fetchSectionsBySubject(subjectCode, term, year);
+		} else {
+			setSearchedCourses({});
 		}
+		clearToast("search");
 	}, [subjectSearchQuery]);
-	const filteredSections = useMemo(() => {
-		return Object.values(searchedSections).filter(
-			section => !excludedCourseIds.includes(section.course_id)
-		);
-	}, [searchedSections, excludedCourseIds]);
+	// const filteredSections = useMemo(() => {
+	// 	return Object.values(searchedSections).filter(
+	// 		section => !excludedCourseIds.includes(section.course_id)
+	// 	);
+	// }, [searchedSections, excludedCourseIds]);
 
 	// const limit = useMemo(() => {
 	// 	return subjectSearchQuery || schoolSearchQuery ? 200 : 50;
@@ -76,8 +81,10 @@ const SelectCourses = ({
 			/>
 
 			<DropdownTable
-				sections={filteredSections}
+				courses={searchedCourses}
 				handleOnAddCourse={handleOnAddCourse}
+				handleOnRemoveCourse={handleRemoveCourseRecord}
+				addedCourseIds={addedCourseIds}
 			/>
 			<div className="p-2 border border-gray-200 rounded-md bg-white">
 				<h2 className="m-0 text-center">
@@ -102,7 +109,7 @@ const SelectCourses = ({
 								id={courseRecord["course_id"]}
 								value={`${courseRecord["course_id"]} ${courseRecord["course_name"]}`}
 								onClick={handleRemoveCourseRecord}
-								buttonType=" Remove "
+								buttonType="-"
 							/>
 						))}
 				</div>

@@ -109,26 +109,25 @@ def get_course_sections_by_subject():
 
 @section_bp.route("/expanded", methods=["GET"])
 def get_course_sections_expanded():
-    course_id = request.args.get("course_id").split(":")
-    subject = course_id[1]
-    course_number = course_id[2]
-    semester = request.args.get("semester").lower()
+    course_id = request.args.get("course_id")
+    _, subject, course_number = course_id.split(":")
+    term = request.args.get("term").lower()
     year = request.args.get("year")
-    campus = request.args.get("campus", "NB")
-    level = request.args.get("level", "UG")
+    campus = request.args.get("campus", "NB")  # Default to "NB" if not provided
+    level = request.args.get("level", "UG")  # Default to "UG" if not provided
 
-    if semester == "spring":
-        semester = "1"
-    elif semester == "fall":
-        semester = "9"
-    elif semester == "winter":
-        semester = "0"
-    elif semester == "summer":
-        semester = "7"
+    if term == "spring":
+        term = "1"
+    elif term == "fall":
+        term = "9"
+    elif term == "winter":
+        term = "0"
+    elif term == "summer":
+        term = "7"
     else:
         return jsonify({"error": f"Invalid semester: {semester}"})
 
-    semester = semester + year
+    semester = term + year
 
     if not subject or not semester or not course_number:
         return jsonify({"error": "Missing required parameters"}), 400
@@ -139,10 +138,15 @@ def get_course_sections_expanded():
         courses = api.get_courses()
         if len(courses) < 1:
             return jsonify({"error": "No courses exist"}), 404
-        if not any(course["course_id"] == course_id for course in courses):
+        if not any(course["course_id"] == course_id for course in courses.values()):
             return jsonify({"error": "Course not found"}), 404
 
-        return jsonify({"sections": courses})
+        return jsonify(
+            {
+                "message": f"Retrieve information for course {course_id}",
+                "sections": courses[course_id],
+            }
+        )
 
     except Exception as e:
         # Handle any other exceptions
@@ -185,7 +189,6 @@ def get_course_sections():
             return jsonify({"error": "No courses exist"}), 404
         if not any(course["course_id"] == course_id for course in courses.values()):
             return jsonify({"error": "Course not found"}), 404
-        print(courses)
 
         section_info = [
             {"section_number": section["section_number"], "index": section.get("index")}
@@ -198,3 +201,8 @@ def get_course_sections():
     except Exception as e:
         # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
+
+
+@section_bp.route("/generate_schedules", methods=["GET"])
+def generate_all_valid_schedules():
+    pass

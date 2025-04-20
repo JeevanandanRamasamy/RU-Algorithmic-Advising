@@ -7,7 +7,7 @@ const ListItem = ({ id, value, onClick, buttonType }) => {
 			<span>{value}</span>
 			<Button
 				onClick={() => onClick(id)}
-				className="bg-blue-500 hover:bg-blue-700 text-white p-1 rounded"
+				className="p-2 bg-blue-500 hover:bg-blue-700 text-white rounded font-bold"
 				label={buttonType}
 			/>
 		</div>

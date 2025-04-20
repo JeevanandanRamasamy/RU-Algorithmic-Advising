@@ -1,34 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-const CheckboxDropdownTable = ({ selectedSections }) => {
+const CheckboxDropdownTable = ({
+	courseRecords,
+	selectedCourses,
+	setSelectedCourses,
+	checkedSections,
+	setCheckedSections
+}) => {
 	const [openCourses, setOpenCourses] = useState([]);
-	const [checkedSections, setCheckedSections] = useState({});
 
 	const toggleOpen = key => {
 		setOpenCourses(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
 	};
 
-	const toggleCourseSelect = (course_id, courseSections) => {
-		setCheckedSections(prev => {
-			const allSectionNumbers = new Set(
-				Object.values(courseSections).map(s => s.section_number)
-			);
-			const currentSelected = prev[course_id] || new Set();
-
-			const isFullySelected = allSectionNumbers.size === currentSelected.size;
-
-			const updated = new Set();
-			if (!isFullySelected) {
-				allSectionNumbers.forEach(sn => updated.add(sn));
-			}
-
-			return {
-				...prev,
-				[course_id]: isFullySelected ? new Set() : updated
-			};
-		});
-	};
+	console.log(checkedSections);
+	console.log(selectedCourses);
+	useEffect(() => {
+		if (selectedCourses) {
+			const initialCheckedSections = {};
+			Object.values(selectedCourses).forEach(({ course_id, sections }) => {
+				console.log(course_id, sections);
+				const allSectionNumbers = new Set(Object.values(sections).map(s => s.index));
+				initialCheckedSections[course_id] = allSectionNumbers;
+			});
+			setCheckedSections(initialCheckedSections);
+		}
+	}, [selectedCourses, setCheckedSections]);
+	// TODO: define sections to meeting times map
 
 	const toggleSectionSelect = (course_id, section_number) => {
 		setCheckedSections(prev => {
@@ -42,17 +41,27 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 			return { ...prev, [course_id]: updatedSet };
 		});
 	};
-
 	const isSectionSelected = (course_id, section_number) =>
 		checkedSections[course_id]?.has(section_number);
-
 	const isAllSectionsSelected = (course_id, courseSections) =>
 		checkedSections[course_id]?.size === Object.keys(courseSections).length;
+	const handleSelectAll = (e, course_id, sections) => {
+		e.stopPropagation();
+		if (isAllSectionsSelected(course_id, sections)) {
+			setCheckedSections(prev => ({ ...prev, [course_id]: new Set() }));
+		} else {
+			const allSectionNumbers = new Set(Object.values(sections).map(s => s.section_number));
+			setCheckedSections(prev => ({
+				...prev,
+				[course_id]: allSectionNumbers
+			}));
+		}
+	};
 
 	return (
 		<div className="w-full max-w-md border rounded-xl shadow overflow-hidden">
-			{selectedSections &&
-				Object.values(selectedSections).map(
+			{selectedCourses &&
+				Object.values(selectedCourses).map(
 					({ course_id, course_name, credits, sections }) => {
 						const isOpen = openCourses.includes(course_id);
 						const allSelected = isAllSectionsSelected(course_id, sections);
@@ -62,26 +71,16 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 								key={course_id}
 								className="border-b last:border-none">
 								<div
-									className="w-full flex items-center justify-between px-4 py-3 bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
+									className="w-full flex items-center justify-between px-4 py-2 bg-gray-100 hover:bg-gray-200 transition cursor-pointer"
 									onClick={() => toggleOpen(course_id)}>
 									<input
 										type="checkbox"
 										checked={allSelected}
-										onChange={e => {
-											e.stopPropagation();
-											toggleCourseSelect(course_id, sections);
-											if (!allSelected) {
-												handleOnAddCourse(
-													course_id,
-													Object.values(sections).map(
-														s => s.section_number
-													)
-												);
-											}
-										}}
+										onClick={e => handleSelectAll(e, course_id, sections)}
+										className="w-4 h-4"
 									/>
 									<div className="flex-1 mx-4 flex justify-between items-center">
-										<span className="font-medium">
+										<span className="font-medium text-sm">
 											{`${course_id} ${course_name} (${credits} credits)`}
 										</span>
 										<span className="text-lg">{isOpen ? "▲" : "▼"}</span>
@@ -95,8 +94,8 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 											animate={{ height: "auto", opacity: 1 }}
 											exit={{ height: 0, opacity: 0 }}
 											transition={{ duration: 0.3 }}
-											className="overflow-hidden px-4 py-2 bg-white">
-											<ul className="space-y-2">
+											className="overflow-hidden px-2 py-1 bg-white">
+											<ul className="space-y-1">
 												{Object.values(sections).map(
 													({
 														section_number,
@@ -105,7 +104,7 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 													}) => (
 														<li
 															key={section_number}
-															className="px-3 py-2 border rounded hover:bg-gray-50 flex gap-3">
+															className="px-2 py-1 border rounded hover:bg-gray-50 flex gap-2 text-sm">
 															<input
 																type="checkbox"
 																checked={isSectionSelected(
@@ -118,22 +117,20 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 																		course_id,
 																		section_number
 																	);
-																	handleOnAddCourse(course_id, [
-																		section_number
-																	]);
 																}}
+																className="w-4 h-4"
 															/>
 															<div>
-																<h3 className="font-medium">
+																<h3 className="font-medium text-xs">
 																	Section: {section_number}
 																</h3>
-																<div className="text-sm">
+																<div className="text-xs">
 																	<strong>Instructors:</strong>{" "}
 																	{instructors.join(", ")}
 																</div>
-																<div className="text-sm">
+																<div className="text-xs">
 																	<strong>Meeting Times:</strong>
-																	<ul>
+																	<ul className="text-xs">
 																		{meeting_times.map(
 																			(
 																				{
@@ -148,7 +145,9 @@ const CheckboxDropdownTable = ({ selectedSections }) => {
 																				<li key={index}>
 																					{day}{" "}
 																					{formatted_time}{" "}
-																					| {campus},{" "}
+																					{campus !==
+																						"** INVALID **" &&
+																						` | ${campus}`}{" "}
 																					{building}{" "}
 																					{room}
 																				</li>

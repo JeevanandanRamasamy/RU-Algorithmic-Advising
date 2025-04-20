@@ -4,6 +4,7 @@ from models.schedule_plan import SchedulePlan
 from sqlalchemy.exc import SQLAlchemyError
 import datetime
 
+
 class SectionService:
     @staticmethod
     def get_sections_in_schedule(schedule_data):
@@ -76,7 +77,7 @@ class SectionService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error updating section: {str(e)}"
-        
+
     @staticmethod
     def get_sections_by_course_ids(course_ids):
         """Retrieve courses by their course_ids."""

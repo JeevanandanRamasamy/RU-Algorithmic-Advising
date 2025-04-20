@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-import { showInfoToast } from "../components/toast/Toast";
+import { showInfoToast, showErrorToast } from "../components/toast/Toast";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+import isEqual from "lodash/isEqual";
 
 export const useSections = () => {
-	const [searchedSections, setSearchedSections] = useState({});
-	const [selectedSections, setSelectedSections] = useState({});
+	const [searchedCourses, setSearchedCourses] = useState({});
+	const [selectedCourses, setSelectedCourses] = useState({});
+	const [checkedSections, setCheckedSections] = useState({});
 
 	const validSemesters = [
 		{ term: "summer", year: 2025 },
@@ -27,7 +30,22 @@ export const useSections = () => {
 			`${backendUrl}/api/sections?course_id=${courseId}&term=${term}&year=${year}`
 		);
 		const sectionData = await sectionResponse.json();
-		console.log(sectionData);
+		return sectionData.sections;
+	};
+
+	const fetchSectionsByCourses = async (courseIds, term, year) => {
+		const allSections = {};
+
+		await Promise.all(
+			courseIds.map(async courseId => {
+				const sectionResponse = await fetch(
+					`${backendUrl}/api/sections/expanded?course_id=${courseId}&term=${term}&year=${year}`
+				);
+				const sectionData = await sectionResponse.json();
+				allSections[courseId] = sectionData.sections;
+			})
+		);
+		setSelectedCourses(prev => (isEqual(prev, allSections) ? prev : allSections));
 	};
 
 	const courseAvailableThisSemester = async (courseId, term, year) => {
@@ -44,10 +62,8 @@ export const useSections = () => {
 			console.error("Error fetching sections:", sectionResponse.status);
 			return false;
 		}
-		console.log(!sectionResponse.ok);
 
 		const sectionData = await sectionResponse.json();
-		console.log(sectionData);
 		if (!sectionData || (Array.isArray(sectionData) && sectionData.length === 0)) {
 			return false;
 		}
@@ -56,19 +72,19 @@ export const useSections = () => {
 	};
 
 	const fetchSectionsBySubject = async (subject, term, year) => {
-		console.log(subject);
 		if (subject === "") {
-			setCurrentSections({});
+			setSearchedCourses({});
 			return;
 		}
 		try {
-			console.log(subject);
 			const sectionResponse = await fetch(
 				`${backendUrl}/api/sections/subject?subject=${subject}&semester=${term}&year=${year}`
 			);
 			const sectionData = await sectionResponse.json();
-			setCurrentSections(sectionData.sections || {});
-			console.log(sectionData);
+			setSearchedCourses(sectionData.sections || {});
+			if (sectionData.error === "No courses exist") {
+				showErrorToast(`No courses found`, "courses-not-found");
+			}
 		} catch (error) {
 			console.error("Error fetching sections:", error);
 			showErrorToast("Failed to fetch sections.");
@@ -80,10 +96,13 @@ export const useSections = () => {
 		getSemesterNumber,
 		fetchSectionsByCourse,
 		courseAvailableThisSemester,
-		searchedSections,
-		setSearchedSections,
-		selectedSections,
-		setSelectedSections
+		searchedCourses,
+		setSearchedCourses,
+		selectedCourses,
+		setSelectedCourses,
+		checkedSections,
+		setCheckedSections,
+		fetchSectionsByCourses
 	};
 };
 

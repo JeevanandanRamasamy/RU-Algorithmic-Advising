@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -35,11 +35,12 @@ const CoursePlanner = () => {
 		{ term: "fall", year: 2025 }
 	];
 
-	const {
-		coursesWithMissingRequirements,
-		fetchPlannedCoursesWithMissingRequirements,
-		requirementStrings
-	} = useCourseRequirements();
+	//TODO: highlight in red if you can not take the course
+	// const {
+	// 	coursesWithMissingRequirements,
+	// 	fetchPlannedCoursesWithMissingRequirements,
+	// 	requirementStrings
+	// } = useCourseRequirements();
 	const { courses } = useCourses();
 	const { enrollYear, gradYear } = useStudentDetails();
 	const { courseRecords, handleAddCourseRecord, handleRemoveCourseRecord } = useCourseRecords();
@@ -49,6 +50,20 @@ const CoursePlanner = () => {
 	const [selectedViewTabIndex, setSelectedViewTabIndex] = useState(0);
 	const { generateSemestersTillNow } = useSemesterInfo();
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
+
+	const {
+		fetchSectionsBySubject,
+		getSemesterNumber,
+		fetchSectionsByCourse,
+		courseAvailableThisSemester,
+		searchedCourses,
+		setSearchedCourses,
+		selectedCourses,
+		setSelectedCourses,
+		checkedSections,
+		setCheckedSections,
+		fetchSectionsByCourses
+	} = useSections();
 
 	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
 
@@ -62,7 +77,6 @@ const CoursePlanner = () => {
 
 	const currentCourseRecords = useMemo(() => {
 		if (!courseRecords || !currentSemester) return [];
-
 		return courseRecords
 			.filter(
 				courseRecord =>
@@ -71,22 +85,15 @@ const CoursePlanner = () => {
 			)
 			.map(course => course?.course_info);
 	}, [courseRecords, currentSemester]);
-	// const excludedCourseIds = useMemo(() => {
-	// 	return courseRecords?.map(courseRecord => courseRecord.course_id) || [];
-	// }, [courseRecords]);
 
-	// const { sectionsMap, getSemesterNumber } = useSections();
-	//
-	const {
-		fetchSectionsBySubject,
-		getSemesterNumber,
-		fetchSectionsByCourse,
-		courseAvailableThisSemester,
-		searchedSections,
-		setSearchedSections,
-		selectedSections,
-		setSelectedSections
-	} = useSections();
+	useEffect(() => {
+		if (!currentCourseRecords.length || !currentSemester) return;
+		fetchSectionsByCourses(
+			currentCourseRecords.map(course => course.course_id),
+			currentSemester.term,
+			currentSemester.year
+		);
+	}, [currentCourseRecords, currentSemester]);
 
 	return (
 		<>
@@ -128,8 +135,8 @@ const CoursePlanner = () => {
 											fetchSectionsBySubject={fetchSectionsBySubject}
 											term={currentSemester.term}
 											year={currentSemester.year}
-											searchedSections={searchedSections}
-											setSearchedSections={setSearchedSections}
+											searchedCourses={searchedCourses}
+											setSearchedCourses={setSearchedCourses}
 										/>
 									)}
 									{view === "Select Sections" && (
@@ -137,8 +144,10 @@ const CoursePlanner = () => {
 											courseRecords={currentCourseRecords}
 											term={currentSemester.term}
 											year={currentSemester.year}
-											selectedSections={selectedSections}
-											setSelectedSections={setSelectedSections}
+											selectedCourses={selectedCourses}
+											setSelectedCourses={setSelectedCourses}
+											checkedSections={checkedSections}
+											setCheckedSections={setCheckedSections}
 										/>
 									)}
 
