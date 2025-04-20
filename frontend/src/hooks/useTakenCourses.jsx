@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 import { useAuth } from "../context/AuthContext";
+import { showErrorToast } from "../components/toast/Toast";
 
 const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 	const { user, token } = useAuth();
@@ -25,6 +26,7 @@ const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 		} catch (err) {
 			setTakenCoursesError(err.message);
 			console.error("Error fetching courses:", err);
+			showErrorToast("Error fetching courses.")
 		} finally {
 			setTakenCoursesLoading(false);
 		}
@@ -49,6 +51,7 @@ const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 			const data = await response.json();
 			if (!response.ok) {
 				console.error("Error adding course to the plan:", data.message);
+				showErrorToast("Error adding course to the plan.")
 				setTakenCoursesError(data.message);
 			} else {
 				setTakenCourses(prevCourses => [...prevCourses, data.course_record.course_info]);
@@ -56,6 +59,7 @@ const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 			}
 		} catch (error) {
 			console.error("Error adding course:", error);
+			showErrorToast("Error adding course.")
 		}
 	};
 
@@ -75,6 +79,7 @@ const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 			const data = await response.json();
 			if (!response.ok) {
 				console.error("Error removing course:", data.message);
+				showErrorToast("Error removing course.")
 				setTakenCoursesError(data.message);
 			} else {
 				setTakenCourses(prevTakenCourses =>
@@ -84,6 +89,7 @@ const useTakenCourses = fetchPlannedCoursesWithMissingRequirements => {
 			}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);
+			showErrorToast("Error removing course from the plan.")
 		} finally {
 			setTakenCoursesLoading(false);
 		}
