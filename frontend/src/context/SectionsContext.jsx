@@ -1,119 +1,165 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState } from "react";
+import isEqual from "lodash/isEqual";
+import { showInfoToast, showErrorToast } from "../components/toast/Toast";
+import { useAuth } from "../context/AuthContext";
 
-import { showInfoToast, clearToast, showSuccessToast } from "../components/toast/Toast";
+const SectionsContext = createContext();
 
-const SectionsContext = createContext(null);
+export const useSections = () => useContext(SectionsContext);
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const SectionsProvider = ({ children }) => {
+	const { token } = useAuth();
+	const [searchedCourses, setSearchedCourses] = useState({});
+	const [selectedCourses, setSelectedCourses] = useState({});
+	const [checkedSections, setCheckedSections] = useState({});
+	const [indexToMeetingTimesMap, setIndexToMeetingTimesMap] = useState({});
+
 	const validSemesters = [
 		{ term: "summer", year: 2025 },
 		{ term: "fall", year: 2025 }
 	];
-	const [sectionsMap, setSectionsMap] = useState({});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
-	const sectionsMapRef = useRef({});
-	const loadingRef = useRef(true);
 
 	const getSemesterNumber = (term, year) => {
-		if (term === "spring") {
-			return "1" + year;
-		} else if (term === "fall") {
-			return "9" + year;
-		} else if (term === "winter") {
-			return "0" + year;
-		} else if (term === "summer") {
-			return "7" + year;
-		}
+		if (term === "spring") return "1" + year;
+		if (term === "fall") return "9" + year;
+		if (term === "winter") return "0" + year;
+		if (term === "summer") return "7" + year;
 	};
 
-	const fetchSections = async (term, year) => {
-		try {
-			const sectionResponse = await fetch(
-				`${backendUrl}/api/sections/all?term=${term}&year=${year}`
-			);
-			const data = await sectionResponse.json();
-			return data.courses_with_sections || [];
-		} catch (error) {
-			console.error(`Error fetching sections for ${term} ${year}:`, error);
-			setError(error);
-			return [];
-		}
+	const fetchSectionsByCourse = async (courseId, term, year) => {
+		const sectionResponse = await fetch(
+			`${backendUrl}/api/sections?course_id=${courseId}&term=${term}&year=${year}`
+		);
+		const sectionData = await sectionResponse.json();
+		return sectionData.sections;
 	};
 
-	useEffect(() => {
-		const loadSections = async () => {
-			// showInfoToast("loading courses", "loading-sections");
-			const resultMap = {};
+	const fetchSectionsByCourses = async (courseIds, term, year) => {
+		const allSections = {};
+		const prevIndexToMeetingMap = {};
+		await Promise.all(
+			courseIds.map(async courseId => {
+				const sectionResponse = await fetch(
+					`${backendUrl}/api/sections/expanded?course_id=${courseId}&term=${term}&year=${year}`
+				);
+				const sectionData = await sectionResponse.json();
+				const courseSections = sectionData?.sections?.sections || [];
+				Object.values(courseSections).forEach(section => {
+					const sectionIndex = section.index;
+					const meetingTimes = section.meeting_times || [];
+					prevIndexToMeetingMap[sectionIndex] = meetingTimes;
+				});
+				allSections[courseId] = sectionData.sections;
+			})
+		);
+		setSelectedCourses(prev => (isEqual(prev, allSections) ? prev : allSections));
+		setIndexToMeetingTimesMap(prev =>
+			isEqual(prev, prevIndexToMeetingMap) ? prev : prevIndexToMeetingMap
+		);
+	};
 
-			for (const semester of validSemesters) {
-				const term = semester["term"];
-				const year = semester["year"];
-				const sections = await fetchSections(term, year);
-				resultMap[getSemesterNumber(term, year)] = sections;
-			}
-
-			clearToast("loading-sections");
-			setSectionsMap(resultMap);
-			setLoading(false);
-			// showSuccessToast("Finished loading courses", "completed-loading-courses");
-		};
-
-		loadSections();
-	}, []);
-
-	useEffect(() => {
-		sectionsMapRef.current = sectionsMap;
-	}, [sectionsMap]);
-
-	useEffect(() => {
-		loadingRef.current = loading;
-	}, [loading]);
-
-	const courseOfferedThisSemester = (term, year, courseId) => {
-		let semester = "";
-
-		if (term === "spring") {
-			semester = "1" + year;
-		} else if (term === "fall") {
-			semester = "9" + year;
-		} else if (term === "winter") {
-			semester = "0" + year;
-		} else if (term === "summer") {
-			semester = "7" + year;
-		}
-
-		if (!(semester in sectionsMapRef.current)) {
+	const courseAvailableThisSemester = async (courseId, term, year) => {
+		if (!validSemesters.some(sem => sem.term === term && sem.year === year)) {
 			return true;
 		}
 
-		if (loadingRef.current) {
-			console.log("Still loading courses, please wait...");
-			return;
+		showInfoToast(`Processing ${courseId}`, `checking-${courseId}-${term}-${year}`);
+		const sectionResponse = await fetch(
+			`${backendUrl}/api/sections?course_id=${courseId}&term=${term}&year=${year}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+				}
+			}
+		);
+
+		if (!sectionResponse.ok) {
+			console.error("Error fetching sections:", sectionResponse.status);
+			return false;
 		}
 
-		const course = sectionsMapRef.current[semester]?.[courseId];
-		return !!course;
+		const sectionData = await sectionResponse.json();
+		if (!sectionData || (Array.isArray(sectionData) && sectionData.length === 0)) {
+			return false;
+		}
+
+		return true;
 	};
 
-	return (
-		<SectionsContext.Provider
-			value={{
-				sectionsMap,
-				courseOfferedThisSemester,
-				getSemesterNumber,
-				loading,
-				error,
-				sectionsMapRef,
-				loadingRef
-			}}>
-			{children}
-		</SectionsContext.Provider>
-	);
-};
+	const fetchSectionsBySubject = async (subject, term, year) => {
+		if (subject === "") {
+			setSearchedCourses({});
+			return;
+		}
+		try {
+			const sectionResponse = await fetch(
+				`${backendUrl}/api/sections/subject?subject=${subject}&semester=${term}&year=${year}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					}
+				}
+			);
+			const sectionData = await sectionResponse.json();
+			setSearchedCourses(sectionData.sections || {});
+			if (sectionData.error === "No courses exist") {
+				showErrorToast(`No courses found`, "courses-not-found");
+			}
+		} catch (error) {
+			console.error("Error fetching sections:", error);
+			showErrorToast("Failed to fetch sections.");
+		}
+	};
 
-export const useSections = () => {
-	return useContext(SectionsContext);
+	const generateValidSchedules = async () => {
+		try {
+			const serializableCheckedSections = Object.fromEntries(
+				Object.entries(checkedSections).map(([courseId, sectionSet]) => [
+					courseId,
+					Array.from(sectionSet)
+				])
+			);
+			const sectionResponse = await fetch(`${backendUrl}/api/sections/generate_schedules`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					checkedSections: serializableCheckedSections,
+					indexToMeetingTimesMap: indexToMeetingTimesMap
+				})
+			});
+			const data = await sectionResponse.json();
+			console.log(data);
+		} catch (error) {
+			console.error("Error fetching sections:", error);
+			showErrorToast("Failed to fetch sections.");
+		}
+	};
+
+	const value = {
+		getSemesterNumber,
+		fetchSectionsByCourse,
+		fetchSectionsByCourses,
+		courseAvailableThisSemester,
+		fetchSectionsBySubject,
+		searchedCourses,
+		setSearchedCourses,
+		selectedCourses,
+		setSelectedCourses,
+		checkedSections,
+		setCheckedSections,
+		indexToMeetingTimesMap,
+		setIndexToMeetingTimesMap,
+		generateValidSchedules
+	};
+
+	return <SectionsContext.Provider value={value}>{children}</SectionsContext.Provider>;
 };

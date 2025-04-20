@@ -15,13 +15,13 @@ const AuthLayout = () => {
 				<ProgramsProvider>
 					<CoursesProvider>
 						<CourseRequirementsProvider>
-							{/* <SectionsProvider> */}
-							<TakenCoursesProvider>
-								<CourseRecordsProvider>
-									<Outlet />
-								</CourseRecordsProvider>
-							</TakenCoursesProvider>
-							{/* </SectionsProvider> */}
+							<SectionsProvider>
+								<TakenCoursesProvider>
+									<CourseRecordsProvider>
+										<Outlet />
+									</CourseRecordsProvider>
+								</TakenCoursesProvider>
+							</SectionsProvider>
 						</CourseRequirementsProvider>
 					</CoursesProvider>
 				</ProgramsProvider>

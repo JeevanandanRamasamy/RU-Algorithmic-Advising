@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import { useAuth } from "../context/AuthContext";
 import { showErrorToast, showInfoToast, clearToast } from "../components/toast/Toast";
 import { useCourseRequirements } from "./CourseRequirementContext";
-import useSections from "../hooks/useSections";
+import { useSections } from "../context/SectionsContext";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const CourseRecordsContext = createContext();

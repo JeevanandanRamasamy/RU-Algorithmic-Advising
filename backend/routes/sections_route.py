@@ -203,6 +203,12 @@ def get_course_sections():
         return jsonify({"error": str(e)}), 500
 
 
-@section_bp.route("/generate_schedules", methods=["GET"])
+@section_bp.route("/generate_schedules", methods=["POST"])
 def generate_all_valid_schedules():
-    pass
+    data = request.json
+    checked_sections = data.get("checkedSections")
+    index_to_meeting_map = data.get("indexToMeetingTimesMap")
+
+    print(checked_sections)
+    print(index_to_meeting_map)
+    return {}

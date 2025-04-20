@@ -8,9 +8,12 @@ const SelectSections = ({
 	selectedCourses,
 	setSelectedCourses,
 	checkedSections,
-	setCheckedSections
+	setCheckedSections,
+	toggleSectionSelect,
+	isSectionSelected,
+	handleSelectAll,
+	isAllSectionsSelected
 }) => {
-	console.log(courseRecords);
 	// console.log(selectedCourses);
 	// useEffect(() => {
 	// 	setSelectedSections({});
@@ -23,6 +26,10 @@ const SelectSections = ({
 			setSelectedCourses={setSelectedCourses}
 			checkedSections={checkedSections}
 			setCheckedSections={setCheckedSections}
+			toggleSectionSelect={toggleSectionSelect}
+			isSectionSelected={isSectionSelected}
+			handleSelectAll={handleSelectAll}
+			isAllSectionsSelected={isAllSectionsSelected}
 		/>
 	);
 };

@@ -12,8 +12,7 @@ import { useStudentDetails } from "../context/StudentDetailsContext";
 import { useCourseRequirements } from "../context/CourseRequirementContext";
 import { useCourseRecords } from "../context/CourseRecordsContext";
 import { useTakenCourses } from "../context/TakenCoursesContext";
-
-import useSections from "../hooks/useSections";
+import { useSections } from "../context/SectionsContext";
 import Button from "../components/generic/Button";
 import DropCoursesContainer from "../components/courses/dropCoursesContainer";
 import CheckboxDropdownTable from "../components/generic/CheckBoxDropdownTable";
@@ -62,7 +61,10 @@ const CoursePlanner = () => {
 		setSelectedCourses,
 		checkedSections,
 		setCheckedSections,
-		fetchSectionsByCourses
+		fetchSectionsByCourses,
+		indexToMeetingTimesMap,
+		setIndexToMeetingTimesMap,
+		generateValidSchedules
 	} = useSections();
 
 	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
@@ -85,7 +87,6 @@ const CoursePlanner = () => {
 			)
 			.map(course => course?.course_info);
 	}, [courseRecords, currentSemester]);
-
 	useEffect(() => {
 		if (!currentCourseRecords.length || !currentSemester) return;
 		fetchSectionsByCourses(
@@ -94,6 +95,58 @@ const CoursePlanner = () => {
 			currentSemester.year
 		);
 	}, [currentCourseRecords, currentSemester]);
+
+	useEffect(() => {
+		if (
+			!Object.keys(checkedSections).length ||
+			Object.keys(checkedSections).length != currentCourseRecords.length
+		)
+			//TODO: handle if no valid schedule
+			return;
+		generateValidSchedules();
+	}, [checkedSections]);
+
+	useEffect(() => {
+		if (selectedCourses) {
+			const initialCheckedSections = {};
+			Object.values(selectedCourses).forEach(({ course_id, sections }) => {
+				const allSectionIndex = new Set(Object.values(sections).map(s => s.index));
+				initialCheckedSections[course_id] = allSectionIndex;
+			});
+			console.log(initialCheckedSections);
+			setCheckedSections(initialCheckedSections);
+		}
+	}, [selectedCourses, setCheckedSections]);
+
+	const toggleSectionSelect = (course_id, index) => {
+		setCheckedSections(prev => {
+			const currentSet = prev[course_id] || new Set();
+			const updatedSet = new Set(currentSet);
+			if (updatedSet.has(index)) {
+				updatedSet.delete(index);
+			} else {
+				updatedSet.add(index);
+			}
+			return { ...prev, [course_id]: updatedSet };
+		});
+	};
+	const isSectionSelected = (course_id, index) => {
+		return checkedSections[course_id]?.has(index);
+	};
+	const isAllSectionsSelected = (course_id, courseSections) =>
+		checkedSections[course_id]?.size === Object.keys(courseSections).length;
+	const handleSelectAll = (e, course_id, sections) => {
+		e.stopPropagation();
+		if (isAllSectionsSelected(course_id, sections)) {
+			setCheckedSections(prev => ({ ...prev, [course_id]: new Set() }));
+		} else {
+			const allSectionIndices = new Set(Object.values(sections).map(s => s.index));
+			setCheckedSections(prev => ({
+				...prev,
+				[course_id]: allSectionIndices
+			}));
+		}
+	};
 
 	return (
 		<>
@@ -148,6 +201,10 @@ const CoursePlanner = () => {
 											setSelectedCourses={setSelectedCourses}
 											checkedSections={checkedSections}
 											setCheckedSections={setCheckedSections}
+											toggleSectionSelect={toggleSectionSelect}
+											isSectionSelected={isSectionSelected}
+											handleSelectAll={handleSelectAll}
+											isAllSectionsSelected={isAllSectionsSelected}
 										/>
 									)}
 

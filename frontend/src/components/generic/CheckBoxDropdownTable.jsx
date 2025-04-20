@@ -6,56 +6,15 @@ const CheckboxDropdownTable = ({
 	selectedCourses,
 	setSelectedCourses,
 	checkedSections,
-	setCheckedSections
+	setCheckedSections,
+	toggleSectionSelect,
+	isSectionSelected,
+	handleSelectAll,
+	isAllSectionsSelected
 }) => {
 	const [openCourses, setOpenCourses] = useState([]);
-
 	const toggleOpen = key => {
 		setOpenCourses(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
-	};
-
-	console.log(checkedSections);
-	console.log(selectedCourses);
-	useEffect(() => {
-		if (selectedCourses) {
-			const initialCheckedSections = {};
-			Object.values(selectedCourses).forEach(({ course_id, sections }) => {
-				console.log(course_id, sections);
-				const allSectionNumbers = new Set(Object.values(sections).map(s => s.index));
-				initialCheckedSections[course_id] = allSectionNumbers;
-			});
-			setCheckedSections(initialCheckedSections);
-		}
-	}, [selectedCourses, setCheckedSections]);
-	// TODO: define sections to meeting times map
-
-	const toggleSectionSelect = (course_id, section_number) => {
-		setCheckedSections(prev => {
-			const currentSet = prev[course_id] || new Set();
-			const updatedSet = new Set(currentSet);
-			if (updatedSet.has(section_number)) {
-				updatedSet.delete(section_number);
-			} else {
-				updatedSet.add(section_number);
-			}
-			return { ...prev, [course_id]: updatedSet };
-		});
-	};
-	const isSectionSelected = (course_id, section_number) =>
-		checkedSections[course_id]?.has(section_number);
-	const isAllSectionsSelected = (course_id, courseSections) =>
-		checkedSections[course_id]?.size === Object.keys(courseSections).length;
-	const handleSelectAll = (e, course_id, sections) => {
-		e.stopPropagation();
-		if (isAllSectionsSelected(course_id, sections)) {
-			setCheckedSections(prev => ({ ...prev, [course_id]: new Set() }));
-		} else {
-			const allSectionNumbers = new Set(Object.values(sections).map(s => s.section_number));
-			setCheckedSections(prev => ({
-				...prev,
-				[course_id]: allSectionNumbers
-			}));
-		}
 	};
 
 	return (
@@ -98,6 +57,7 @@ const CheckboxDropdownTable = ({
 											<ul className="space-y-1">
 												{Object.values(sections).map(
 													({
+														index,
 														section_number,
 														instructors,
 														meeting_times
@@ -109,20 +69,21 @@ const CheckboxDropdownTable = ({
 																type="checkbox"
 																checked={isSectionSelected(
 																	course_id,
-																	section_number
+																	index
 																)}
 																onChange={e => {
 																	e.stopPropagation();
 																	toggleSectionSelect(
 																		course_id,
-																		section_number
+																		index
 																	);
 																}}
 																className="w-4 h-4"
 															/>
 															<div>
 																<h3 className="font-medium text-xs">
-																	Section: {section_number}
+																	Section: {section_number} |
+																	Index {index}
 																</h3>
 																<div className="text-xs">
 																	<strong>Instructors:</strong>{" "}
