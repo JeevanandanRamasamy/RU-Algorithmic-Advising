@@ -22,13 +22,12 @@ class SPNRequestService:
             return f"Error retrieving SPN requests: {str(e)}"
         
     @staticmethod
-    def get_spn_pending(pending):
-        """Retrieve all pending requests if true, otherwise all non-pending requests"""
+    def get_spn_pending(pending: bool):
+        """Retrieve all pending requests if true; otherwise all non‑pending."""
         try:
             if pending:
-                return SPNRequest.query.filter_by(status='pending').all()
-            # Using notin_ for clearer exclusion logic
-            return SPNRequest.query.filter(SPNRequest.status.notin_(['pending'])).all()
+                return SPNRequest.query.filter_by(status='Pending').all()
+            return SPNRequest.query.filter(SPNRequest.status != 'Pending').all()
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving SPN requests: {str(e)}"

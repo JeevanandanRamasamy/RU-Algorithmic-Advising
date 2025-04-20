@@ -1,6 +1,8 @@
 import os
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
+
 
 # from services.user_service import UserService
 from db import db
@@ -17,6 +19,7 @@ from routes.users_route import users_bp
 from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
+from routes.admin_route import admin_bp
 
 from flask_cors import CORS
 
@@ -153,6 +156,7 @@ def create_app():
     app.register_blueprint(requirements_bp)
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
+    app.register_blueprint(admin_bp)
 
     @app.before_request
     def handle_options_request():
@@ -182,6 +186,7 @@ def create_app():
     #     except Exception as e:
     #         return f"Database connection failed: {e}"
 
+    jwt = JWTManager(app)
     return app
 
 

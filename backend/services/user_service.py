@@ -136,3 +136,16 @@ class UserService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error updating account: {str(e)}"
+        
+    @staticmethod
+    def search_students(query: str):
+        """Return all student accounts whose username matches the query."""
+        try:
+            pattern = f"%{query}%"
+            return Account.query.filter(
+                Account.role == 'student',
+                Account.username.ilike(pattern)
+            ).all()
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error searching students: {str(e)}"

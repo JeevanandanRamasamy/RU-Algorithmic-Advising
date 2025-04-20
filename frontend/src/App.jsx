@@ -15,6 +15,7 @@ import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminStudentSchedule from "./pages/AdminStudentSchedule";
 
 import { AuthProvider } from "./context/AuthContext"; // <- 👈 import AuthProvider
 import AuthWatcher from "./context/AuthWatcher"; // <- 👈 import the watcher
@@ -93,6 +94,12 @@ function App() {
 							element={
 								<AdminDashboard />
 							}
+						/>
+						<Route 
+							path="/admin/student/:studentId" 
+							element={
+								<AdminStudentSchedule />
+							} 
 						/>
 					</Routes>
 				</main>
