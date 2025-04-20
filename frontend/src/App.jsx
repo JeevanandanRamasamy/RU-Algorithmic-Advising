@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
+import SPN from "./pages/SPN";
 import DegreeNavigator from "./pages/DegreeNavigator";
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
@@ -46,6 +47,17 @@ function App() {
                 // autoScroll={true}
               >
                 <DegreePlanner />
+              </DndProvider>
+            }
+          />
+          <Route
+            path="/request-spn"
+            element={
+              <DndProvider
+                backend={HTML5Backend}
+                // autoScroll={true}
+              >
+                <SPN />
               </DndProvider>
             }
           />
