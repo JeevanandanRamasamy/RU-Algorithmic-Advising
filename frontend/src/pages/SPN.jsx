@@ -41,6 +41,7 @@ function SPN() {
 		const { courseRecords } = useCourseRecords();
 		const [isOpen, setIsOpen] = useState(false);
 		let url = apiUrl + `?student_id=${encodeURIComponent(user)}`;
+		let deleteUrl = apiUrl + `/drop`;
 
 		const { requirementStrings, validateSchedule } = useRequirements();
 		return (
@@ -67,7 +68,7 @@ function SPN() {
 					<main className="gap-8 flex flex-col -z-5">
 						<DataTable
 							apiUrl={url}
-							deleteApiUrl={url}
+							deleteApiUrl={deleteUrl}
 							columns={columns}
 							allowDelete={true}
 							deleteRoles={"student"}
@@ -79,7 +80,7 @@ function SPN() {
 					<div className="pb-2 flex justify-end">
 						<Button
 							onClick={() => setIsOpen(!isOpen)}
-							className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
+							className="p-2 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white border border-black"
 							label={isOpen ? "Close Available Courses" : "Open Available Courses"}
 						/>
 					</div>

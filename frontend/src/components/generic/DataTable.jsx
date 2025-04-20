@@ -113,19 +113,15 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 		if (!canDelete) return;
 		
 		const rowToDelete = data[rowIndex];
-		
-		// Get the ID field - assumes each row has an 'id' field
-		// Modify this based on your actual ID field name
-		const idField = 'id'; 
-		const idToDelete = rowToDelete[idField];
-		
+				
 		try {
-			const response = await fetch(`${deleteApiUrl}/${idToDelete}`, {
+			const response = await fetch(`${deleteApiUrl}`, {
 				method: "DELETE",
 				headers: {
 					"Authorization": `Bearer ${token}`,
 					"Content-Type": "application/json"
-				}
+				},
+				body: JSON.stringify(rowToDelete)
 			});
 			
 			if (!response.ok) {
@@ -140,7 +136,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 			// Recalculate visible rows
 			calculateVisibleRows(scrollTop, updatedData);
 			
-			showSuccessToast("Row successfully deleted.");
+			showSuccessToast("SPN successfully removed.");
 		} catch (error) {
 			showErrorToast("Error deleting row.");
 			console.error("Delete error:", error);
@@ -241,18 +237,20 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 										);
 									})}
 									
-									{/* Delete button cell (if applicable) */}
-									{canDelete && (
-										<div
-											className="px-4 py-2 border-b border-r flex items-center"
-											style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
-											<button
-												onClick={() => handleDeleteRow(rowIndex)}
-												className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
-												Remove
-											</button>
-										</div>
+									{/* Delete button cell (always visible) */}
+									<div
+										className="px-4 py-2 border-b border-r flex items-center"
+										style={{ width: `${columnWidth}px`, flexShrink: 0 }}
+									>
+									{canDelete && row["admin_id"] === null && (
+										<button
+										onClick={() => handleDeleteRow(rowIndex)}
+										className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm cursor-pointer"
+										>
+										Remove
+										</button>
 									)}
+									</div>
 								</div>
 							);
 						})}
