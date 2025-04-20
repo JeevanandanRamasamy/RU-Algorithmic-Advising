@@ -16,6 +16,7 @@ import CourseList from "../components/courses/CourseList";
 import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import useRequirements from "../hooks/useRequirements";
+import useCourseRequirements from "../hooks/useCourseRequirements";
 import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -35,6 +36,7 @@ const Questionnaire = () => {
 		handleGradYearChange,
 		handleEnrollYearChange
 	} = useStudentDetails();
+	const { fetchPlannedCoursesWithMissingRequirements } = useCourseRequirements();
 
 	const {
 		selectedProgramsQuery,
@@ -61,7 +63,7 @@ const Questionnaire = () => {
 		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses();
+	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 	const {
 		courseRecords,
 		setCourseRecords,
@@ -71,7 +73,7 @@ const Questionnaire = () => {
 		setCourseRecordsError,
 		handleAddCourseRecord,
 		handleRemoveCourseRecord
-	} = useCourseRecords();
+	} = useCourseRecords(fetchPlannedCoursesWithMissingRequirements);
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
