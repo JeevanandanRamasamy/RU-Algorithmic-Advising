@@ -11,6 +11,7 @@ const useStudentDetails = () => {
 	const [gradYear, setGradYear] = useState("");
 	const [enrollYear, setEnrollYear] = useState("");
 	const [gpa, setGpa] = useState(0);
+	const [creditsEarned, setCreditsEarned] = useState(0);
 
 	const navigate = useNavigate();
 
@@ -51,6 +52,7 @@ const useStudentDetails = () => {
 				setGradYear(userDetails.grad_year ?? currentYear + 4);
 				setEnrollYear(userDetails.enroll_year ?? currentYear);
 				setGpa(userDetails.gpa ?? "");
+				setCreditsEarned(userDetails.credits_earned ?? 0);
 			} catch (error) {
 				console.error("Error fetching student details:", error);
 			}
@@ -92,6 +94,8 @@ const useStudentDetails = () => {
 		setEnrollYear,
 		gpa,
 		setGpa,
+		creditsEarned,
+		setCreditsEarned,
 		saveStudentDetails,
 		handleGpaChange,
 		handleGradYearChange,

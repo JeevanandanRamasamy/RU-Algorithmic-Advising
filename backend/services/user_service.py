@@ -63,7 +63,6 @@ class UserService:
             if account:
                 db.session.delete(account)
                 db.session.commit()
-                return f"Account {username} deleted successfully"
             else:
                 return "Account not found"
         except SQLAlchemyError as e:
@@ -149,3 +148,17 @@ class UserService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error searching students: {str(e)}"
+
+    @staticmethod
+    def update_student_credits(username, change):
+        try:
+            student_details = StudentDetails.query.filter_by(username=username).first()
+            if student_details:
+                student_details.credits_earned += change
+                db.session.commit()
+                return student_details
+            else:
+                return "StudentDetails not found"
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error updating account: {str(e)}"

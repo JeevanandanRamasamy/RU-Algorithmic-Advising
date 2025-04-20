@@ -10,6 +10,7 @@ import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
 import SPN from "./pages/SPN";
+import AccountSettings from "./pages/AccountSettings";
 
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
@@ -82,6 +83,12 @@ function App() {
 									<SPN />
 								</DndProvider>
 							}
+						/>
+						<Route 
+							path="/account-settings" 
+							element={
+								<AccountSettings />
+							} 
 						/>
 						<Route
 							path="/toast"

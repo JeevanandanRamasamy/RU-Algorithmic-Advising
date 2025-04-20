@@ -11,9 +11,9 @@ from routes.courses_route import course_bp
 from routes.course_record_route import course_record_bp
 from routes.programs_route import programs_bp
 from routes.register_route import register_bp
-from routes.login import login_bp
-from routes.reset_password import reset_password_bp
-from routes.verification import verification_bp
+from routes.login_route import login_bp
+from routes.reset_password_route import reset_password_bp
+from routes.verification_route import verification_bp
 from routes.user_programs_route import users_programs_bp
 from routes.users_route import users_bp
 from routes.sections_route import section_bp
@@ -153,6 +153,7 @@ def create_app():
     app.register_blueprint(register_bp)
     app.register_blueprint(login_bp)
     app.register_blueprint(verification_bp)
+    app.register_blueprint(reset_password_bp)
     app.register_blueprint(requirements_bp)
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
