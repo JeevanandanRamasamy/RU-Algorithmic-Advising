@@ -1,10 +1,14 @@
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from datetime import timedelta
 from dotenv import load_dotenv
 
-# from services.user_service import UserService
 from db import db
 from models.account import Account
+from jwt_helper import init_jwt
+
+# Import routes
 from routes.courses_route import course_bp
 from routes.course_record_route import course_record_bp
 from routes.programs_route import programs_bp
@@ -18,104 +22,98 @@ from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
 
-from flask_cors import CORS
-
-# from flask_jwt_extended import (
-#    JWTManager,
-#    create_access_token,
-#    jwt_required,
-#    get_jwt_identity,
-# )
-from datetime import timedelta
-from jwt_helper import init_jwt
-
-
 load_dotenv()
 
-app = Flask(__name__)
-CORS(app)
+def create_app(testing=False):
+    app = Flask(__name__)
+    CORS(app)
 
+    # Config
+    if testing:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        app.config["TESTING"] = True
+        app.config["JWT_SECRET_KEY"] = "test-key"
+        app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
+    else:
+        username = os.getenv("DB_USERNAME")
+        password = os.getenv("DB_PASSWORD")
+        host = os.getenv("DB_HOST", "localhost")
+        dbname = os.getenv("DB_NAME")
+        port = os.getenv("PORT_NUM")
+        key = os.getenv("KEY")
+        print(username)
+        print(password)
+        print(host)
+        print(dbname)
+        print(port)
 
-@app.before_request
-def handle_options_request():
-    if request.method == "OPTIONS":
-        response = jsonify({"message": "CORS preflight successful"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add(
-            "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
+        app.config["SQLALCHEMY_DATABASE_URI"] = (
+            f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
         )
-        response.headers.add(
-            "Access-Control-Allow-Headers", "Content-Type, Authorization"
-        )
-        return response, 200
+        app.config["JWT_SECRET_KEY"] = key
+        app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# @app.after_request
-# def add_cors_headers(response):
-#     response.headers["Access-Control-Allow-Origin"] = "*"
-#     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-#     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-#     return response
+    # Init
+    db.init_app(app)
+    init_jwt(app)
 
+    # Register blueprints
+    app.register_blueprint(course_bp)
+    app.register_blueprint(course_record_bp)
+    app.register_blueprint(programs_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(users_programs_bp)
+    app.register_blueprint(register_bp)
+    app.register_blueprint(login_bp)
+    app.register_blueprint(verification_bp)
+    app.register_blueprint(reset_password_bp)
+    app.register_blueprint(requirements_bp)
+    app.register_blueprint(spn_request_bp)
+    app.register_blueprint(section_bp)
 
-app.register_blueprint(course_bp)
-app.register_blueprint(course_record_bp)
-app.register_blueprint(programs_bp)
-app.register_blueprint(users_bp)
-app.register_blueprint(users_programs_bp)
-app.register_blueprint(register_bp)
-app.register_blueprint(login_bp)
-app.register_blueprint(verification_bp)
-app.register_blueprint(section_bp)
-app.register_blueprint(spn_request_bp)
-app.register_blueprint(requirements_bp)
+    # CORS preflight
+    @app.before_request
+    def handle_options_request():
+        if request.method == "OPTIONS":
+            response = jsonify({"message": "CORS preflight successful"})
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            response.headers.add(
+                "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
+            )
+            response.headers.add(
+                "Access-Control-Allow-Headers", "Content-Type, Authorization"
+            )
+            return response, 200
 
-username = os.getenv("DB_USERNAME")
-password = os.getenv("DB_PASSWORD")
-host = os.getenv("DB_HOST", "localhost")
-dbname = os.getenv("DB_NAME")
-port = os.getenv("PORT_NUM")
-key = os.getenv("KEY")
-print(username)
-print(password)
-print(host)
-print(dbname)
-print(port)
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = key
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Tokens expire in 1 hour
-db.init_app(app)
-init_jwt(app)  # Initialize JWTManager
+    @app.route("/")
+    def home():
+        return "Welcome to the RU Algorithmic Advising Web Server!"
 
+    @app.route("/api/db_check", methods=["GET"])
+    def check_db_connection():
+        """
+        Check the database connection and return a message.
+        """
+        try:
+            test_account = Account.query.first()
+            if test_account:
+                return jsonify({"status": "ok"}), 200
+            else:
+                return jsonify({"status": "error", "message": "No accounts found"}), 500
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
 
-@app.route("/")
-def home():
-    return "Welcome to  the RU Algorithmic Advising Web Server!"
+    @app.route("/api/health", methods=["GET"])
+    def health_check():
+        """
+        Health check endpoint to verify the server is running.
+        """
+        return jsonify({"status": "ok"}), 200
 
-
-@app.route("/api/db_check", methods=["GET"])
-def check_db_connection():
-    """
-    Check the database connection and return a message.
-    """
-    try:
-        test_account = Account.query.first()
-        if test_account:
-            return jsonify({"status": "ok"}), 200
-        else:
-            return jsonify({"status": "error", "message": "No accounts found"}), 500
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route("/api/health", methods=["GET"])
-def health_check():
-    """
-    Health check endpoint to verify the server is running.
-    """
-    return jsonify({"status": "ok"}), 200
+    return app
 
 if __name__ == "__main__":
+    app = create_app()
     app.run(host="0.0.0.0", port=8080, debug=True)

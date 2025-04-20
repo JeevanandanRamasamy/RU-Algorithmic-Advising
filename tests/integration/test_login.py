@@ -10,9 +10,9 @@ def base_url():
 @pytest.mark.parametrize(
     "username, password, expected_status_code, expected_response",
     [
-        ("nyc14", "123456", 200, ["token", "message"]),  # Correct password
+        ("jr1635", "123456", 200, ["token", "message"]),  # Correct password
         ("unknown", "178", 401, {"message": "Account doesn't exist, please register", "status": "error"}),  # Unknown user
-        ("nyc14", "178", 401, {"message": "Invalid credentials", "status": "error"}),  # Incorrect password
+        ("jr1635", "178", 401, {"message": "Invalid credentials", "status": "error"}),  # Incorrect password
     ]
 )
 def test_login(base_url, username, password, expected_status_code, expected_response):

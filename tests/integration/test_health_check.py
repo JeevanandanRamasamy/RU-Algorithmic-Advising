@@ -1,20 +1,14 @@
 import pytest
 import time
 import logging
-from backend.app import app as flask_app
+from backend.app import create_app
 logging.basicConfig(level=logging.INFO)
 
 # Test fixture for app
 @pytest.fixture
-def app():
-    flask_app.config.update({
-        "TESTING": True,
-    })
-    return flask_app
-
-# Test fixture for client (app.test_client() is used to simulate requests)
-@pytest.fixture
-def client(app):
+def client():
+    app = create_app(testing=True)
+    app.config["TESTING"] = True
     return app.test_client()
 
 # Test case for health check endpoint
