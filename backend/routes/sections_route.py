@@ -14,62 +14,6 @@ def get_json(url):
     return response.json()
 
 
-# def binary_search_course(courses, course_id):
-#     left = 0
-#     right = len(courses) - 1
-#     while left <= right:
-#         mid = (left + right) // 2
-#         mid_course_number = str(courses[mid]["course_number"])
-#         if mid_course_number == target_course_number:
-#             return courses[mid]
-#         elif mid_course_number < target_course_number:
-#             left = mid + 1
-#         else:
-#             right = mid - 1
-#     return None
-
-
-# @section_bp.route("/all", methods=["GET"])
-# def get_all_courses_with_sections_for_semester():
-
-#     term = request.args.get("term")
-#     year = request.args.get("year")
-
-#     if not term or not year:
-#         return jsonify({"message": "Missing term or year"}), 400
-#     term = term.lower()
-
-#     if term == "spring":
-#         term = "1"
-#     elif term == "fall":
-#         term = "9"
-#     elif term == "winter":
-#         term = "0"
-#     elif term == "summer":
-#         term = "7"
-#     else:
-#         return jsonify({"error": f"Invalid semester: {term}"})
-#     semester = term + year
-
-#     SECTIONS_FILE_PATH = os.path.join(
-#         os.path.dirname(__file__), "..", "data", f"sections{semester}.json"
-#     )
-#     with open(SECTIONS_FILE_PATH, "r") as json_file:
-#         course_sections = json.load(json_file)
-
-#     return jsonify(
-#         {
-#             "message": "retrieved all courses with sections",
-#             "courses_with_sections": course_sections,
-#         }
-#     )
-#     print(f"Parsed {semester}")
-
-
-# # Save the courses to a CSV file
-# print(f"Total courses parsed: {len(course_list)}")
-# df = pd.DataFrame(course_list)
-# df.to_csv(file_name, index=False)
 @section_bp.route("/subject", methods=["GET"])
 def get_course_sections_by_subject():
     subject = request.args.get("subject")
@@ -172,7 +116,7 @@ def get_course_sections():
     elif term == "summer":
         term = "7"
     else:
-        return jsonify({"error": f"Invalid semester: {semester}"})
+        return jsonify({"error": f"Invalid semester"})
 
     semester = term + year
 
@@ -194,15 +138,13 @@ def get_course_sections():
             {"section_number": section["section_number"], "index": section.get("index")}
             for section in courses[course_id]["sections"].values()
         ]
-        # print(course)
-        # Return the desired information, such as the course title
         return jsonify({"sections": section_info})
 
     except Exception as e:
-        # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
 
 
+# TODO: finish generating all schedules
 @section_bp.route("/generate_schedules", methods=["POST"])
 def generate_all_valid_schedules():
     data = request.json

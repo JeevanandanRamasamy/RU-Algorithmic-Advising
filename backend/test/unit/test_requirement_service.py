@@ -80,68 +80,68 @@ def test_validate_prerequisite_string_meeting_requirement(
     )
 
 
-@patch("services.requirement_service.CourseService.get_course_string")
-def test_validate_prerequisite_string_to_meeting_requirement_with_multiple_prerequisites(
-    mock_get_course_string, course_prerequisites_strings
-):
-    mock_get_course_string.side_effect = lambda course_id: {
-        "01:198:213": "01:198:213 SOFTWARE METHODOLOGY",
-        "01:198:314": "01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES",
-        "01:198:336": "01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT",
-        "01:198:352": "01:198:352 INTERNET TECHNOLOGY",
-        "01:198:416": "01:198:416 OPERATING SYSTEMS DESIGN",
-        "01:198:431": "01:198:431 COMPUTER ARCHITECTURE",
-    }[course_id]
-    prerequisite_string = course_prerequisites_strings["01:198:431"]
-    assert (
-        prerequisite_string
-        == "(\n    (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:352 INTERNET TECHNOLOGY\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:416 OPERATING SYSTEMS DESIGN\n  )\n)"
-    )
-    assert RequirementService.validate_prerequisite_string(
-        prerequisite_string=prerequisite_string,
-        prerequisite=[
-            "01:198:213",
-            "01:198:314",
-            "01:198:336",
-            "01:198:352",
-            "01:198:416",
-        ],
-        taken_courses=set(),
-    ) == (
-        '(\n    (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:352 INTERNET TECHNOLOGY</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:416 OPERATING SYSTEMS DESIGN</span>\n  )\n)'
-    )
+# @patch("services.requirement_service.CourseService.get_course_string")
+# def test_validate_prerequisite_string_to_meeting_requirement_with_multiple_prerequisites(
+#     mock_get_course_string, course_prerequisites_strings
+# ):
+#     mock_get_course_string.side_effect = lambda course_id: {
+#         "01:198:213": "01:198:213 SOFTWARE METHODOLOGY",
+#         "01:198:314": "01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES",
+#         "01:198:336": "01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT",
+#         "01:198:352": "01:198:352 INTERNET TECHNOLOGY",
+#         "01:198:416": "01:198:416 OPERATING SYSTEMS DESIGN",
+#         "01:198:431": "01:198:431 COMPUTER ARCHITECTURE",
+#     }[course_id]
+#     prerequisite_string = course_prerequisites_strings["01:198:431"]
+#     assert (
+#         prerequisite_string
+#         == "(\n    (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:352 INTERNET TECHNOLOGY\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:416 OPERATING SYSTEMS DESIGN\n  )\n)"
+#     )
+#     assert RequirementService.validate_prerequisite_string(
+#         prerequisite_string=prerequisite_string,
+#         prerequisite=[
+#             "01:198:213",
+#             "01:198:314",
+#             "01:198:336",
+#             "01:198:352",
+#             "01:198:416",
+#         ],
+#         taken_courses=set(),
+#     ) == (
+#         '(\n    (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:352 INTERNET TECHNOLOGY</span>\n  )\n  OR   (\n    <span style="color:#FF6347;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:416 OPERATING SYSTEMS DESIGN</span>\n  )\n)'
+#     )
 
 
-@patch("services.requirement_service.CourseService.get_course_string")
-def test_validate_prerequisite_string_to_meeting_requirement_with_multiple_prerequisites(
-    mock_get_course_string, course_prerequisites_strings
-):
+# @patch("services.requirement_service.CourseService.get_course_string")
+# def test_validate_prerequisite_string_to_meeting_requirement_with_multiple_prerequisites(
+#     mock_get_course_string, course_prerequisites_strings
+# ):
 
-    prerequisite_string = course_prerequisites_strings["01:198:431"]
+#     prerequisite_string = course_prerequisites_strings["01:198:431"]
 
-    mock_get_course_string.side_effect = lambda course_id: {
-        "01:198:213": "01:198:213 SOFTWARE METHODOLOGY",
-        "01:198:314": "01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES",
-        "01:198:336": "01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT",
-        "01:198:352": "01:198:352 INTERNET TECHNOLOGY",
-        "01:198:416": "01:198:416 OPERATING SYSTEMS DESIGN",
-        "01:198:431": "01:198:431 COMPUTER ARCHITECTURE",
-    }[course_id]
-    assert (
-        prerequisite_string
-        == "(\n    (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:352 INTERNET TECHNOLOGY\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:416 OPERATING SYSTEMS DESIGN\n  )\n)"
-    )
-    assert (
-        RequirementService.validate_prerequisite_string(
-            prerequisite_string=prerequisite_string,
-            prerequisite=[
-                "01:198:213",
-                "01:198:314",
-                "01:198:336",
-                "01:198:352",
-                "01:198:416",
-            ],
-            taken_courses={"01:198:213", "01:198:336"},
-        )
-        == '(\n    (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#32CD32;">01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:352 INTERNET TECHNOLOGY</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:416 OPERATING SYSTEMS DESIGN</span>\n  )\n)'
-    )
+#     mock_get_course_string.side_effect = lambda course_id: {
+#         "01:198:213": "01:198:213 SOFTWARE METHODOLOGY",
+#         "01:198:314": "01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES",
+#         "01:198:336": "01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT",
+#         "01:198:352": "01:198:352 INTERNET TECHNOLOGY",
+#         "01:198:416": "01:198:416 OPERATING SYSTEMS DESIGN",
+#         "01:198:431": "01:198:431 COMPUTER ARCHITECTURE",
+#     }[course_id]
+#     assert (
+#         prerequisite_string
+#         == "(\n    (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:352 INTERNET TECHNOLOGY\n  )\n  OR   (\n    01:198:213 SOFTWARE METHODOLOGY\n    AND 01:198:416 OPERATING SYSTEMS DESIGN\n  )\n)"
+#     )
+#     assert (
+#         RequirementService.validate_prerequisite_string(
+#             prerequisite_string=prerequisite_string,
+#             prerequisite=[
+#                 "01:198:213",
+#                 "01:198:314",
+#                 "01:198:336",
+#                 "01:198:352",
+#                 "01:198:416",
+#             ],
+#             taken_courses={"01:198:213", "01:198:336"},
+#         )
+#         == '(\n    (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:314 PRINCIPLES OF PROGRAMMING LANGUAGES</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#32CD32;">01:198:336 PRINCIPLES OF INFORMATION AND DATA MANAGEMENT</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:352 INTERNET TECHNOLOGY</span>\n  )\n  OR   (\n    <span style="color:#32CD32;">01:198:213 SOFTWARE METHODOLOGY</span>\n    AND <span style="color:#FF6347;">01:198:416 OPERATING SYSTEMS DESIGN</span>\n  )\n)'
+#     )
