@@ -38,13 +38,13 @@ def send_email(email, code):
 def send_verification():
     data = request.json
     netid = data.get("username")
-    
+
     if not netid:
         return jsonify({"success": False, "message": "Invalid NetID"}), 400
     email = f"{netid}@scarletmail.rutgers.edu"
 
     code = str(random.randint(100000, 999999))  # Generate 6-digit OTP
-    print(code)
+    # print(code)
     verification_codes[netid] = {"code": code, "timestamp": time.time()}
     success = send_email(email, code)  # Send OTP via email
 

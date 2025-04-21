@@ -1,18 +1,18 @@
-#This is just a test file to test the requirement group service
+# This is just a test file to test the requirement group service
 
 # Run with: python -m backend.test.test_requirements
 import sys
 import os
+from app import create_app
 
 # Add the project root (RU-Algorithmic-Advising) to the Python path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app import app  # import your Flask app
 from services.requirement_group_service import RequirementGroupService
 from services.requirement_service import RequirementService
 
 
-def show_all_requirements(program_id):  
+def show_all_requirements(program_id):
     top_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
 
     def print_group_tree(group, prefix, indent=0):
@@ -22,7 +22,9 @@ def show_all_requirements(program_id):
         else:
             # Indented child group with "R1.1" label
             spacing = "  " * indent
-            print(f"{spacing}{prefix} {group.group_name} (Num Required: {group.num_required})")
+            print(
+                f"{spacing}{prefix} {group.group_name} (Num Required: {group.num_required})"
+            )
 
         if group.list:
             spacing = "  " * (indent + 1)
@@ -39,9 +41,8 @@ def show_all_requirements(program_id):
         print_group_tree(group, str(i))
 
 
-
 # Function to test get_requirement_group_by_id
-def test_get_group_by_id(group_id):
+def get_group_by_id_test(group_id):
     group = RequirementGroupService.get_requirement_group_by_id(group_id)
     if group:
         print(f"✅ Found group: {group.group_id} - {group.group_name}")
@@ -51,13 +52,14 @@ def test_get_group_by_id(group_id):
     else:
         print(f"❌ No group found with ID {group_id}")
 
-#Not needed because show_all_requirements already shows the tree
+
+# Not needed because show_all_requirements already shows the tree
 def display_requirement_tree(program_id):
     trees = RequirementService.get_program_requirement_tree(program_id)
     if not trees:
         print("No requirement trees found.")
         return
-    
+
     def print_tree(node, depth=0):
         indent = "  " * depth
         print(f"{indent}- Group {node.group_id} (Num Required: {node.num_required})")
@@ -69,13 +71,15 @@ def display_requirement_tree(program_id):
     for tree in trees:
         print_tree(tree)
 
+
 if __name__ == "__main__":
+    app = create_app()
     with app.app_context():
         # Show all requirements for the CS program
         show_all_requirements("NB198SJ")
 
         # print("\n--- Testing get_requirement_group_by_id ---")
-        # test_get_group_by_id(1) 
+        # test_get_group_by_id(1)
 
         # print("\n--- Testing tree building ---")
-        # display_requirement_tree("NB198SJ") 
+        # display_requirement_tree("NB198SJ")

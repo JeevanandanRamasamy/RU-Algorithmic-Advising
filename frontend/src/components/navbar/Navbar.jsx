@@ -21,7 +21,7 @@ const Navbar = () => {
 	const navigate = useNavigate();
 
 	const toggleColors = () => {
-		setIsColorFlipped((prev) => {
+		setIsColorFlipped(prev => {
 			const newValue = !prev;
 			localStorage.setItem("color-flipped", newValue);
 			return newValue;
@@ -52,15 +52,15 @@ const Navbar = () => {
 		}
 		const root = document.documentElement;
 		if (isColorFlipped) {
-			root.style.setProperty('--primary-color', '#fcf8d7');
-			root.style.setProperty('--sidebar-color', '#cc0033');
-			root.style.setProperty('--title-color', '#fcf8d7');
-			root.style.setProperty('--hover-text-color', '#000');
+			root.style.setProperty("--primary-color", "#fcf8d7");
+			root.style.setProperty("--sidebar-color", "#cc0033");
+			root.style.setProperty("--title-color", "#fcf8d7");
+			root.style.setProperty("--hover-text-color", "#000");
 		} else {
-			root.style.setProperty('--primary-color', '#cc0033');
-			root.style.setProperty('--sidebar-color', '#fcf8d7');
-			root.style.setProperty('--title-color', '#000');
-			root.style.setProperty('--hover-text-color', '#fff');
+			root.style.setProperty("--primary-color", "#cc0033");
+			root.style.setProperty("--sidebar-color", "#fcf8d7");
+			root.style.setProperty("--title-color", "#000");
+			root.style.setProperty("--hover-text-color", "#fff");
 		}
 	}, [user, navigate, isColorFlipped]);
 
@@ -84,11 +84,12 @@ const Navbar = () => {
 						</span>
 					</div>
 					<i
-						className={`bx ${isCollapsed ? "bx-chevron-right" : "bx-chevron-left"} toggle`}
+						className={`bx ${
+							isCollapsed ? "bx-chevron-right" : "bx-chevron-left"
+						} toggle`}
 						onClick={toggleNavbar}
 						role="button"
-						tabIndex="0"
-					></i>
+						tabIndex="0"></i>
 				</div>
 			</div>
 
@@ -102,25 +103,25 @@ const Navbar = () => {
 							</Link>
 						</li>
 						<li className="nav-link">
-							<Link to="/degree-planner">
+							<Link to="/student/degree-planner">
 								<i className="bx bx-spreadsheet icon"></i>
 								<span className="text nav-text">Degree Planner</span>
 							</Link>
 						</li>
 						<li className="nav-link">
-							<Link to="/course-planner">
+							<Link to="/student/course-planner">
 								<i className="bx bx-calendar icon"></i>
 								<span className="text nav-text">Course Planner</span>
 							</Link>
 						</li>
 						<li className="nav-link">
-							<Link to="/request-spn">
+							<Link to="/student/request-spn">
 								<i className="bx bx-envelope icon"></i>
 								<span className="text nav-text">Request SPN</span>
 							</Link>
 						</li>
 						<li className="nav-link">
-							<Link to="/questionnaire">
+							<Link to="/student/questionnaire">
 								<i className="bx bx-edit-alt icon"></i>
 								<span className="text nav-text">Questionnaire</span>
 							</Link>
@@ -148,20 +149,19 @@ const Navbar = () => {
 					<li className="nav-link">
 						<a
 							href="/"
-							onClick={(e) => {
+							onClick={e => {
 								e.preventDefault(); // prevent default anchor behavior
 								logout(); // your logout function
 								navigate("/"); // Redirect to the login page. Didn't work when logging out from SPNRequest?
 								showSuccessToast("You have been logged out successfully!");
-							}}
-						>
+							}}>
 							<i className="bx bx-log-out icon"></i>
 							<span className="text nav-text">Logout</span>
 						</a>
 					</li>
 				</div>
 			</div>
-		</nav >
+		</nav>
 	);
 };
 
