@@ -147,8 +147,8 @@ def add_course_record():
         course_id = data.get("course_id")
         # if "term" not in data or "year" not in data:
         #     return jsonify({"message": "Missing term or year"}), 400
-        term = data.get("term")
-        year = data.get("year")
+        term = data.get("term") if "term" in data else None
+        year = data.get("year") if "year" in data else None
         grade = data.get("grade") if "grade" in data else None
 
         result = CourseRecordService.insert_course_record(
