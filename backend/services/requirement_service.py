@@ -75,7 +75,6 @@ class RequirementService:
     @staticmethod
     def get_all_prerequisites(course_id, visited=None):
         """Retrieve all prerequisite courses for a given course."""
-        print(course_id, visited)
         if visited is None:
             visited = set()  # Keep track of visited courses to avoid infinite loops
         course = CourseService.get_course_by_id(course_id)

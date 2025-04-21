@@ -185,8 +185,7 @@ class UserService:
         try:
             pattern = f"%{query}%"
             return Account.query.filter(
-                Account.role == 'student',
-                Account.username.ilike(pattern)
+                Account.role == "student", Account.username.ilike(pattern)
             ).all()
         except SQLAlchemyError as e:
             db.session.rollback()
