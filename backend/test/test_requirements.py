@@ -3,11 +3,11 @@
 # Run with: python -m backend.test.test_requirements
 import sys
 import os
+from app import create_app
 
 # Add the project root (RU-Algorithmic-Advising) to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app import app  # import your Flask app
 from services.requirement_group_service import RequirementGroupService
 from services.requirement_service import RequirementService
 
@@ -73,6 +73,7 @@ def display_requirement_tree(program_id):
 
 
 if __name__ == "__main__":
+    app = create_app()
     with app.app_context():
         # Show all requirements for the CS program
         show_all_requirements("NB198SJ")

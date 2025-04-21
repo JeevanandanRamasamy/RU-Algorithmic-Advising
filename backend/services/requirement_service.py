@@ -239,6 +239,7 @@ class RequirementService:
 
         # Check all top-level groups
         for group in requirement_groups:
+            print(group)
             if not RequirementService.check_group_fulfillment(
                 group.group_id, courses_taken
             ):
@@ -675,7 +676,5 @@ class RequirementService:
 
             degree_plan.append(suggested_courses)
             taken = taken.union(suggested_courses)
-
-        return {"plan": course_plan}
 
         return {"plan": degree_plan}
