@@ -144,7 +144,9 @@ class CourseRecordService:
                     .join(Course, Course.course_id == CourseRecord.course_id)
                     .all()
                 )
-            return CourseRecordService.convert_courses_to_dict(courses)
+            return CourseRecordService.convert_courses_to_dict(
+                courses
+            ) + CourseRecordService.get_termless_course_records_joined(username)
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving past course records: {str(e)}"
@@ -211,18 +213,32 @@ class CourseRecordService:
             return f"Error: {str(e)}"
 
     @staticmethod
+    def get_termless_course_records_joined(username):
+        """Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits)."""
+        try:
+            courses = (
+                db.session.query(CourseRecord, Course)
+                .filter(CourseRecord.username == username, CourseRecord.term == None)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+                .all()
+            )
+            return CourseRecordService.convert_courses_to_dict(courses)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving termless course records: {str(e)}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    @staticmethod
     def insert_course_record(course_record_data):
         """Insert a course record into a user's degree plan."""
         try:
-
             new_course = CourseRecord(**course_record_data)
             db.session.add(new_course)
             db.session.commit()
             return CourseRecordService.get_course_record_by_course_id(
                 course_record_data["username"], course_record_data["course_id"]
             )
-
-            # return new_course
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error inserting course record: {str(e)}"
@@ -234,17 +250,17 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
+            print(course_record)
             if course_record:
                 for key, value in new_data.items():
                     if hasattr(course_record, key):
                         setattr(course_record, key, value)
-
                     else:
                         return f"Invalid field: {key}"
-                    db.session.commit()
-                    return CourseRecordService.get_course_record_by_course_id(
-                        username, course_id
-                    )
+                db.session.commit()
+                return CourseRecordService.get_course_record_by_course_id(
+                    username, course_id
+                )
             else:
                 return "Course record not found"
         except SQLAlchemyError as e:

@@ -6,7 +6,6 @@ const studentDetails = ({
 	handleEnrollYearChange,
 	gradYear,
 	handleGradYearChange,
-	classes,
 	gpa,
 	handleGpaChange
 }) => {
@@ -16,7 +15,7 @@ const studentDetails = ({
 			<div className="flex flex-row gap-5 items-center justify-between">
 				<label
 					className="w-[280px]"
-					htmlFor="enrolled-year">
+					htmlFor="enroll-year">
 					Enter Enrolled Year:
 				</label>
 				<input

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import DropdownItem from "../temp/DropdownItem";
+import DropdownItem from "../generic/DropdownItem";
 import { schools, subjects } from "../../data/sas";
-import DropdownWithSearch from "../temp/DropdownWithSearch";
+import DropdownWithSearch from "../generic/DropdownWithSearch";
 import useFilterCourses from "../../hooks/useFilterCourses";
+import { AnimatePresence, motion } from "framer-motion";
 
 const CourseListContainer = ({
 	title = "",
@@ -11,7 +12,9 @@ const CourseListContainer = ({
 	getCourse = course => course,
 	CourseComponent,
 	courseComponentProps,
-	requirementStrings
+	requirementStrings,
+	hasCredits = false,
+	coursesWithMissingRequirements
 }) => {
 	const {
 		subjectSearchQuery,
@@ -28,7 +31,20 @@ const CourseListContainer = ({
 
 	return (
 		<section className="flex-1 bg-white rounded-lg shadow-md p-5 h-[600px] flex flex-col">
-			<h2 className="m-0 text-center">{title}</h2>
+			<h2 className="m-0 text-center">
+				{title}
+				{hasCredits && (
+					<>
+						{" "}
+						(
+						{filterCourses(courses, excludedCourseIds)
+							.map(getCourse)
+							.reduce((sum, course) => sum + parseInt(course?.credits || 0, 10), 0)}
+						)
+					</>
+				)}
+			</h2>
+
 			<div className="py-2">
 				<div
 					className="flex items-center justify-between cursor-pointer mb-2"
@@ -41,32 +57,40 @@ const CourseListContainer = ({
 						▼
 					</span>
 				</div>
-				<div
-					className={`grid gap-4 transition-all duration-300 overflow-hidden ${
-						showFilters ? "max-h-[9999x] opacity-100" : "max-h-0 opacity-0"
-					}`}>
-					<input
-						className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
-						type="text"
-						id="search-courses"
-						placeholder="Search courses by name or course code"
-						value={searchQuery}
-						onChange={e => setSearchQuery(e.target.value)}
-					/>
 
-					<DropdownItem
-						placeholder="Search by School code"
-						selectedValue={schoolSearchQuery}
-						onChange={e => setSchoolSearchQuery(e.target.value)}
-						options={schools}
-					/>
-					<DropdownItem
-						placeholder="Search by subject code"
-						selectedValue={subjectSearchQuery}
-						onChange={e => setSubjectSearchQuery(e.target.value)}
-						options={subjects}
-					/>
-				</div>
+				<AnimatePresence initial={false}>
+					{showFilters && (
+						<motion.div
+							key="filters"
+							initial={{ height: 0, opacity: 0 }}
+							animate={{ height: "auto", opacity: 1 }}
+							exit={{ height: 0, opacity: 0 }}
+							transition={{ duration: 0.3 }}
+							className="overflow-hidden grid gap-4">
+							<input
+								className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
+								type="text"
+								id="search-courses"
+								placeholder="Search courses by name or course code"
+								value={searchQuery}
+								onChange={e => setSearchQuery(e.target.value)}
+							/>
+
+							<DropdownItem
+								placeholder="Search by School code"
+								selectedValue={schoolSearchQuery}
+								onChange={e => setSchoolSearchQuery(e.target.value)}
+								options={schools}
+							/>
+							<DropdownItem
+								placeholder="Search by subject code"
+								selectedValue={subjectSearchQuery}
+								onChange={e => setSubjectSearchQuery(e.target.value)}
+								options={subjects}
+							/>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</div>
 			{/* <div className={`p-2 border border-gray-200 rounded-md `}> */}
 			<CourseComponent

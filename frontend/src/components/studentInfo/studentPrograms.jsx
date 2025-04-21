@@ -23,7 +23,7 @@ const studentPrograms = ({
 					type="Program"
 					field="program_name"
 					key_field="program_id"
-					buttonType="add"
+					buttonType="+"
 					handleButtonClick={handleInsertProgram}
 					excludedByKeys={
 						filteredSelectedPrograms
@@ -40,7 +40,7 @@ const studentPrograms = ({
 					values={filteredSelectedPrograms}
 					field="program_name"
 					key_field="program_id"
-					buttonType="remove"
+					buttonType="-"
 					handleButtonClick={handleRemoveProgram}
 				/>
 			</div>
