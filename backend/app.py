@@ -29,29 +29,23 @@ def create_app(testing=False):
     CORS(app)
 
     # Config
-    if testing:
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        app.config["TESTING"] = True
-        app.config["JWT_SECRET_KEY"] = "test-key"
-        app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
-    else:
-        username = os.getenv("DB_USERNAME")
-        password = os.getenv("DB_PASSWORD")
-        host = os.getenv("DB_HOST", "localhost")
-        dbname = os.getenv("DB_NAME")
-        port = os.getenv("PORT_NUM")
-        key = os.getenv("KEY")
-        print(username)
-        print(password)
-        print(host)
-        print(dbname)
-        print(port)
+    username = os.getenv("DB_USERNAME")
+    password = os.getenv("DB_PASSWORD")
+    host = os.getenv("DB_HOST", "localhost")
+    dbname = os.getenv("DB_NAME")
+    port = os.getenv("PORT_NUM")
+    key = os.getenv("KEY")
+    print(username)
+    print(password)
+    print(host)
+    print(dbname)
+    print(port)
 
-        app.config["SQLALCHEMY_DATABASE_URI"] = (
-            f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
-        )
-        app.config["JWT_SECRET_KEY"] = key
-        app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
+    )
+    app.config["JWT_SECRET_KEY"] = key
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

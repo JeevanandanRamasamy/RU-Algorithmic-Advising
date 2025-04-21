@@ -6,13 +6,21 @@ import pytest
 def base_url():
     return "http://127.0.0.1:8080/api/login"
 
+@pytest.fixture(scope="module", autouse=True)
+def register_test_user():
+    url = "http://127.0.0.1:8080/api/register"
+    payload = {"username": "test", "password": "123456", "first_name": "John", "last_name": "Doe"}
+    response = requests.post(url, json=payload)
+    # It's okay if the user is already registered
+    assert response.status_code == 201
+
 # Parametrize tests to reduce redundancy for checking different login cases
 @pytest.mark.parametrize(
     "username, password, expected_status_code, expected_response",
     [
-        ("jr1635", "123456", 200, ["token", "message"]),  # Correct password
+        ("test", "123456", 200, ["token", "message"]),  # Correct password
         ("unknown", "178", 401, {"message": "Account doesn't exist, please register", "status": "error"}),  # Unknown user
-        ("jr1635", "178", 401, {"message": "Invalid credentials", "status": "error"}),  # Incorrect password
+        ("test", "178", 401, {"message": "Invalid credentials", "status": "error"}),  # Incorrect password
     ]
 )
 def test_login(base_url, username, password, expected_status_code, expected_response):
