@@ -5,18 +5,13 @@ import { useAuth } from "../context/AuthContext";
 
 const AccountSettings = () => {
 	const { user } = useAuth();
-	const {
-		firstName,
-		lastName,
-		updateAccount,
-		deleteAccount,
-	} = useAccount();
+	const { firstName, lastName, updateAccount, deleteAccount } = useAccount();
 
 	const [form, setForm] = useState({
 		first_name: "",
 		last_name: "",
 		password: "",
-		confirm_password: "",
+		confirm_password: ""
 	});
 	const [editField, setEditField] = useState(null);
 	const [message, setMessage] = useState("");
@@ -27,12 +22,12 @@ const AccountSettings = () => {
 				first_name: firstName,
 				last_name: lastName,
 				password: "",
-				confirm_password: "",
+				confirm_password: ""
 			});
 		}
 	}, [user, firstName, lastName]);
 
-	const handleChange = (e) => {
+	const handleChange = e => {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	};
 
@@ -53,19 +48,17 @@ const AccountSettings = () => {
 		setMessage(success ? `✅ ${message}` : `❌ ${message}`);
 		if (success) {
 			setEditField(null);
-			setForm((prev) => ({
+			setForm(prev => ({
 				...prev,
 				password: "",
-				confirm_password: "",
+				confirm_password: ""
 			}));
 		}
 	};
 
 	const handleDelete = async () => {
 		if (
-			window.confirm(
-				"Are you sure you want to delete your account? This cannot be undone."
-			)
+			window.confirm("Are you sure you want to delete your account? This cannot be undone.")
 		) {
 			const { success, message } = await deleteAccount();
 			if (!success) setMessage(`❌ ${message}`);
@@ -73,7 +66,7 @@ const AccountSettings = () => {
 	};
 
 	return (
-		<div className="p-4 max-w-md mx-auto">
+		<div className="p-5 mx-auto ml-[130px] h-auto overflow-x-hidden">
 			<Navbar />
 			<h2 className="text-xl font-bold mb-6">Account Settings</h2>
 
@@ -91,24 +84,27 @@ const AccountSettings = () => {
 						/>
 						<button
 							onClick={() => {
-								setForm((prev) => ({
+								setForm(prev => ({
 									...prev,
-									first_name: firstName,
+									first_name: firstName
 								}));
 								setEditField(null);
 							}}
-							className="text-gray-500"
-						>
+							className="text-gray-500">
 							Cancel
 						</button>
-						<button onClick={handleSubmit} className="text-blue-600 font-semibold">
+						<button
+							onClick={handleSubmit}
+							className="text-blue-600 font-semibold">
 							Confirm
 						</button>
 					</div>
 				) : (
 					<div className="flex justify-between items-center">
 						<span>{form.first_name}</span>
-						<button onClick={() => setEditField("first_name")} className="text-blue-600">
+						<button
+							onClick={() => setEditField("first_name")}
+							className="text-blue-600">
 							Edit
 						</button>
 					</div>
@@ -129,24 +125,27 @@ const AccountSettings = () => {
 						/>
 						<button
 							onClick={() => {
-								setForm((prev) => ({
+								setForm(prev => ({
 									...prev,
-									last_name: lastName,
+									last_name: lastName
 								}));
 								setEditField(null);
 							}}
-							className="text-gray-500"
-						>
+							className="text-gray-500">
 							Cancel
 						</button>
-						<button onClick={handleSubmit} className="text-blue-600 font-semibold">
+						<button
+							onClick={handleSubmit}
+							className="text-blue-600 font-semibold">
 							Confirm
 						</button>
 					</div>
 				) : (
 					<div className="flex justify-between items-center">
 						<span>{form.last_name}</span>
-						<button onClick={() => setEditField("last_name")} className="text-blue-600">
+						<button
+							onClick={() => setEditField("last_name")}
+							className="text-blue-600">
 							Edit
 						</button>
 					</div>
@@ -177,18 +176,19 @@ const AccountSettings = () => {
 						<div className="flex gap-2 mt-2">
 							<button
 								onClick={() => {
-									setForm((prev) => ({
+									setForm(prev => ({
 										...prev,
 										password: "",
-										confirm_password: "",
+										confirm_password: ""
 									}));
 									setEditField(null);
 								}}
-								className="text-gray-500"
-							>
+								className="text-gray-500">
 								Cancel
 							</button>
-							<button onClick={handleSubmit} className="text-blue-600 font-semibold">
+							<button
+								onClick={handleSubmit}
+								className="text-blue-600 font-semibold">
 								Confirm
 							</button>
 						</div>
@@ -196,7 +196,9 @@ const AccountSettings = () => {
 				) : (
 					<div className="flex justify-between items-center">
 						<span>******</span>
-						<button onClick={() => setEditField("password")} className="text-blue-600">
+						<button
+							onClick={() => setEditField("password")}
+							className="text-blue-600">
 							Edit
 						</button>
 					</div>
@@ -205,8 +207,7 @@ const AccountSettings = () => {
 
 			<button
 				onClick={handleDelete}
-				className="mt-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded w-full"
-			>
+				className="mt-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded w-full">
 				Delete Account
 			</button>
 

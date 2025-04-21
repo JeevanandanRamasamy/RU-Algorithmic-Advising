@@ -15,11 +15,8 @@ export const StudentDetailsProvider = ({ children }) => {
 	const [gpa, setGpa] = useState(0);
 	const [creditsEarned, setCreditsEarned] = useState(0);
 
-	const navigate = useNavigate();
-
 	const fetchUserDetails = async () => {
 		try {
-			console.log("here");
 			if (!user) return;
 			const response = await fetch(`${backendUrl}/api/users/details`, {
 				method: "GET",
@@ -34,7 +31,6 @@ export const StudentDetailsProvider = ({ children }) => {
 			setEnrollYear(userDetails.enroll_year ?? currentYear);
 			setGpa(userDetails.gpa ?? "");
 			setCreditsEarned(userDetails.credits_earned ?? 0);
-			console.log(userDetails.credits_earned);
 		} catch (error) {
 			console.error("Error fetching student details:", error);
 		}
