@@ -5,6 +5,7 @@ from models.course_record import CourseRecord
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
 
+
 class CourseRecordService:
     @staticmethod
     def convert_courses_to_dict(courses):
@@ -108,7 +109,6 @@ class CourseRecordService:
         except Exception as e:
             return f"Error: {str(e)}"
 
-
     @staticmethod
     def get_past_course_records(username):
         """Retrieve all past course records from a user's degree plan."""
@@ -135,11 +135,17 @@ class CourseRecordService:
             if terms:
                 base_query = base_query.filter(
                     or_(CourseRecord.term.in_(terms), CourseRecord.term.is_(None)),
-                    or_(CourseRecord.year <= current_date.year, CourseRecord.year.is_(None))
+                    or_(
+                        CourseRecord.year <= current_date.year,
+                        CourseRecord.year.is_(None),
+                    ),
                 )
             else:
                 base_query = base_query.filter(
-                    or_(CourseRecord.year < current_date.year, CourseRecord.year.is_(None))
+                    or_(
+                        CourseRecord.year < current_date.year,
+                        CourseRecord.year.is_(None),
+                    )
                 )
 
             courses = base_query.all()
@@ -150,8 +156,6 @@ class CourseRecordService:
             return f"Error retrieving past course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-
-
 
     @staticmethod
     def get_future_course_records(username):
@@ -250,7 +254,6 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
-            print(course_record)
             if course_record:
                 for key, value in new_data.items():
                     if hasattr(course_record, key):
@@ -274,7 +277,6 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
-            print(course_record, username)
             if course_record:
                 db.session.delete(course_record)
                 db.session.commit()

@@ -9,7 +9,6 @@ class SemestersService:
 
     @staticmethod
     def decode_semester(encoded):
-        print(encoded)
         terms = ["spring", "summer", "fall", "winter"]
         year = encoded // 4
         term = terms[encoded % 4]

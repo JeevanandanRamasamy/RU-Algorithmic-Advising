@@ -151,6 +151,6 @@ def generate_all_valid_schedules():
     checked_sections = data.get("checkedSections")
     index_to_meeting_map = data.get("indexToMeetingTimesMap")
 
-    print(checked_sections)
-    print(index_to_meeting_map)
+    # print(checked_sections)
+    # print(index_to_meeting_map)
     return {}

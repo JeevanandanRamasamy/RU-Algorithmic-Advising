@@ -110,7 +110,6 @@ def get_taken_courses_for_program():
 @requirements_bp.route("/planned-courses/missing", methods=["GET"])
 @jwt_required()
 def get_missing_requirements_for_planned_courses():
-    print("here")
     username = get_jwt_identity()
     student_details = UserService.get_student_details(username=username)
     if isinstance(student_details, str):

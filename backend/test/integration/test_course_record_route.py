@@ -276,7 +276,7 @@ def test_get_planned_courses_courses_added(
                         "course_id": "01:198:111",
                         "course_link": "https://www.cs.rutgers.edu/academics/undergraduate/course-synopses/course-details/01-198-111-introduction-to-computer-science",
                         "course_name": "INTRO COMPUTER SCI",
-                        # "credits": "4.0",
+                        "credits": "4.0",
                     },
                     "term": "fall",
                     "username": "test",
@@ -299,7 +299,6 @@ def test_add_course_record(
     response = client.post(
         "/api/users/course_record", json=payload, headers=auth_header
     )
-
     assert response.status_code == expected_status
     assert response.get_json() == expected_json
 

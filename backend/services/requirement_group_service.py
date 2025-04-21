@@ -26,6 +26,8 @@ class RequirementGroupService:
     @staticmethod
     def get_requirement_group_by_course(course_id):
         """Retrieve all requirement groups associated with a course."""
+        print(course_id)
+        print("b", RequirementGroup.query.filter_by(course_id=course_id).all())
         try:
             return RequirementGroup.query.filter_by(course_id=course_id).all()
         except SQLAlchemyError as e:
