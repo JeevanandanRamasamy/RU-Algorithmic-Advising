@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 import { useAuth } from "./AuthContext";
 import { useCourseRequirements } from "./CourseRequirementContext";
 import { useStudentDetails } from "../context/StudentDetailsContext";
+import { showErrorToast } from "../components/toast/Toast";
 
 const TakenCoursesContext = createContext();
 
@@ -31,6 +32,7 @@ export const TakenCoursesProvider = ({ children }) => {
 		} catch (err) {
 			setTakenCoursesError(err.message);
 			console.error("Error fetching courses:", err);
+			showErrorToast("Error fetching courses.");
 		} finally {
 			setTakenCoursesLoading(false);
 		}
@@ -53,6 +55,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			const data = await res.json();
 			if (!res.ok) {
 				setTakenCoursesError(data.message);
+				showErrorToast("Error adding course.");
 			} else {
 				setTakenCourses(prev => [...prev, data.course_record.course_info]);
 				fetchPlannedCoursesWithMissingRequirements?.();
@@ -60,6 +63,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			}
 		} catch (err) {
 			console.error("Error adding course:", err);
+			showErrorToast("Error adding course.");
 		}
 	};
 
@@ -77,6 +81,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			const data = await res.json();
 			if (!res.ok) {
 				setTakenCoursesError(data.message);
+				showErrorToast("Error removing course.");
 			} else {
 				setTakenCourses(prev => prev.filter(c => c.course_id !== courseId));
 				fetchPlannedCoursesWithMissingRequirements?.();
@@ -84,6 +89,7 @@ export const TakenCoursesProvider = ({ children }) => {
 			}
 		} catch (err) {
 			console.error("Error removing course:", err);
+			showErrorToast("Error removing course.");
 		} finally {
 			setTakenCoursesLoading(false);
 		}

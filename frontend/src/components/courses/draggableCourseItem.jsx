@@ -79,7 +79,7 @@ const DraggableCourseItem = ({ course, isPlanned = false, requirementString }) =
 	return (
 		<div
 			ref={drag}
-			className={`bg-white border border-[#ddd] rounded px-1.5 py-1.5 ${
+			className={`bg-white hover:bg-gray-100 border border-[#ddd] rounded px-1.5 py-1.5 ${
 				isDragging ? "dragging" : ""
 			} ${isPlanned ? "planned" : ""}`}
 			style={{ opacity: isDragging ? 0.5 : 1 }}>
