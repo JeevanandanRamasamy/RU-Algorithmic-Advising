@@ -15,7 +15,6 @@ const TakenCourses = ({
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
-			// console.log("Added course:", item);
 			onAddCourse(item.id);
 		},
 		collect: monitor => ({

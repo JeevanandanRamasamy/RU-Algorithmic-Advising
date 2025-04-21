@@ -32,86 +32,13 @@ function App() {
 			<div>
 				<main className="main-content">
 					<Routes>
-						{/* <Route
-							path="/"
-							element={<Login />}
-						/>
-						<Route
-							path="/register"
-							element={<Register />}
-						/>
-						<Route
-							path="/reset-password"
-							element={<ResetPassword />}
-						/>
-						<Route
-							path="/student/home"
-							element={<StudentDashboard />}
-						/>
-						<Route
-							path="/navbar"
-							element={<Navbar />}
-						/>
-						<Route
-							path="/questionnaire"
-							element={
-								<DndProvider backend={HTML5Backend}>
-									<Questionnaire />
-								</DndProvider>
-							}
-						/>
-						<Route
-							path="/degree-planner"
-							element={
-								<DndProvider backend={HTML5Backend}>
-									<DegreePlanner />
-								</DndProvider>
-							}
-						/>
-						<Route
-							path="/request-spn"
-							element={
-								<DndProvider backend={HTML5Backend}>
-									<SPN />
-								</DndProvider>
-							}
-						/>
-						<Route 
-							path="/account-settings" 
-							element={
-								<AccountSettings />
-							} 
-						/>
-						<Route
-							path="/toast"
-							element={<ToastDemo />}
-						/>
-						<Route
-							path="/admin/home"
-							element={<AdminDashboard />}
-						/>
 						<Route
 							path="/"
 							element={<Login />}
 						/>
 						<Route
-							path="/register"
-							element={<Register />}
-						/>
-						<Route
-							path="/reset-password"
-							element={<ResetPassword />}
-						/> */}
-
-						<Route
-							path="/"
-							element={<Login />}
-						/>
-						<Route 
-							path="/admin/student/:studentId" 
-							element={
-								<AdminStudentSchedule />
-							} 
+							path="/admin/student/:studentId"
+							element={<AdminStudentSchedule />}
 						/>
 						<Route
 							path="/register"
@@ -182,7 +109,6 @@ function App() {
 								path="/student/degree-navigator"
 								element={<DegreeNavigator />}
 							/>
-
 						</Route>
 					</Routes>
 				</main>

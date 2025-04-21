@@ -7,7 +7,6 @@ const PlannedCourses = ({ courses, getCourse, loading, error, onRemoveCourse, on
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
-			// console.log("Dropped course:", item);
 			onAddCourse(item.id); // Pass courseId
 		},
 		collect: monitor => ({
