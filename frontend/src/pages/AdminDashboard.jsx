@@ -7,8 +7,17 @@ import DataTable from "../components/generic/DataTable";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
-  const { token } = useAuth();
+  const { user, token, role } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/"); // Redirect to login if not authenticated
+    }
+    if (role === "student") {
+      navigate("/student/home"); // Redirect to student dashboard if user is student
+    }
+  }, [user, role, navigate]); // Runs whenever user changes
 
   // SPN state
   const [spnApi] = useState("/api/admin/spn?pending=true");
