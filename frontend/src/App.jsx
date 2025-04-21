@@ -17,6 +17,7 @@ import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminStudentSchedule from "./pages/AdminStudentSchedule";
 
 import { AuthProvider } from "./context/AuthContext";
 import "./css/index.css";
@@ -105,6 +106,12 @@ function App() {
 						<Route
 							path="/"
 							element={<Login />}
+						/>
+						<Route 
+							path="/admin/student/:studentId" 
+							element={
+								<AdminStudentSchedule />
+							} 
 						/>
 						<Route
 							path="/register"

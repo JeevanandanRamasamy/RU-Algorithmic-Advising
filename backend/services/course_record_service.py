@@ -299,3 +299,27 @@ class CourseRecordService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course records: {str(e)}"
+        
+    @staticmethod
+    def get_all_course_records(username: str):
+        """Retrieve every course record (i.e. planned course) for the given user."""
+        try:
+            rows = (
+                db.session.query(CourseRecord, Course)
+                  .filter(CourseRecord.username == username)
+                  .join(Course, Course.course_id == CourseRecord.course_id)
+                  .all()
+            )
+            return [
+                {
+                  "username": rec.username,
+                  "course_id": rec.course_id,
+                  "course_name": crs.course_name,
+                  "term": rec.term,
+                  "year": rec.year
+                }
+                for rec, crs in rows
+            ]
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving course records: {str(e)}"

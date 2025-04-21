@@ -1,6 +1,8 @@
 import os
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
+
 
 # from services.user_service import UserService
 from db import db
@@ -18,6 +20,7 @@ from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
 from routes.degree_navigator_route import degree_navigator_bp
+from routes.admin_route import admin_bp
 
 from flask_cors import CORS
 
@@ -32,6 +35,7 @@ from jwt_helper import init_jwt
 
 
 load_dotenv()
+
 
 def create_app():
     app = Flask(__name__)
@@ -79,6 +83,7 @@ def create_app():
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
     app.register_blueprint(degree_navigator_bp)
+    app.register_blueprint(admin_bp)
 
     @app.before_request
     def handle_options_request():
@@ -97,6 +102,18 @@ def create_app():
     def home():
         return "Welcome to the RU Algorithmic Advising Web Server!"
 
+    # @app.route("/check_db")
+    # def check_db_connection():
+    #     try:
+    #         test_account = Account.query.first()
+    #         if test_account:
+    #             return f"Database connected successfully! First user: {test_account.username}"
+    #         else:
+    #             return "Database connected, but no users found."
+    #     except Exception as e:
+    #         return f"Database connection failed: {e}"
+
+    jwt = JWTManager(app)
     return app
 
 
