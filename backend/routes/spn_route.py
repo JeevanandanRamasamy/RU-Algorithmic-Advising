@@ -47,7 +47,7 @@ def add_spn():
     sections = data.get("sections")
     reason = data.get("reason")
 
-    if not username or not course_id or len(sections) < 1:
+    if not username or not course_id or len(sections) < 1: # Sections wouldnt be selectable if there is no semester/term/year
         return jsonify({"message": "Missing required fields"}), 400
     try:
         spn_requests = [
