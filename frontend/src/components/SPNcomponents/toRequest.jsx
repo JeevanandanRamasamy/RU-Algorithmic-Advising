@@ -198,7 +198,10 @@ const ToRequest = () => {
         }`}
         >
         <h3 className="text-lg font-bold">Drop Courses Here</h3>
-        <SemesterSelector onSemesterSelect={handleSemesterSelection} />
+        {/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
+		<div>
+             <label className="block mb-1 font-bold">{nextTerm} {currentYear}</label>
+        </div>
         {isLoading && <p>Loading course details...</p>}
         {droppedCourse ? (
             <div className="mt-2">
