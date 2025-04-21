@@ -111,6 +111,7 @@ CREATE TABLE StudentProgram (
 CREATE TABLE RequirementGroup (
 	group_id INT AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each requirement group
 	-- Only one of program_id or course_id can be not null at once
+    group_name VARCHAR(255),
 	program_id VARCHAR(7), -- ID of the program that this requirement group applies to
 	course_id CHAR(10), -- ID of the course that this requirement group applies to
 	num_required INT DEFAULT NULL, -- Logic used to combine the courses in this group

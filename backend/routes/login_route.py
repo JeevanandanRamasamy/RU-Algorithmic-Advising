@@ -26,33 +26,32 @@ def login():
     # Fetch user record
     account = UserService.get_account_by_username(username)
 
+
     # Check if account exists
-    # if account:
-    stored_pw = account.password
+    if account:
+        stored_pw = account.password
 
-    # if stored_pw.startswith("pbkdf2:"):
-    # Looks like a hashed password
-    password_valid = check_password_hash(stored_pw, password)
-    # else:
-    #     # Fallback to plain text comparison
-    #     password_valid = stored_pw == password
+        if(check_password_hash(stored_pw, password)): # Check if password matches with hashed
+            password_valid = True
+        elif(stored_pw == password): # Fallback to plain text comparison
+            password_valid = True
+        else:
+            password_valid = False
 
-    # print(f"DB: {account.password}, Input: {password}")
-
-    if password_valid:
-        # Create JWT token
-        access_token = create_access_token(identity=username)
-        return (
-            jsonify(
-                {
-                    "message": "Login successful",
-                    "status": "success",
-                    "role": account.role,
-                    "access_token": access_token,
-                }
-            ),
-            200,
-        )
+        if password_valid:
+            # Create JWT token
+            access_token = create_access_token(identity=username)
+            return (
+                jsonify(
+                    {
+                        "message": "Login successful",
+                        "status": "success",
+                        "role": account.role,
+                        "access_token": access_token,
+                    }
+                ),
+                200,
+            )
 
     # If no account or password check failed
     return jsonify({"message": "Invalid credentials", "status": "error"}), 401
