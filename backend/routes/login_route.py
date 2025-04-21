@@ -39,7 +39,7 @@ def login():
 
     # print(f"DB: {account.password}, Input: {password}")
 
-    if True:
+    if password_valid:
         # Create JWT token
         access_token = create_access_token(identity=username)
         return (
