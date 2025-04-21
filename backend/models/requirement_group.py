@@ -13,9 +13,9 @@ from dataclasses import dataclass
 @dataclass
 class RequirementGroup(db.Model):
     __tablename__ = "RequirementGroup"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
     group_id = Column(Integer, primary_key=True, autoincrement=True)
-    group_name = db.Column(db.String(255)) # Added group_name column
+    group_name = db.Column(db.String(255))  # Added group_name column
     program_id = Column(String(7), ForeignKey("Program.program_id", ondelete="CASCADE"))
     course_id = Column(CHAR(10), ForeignKey("Course.course_id", ondelete="CASCADE"))
     num_required = Column(Integer, default=None)

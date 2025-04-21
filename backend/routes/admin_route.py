@@ -18,6 +18,7 @@ def list_spn_requests():
     spns = SPNRequestService.get_spn_pending(pending)
     return jsonify([s.to_dict() for s in spns]), 200
 
+
 @admin_bp.route("/spn", methods=["PUT"])
 @jwt_required()
 def update_spn_request():
@@ -37,7 +38,7 @@ def update_spn_request():
     admin_id = get_jwt_identity()
     updated = SPNRequestService.update_spn_request(
         {"student_id": sid, "course_id": cid, "section_num": sec},
-        {"status": status, "admin_id": admin_id, "timestamp": datetime.utcnow()}
+        {"status": status, "admin_id": admin_id, "timestamp": datetime.utcnow()},
     )
     if hasattr(updated, "to_dict"):
         out = updated.to_dict()
@@ -47,6 +48,7 @@ def update_spn_request():
 
 
 # — Popularity —
+
 
 @admin_bp.route("/courses/popular", methods=["GET"])
 @jwt_required()
@@ -60,16 +62,27 @@ def popular_courses():
 
 # — Student directory & schedules —
 
+
 @admin_bp.route("/students", methods=["GET"])
 @jwt_required()
 def list_students():
     q = request.args.get("q", "")
     students = UserService.search_students(q)
     # return basic info
-    return jsonify([
-        {"username": s.username, "first_name": s.first_name, "last_name": s.last_name}
-        for s in students
-    ]), 200
+    return (
+        jsonify(
+            [
+                {
+                    "username": s.username,
+                    "first_name": s.first_name,
+                    "last_name": s.last_name,
+                }
+                for s in students
+            ]
+        ),
+        200,
+    )
+
 
 @admin_bp.route("/students/<string:student_id>/schedule", methods=["GET"])
 @jwt_required()

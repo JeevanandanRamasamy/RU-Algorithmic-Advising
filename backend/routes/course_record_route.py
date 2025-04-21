@@ -166,7 +166,7 @@ def add_course_record():
 
         course = CourseService.get_course_by_id(course_id)
         if isinstance(course, str):
-            return jsonify({"message": course}), 500
+            return jsonify({"message": course}), 400
 
         UserService.update_taken_credits(username)
 
@@ -247,7 +247,7 @@ def update_course_record():
         )
 
         if isinstance(result, str):
-            return jsonify({"message": result}), 500
+            return jsonify({"message": result}), 404
 
         UserService.update_taken_credits(username)
 
