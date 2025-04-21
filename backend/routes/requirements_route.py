@@ -92,8 +92,10 @@ def get_taken_courses_for_program():
         return jsonify({"message": "User not authenticated."}), 401
     if not program_id:
         return jsonify({"message": "Program ID is required."}), 400
-    
-    num_courses_taken = RequirementService.get_num_courses_taken(username=username, program_id=program_id)
+
+    num_courses_taken = RequirementService.get_num_courses_taken(
+        username=username, program_id=program_id
+    )
     return (
         jsonify(
             {
@@ -108,6 +110,7 @@ def get_taken_courses_for_program():
 @requirements_bp.route("/planned-courses/missing", methods=["GET"])
 @jwt_required()
 def get_missing_requirements_for_planned_courses():
+    print("here")
     username = get_jwt_identity()
     student_details = UserService.get_student_details(username=username)
     if isinstance(student_details, str):
@@ -150,6 +153,7 @@ def get_requirements_for_planned_courses():
         200,
     )
 
+
 @requirements_bp.route("/course-plan", methods=["GET"])
 @jwt_required()
 def get_course_plan_size():
@@ -159,18 +163,22 @@ def get_course_plan_size():
     username = get_jwt_identity()
     if not username:
         return jsonify({"message": "User not authenticated."}), 401
-    
+
     max_credits = request.args.get("max_credits")
     if not max_credits:
         return jsonify({"message": "Max credits is required."}), 400
 
-    course_plan = RequirementService.create_course_plan(username=username, max_credits=int(max_credits))
+    course_plan = RequirementService.create_course_plan(
+        username=username, max_credits=int(max_credits)
+    )
 
     return (
         jsonify(
             {
                 "message": "Successfully retrieved course plan",
-                "course_plan_size": len(course_plan["plan"]) if "plan" in course_plan else 0,
+                "course_plan_size": (
+                    len(course_plan["plan"]) if "plan" in course_plan else 0
+                ),
             }
         ),
         200,

@@ -152,7 +152,6 @@ def add_course_record():
         year = data.get("year")
         grade = data.get("grade") if "grade" in data else None
 
-        print(course_id)
         result = CourseRecordService.insert_course_record(
             {
                 "username": username,
@@ -197,7 +196,6 @@ def remove_course_record():
         course_record = CourseRecordService.delete_course_record(username, course_id)
         if isinstance(course_record, str):
             return jsonify({"message": course_record}), 500
-        print("here")
 
         course = CourseService.get_course_by_id(course_id)
         if isinstance(course, str):
