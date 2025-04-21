@@ -80,7 +80,6 @@ def create_app():
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
     app.register_blueprint(degree_navigator_bp)
-    app.register_blueprint(admin_bp)
 
     @app.before_request
     def handle_options_request():

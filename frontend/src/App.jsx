@@ -75,11 +75,11 @@ function App() {
 								</DndProvider>
 							}
 						/>
-						<Route 
-							path="/account-settings" 
+						<Route
+							path="/account-settings"
 							element={
 								<AccountSettings />
-							} 
+							}
 						/>
 						<Route
 							path="/toast"
@@ -130,6 +130,11 @@ function App() {
 								path="/navbar"
 								element={<Navbar />}
 							/>
+
+							<Route
+								path="/account-settings"
+								element={<AccountSettings />}
+							/>
 							<Route
 								path="/questionnaire"
 								element={
@@ -175,7 +180,6 @@ function App() {
 								path="/student/degree-navigator"
 								element={<DegreeNavigator />}
 							/>
-
 						</Route>
 					</Routes>
 				</main>
