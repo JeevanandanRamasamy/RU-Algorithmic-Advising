@@ -1,6 +1,8 @@
 from db import db
 from models.course import Course
 from sqlalchemy.exc import SQLAlchemyError
+from models.course_record import CourseRecord
+from sqlalchemy import func, desc, asc
 
 
 class CourseService:
@@ -67,3 +69,41 @@ class CourseService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course: {str(e)}"
+
+    @staticmethod
+    def get_most_popular_courses(n=3):
+        """Return the n courses with highest enrollment counts."""
+        try:
+            results = (
+                db.session.query(
+                    CourseRecord.course_id,
+                    func.count(CourseRecord.username).label('count')
+                )
+                .group_by(CourseRecord.course_id)
+                .order_by(desc('count'))
+                .limit(n)
+                .all()
+            )
+            return [{"course_id": r.course_id, "count": int(r.count)} for r in results]
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving most popular courses: {str(e)}"
+
+    @staticmethod
+    def get_least_popular_courses(n=3):
+        """Return the n courses with lowest enrollment counts."""
+        try:
+            results = (
+                db.session.query(
+                    CourseRecord.course_id,
+                    func.count(CourseRecord.username).label('count')
+                )
+                .group_by(CourseRecord.course_id)
+                .order_by(asc('count'))
+                .limit(n)
+                .all()
+            )
+            return [{"course_id": r.course_id, "count": int(r.count)} for r in results]
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving least popular courses: {str(e)}"

@@ -3,8 +3,8 @@ import logging
 import decimal
 import json
 import os
-from unittest.mock import patch
 
+from unittest.mock import patch
 from backend.app import create_app
 from backend.db import db
 from flask_jwt_extended import create_access_token

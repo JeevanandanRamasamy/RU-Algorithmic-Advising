@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import timedelta
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
+
 
 from db import db
 from models.account import Account
@@ -21,10 +23,12 @@ from routes.users_route import users_bp
 from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
+from routes.degree_navigator_route import degree_navigator_bp
+from routes.admin_route import admin_bp
 
 load_dotenv()
 
-def create_app(testing=False):
+def create_app():
     app = Flask(__name__)
     CORS(app)
 
@@ -66,6 +70,8 @@ def create_app(testing=False):
     app.register_blueprint(requirements_bp)
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
+    app.register_blueprint(degree_navigator_bp)
+    app.register_blueprint(admin_bp)
 
     # CORS preflight
     @app.before_request
@@ -106,6 +112,7 @@ def create_app(testing=False):
         """
         return jsonify({"status": "ok"}), 200
 
+    jwt = JWTManager(app)
     return app
 
 if __name__ == "__main__":

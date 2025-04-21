@@ -8,7 +8,6 @@ logging.basicConfig(level=logging.INFO)
 @pytest.fixture
 def client():
     app = create_app(testing=True)
-    app.config["TESTING"] = True
     return app.test_client()
 
 # Test case for health check endpoint

@@ -3,7 +3,7 @@ from datetime import datetime
 from models.course import Course
 from models.course_record import CourseRecord
 from sqlalchemy.exc import SQLAlchemyError
-
+from sqlalchemy import or_
 
 class CourseRecordService:
     @staticmethod
@@ -109,12 +109,14 @@ class CourseRecordService:
         except Exception as e:
             return f"Error: {str(e)}"
 
+
     @staticmethod
     def get_past_course_records(username):
         """Retrieve all past course records from a user's degree plan."""
         try:
-            # use datetime to filter past records
             current_date = datetime.now()
+
+            # Define valid terms based on current month
             terms = []
             if current_date.month > 5:
                 terms.append("spring")
@@ -123,35 +125,34 @@ class CourseRecordService:
             if current_date.month == 12:
                 terms.append("fall")
 
+            # Base query
+            base_query = (
+                db.session.query(CourseRecord, Course)
+                .filter(CourseRecord.username == username)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+            )
+
+            # Only apply filters if data in term/year is expected
             if terms:
-                courses = (
-                    db.session.query(CourseRecord, Course)
-                    .filter(
-                        CourseRecord.username == username,
-                        CourseRecord.term.in_(terms),
-                        CourseRecord.year <= current_date.year,
-                    )
-                    .join(Course, Course.course_id == CourseRecord.course_id)
-                    .all()
+                base_query = base_query.filter(
+                    or_(CourseRecord.term.in_(terms), CourseRecord.term.is_(None)),
+                    or_(CourseRecord.year <= current_date.year, CourseRecord.year.is_(None))
                 )
-            else:  # no terms completed in the current year
-                courses = (
-                    db.session.query(CourseRecord, Course)
-                    .filter(
-                        CourseRecord.username == username,
-                        CourseRecord.year < current_date.year,
-                    )
-                    .join(Course, Course.course_id == CourseRecord.course_id)
-                    .all()
+            else:
+                base_query = base_query.filter(
+                    or_(CourseRecord.year < current_date.year, CourseRecord.year.is_(None))
                 )
-            return CourseRecordService.convert_courses_to_dict(
-                courses
-            ) + CourseRecordService.get_termless_course_records_joined(username)
+
+            courses = base_query.all()
+            return CourseRecordService.convert_courses_to_dict(courses)
+
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving past course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
+
+
 
     @staticmethod
     def get_future_course_records(username):
@@ -298,3 +299,27 @@ class CourseRecordService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course records: {str(e)}"
+        
+    @staticmethod
+    def get_all_course_records(username: str):
+        """Retrieve every course record (i.e. planned course) for the given user."""
+        try:
+            rows = (
+                db.session.query(CourseRecord, Course)
+                  .filter(CourseRecord.username == username)
+                  .join(Course, Course.course_id == CourseRecord.course_id)
+                  .all()
+            )
+            return [
+                {
+                  "username": rec.username,
+                  "course_id": rec.course_id,
+                  "course_name": crs.course_name,
+                  "term": rec.term,
+                  "year": rec.year
+                }
+                for rec, crs in rows
+            ]
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving course records: {str(e)}"
