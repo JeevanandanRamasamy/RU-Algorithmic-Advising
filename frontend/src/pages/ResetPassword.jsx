@@ -66,12 +66,19 @@ function ResetPassword() {
             setMessage("Please enter the verification code.");
             return;
         }
+        if (code.length !== 6) {
+            setMessage("Verification code must be 6 digits.");
+            return;
+        }
 
+        if (password.length < 6) {
+            setMessage("Password must be at least 6 characters long.");
+            return;
+        }
         if (!password || !confirmPassword) {
             setMessage("All fields are required.");
             return;
         }
-
         if (password !== confirmPassword) {
             setMessage("Passwords do not match.");
             return;

@@ -13,8 +13,8 @@ def get_courses():
     """
     API endpoint to fetch and return course information from the Rutgers SOC API.
     """
-    api = RutgersCourseAPI(subject="198", semester="12025", campus="NB", level="UG")
-    courses = api.get_courses()
+    api = RutgersCourseAPI(subject="198", semester="72025", campus="NB", level="UG")
+    courses = api.get_courses("198")
     return jsonify(courses)
 
 
@@ -41,10 +41,7 @@ def get_db_courses():
             # If no search query, return all courses
             courses = Course.query.all()
 
-        course_list = [
-            course.to_dict()
-            for course in courses
-        ]
+        course_list = [course.to_dict() for course in courses]
         return jsonify(course_list), 200
     except Exception as e:
         return jsonify({"message": f"Error fetching courses: {e}"}), 500

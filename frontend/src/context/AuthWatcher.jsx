@@ -6,53 +6,55 @@ import { toast } from "react-toastify"; // if you're using react-toastify or sim
 import { showWarningToast } from "../components/toast/Toast";
 
 const AuthWatcher = () => {
-  const { token, logout } = useAuth();
-  const navigate = useNavigate();
+	const { token, logout } = useAuth();
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!token) return;
+	useEffect(() => {
+		if (!token) {
+			return;
+		}
 
-    let logoutTimeoutId;
-    let warningTimeoutId;
+		let logoutTimeoutId;
+		let warningTimeoutId;
 
-    try {
-      const { exp } = jwtDecode(token);
-      const expirationTime = exp * 1000;
-      const currentTime = Date.now();
-      const timeUntilExpiry = expirationTime - currentTime;
+		try {
+			const { exp } = jwtDecode(token);
+			const expirationTime = exp * 1000;
+			const currentTime = Date.now();
+			const timeUntilExpiry = expirationTime - currentTime;
 
-      const warningTime = 300 * 1000; // 5 minutes before expiry
+			const warningTime = 300 * 1000; // 5 minutes before expiry
 
-      if (timeUntilExpiry <= 0) {
-        logout();
-        navigate("/");
-      } else {
-        // Show a warning 1 minute before expiry
-        if (timeUntilExpiry > warningTime) {
-          warningTimeoutId = setTimeout(() => {
-            showWarningToast("Your session will expire in 5 minute!");
-          }, timeUntilExpiry - warningTime);
-        }
+			if (timeUntilExpiry <= 0) {
+				logout();
+				navigate("/");
+			} else {
+				// Show a warning 1 minute before expiry
+				if (timeUntilExpiry > warningTime) {
+					warningTimeoutId = setTimeout(() => {
+						showWarningToast("Your session will expire in 5 minute!");
+					}, timeUntilExpiry - warningTime);
+				}
 
-        // Logout on expiry
-        logoutTimeoutId = setTimeout(() => {
-          logout();
-          navigate("/");
-        }, timeUntilExpiry);
-      }
-    } catch (error) {
-      console.error("Invalid token:", error);
-      logout();
-      navigate("/");
-    }
+				// Logout on expiry
+				logoutTimeoutId = setTimeout(() => {
+					logout();
+					navigate("/");
+				}, timeUntilExpiry);
+			}
+		} catch (error) {
+			console.error("Invalid token:", error);
+			logout();
+			navigate("/");
+		}
 
-    return () => {
-      clearTimeout(logoutTimeoutId);
-      clearTimeout(warningTimeoutId);
-    };
-  }, [token, logout, navigate]);
+		return () => {
+			clearTimeout(logoutTimeoutId);
+			clearTimeout(warningTimeoutId);
+		};
+	}, [token, logout, navigate]);
 
-  return null;
+	return null;
 };
 
 export default AuthWatcher;

@@ -173,8 +173,8 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 	if (error) return <p>{error}</p>;
 
 	return (
-		<div className="w-full border border-gray-200 rounded"> {/* z-[-4] makes it so the table could not be scrolled*/}
-			{/* Main container with dynamic height */}
+		<div className="w-full border border-gray-200 rounded z-[4]">
+			{/* Single scrollable container */}
 			<div
 				className="overflow-auto relative"
 				style={{ height: `${tableHeight}px`, width: "100%" }}
@@ -183,7 +183,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 				<div style={{ width: `${tableWidth}px`, minWidth: "100%" }}>
 					{/* Header - using position sticky with full width background */}
 					<div 
-					className="sticky top-0 bg-gray-100 z-10" 
+					className="sticky top-0 bg-gray-100 z-4" 
 					style={{ 
 						width: `${tableWidth}px`, 
 						minWidth: "100%",

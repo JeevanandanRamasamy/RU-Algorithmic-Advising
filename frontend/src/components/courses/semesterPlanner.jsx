@@ -1,7 +1,8 @@
-import useStudentDetails from "../../hooks/useStudentDetails";
+import { useStudentDetails } from "../../context/StudentDetailsContext";
+import { useCourseRequirements } from "../../context/CourseRequirementContext";
+
 import DropCoursesContainer from "../courses/dropCoursesContainer";
-import { generateSemesters, generateSemestersTillNow } from "../../helpers/semesters";
-import useCourseRequirements from "../../hooks/useCourseRequirements";
+import useSemesterInfo from "../../hooks/useSemesterInfo";
 
 const SemesterPlanner = ({
 	courses,
@@ -13,6 +14,7 @@ const SemesterPlanner = ({
 	coursesWithMissingRequirements
 }) => {
 	const { enrollYear, gradYear } = useStudentDetails();
+	const { generateSemesters, generateSemestersTillNow } = useSemesterInfo();
 	const semesters = generateSemesters(enrollYear, gradYear);
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
 
@@ -32,6 +34,7 @@ const SemesterPlanner = ({
 							semestersTillNow={semestersTillNow}
 							requirementStrings={requirementStrings}
 							coursesWithMissingRequirements={coursesWithMissingRequirements}
+							hasCredits={true}
 						/>
 					);
 				})}

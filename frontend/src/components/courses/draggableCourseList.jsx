@@ -3,10 +3,11 @@ import Draggable from "react-draggable";
 import useDraggableCourses from "../../hooks/useDraggableCourses";
 import CourseList from "./CourseList";
 import DraggableCourseItem from "./draggableCourseItem";
-import DropdownItem from "../temp/DropdownItem";
+import DropdownItem from "../generic/DropdownItem";
 import { schools, subjects } from "../../data/sas";
 import useFilterCourses from "../../hooks/useFilterCourses";
 import Button from "../generic/Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DraggableCourseList = ({
 	title,
@@ -77,38 +78,47 @@ const DraggableCourseList = ({
 													▼
 												</span>
 											</div>
-											<div
-												className={`grid gap-4 transition-all duration-300 overflow-hidden px-2 ${
-													showFilters
-														? "max-h-[9999x] opacity-100"
-														: "max-h-0 opacity-0"
-												}`}>
-												<input
-													className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
-													type="text"
-													id="search-courses"
-													placeholder="Search courses by name or course code"
-													value={searchQuery}
-													onChange={e => setSearchQuery(e.target.value)}
-												/>
+											<AnimatePresence initial={false}>
+												{showFilters && (
+													<motion.div
+														key="filters"
+														initial={{ height: 0, opacity: 0 }}
+														animate={{ height: "auto", opacity: 1 }}
+														exit={{ height: 0, opacity: 0 }}
+														transition={{ duration: 0.3 }}
+														className="overflow-hidden grid gap-4 px-2">
+														<input
+															className="w-full p-[10px] border border-gray-300 rounded text-sm box-border non-draggable mx-auto focus:outline-none"
+															type="text"
+															id="search-courses"
+															placeholder="Search courses by name or course code"
+															value={searchQuery}
+															onChange={e =>
+																setSearchQuery(e.target.value)
+															}
+														/>
 
-												<DropdownItem
-													placeholder="Search by School code"
-													selectedValue={schoolSearchQuery}
-													onChange={e =>
-														setSchoolSearchQuery(e.target.value)
-													}
-													options={schools}
-												/>
-												<DropdownItem
-													placeholder="Search by subject code"
-													selectedValue={subjectSearchQuery}
-													onChange={e =>
-														setSubjectSearchQuery(e.target.value)
-													}
-													options={subjects}
-												/>
-											</div>
+														<DropdownItem
+															placeholder="Search by School code"
+															selectedValue={schoolSearchQuery}
+															onChange={e =>
+																setSchoolSearchQuery(e.target.value)
+															}
+															options={schools}
+														/>
+														<DropdownItem
+															placeholder="Search by subject code"
+															selectedValue={subjectSearchQuery}
+															onChange={e =>
+																setSubjectSearchQuery(
+																	e.target.value
+																)
+															}
+															options={subjects}
+														/>
+													</motion.div>
+												)}
+											</AnimatePresence>
 											<div className="p-2">
 												<div
 													className={`non-draggable border border-gray-200 rounded-md flex flex-row gap-3 overflow-x-auto overflow-y-hidden h-[200px] p-2`}>
