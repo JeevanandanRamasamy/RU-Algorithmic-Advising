@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
+import Button from "../generic/Button";
 
 const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 	return (
@@ -35,11 +35,11 @@ const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 			)}
 			<div className="flex justify-between">
 				<p className="planned-course-credits m-0 text-center">{course.credits} credits</p>
-				<button
-					className="bg-[#f44336] text-white border-none px-2.5 py-1 rounded cursor-pointer invisible group-hover:visible transition-opacity duration-200 hover:bg-[#d32f2f]"
-					onClick={() => onRemove(course.course_id)}>
-					Remove
-				</button>
+				<Button
+					className="bg-blue-500 text-white border-none px-2.5 py-1 rounded cursor-pointer invisible group-hover:visible transition-opacity duration-200 hover:bg-blue-700"
+					onClick={() => onRemove(course.course_id)}
+					label="-"
+				/>
 			</div>
 		</div>
 		// </div>

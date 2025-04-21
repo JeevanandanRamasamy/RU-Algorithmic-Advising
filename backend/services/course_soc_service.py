@@ -1,4 +1,7 @@
 import requests
+from services.timeService import TimeService
+from services.course_service import CourseService
+
 
 class RutgersCourseAPI:
     BASE_URL = "https://sis.rutgers.edu/oldsoc/courses.json"
@@ -14,10 +17,10 @@ class RutgersCourseAPI:
         Fetch courses from the Rutgers SOC API.
         """
         params = {
-            'subject': self.subject,
-            'semester': self.semester,
-            'campus': self.campus,
-            'level': self.level
+            "subject": self.subject,
+            "semester": self.semester,
+            "campus": self.campus,
+            "level": self.level,
         }
         try:
             response = requests.get(self.BASE_URL, params=params)
@@ -27,48 +30,97 @@ class RutgersCourseAPI:
             print(f"Error fetching data: {e}")
             return []
 
-    def parse_course(self, course):
+    def parse_course(self, course, res_dict):
         """
         Parse a single course dictionary into a structured format.
         """
-        return {
-            'course_number': course.get('courseNumber'),
-            'title': course.get('title'),
-            'credits': course.get('credits'),
-            'description': course.get('courseDescription'),
-            'prerequisites': course.get('preReqNotes'),
-            'sections': [
-                {
-                    'section_number': section.get('number'),
-                    'instructors': [instructor.get('name') for instructor in section.get('instructors', [])],
-                    'meeting_times': [
-                        {
-                            'day': meeting.get('meetingDay'),
-                            'start_time': meeting.get('startTime'),
-                            'end_time': meeting.get('endTime'),
-                            'campus': meeting.get('campusName'),
-                            'building': meeting.get('buildingCode'),
-                            'room': meeting.get('roomNumber')
-                        }
-                        for meeting in section.get('meetingTimes', [])
-                    ],
-                    'open_status': section.get('openStatus'),
-                    'index': section.get('index')
-                }
-                for section in course.get('sections', [])
-            ]
-        }
+        school = CourseService.get_course_prefix_from_subject(
+            f'{course.get("subject")}'
+        )
+        if not school:
+            print(course)
+        course_id = (
+            school + ":" + course.get("subject") + ":" + course.get("courseNumber")
+        )
+        # if course_id in res_dict:
+        #    res_dict[course_id][sections].
 
-    def get_courses(self):
+        sections = {}
+        for section in course.get("sections", []):
+            index = section.get("index")
+            if index is None:
+                continue
+            if section.get("printed") != "Y":
+                continue
+
+            meeting_times = []
+
+            for meeting in section.get("meetingTimes", []):
+                meeting_data = {
+                    "day": meeting.get("meetingDay"),
+                    "start_time": meeting.get("startTime"),
+                    "end_time": meeting.get("endTime"),
+                    "pm_code": meeting.get("pmCode"),
+                    "formatted_time": TimeService.formatTime(
+                        meeting.get("startTime"),
+                        meeting.get("endTime"),
+                        meeting.get("pmCode"),
+                    ),
+                    "meeting_mode_desc": meeting.get("meetingModeDesc"),
+                    "campus": meeting.get("campusName"),
+                    "building": meeting.get("buildingCode"),
+                    "room": meeting.get("roomNumber"),
+                }
+                # Append to meeting_times list
+                meeting_times.append(meeting_data)
+
+                sections[index] = {
+                    "section_number": section.get("number"),
+                    "instructors": [
+                        instructor.get("name")
+                        for instructor in section.get("instructors", [])
+                    ],
+                    "meeting_times": meeting_times,
+                    # "open_status": section.get("openStatus"),
+                    "index": index,
+                    "section_eligibility": section.get("sectionEligibility"),
+                    "exam_code": section.get("examCode"),
+                    "section_notes": section.get("sectionNotes"),
+                }
+
+        if not sections:
+            return  # Don't add this course if it has no valid sections
+
+        if course_id in res_dict:
+            res_dict[course_id]["sections"].update(sections)
+        else:
+            res_dict[course_id] = {
+                "course_id": course_id,
+                "course_name": course.get("expandedTitle") or course.get("title") or "",
+                "credits": f"{float(course.get('credits') or 0):.1f}",
+                "description": course.get("courseDescription"),
+                # "prerequisites": course.get("preReqNotes"),
+                "sections": sections,
+            }
+
+    def get_courses(
+        self,
+    ):
         """
         Retrieve and parse courses from the API.
         """
+        res_dict = {}
         raw_courses = self.fetch_courses()
-        return [self.parse_course(course) for course in raw_courses]
+        for course in raw_courses:
+            self.parse_course(course, res_dict)
+        return res_dict
+
+        # return [self.parse_course(course, subject, res_dict) for course in raw_courses]
+
 
 # Example usage for testing
 if __name__ == "__main__":
-    api = RutgersCourseAPI(subject='198', semester='12025', campus='NB', level='UG')
+    api = RutgersCourseAPI(subject="198", semester="12025", campus="NB", level="UG")
     courses = api.get_courses()
     for course in courses[:5]:  # Print only the first 5 courses for readability
         print(course)

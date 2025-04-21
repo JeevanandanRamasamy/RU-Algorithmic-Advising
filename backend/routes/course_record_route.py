@@ -1,6 +1,10 @@
+from services.semesters_service import SemestersService
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.course_record_service import CourseRecordService
+from services.course_service import CourseService
+from services.user_service import UserService
+import decimal
 
 # Define a Blueprint for course records
 course_record_bp = Blueprint(
@@ -117,7 +121,6 @@ def get_planned_courses():
             return jsonify({"message": "Missing username"}), 400
 
         planned_courses = CourseRecordService.get_future_course_records(username)
-        print(planned_courses)
         if isinstance(planned_courses, str):
             return jsonify({"message", planned_courses}), 500
 
@@ -158,10 +161,14 @@ def add_course_record():
                 "grade": grade,
             }
         )
-        print(result)
         if isinstance(result, str):
-
             return jsonify({"message": result}), 500
+
+        course = CourseService.get_course_by_id(course_id)
+        if isinstance(course, str):
+            return jsonify({"message": course}), 500
+
+        UserService.update_taken_credits(username)
 
         return (
             jsonify(
@@ -190,6 +197,12 @@ def remove_course_record():
         if isinstance(course_record, str):
             return jsonify({"message": course_record}), 500
 
+        course = CourseService.get_course_by_id(course_id)
+        if isinstance(course, str):
+            return jsonify({"message": course}), 500
+
+        UserService.update_taken_credits(username)
+
         return (
             jsonify(
                 {
@@ -208,7 +221,6 @@ def remove_course_record():
 def update_course_record():
     try:
         username = get_jwt_identity()
-
         data = request.get_json()
         if not username or "course_id" not in data:
             return jsonify({"message": "Missing username or course_id"}), 400
@@ -218,16 +230,11 @@ def update_course_record():
         term = data.get("term")
         year = data.get("year")
         grade = data.get("grade") if "grade" in data else None
-        # data = request.get_json()
-
         if not username or "course_id" not in data:
             return (
                 jsonify({"message": "Missing username, course_id, or new_course_id"}),
                 400,
             )
-
-        # course_id = data["course_id"]
-        # new_course_id = data["new_course_id"]
 
         result = CourseRecordService.update_course_record(
             username=username,
@@ -238,8 +245,11 @@ def update_course_record():
                 "grade": grade,
             },
         )
+
         if isinstance(result, str):
             return jsonify({"message": result}), 500
+
+        UserService.update_taken_credits(username)
 
         return (
             jsonify(

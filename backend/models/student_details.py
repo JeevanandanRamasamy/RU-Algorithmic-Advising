@@ -16,11 +16,14 @@ from dataclasses import dataclass
 class StudentDetails(db.Model):
     __tablename__ = "StudentDetails"
 
+    __table_args__ = {"extend_existing": True}
+
     username: str
     grad_year: int
     enroll_year: int
     credits_earned: str
     gpa: str
+    
     username = Column(
         String(6), ForeignKey("Account.username", ondelete="CASCADE"), primary_key=True
     )

@@ -16,9 +16,10 @@ export const AuthProvider = ({ children }) => {
 			localStorage.setItem("token", token);
 			localStorage.setItem("role", role);
 		} else {
-			localStorage.removeItem("user");
-			localStorage.removeItem("token");
-			localStorage.removeItem("role");
+			localStorage.clear();
+			setUser(null); // Not sure how necessary, but just in case
+			setToken(null);
+			setRole(null);
 		}
 	}, [user, token, role]);
 
@@ -32,9 +33,7 @@ export const AuthProvider = ({ children }) => {
 		setUser(null);
 		setToken(null);
 		setRole(null);
-		localStorage.removeItem("user");
-		localStorage.removeItem("token");
-		localStorage.removeItem("role")
+		localStorage.clear();
 	};
 
 	return (

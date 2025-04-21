@@ -24,7 +24,7 @@ const Register = () => {
           <RegisterFlow />
           <p className="text-sm text-gray-500">
             Already have an account?
-            <Link to="/" className="text-blue-500 hover:underline">
+            <Link to="/" className="text-blue-500 hover:underline ml-1">
               Log in here.
             </Link>
           </p>

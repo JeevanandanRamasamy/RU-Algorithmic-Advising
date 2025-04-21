@@ -1,25 +1,24 @@
-import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useCourses } from "../context/CoursesContext";
+import { useTakenCourses } from "../context/TakenCoursesContext";
+import { useStudentDetails } from "../context/StudentDetailsContext";
+import { usePrograms } from "../context/ProgramsContext";
+import { useCourseRequirements } from "../context/CourseRequirementContext";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+
+import { useState, useEffect } from "react";
 import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
-import { useAuth } from "../context/AuthContext";
-import useCourses from "../hooks/useCourses";
-import useTakenCourses from "../hooks/useTakenCourses";
 import Navbar from "../components/navbar/Navbar";
-import useStudentDetails from "../hooks/useStudentDetails";
+import NotificationsButton from "../components/widgets/notifications";
 import StudentDetails from "../components/studentInfo/studentDetails";
-import usePrograms from "../hooks/usePrograms";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
-import useCourseRecords from "../hooks/useCourseRecords";
-import CourseList from "../components/courses/CourseList";
-import CourseItem from "../components/courses/CourseItem";
 import AvailableCourses from "../components/courses/AvailableCourses";
-import useRequirements from "../hooks/useRequirements";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+import { useNavigate } from "react-router-dom";
 
 const Questionnaire = () => {
-	const { user, token } = useAuth();
+	const { user, token, role } = useAuth();
 	const {
 		classes,
 		gradYear,
@@ -49,6 +48,24 @@ const Questionnaire = () => {
 		handleRemoveProgram
 	} = usePrograms();
 	const { courses } = useCourses();
+
+	const {
+		coursesWithMissingRequirements,
+		fetchPlannedCoursesWithMissingRequirements,
+		requirementStrings
+	} = useCourseRequirements();
+
+	const {
+		courseRecords,
+		setCourseRecords,
+		coursesRecordsLoading,
+		setCoursesRecordsLoading,
+		coursesRecordsError,
+		setCourseRecordsError,
+		handleAddCourseRecord,
+		handleRemoveCourseRecord
+	} = useCourseRecords(fetchPlannedCoursesWithMissingRequirements);
+
 	const {
 		takenCourses,
 		takenCoursesLoading,
@@ -59,21 +76,20 @@ const Questionnaire = () => {
 		handleRemoveTakenCourse,
 		searchTaken,
 		setSearchTaken
-	} = useTakenCourses();
-	const {
-		courseRecords,
-		setCourseRecords,
-		coursesRecordsLoading,
-		setCoursesRecordsLoading,
-		coursesRecordsError,
-		setCourseRecordsError,
-		handleAddCourseRecord,
-		handleRemoveCourseRecord
-	} = useCourseRecords();
+	} = useTakenCourses(fetchPlannedCoursesWithMissingRequirements);
 
 	const [showAvailableCourseFilters, setShowAvailableCourseFilters] = useState(false);
 	const [showTakenCourseFilters, setShowTakenCourseFilters] = useState(false);
-	const { requirementStrings, validateSchedule } = useRequirements();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (!user) {
+			navigate("/");
+		}
+		if (role === "admin") {
+			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
+		}
+	}, [user, role, navigate]); // Runs whenever user changes
 
 	return (
 		<>
@@ -82,6 +98,7 @@ const Questionnaire = () => {
 					<h1>Questionnaire</h1>
 				</header>
 				<Navbar />
+				<NotificationsButton />
 				<div className="">
 					<div className="flex justify-between pb-5">
 						<StudentDetails
@@ -134,6 +151,7 @@ const Questionnaire = () => {
 								onAddCourse: handleAddTakenCourse
 							}}
 							requirementStrings={requirementStrings}
+							hasCredits={true}
 						/>
 					</div>
 					<div className="flex justify-center mt-5">

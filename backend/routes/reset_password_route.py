@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from services.user_service import UserService
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.security import generate_password_hash
 
 reset_password_bp = Blueprint("reset_password", __name__)  # Create a Blueprint object
 
@@ -47,7 +48,7 @@ def reset_password():
         account = UserService.get_account_by_username(username)
         account_data = {
             "username": username,
-            "password": new_password,
+            "password": generate_password_hash(new_password),
             "first_name": account.first_name,
             "last_name": account.last_name,
             "role": account.role,
