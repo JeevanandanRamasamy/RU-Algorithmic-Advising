@@ -17,6 +17,7 @@ from routes.users_route import users_bp
 from routes.sections_route import section_bp
 from routes.spn_route import spn_request_bp
 from routes.requirements_route import requirements_bp
+from routes.degree_navigator_route import degree_navigator_bp
 
 from flask_cors import CORS
 
@@ -31,83 +32,6 @@ from jwt_helper import init_jwt
 
 
 load_dotenv()
-
-# app = Flask(__name__)
-# CORS(app)
-
-
-# @app.before_request
-# def handle_options_request():
-#     if request.method == "OPTIONS":
-#         response = jsonify({"message": "CORS preflight successful"})
-#         response.headers.add("Access-Control-Allow-Origin", "*")
-#         response.headers.add(
-#             "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
-#         )
-#         response.headers.add(
-#             "Access-Control-Allow-Headers", "Content-Type, Authorization"
-#         )
-#         return response, 200
-
-
-# @app.after_request
-# def add_cors_headers(response):
-#     response.headers["Access-Control-Allow-Origin"] = "*"
-#     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-#     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-#     return response
-
-
-# app.register_blueprint(course_bp)
-# app.register_blueprint(course_record_bp)
-# app.register_blueprint(programs_bp)
-# app.register_blueprint(users_bp)
-# app.register_blueprint(users_programs_bp)
-# app.register_blueprint(register_bp)
-# app.register_blueprint(login_bp)
-# app.register_blueprint(verification_bp)
-# app.register_blueprint(requirements_bp)
-
-
-# username = os.getenv("DB_USERNAME")
-# password = os.getenv("DB_PASSWORD")
-# host = os.getenv("DB_HOST", "localhost")
-# dbname = os.getenv("DB_NAME")
-# port = os.getenv("PORT_NUM")
-# key = os.getenv("KEY")
-# print(username)
-# print(password)
-# print(host)
-# print(dbname)
-# print(port)
-# app.config["SQLALCHEMY_DATABASE_URI"] = (
-#     f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
-# )
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config["JWT_SECRET_KEY"] = key
-# app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Tokens expire in 1 hour
-# db.init_app(app)
-# init_jwt(app)  # Initialize JWTManager
-
-
-# @app.route("/")
-# def home():
-#     return "Welcome to  the RU Algorithmic Advising Web Server!"
-
-
-# @app.route("/check_db")
-# def check_db_connection():
-#     try:
-#         test_account = Account.query.first()
-#         if test_account:
-#             return (
-#                 f"Database connected successfully! First user: {test_account.username}"
-#             )
-#         else:
-#             return "Database connected, but no users found."
-#     except Exception as e:
-#         return f"Database connection failed: {e}"
-
 
 def create_app():
     app = Flask(__name__)
@@ -154,6 +78,7 @@ def create_app():
     app.register_blueprint(requirements_bp)
     app.register_blueprint(spn_request_bp)
     app.register_blueprint(section_bp)
+    app.register_blueprint(degree_navigator_bp)
 
     @app.before_request
     def handle_options_request():
@@ -171,17 +96,6 @@ def create_app():
     @app.route("/")
     def home():
         return "Welcome to the RU Algorithmic Advising Web Server!"
-
-    # @app.route("/check_db")
-    # def check_db_connection():
-    #     try:
-    #         test_account = Account.query.first()
-    #         if test_account:
-    #             return f"Database connected successfully! First user: {test_account.username}"
-    #         else:
-    #             return "Database connected, but no users found."
-    #     except Exception as e:
-    #         return f"Database connection failed: {e}"
 
     return app
 

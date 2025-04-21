@@ -31,6 +31,26 @@ class RequirementService:
         root = RequirementService.build_tree_from_group(group)
         return root
 
+# Create a tree from a program
+    @staticmethod
+    def get_program_requirement_tree(program_id):
+        """ 
+        Build a hierarchical tree of requirements for a program.
+        Returns a list of root RequirementGroupNode trees.
+        """
+        top_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
+
+        if not top_groups:
+            return []
+
+        root_nodes = []
+        for group in top_groups:
+            if group.parent_group_id is None:
+                root = RequirementService.build_tree_from_group(group)
+                root_nodes.append(root)
+
+        return root_nodes
+    
     @staticmethod
     def build_tree_from_group(group):
         root = RequirementGroupNode(
