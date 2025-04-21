@@ -1,6 +1,6 @@
 import pytest
 from flask_jwt_extended import create_access_token
-from app import create_app
+from backend.app import create_app
 
 @pytest.fixture
 def client():

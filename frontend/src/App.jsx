@@ -10,12 +10,14 @@ import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
 import SPN from "./pages/SPN";
+import DegreeNavigator from "./pages/DegreeNavigator";
 import AccountSettings from "./pages/AccountSettings";
 
 import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminStudentSchedule from "./pages/AdminStudentSchedule";
 
 import { AuthProvider } from "./context/AuthContext";
 import "./css/index.css";
@@ -105,6 +107,12 @@ function App() {
 							path="/"
 							element={<Login />}
 						/>
+						<Route 
+							path="/admin/student/:studentId" 
+							element={
+								<AdminStudentSchedule />
+							} 
+						/>
 						<Route
 							path="/register"
 							element={<Register />}
@@ -170,6 +178,11 @@ function App() {
 								path="/admin/home"
 								element={<AdminDashboard />}
 							/>
+							<Route
+								path="/student/degree-navigator"
+								element={<DegreeNavigator />}
+							/>
+
 						</Route>
 					</Routes>
 				</main>
