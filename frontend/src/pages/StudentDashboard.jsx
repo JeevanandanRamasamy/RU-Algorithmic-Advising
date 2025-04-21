@@ -4,11 +4,13 @@ import Navbar from "../components/navbar/Navbar";
 import NotificationsButton from "../components/widgets/notifications";
 import { useAuth } from "../context/AuthContext";
 import useAccount from "../hooks/useAccount";
-import useStudentDetails from "../hooks/useStudentDetails";
-import usePrograms from "../hooks/usePrograms";
 import useProgramRequirements from "../hooks/useProgramRequirements";
-import useTakenCourses from "../hooks/useTakenCourses";
-import usePlannedCourses from "../hooks/usePlannedCourses";
+
+import { usePrograms } from "../context/ProgramsContext";
+import { useStudentDetails } from "../context/StudentDetailsContext";
+import { useTakenCourses } from "../context/TakenCoursesContext";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+
 import Card, { CardContent } from "../components/generic/Card";
 import GraduationForecastCard from "../components/widgets/GraduationForecast";
 import Progress from "../components/generic/progress";
@@ -19,24 +21,13 @@ import "../css/home.css";
 function StudentDashboard() {
 	const { user, role } = useAuth();
 	const navigate = useNavigate();
-	const {
-		firstName,
-		lastName,
-	} = useAccount();
-	const {
-		enrollYear,
-		gradYear,
-		gpa,
-		creditsEarned,
-	} = useStudentDetails();
+	const { firstName, lastName } = useAccount();
+	const { enrollYear, gradYear, gpa, creditsEarned } = useStudentDetails();
 	const { selectedPrograms } = usePrograms();
-	const {
-		fetchProgramRequirements,
-		fetchTakenCourses
-	} = useProgramRequirements();
+	const { fetchProgramRequirements, fetchTakenCourses } = useProgramRequirements();
 	const [programStats, setProgramStats] = useState({});
+	const { plannedCourses } = useCourseRecords();
 	const { takenCourses } = useTakenCourses();
-	const { plannedCourses } = usePlannedCourses();
 	const totalCredits = 120;
 
 	useEffect(() => {
@@ -55,13 +46,13 @@ function StudentDashboard() {
 				stats[program.program_id] = {
 					total,
 					taken,
-					needed: total - taken,
+					needed: total - taken
 				};
 			}
 			setProgramStats(stats);
 		};
 
-		if (selectedPrograms.length) loadProgramData();
+		if (selectedPrograms?.length) loadProgramData();
 	}, [user, role, navigate, selectedPrograms]);
 
 	return (
@@ -70,7 +61,11 @@ function StudentDashboard() {
 			<NotificationsButton />
 			<div className="p-8 ml-[110px]">
 				<h1 className="text-3xl font-bold mb-6 text-gray-800">
-					Welcome back, <span className="text-primary">{firstName} {lastName}</span> 👋
+					Welcome back,{" "}
+					<span className="text-primary">
+						{firstName} {lastName}
+					</span>{" "}
+					👋
 				</h1>
 
 				<div className={`grid gap-6 grid-cols-1 md:grid-cols-3`}>
@@ -95,10 +90,12 @@ function StudentDashboard() {
 								Expected Graduation: <span className="font-medium">{gradYear}</span>
 							</p>
 							<p className="text-sm text-gray-600">
-								Number of Courses Taken: <span className="font-medium">{takenCourses.length}</span>
+								Number of Courses Taken:{" "}
+								<span className="font-medium">{takenCourses.length}</span>
 							</p>
 							<p className="text-sm text-gray-600">
-								Number of Courses Planned: <span className="font-medium">{plannedCourses.length}</span>
+								Number of Courses Planned:{" "}
+								<span className="font-medium">{plannedCourses.length}</span>
 							</p>
 						</CardContent>
 					</Card>
@@ -129,30 +126,33 @@ function StudentDashboard() {
 					{/* Enrolled Programs */}
 					<Card className="col-span-1 md:col-span-3">
 						<CardContent className="p-6">
-							<p className="text-xl font-semibold mb-4">
-								Your Programs
-							</p>
-							{selectedPrograms.map((program) => {
-								const stats = programStats[program.program_id];
-								const percent =
-									stats && stats.needed === 0
-										? 100
-										: stats && stats.total > 0
+							<p className="text-xl font-semibold mb-4">Your Programs</p>
+							{selectedPrograms &&
+								selectedPrograms.map(program => {
+									const stats = programStats[program.program_id];
+									const percent =
+										stats && stats.needed === 0
+											? 100
+											: stats && stats.total > 0
 											? (stats.taken / stats.total) * 100
 											: 0;
-								
-								return (
-									<div key={program.program_id} className="mb-4">
-										<p className="text-sm font-medium text-gray-700 mb-1">
-											{program.program_name}
-										</p>
-										<Progress value={percent} />
-										<p className="text-xs text-gray-500 mt-1">
-											{stats ? `${stats.needed} courses remaining` : "Loading..."}
-										</p>
-									</div>
-								);
-							})}
+
+									return (
+										<div
+											key={program.program_id}
+											className="mb-4">
+											<p className="text-sm font-medium text-gray-700 mb-1">
+												{program.program_name}
+											</p>
+											<Progress value={percent} />
+											<p className="text-xs text-gray-500 mt-1">
+												{stats
+													? `${stats.needed} courses remaining`
+													: "Loading..."}
+											</p>
+										</div>
+									);
+								})}
 						</CardContent>
 					</Card>
 				</div>

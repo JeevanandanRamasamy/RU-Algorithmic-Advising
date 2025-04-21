@@ -1,20 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
-import { useAuth } from "../context/AuthContext";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { useAuth } from "./AuthContext";
 
-const useCourses = () => {
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+const CoursesContext = createContext();
+
+export const CoursesProvider = ({ children }) => {
 	const { token } = useAuth();
 	const [courses, setCourses] = useState([]);
 	const [coursesLoading, setCoursesLoading] = useState(false);
 	const [coursesError, setCoursesError] = useState(null);
-	// const [searchAvailable, setSearchAvailable] = useState("");
 
 	const fetchCourses = useCallback(async () => {
 		setCoursesLoading(true);
 		try {
 			const response = await fetch(`${backendUrl}/api/courses`, {
 				headers: {
-					Authorization: `Bearer ${localStorage.getItem("token")}`
+					Authorization: `Bearer ${token}`
 				}
 			});
 			if (!response.ok) throw new Error("Failed to fetch courses");
@@ -35,15 +37,18 @@ const useCourses = () => {
 		}
 	}, [token, fetchCourses]);
 
-	return {
-		courses,
-		coursesLoading,
-		coursesError,
-		fetchCourses,
-		setCourses
-		// searchAvailable,
-		// setSearchAvailable
-	};
+	return (
+		<CoursesContext.Provider
+			value={{
+				courses,
+				coursesLoading,
+				coursesError,
+				fetchCourses,
+				setCourses
+			}}>
+			{children}
+		</CoursesContext.Provider>
+	);
 };
 
-export default useCourses;
+export const useCourses = () => useContext(CoursesContext);

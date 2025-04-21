@@ -92,16 +92,16 @@ class SPNRequestService:
             return {"success": successful, "failed": failed}
         
     @staticmethod
-    def delete_spn_request(spn_request_id):
+    def delete_spn_request(identifier: dict):
         """Delete a SPN request by its spn_request_id."""
         try:
-            spn_request = SPNRequest.query.filter_by(spn_request_id=spn_request_id).first()
+            spn_request = SPNRequest.query.filter_by(**identifier).first()
             if spn_request:
                 db.session.delete(spn_request)
                 db.session.commit()
-                return f"SPN request {spn_request_id} deleted successfully"
+                return {"success": True, "msg": "SPN request deleted successfully"}
             else:
-                return "SPN request not found"
+                return {"success": False, "msg": "SPN request not found"}
         except SQLAlchemyError as e:
             db.session.rollback()
-            return f"Error deleting SPN request: {str(e)}"
+            return {"success": False, "msg": f"Error deleting SPN request: {str(e)}"}

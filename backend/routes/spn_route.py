@@ -37,7 +37,7 @@ def get_spn_requests():
 # Add course to the user's planned courses
 @spn_request_bp.route("/add", methods=["POST"])
 @jwt_required()  # Ensure the user is authenticated
-def add_planned_course():
+def add_spn():
     data = request.get_json()
     username = data.get("username")
     course_id = data.get("course_id")
@@ -104,27 +104,25 @@ def update_spn_request():
     except Exception as e:
         return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
 
-
-""" # Is there a need to delete SPNs?
 @spn_request_bp.route("/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
 def drop_request():
     data = request.get_json()
-    username = data.get("username")
-    course_id = data.get("course_id")
+    identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
+    identifier = {key: data.get(key) for key in identifier_keys}
 
-    if not username or not course_id:
+    if not identifier.get("student_id") or not identifier.get("course_id"):
         return jsonify({"message": "Missing required fields"}), 400
 
     try:
         # Call the service function to remove the course from the user's planned courses
-        response = SPNRequestService.delete_spn_request(spn_request_id)
+        response = SPNRequestService.delete_spn_request(identifier)
         print(response)
 
-        if isinstance(response, dict):
-            return jsonify(response), 200  # Successfully removed
+        if response.get("success"):
+            return jsonify(response.get("msg")), 200  # Successfully removed
         else:
-            return jsonify({"message": response}), 500  # Error message
+            return jsonify({"message": response.get("msg")}), 500  # Error message
     except Exception as e:
-        return jsonify({"message": f"Error removing planned course: {str(e)}"}), 500
-        """
+        return jsonify({"message": response.get("msg")}), 500
+        

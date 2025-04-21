@@ -5,7 +5,7 @@ import {
 	showInfoToast
 } from "../components/toast/Toast";
 import { useState, useEffect, useCallback, useRef } from "react";
-import useCourses from "../hooks/useCourses";
+import { useCourses } from "../context/CoursesContext";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
 import NotificationsButton from "../components/widgets/notifications";
@@ -14,11 +14,12 @@ import CourseListContainer from "../components/courses/CourseListContainer";
 import ToRequest from "../components/SPNcomponents/toRequest";
 import DraggableCourseList from "../components/courses/draggableCourseList";
 import Button from "../components/generic/Button";
-import useCourseRecords from "../hooks/useCourseRecords";
+import { useCourseRecords } from "../context/CourseRecordsContext";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
 import DataTable from "../components/generic/DataTable"; // Adjust the import path
-import useRequirements from "../hooks/useRequirements";
+import { useCourseRequirements } from "../context/CourseRequirementContext";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 
 function SPN() {
@@ -28,7 +29,7 @@ function SPN() {
 		{ header: "Course ID", accessor: "course_id" },
 		{ header: "Section Number", accessor: "section_num" },
 		{ header: "Index", accessor: "index_num" },
-		{ header: "Semester", accessor: "term" },
+		{ header: "Term", accessor: "term" },
 		{ header: "Year", accessor: "year" },
 		{ header: "Reason", accessor: "reason" },
 		{ header: "Status", accessor: "status" },
@@ -42,8 +43,9 @@ function SPN() {
 		const { courseRecords } = useCourseRecords();
 		const [isOpen, setIsOpen] = useState(false);
 		let url = apiUrl + `?student_id=${encodeURIComponent(user)}`;
+		let deleteUrl = apiUrl + `/drop`;
 
-		const { requirementStrings, validateSchedule } = useRequirements();
+		const { requirementStrings } = useCourseRequirements();
 		return (
 			<>
 				{/* <div className="fixed"> */}
@@ -66,10 +68,13 @@ function SPN() {
 					<header className="app-header">
 						<h1>My Requests</h1>
 					</header>
-					<main className="gap-8 flex flex-col -z-5">
+					<main className="gap-8 flex flex-col z-5">
 						<DataTable
 							apiUrl={url}
+							deleteApiUrl={deleteUrl}
 							columns={columns}
+							allowDelete={true}
+							deleteRoles={"student"}
 						/>
 					</main>
 					<header className="app-header">
@@ -78,7 +83,7 @@ function SPN() {
 					<div className="pb-2 flex justify-end">
 						<Button
 							onClick={() => setIsOpen(!isOpen)}
-							className="p-2 flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
+							className="p-2 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white border border-black"
 							label={isOpen ? "Close Available Courses" : "Open Available Courses"}
 						/>
 					</div>
@@ -88,7 +93,7 @@ function SPN() {
 				</div>
 			</>
 		);
-	} else {
+	} else if (role === "admin"){ {/* Needed because will try to run this after logout without the check */}
 		let pendingUrl = apiUrl + `?pending_param=true`;
 		let notPendingUrl = apiUrl + `?pending_param=false`;
 		let updateUrl = apiUrl + "/update";

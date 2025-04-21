@@ -8,10 +8,19 @@ from sqlalchemy import func, desc, asc
 class CourseService:
     # ------------------ COURSE OPERATIONS ------------------
     @staticmethod
+    def get_course_prefix_from_subject(subject):
+        pattern = f"%:{subject}:%"
+        course = Course.query.filter(Course.course_id.like(pattern)).first()
+        return course.course_id.split(":")[0]
+
+    @staticmethod
     def get_course_string(course_id):
         try:
             course = CourseService.get_course_by_id(course_id)
-            return f"{course_id} {course.course_name}"
+            if course:
+                return f"{course_id} {course.course_name if course.course_name else ''}"
+            return course_id
+
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving course: {str(e)}"
