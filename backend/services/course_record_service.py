@@ -80,7 +80,6 @@ class CourseRecordService:
                 .join(Course, Course.course_id == CourseRecord.course_id)
                 .first()
             )
-            print(course)
             return CourseRecordService.convert_courses_to_dict([course])[0]
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -274,6 +273,7 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
+            print(course_record, username)
             if course_record:
                 db.session.delete(course_record)
                 db.session.commit()

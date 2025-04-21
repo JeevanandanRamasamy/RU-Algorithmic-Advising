@@ -15,6 +15,12 @@ def client():
 
 
 @pytest.fixture
+def auth_header():
+    access_token = create_access_token(identity="test")
+    return {"Authorization": f"Bearer {access_token}"}
+
+
+@pytest.fixture
 def register_user(client):
     client.post(
         "/api/register",
@@ -34,13 +40,11 @@ def register_user(client):
 
 
 # T02
-def test_update_user_details_success(client, register_user):
-    access_token = create_access_token(identity="test")
-
+def test_update_user_details_success(client, register_user, auth_header):
     response = client.put(
         "/api/users/details",
         json={"enroll_year": 2020, "grad_year": 2024, "gpa": 3.9},
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers=auth_header,
     )
 
     data = response.get_json()
@@ -80,15 +84,11 @@ def test_update_user_details_success(client, register_user):
     ],
 )
 def test_update_user_details_with_null_fields(
-    client, payload, missing_field, register_user
+    client, payload, missing_field, register_user, auth_header
 ):
     access_token = create_access_token(identity="test")
 
-    response = client.put(
-        "/api/users/details",
-        json=payload,
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
+    response = client.put("/api/users/details", json=payload, headers=auth_header)
 
     data = response.get_json()
     assert response.status_code == 400
@@ -96,13 +96,13 @@ def test_update_user_details_with_null_fields(
 
 
 # T06
-def test_update_user_details_missing_gpa(client, register_user):
+def test_update_user_details_missing_gpa(client, register_user, auth_header):
     access_token = create_access_token(identity="test")
 
     response = client.put(
         "/api/users/details",
         json={"enroll_year": 2020, "grad_year": 2024, "gpa": None},
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers=auth_header,
     )
 
     data = response.get_json()
