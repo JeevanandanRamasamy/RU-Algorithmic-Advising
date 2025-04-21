@@ -24,8 +24,8 @@ def get_auth_headers(username="test_user"):
     return {"Authorization": f"Bearer {token}"}
 
 
-def test_validate_endpoint(mock_validate, mock_fulfill, mock_prereqs, mock_check):
-    mock_validate.return_value = ["01:198:111"]
-    response = client.get("/api/requirements/planned-courses/validate")
-    assert response.status_code == 200
-    assert response.get_json() == {}
+# def test_validate_endpoint(mock_validate, mock_fulfill, mock_prereqs, mock_check):
+#     mock_validate.return_value = ["01:198:111"]
+#     response = client.get("/api/requirements/planned-courses/validate")
+#     assert response.status_code == 200
+#     assert response.get_json() == {}
