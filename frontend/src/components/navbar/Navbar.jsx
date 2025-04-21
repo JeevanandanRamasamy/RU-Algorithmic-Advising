@@ -151,6 +151,7 @@ const Navbar = () => {
 							onClick={(e) => {
 								e.preventDefault(); // prevent default anchor behavior
 								logout(); // your logout function
+								navigate("/"); // Redirect to the login page. Didn't work when logging out from SPNRequest?
 								showSuccessToast("You have been logged out successfully!");
 							}}
 						>

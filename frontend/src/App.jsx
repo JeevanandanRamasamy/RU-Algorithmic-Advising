@@ -10,6 +10,7 @@ import Questionnaire from "./pages/Questionnaire";
 import DegreePlanner from "./pages/DegreePlanner";
 import Navbar from "./components/navbar/Navbar";
 import SPN from "./pages/SPN";
+import DegreeNavigator from "./pages/DegreeNavigator";
 import AccountSettings from "./pages/AccountSettings";
 
 import ToastDemo from "./pages/ToastDemo";
@@ -170,6 +171,11 @@ function App() {
 								path="/admin/home"
 								element={<AdminDashboard />}
 							/>
+							<Route
+								path="/student/degree-navigator"
+								element={<DegreeNavigator />}
+							/>
+
 						</Route>
 					</Routes>
 				</main>

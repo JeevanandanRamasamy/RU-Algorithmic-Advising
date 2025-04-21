@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { showErrorToast, showSuccessToast } from "../toast/Toast";
 import { useAuth } from "../../context/AuthContext";
 
-const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data available." }) => {
+const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage = "No data available.", allowDelete = false, deleteRoles = ["admin"] }) => {
 	const { user, role, token } = useAuth();
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +13,9 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 	const tableRef = useRef(null);
 	const ROW_HEIGHT = 40;
 	const BUFFER_SIZE = 5; // Extra rows to render above and below visible area
+	
+	// Check if user has delete permission
+	const canDelete = allowDelete && deleteRoles.includes(role);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -104,6 +107,41 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 			showErrorToast("Error updating data.");
 		}
 	};
+	
+	// Handle row deletion
+	const handleDeleteRow = async (rowIndex) => {
+		if (!canDelete) return;
+		
+		const rowToDelete = data[rowIndex];
+				
+		try {
+			const response = await fetch(`${deleteApiUrl}`, {
+				method: "DELETE",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(rowToDelete)
+			});
+			
+			if (!response.ok) {
+				throw new Error("Failed to delete row");
+			}
+			
+			// Remove row from local data
+			const updatedData = [...data];
+			updatedData.splice(rowIndex, 1);
+			setData(updatedData);
+			
+			// Recalculate visible rows
+			calculateVisibleRows(scrollTop, updatedData);
+			
+			showSuccessToast("SPN successfully removed.");
+		} catch (error) {
+			showErrorToast("Error deleting row.");
+			console.error("Delete error:", error);
+		}
+	};
 
 	const renderEditableCell = (rowIndex, column, value) => {
 		if (column.accessor === "status" && role !== "student") {
@@ -124,7 +162,12 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 
 	// Calculate column widths
 	const columnWidth = 150;
-	const tableWidth = columns.length * columnWidth;
+	// Add space for delete button column if needed
+	const effectiveColumns = canDelete ? columns.length + 1 : columns.length;
+	const tableWidth = effectiveColumns * columnWidth;
+	
+	// Calculate table height based on data length
+	const tableHeight = Math.min(450, Math.max(data.length * ROW_HEIGHT + 40, 150));
 
 	if (isLoading) return <p>Loading...</p>;
 	if (error) return <p>{error}</p>;
@@ -133,27 +176,42 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 		<div className="w-full border border-gray-200 rounded z-[4]">
 			{/* Single scrollable container */}
 			<div
-				className="overflow-auto -z-4"
-				style={{ height: "450px", width: "100%" }}
+				className="overflow-auto relative"
+				style={{ height: `${tableHeight}px`, width: "100%" }}
 				onScroll={handleScroll}
 				ref={tableRef}>
 				<div style={{ width: `${tableWidth}px`, minWidth: "100%" }}>
-					{/* Header - uses sticky position (Breaks too much if its sticky) */}
-					<div className="top-0 z-4 bg-gray-100">
-						<div className="flex">
-							{columns.map(column => (
-								<div
-									key={column.accessor}
-									className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis"
-									style={{ width: `${columnWidth}px`, flexShrink: 0 }}
-									title={column.header}>
-									{column.header}
-								</div>
-							))}
+					{/* Header - using position sticky with full width background */}
+					<div 
+					className="sticky top-0 bg-gray-100 z-4" 
+					style={{ 
+						width: `${tableWidth}px`, 
+						minWidth: "100%",
+						boxShadow: "0 2px 4px rgba(0,0,0,0.1)" // Optional shadow for visual separation
+					}}>
+					<div className="flex">
+						{columns.map(column => (
+						<div
+							key={column.accessor}
+							className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100" // Added bg-gray-100 to each cell
+							style={{ width: `${columnWidth}px`, flexShrink: 0 }}
+							title={column.header}>
+							{column.header}
 						</div>
+						))}
+						
+						{/* Delete column header (if applicable) */}
+						{canDelete && (
+							<div
+								className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100"
+								style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
+								Actions
+							</div>
+						)}
+					</div>
 					</div>
 
-					{/* Spacer for virtualization */}
+					{/* Data rows container */}
 					<div style={{ height: `${data.length * ROW_HEIGHT}px`, position: "relative" }}>
 						{/* Only render visible rows */}
 						{visibleRows.map(rowIndex => {
@@ -178,6 +236,21 @@ const DataTable = ({ apiUrl, updateApiUrl, columns, noDataMessage = "No data ava
 											</div>
 										);
 									})}
+									
+									{/* Delete button cell (always visible) */}
+									<div
+										className="px-4 py-2 border-b border-r flex items-center"
+										style={{ width: `${columnWidth}px`, flexShrink: 0 }}
+									>
+									{canDelete && row["admin_id"] === null && (
+										<button
+										onClick={() => handleDeleteRow(rowIndex)}
+										className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm cursor-pointer"
+										>
+										Remove
+										</button>
+									)}
+									</div>
 								</div>
 							);
 						})}

@@ -60,7 +60,7 @@ const DraggableCourseList = ({
 							<>
 								<Button
 									onClick={() => setIsOpen(prev => !prev)}
-									className={`absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 text-white  border-none cursor-pointer z-50 opacity-100`}
+									className={`absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 text-white  border-none cursor-pointer z-50 opacity-100`}
 									label="X"
 								/>
 								<div className="fixed bg-white shadow-lg rounded p-4 w-100 transition-all duration-200 cursor-move h-max-[500px] box-border z-40 opacity-100">
