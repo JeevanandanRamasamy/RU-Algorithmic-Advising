@@ -490,11 +490,11 @@ class RequirementService:
                 # Need at least `num_required` courses from the list
                 taken_in_group = required_courses.intersection(courses_taken)
                 needed = num_required - len(taken_in_group)
-                while needed > 0:
-                    # Sort by first 2 digits then by last 3 digits
-                    options = sorted(
-                        required_courses - taken_in_group, key=lambda x: (x[:2], x[7:])
-                    )
+                options = sorted(
+                    list(required_courses - taken_in_group),
+                    key=lambda x: (x[:2], x[7:]),  # Sort by subject and course number
+                )
+                while needed > 0 and options:
                     valid_courses = [
                         course
                         for course in options
@@ -502,15 +502,22 @@ class RequirementService:
                             username, course_id=course, extra_courses=missing_courses
                         )
                     ]
-                    if not valid_courses:
+
+                    if valid_courses:
+                        to_add = valid_courses[:needed]
+                        missing_courses.update(to_add)
+                        needed -= len(to_add)
+                        options = [
+                            course for course in options if course not in to_add
+                        ]  # Remove added courses from options
+                    else:
+                        # Fall back to blindly adding courses if no valid ones were found
                         for course in options:
                             if CourseService.get_course_by_id(course):
                                 missing_courses.add(course)
                                 needed -= 1
                                 if needed <= 0:
                                     break
-                    missing_courses.update(valid_courses[:needed])
-                    needed -= len(valid_courses)
 
             # Recursively check child groups
             child_groups = RequirementGroupService.get_child_requirement_groups(
@@ -650,11 +657,11 @@ class RequirementService:
         return {"courses": suggested_courses, "credits": total_credits}
 
     @staticmethod
-    def create_course_plan(username, max_credits=20.5):
+    def create_degree_plan(username, max_credits=20.5):
         """
-        Create a course plan for a student based on their current credits and requirements.
+        Create a degree plan for a student based on their current credits and requirements.
         """
-        course_plan = []
+        degree_plan = []
         taken = ALWAYS_TAKEN_COURSES.copy()
         while True:
             result = RequirementService.get_suggested_courses(
@@ -666,7 +673,9 @@ class RequirementService:
             if not suggested_courses:
                 break
 
-            course_plan.append(suggested_courses)
+            degree_plan.append(suggested_courses)
             taken = taken.union(suggested_courses)
 
         return {"plan": course_plan}
+
+        return {"plan": degree_plan}

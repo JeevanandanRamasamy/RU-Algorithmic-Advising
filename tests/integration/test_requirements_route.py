@@ -6,10 +6,13 @@ from flask import Flask
 from flask_jwt_extended import create_access_token
 from freezegun import freeze_time
 
+# TESTS DO NOT WORK, TRIED TO FIX
+# REPLACE AS YOU SEE FIT
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
-from app import create_app
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
+)
+from backend.app import create_app
 
 
 @pytest.fixture
