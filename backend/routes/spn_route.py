@@ -42,14 +42,15 @@ def add_spn():
     username = data.get("username")
     course_id = data.get("course_id")
     semester = data.get("semester")
-    season = semester.get("season").lower()
-    year = semester.get("year")
     sections = data.get("sections")
-    reason = data.get("reason")
+    reason = data.get("reason") # reason having something is enforced since cannot submit without typing a reason
 
-    if not username or not course_id or len(sections) < 1:
+    if not username or not course_id or len(sections) < 1: # Sections existing implies semester existing 
         return jsonify({"message": "Missing required fields"}), 400
+    
     try:
+        season = semester.get("season").lower()
+        year = semester.get("year")
         spn_requests = [
             SPNRequest(
                 student_id=username,
