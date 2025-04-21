@@ -150,11 +150,11 @@ def get_requirements_for_planned_courses():
         200,
     )
 
-@requirements_bp.route("/course-plan", methods=["GET"])
+@requirements_bp.route("/degree-plan", methods=["GET"])
 @jwt_required()
 def get_course_plan_size():
     """
-    This endpoint retrieves the course plan for a user.
+    This endpoint retrieves the degree plan for a user.
     """
     username = get_jwt_identity()
     if not username:
@@ -164,13 +164,13 @@ def get_course_plan_size():
     if not max_credits:
         return jsonify({"message": "Max credits is required."}), 400
 
-    course_plan = RequirementService.create_course_plan(username=username, max_credits=int(max_credits))
+    degree_plan = RequirementService.create_degree_plan(username=username, max_credits=int(max_credits))
 
     return (
         jsonify(
             {
-                "message": "Successfully retrieved course plan",
-                "course_plan_size": len(course_plan["plan"]) if "plan" in course_plan else 0,
+                "message": "Successfully retrieved degree plan",
+                "degree_plan_size": len(degree_plan["plan"]) if "plan" in degree_plan else 0,
             }
         ),
         200,

@@ -11,7 +11,7 @@ from services.requirement_group_service import RequirementGroupService
 from models.requirement_group import RequirementGroup
 from models.course import Course
 from db import db
-from app import app
+from app import create_app
 from services.course_service import CourseService
 
 load_dotenv()
@@ -265,6 +265,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
 
 def add_courses_to_database(filename):
     """Adds courses from a CSV file to the database."""
+    app = create_app()
     with app.app_context():
         db.create_all()
         df = pd.read_csv(filename)

@@ -4,12 +4,12 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 
-# @pytest.fixture
-# def client():
-#     app = create_app()
-#     with app.test_client() as client:
-#         with app.app_context():
-#             yield client
+@pytest.fixture
+def client():
+    app = create_app()
+    with app.test_client() as client:
+        with app.app_context():
+            yield client
 
 
 @patch("services.user_service.db.session.commit")
@@ -21,10 +21,10 @@ def test_update_student_details_success(
     mock_generate_semesters,
     mock_course_record_query,
     mock_commit,
+    client,
 ):
 
-    app = create_app()
-    with app.app_context():
+    with client.application.app_context():
         mock_student = MagicMock()
         mock_student.username = "test_user"
         mock_student.enroll_year = 2019
