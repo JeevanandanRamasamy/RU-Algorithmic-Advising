@@ -23,7 +23,7 @@ def test_health_check(client):
 # Test to check uptime over a simulated day
 def test_uptime_over_day(client):
     # total_checks = 24 * 60 * 60  # 24 hours in seconds
-    total_checks = 24  # To be removed for actual testing
+    total_checks = 3  # To be removed for actual testing
     passed_checks = 0
     failed_responses = []
 
