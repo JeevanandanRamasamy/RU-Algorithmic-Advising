@@ -124,6 +124,7 @@ export const ProgramsProvider = ({ children }) => {
 				setProgramsQuery,
 				programs,
 				setPrograms,
+				selectedPrograms,
 				filteredPrograms,
 				setFilteredPrograms,
 				filteredSelectedPrograms,

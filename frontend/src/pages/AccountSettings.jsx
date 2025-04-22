@@ -66,7 +66,7 @@ const AccountSettings = () => {
 	};
 
 	return (
-		<div className="p-5 mx-auto ml-[130px] h-auto overflow-x-hidden">
+		<div className="p-4 max-w-md mx-auto">
 			<Navbar />
 			<h2 className="text-xl font-bold mb-6">Account Settings</h2>
 

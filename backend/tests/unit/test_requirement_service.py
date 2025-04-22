@@ -34,6 +34,7 @@ def course_prerequisites_strings():
 # ##FF6347 is a shade of red
 
 
+# T22
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_failing_to_meet_requirement(
     mock_get_course_string,
@@ -62,6 +63,7 @@ def test_validate_prerequisite_string_failing_to_meet_requirement(
     )
 
 
+# T23
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_meeting_requirement(
     mock_get_course_string,
@@ -149,6 +151,7 @@ def add_courses_records(client, auth_header):
         )
 
 
+# 35
 def test_get_all_prerequisites(client):
     with client.application.app_context():
         prerequisites = RequirementService.get_all_prerequisites(course_id="01:640:151")
@@ -174,6 +177,7 @@ def test_get_all_prerequisites(client):
         assert prerequisites == set()
 
 
+# T36
 def test_check_requirements_met(client, register_user, add_courses_records):
     with client.application.app_context():
         for program_id in PROGRAMS:
@@ -223,6 +227,7 @@ def test_check_requirements_met(client, register_user, add_courses_records):
             ), f"Requirements should be met for course {course_id}"
 
 
+# T37
 def test_check_group_fulfillment(client):
     with client.application.app_context():
         # Group 47: ALL from ["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]
@@ -244,6 +249,7 @@ def test_check_group_fulfillment(client):
         ), "Group 48 should be fulfilled with current courses"
 
 
+# 38
 def test_get_num_requirements(client):
     with client.application.app_context():
         num_requirements = [14, 45]
@@ -264,6 +270,7 @@ def test_get_num_requirements(client):
             ), f"Number of requirements for course {course_id} should be {num_reqs}"
 
 
+# 39
 def test_get_num_courses_taken(client, register_user, add_courses_records):
     with client.application.app_context():
         num_courses_taken = [2, 2]
@@ -291,6 +298,7 @@ def test_get_num_courses_taken(client, register_user, add_courses_records):
             ), f"Number of courses taken for course {course_id} should be {num_courses}"
 
 
+# 40
 def test_get_missing_requirements(client, register_user, add_courses_records):
     with client.application.app_context():
         for program_id in PROGRAMS:
@@ -314,6 +322,7 @@ def test_get_missing_requirements(client, register_user, add_courses_records):
             ), "Requirements should be met with extra courses"
 
 
+# 41
 def test_get_suggested_courses(client, register_user, add_courses_records):
     with client.application.app_context():
         result = RequirementService.get_suggested_courses(
@@ -332,6 +341,7 @@ def test_get_suggested_courses(client, register_user, add_courses_records):
             ), f"Course {course} should not be in suggested courses"
 
 
+# 42
 def test_create_degree_plan(client, register_user, add_courses_records):
     with client.application.app_context():
         result = RequirementService.create_degree_plan(

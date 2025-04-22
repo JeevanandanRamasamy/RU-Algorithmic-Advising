@@ -23,7 +23,7 @@ function StudentDashboard() {
 	const navigate = useNavigate();
 	const { firstName, lastName } = useAccount();
 	const { enrollYear, gradYear, gpa, creditsEarned } = useStudentDetails();
-	const { selectedPrograms } = usePrograms();
+	const { programs, selectedPrograms } = usePrograms();
 	const { fetchProgramRequirements, fetchTakenCourses } = useProgramRequirements();
 	const [programStats, setProgramStats] = useState({});
 	const { plannedCourses } = useCourseRecords();

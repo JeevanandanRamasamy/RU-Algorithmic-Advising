@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/navbar/Navbar";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function AdminStudentSchedule() {
 	const { studentId } = useParams();
@@ -12,7 +13,7 @@ export default function AdminStudentSchedule() {
 	const [schedule, setSchedule] = useState([]);
 
 	useEffect(() => {
-		fetch(`/api/admin/students/${studentId}/schedule`, {
+		fetch(`${backendUrl}/api/admin/students/${studentId}/schedule`, {
 			headers: { Authorization: `Bearer ${token}` }
 		})
 			.then(r => r.json())

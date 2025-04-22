@@ -96,7 +96,6 @@ def test_register_password_too_short(client):
     assert data["status"] == "error"
 
 
-# T34
 @pytest.fixture
 def register_existing_user(client):
     client.post(
@@ -116,6 +115,7 @@ def register_existing_user(client):
     )
 
 
+# T34
 def test_register_username_taken(client, register_existing_user):
     response = client.post(
         "/api/register",

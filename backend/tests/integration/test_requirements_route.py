@@ -110,6 +110,7 @@ def add_courses_records_success_get_missing_requirements_for_planned_courses(
     )
 
 
+# T25
 def test_get_missing_requirements_for_planned_courses(
     client,
     register_user,
@@ -134,7 +135,6 @@ def test_get_missing_requirements_for_planned_courses(
     }
 
 
-# T25
 @pytest.fixture
 def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
