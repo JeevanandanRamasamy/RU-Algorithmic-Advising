@@ -2,10 +2,10 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const RequireAuth = ({ children }) => {
-	const { token } = useAuth();
+	const { token, role } = useAuth();
 	const location = useLocation();
 
-	if (!token) {
+	if (!token && role != "student") {
 		return (
 			<Navigate
 				to="/"

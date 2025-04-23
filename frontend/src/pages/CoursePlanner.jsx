@@ -113,7 +113,6 @@ const CoursePlanner = () => {
 				const allSectionIndex = new Set(Object.values(sections).map(s => s.index));
 				initialCheckedSections[course_id] = allSectionIndex;
 			});
-			console.log(initialCheckedSections);
 			setCheckedSections(initialCheckedSections);
 		}
 	}, [selectedCourses, setCheckedSections]);

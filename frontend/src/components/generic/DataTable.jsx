@@ -32,8 +32,9 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 						"Content-Type": "application/json"
 					}
 				});
-
-				if (!response.ok) throw new Error("Failed to fetch data.");
+				if (!response.ok) {
+					throw new Error("Failed to fetch data.");
+				}
 
 				const result = await response.json();
 				
@@ -47,7 +48,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 			} catch (error) {
 				console.error("Data fetch error:", error);
 				setError(error.message);
-				showErrorToast("Error fetching data.");
+				showErrorToast("Error fetching data.", "error-fetching");
 			} finally {
 				setIsLoading(false);
 			}
@@ -56,16 +57,33 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 		fetchData();
 	}, [apiUrl, token, reloadFlag]); // Keep only these essential dependencies
 
-	const calculateVisibleRows = (scrollPosition, rows = data) => {
-		if (!tableRef.current || !Array.isArray(rows) || rows.length === 0) return;
+	// Add this effect to recalculate visible rows whenever data changes
+	useEffect(() => {
+		if (data.length > 0) {
+		// Short timeout to ensure DOM has updated
+		setTimeout(() => {
+			calculateVisibleRows(scrollTop);
+		}, 0);
+		}
+	}, [data]);
 
-		const tableHeight = tableRef.current.clientHeight;
-		const startIndex = Math.max(0, Math.floor(scrollPosition / ROW_HEIGHT) - BUFFER_SIZE);
-		const endIndex = Math.min(rows.length - 1, Math.ceil((scrollPosition + tableHeight) / ROW_HEIGHT) + BUFFER_SIZE);
-		const visibleIndices = [];
-		for (let i = startIndex; i <= endIndex; i++) visibleIndices.push(i);
-		setVisibleRows(visibleIndices);
-	};
+	const calculateVisibleRows = (scrollPosition, rows = data) => {
+		// Wait until next tick to ensure table ref exists and has dimensions
+		setTimeout(() => {
+		  if (!tableRef.current || !rows || rows.length === 0) return;
+	  
+		  const tableHeight = tableRef.current.clientHeight;
+		  const startIndex = Math.max(0, Math.floor(scrollPosition / ROW_HEIGHT) - BUFFER_SIZE);
+		  const endIndex = Math.min(
+			rows.length - 1, 
+			Math.ceil((scrollPosition + tableHeight) / ROW_HEIGHT) + BUFFER_SIZE
+		  );
+		  
+		  const visibleIndices = [];
+		  for (let i = startIndex; i <= endIndex; i++) visibleIndices.push(i);
+		  setVisibleRows(visibleIndices);
+		}, 0);
+	  };
 
 	const handleScroll = (e) => {
 		if (scrollTimeout.current) cancelAnimationFrame(scrollTimeout.current);
@@ -80,17 +98,24 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 		const updatedData = [...data];
 		const oldRow = { ...updatedData[rowIndex] };
 		const updatedRow = { ...oldRow, [columnAccessor]: newValue, admin_id: user };
+		let flag = false;
 		updatedData[rowIndex] = updatedRow;
+		if (!((updatedRow["status"] == "approved" && oldRow["status"] == "denied")
+			|| (updatedRow["status"] == "denied" && oldRow["status"] == "approved"))){
+			updatedData.splice(rowIndex, 1);
+			flag = true;
+		}
 		setData(updatedData);
 
-		updateDatabase(updatedRow).catch(() => {
+		updateDatabase(updatedRow, flag).catch(() => {
 			// Rollback on failure
 			updatedData[rowIndex] = oldRow;
 			setData([...updatedData]);
 		});
+		calculateVisibleRows(scrollTop, updatedData);
 	};
 
-	const updateDatabase = async (updatedRow) => {
+	const updateDatabase = async (updatedRow, flag) => {
 		try {
 			const response = await fetch(`${updateApiUrl}`, {
 				method: "PUT",
@@ -104,7 +129,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 			const result = await response.json();
 			if (!response.ok || !result.success) throw new Error("Update failed.");
 			
-			if (onDataUpdate && typeof onDataUpdate === 'function') {
+			if (onDataUpdate && typeof onDataUpdate === 'function' && flag) {
 				onDataUpdate(); // trigger parent to reload all
 			}
 			showSuccessToast("Data successfully updated.");
@@ -114,12 +139,12 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 		}
 	};
 
-	const handleDeleteRow = async (rowIndex) => {
+	// Handle row deletion
+	const handleDeleteRow = async rowIndex => {
 		if (!canDelete) return;
-		const confirmed = window.confirm("Are you sure you want to remove this row?");
-		if (!confirmed) return;
 
 		const rowToDelete = data[rowIndex];
+				
 		try {
 			const response = await fetch(`${deleteApiUrl}`, {
 				method: "DELETE",
@@ -163,7 +188,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 	const effectiveColumns = canDelete ? columns.length + 1 : columns.length;
 	const tableWidth = effectiveColumns * columnWidth;
 	// Two rows minimum displayed (single row and headers), + offset pixels for the scrollbar
-	const tableHeight = Math.min(450, Math.max(data.length * ROW_HEIGHT+SCROLL_BAR_OFFSET, ROW_HEIGHT*2+SCROLL_BAR_OFFSET)); 
+	const tableHeight = Math.min(450, Math.max((data.length+1) * ROW_HEIGHT+SCROLL_BAR_OFFSET, ROW_HEIGHT*2+SCROLL_BAR_OFFSET)); 
 
 	if (isLoading) return <p>Loading...</p>;
 	if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
@@ -177,17 +202,26 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
 				onScroll={handleScroll}
 				ref={tableRef}>
 				<div style={{ width: `${tableWidth}px`, minWidth: "100%" }}>
-					<div className="sticky top-0 bg-gray-100 z-4" style={{ width: `${tableWidth}px`, minWidth: "100%", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+					{/* Header - using position sticky with full width background */}
+					<div
+						className="sticky top-0 bg-gray-100 z-4"
+						style={{
+							width: `${tableWidth}px`,
+							minWidth: "100%",
+							boxShadow: "0 2px 4px rgba(0,0,0,0.1)" // Optional shadow for visual separation
+						}}>
 						<div className="flex">
 							{columns.map(column => (
 								<div
 									key={column.accessor}
-									className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100"
+									className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100" // Added bg-gray-100 to each cell
 									style={{ width: `${columnWidth}px`, flexShrink: 0 }}
 									title={column.header}>
 									{column.header}
 								</div>
 							))}
+
+							{/* Delete column header (if applicable) */}
 							{canDelete && (
 								<div
 									className="px-4 py-2 font-bold border-r border-b overflow-hidden whitespace-nowrap text-ellipsis bg-gray-100"
@@ -227,7 +261,7 @@ const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage 
  											className="px-4 py-2 border-b border-r flex items-center"
  											style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
 											{/* If an admin has made a decision (so admin_id exists) will not give remove button*/}
- 											{(row["admin_id"] === null || row["admin_id"] === undefined) && ( 
+ 											{(row["status"] === "pending") && ( 
 											<button
 												onClick={() => handleDeleteRow(rowIndex)}
 												className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm cursor-pointer">

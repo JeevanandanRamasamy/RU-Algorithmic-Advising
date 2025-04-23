@@ -5,6 +5,7 @@ from models.course_record import CourseRecord
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
 
+
 class CourseRecordService:
     @staticmethod
     def convert_courses_to_dict(courses):
@@ -80,7 +81,6 @@ class CourseRecordService:
                 .join(Course, Course.course_id == CourseRecord.course_id)
                 .first()
             )
-            print(course)
             return CourseRecordService.convert_courses_to_dict([course])[0]
         except SQLAlchemyError as e:
             db.session.rollback()
@@ -109,7 +109,6 @@ class CourseRecordService:
         except Exception as e:
             return f"Error: {str(e)}"
 
-
     @staticmethod
     def get_past_course_records(username):
         """Retrieve all past course records from a user's degree plan."""
@@ -136,11 +135,17 @@ class CourseRecordService:
             if terms:
                 base_query = base_query.filter(
                     or_(CourseRecord.term.in_(terms), CourseRecord.term.is_(None)),
-                    or_(CourseRecord.year <= current_date.year, CourseRecord.year.is_(None))
+                    or_(
+                        CourseRecord.year <= current_date.year,
+                        CourseRecord.year.is_(None),
+                    ),
                 )
             else:
                 base_query = base_query.filter(
-                    or_(CourseRecord.year < current_date.year, CourseRecord.year.is_(None))
+                    or_(
+                        CourseRecord.year < current_date.year,
+                        CourseRecord.year.is_(None),
+                    )
                 )
 
             courses = base_query.all()
@@ -151,8 +156,6 @@ class CourseRecordService:
             return f"Error retrieving past course records: {str(e)}"
         except Exception as e:
             return f"Error: {str(e)}"
-
-
 
     @staticmethod
     def get_future_course_records(username):
@@ -251,7 +254,6 @@ class CourseRecordService:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
             ).first()
-            print(course_record)
             if course_record:
                 for key, value in new_data.items():
                     if hasattr(course_record, key):
@@ -299,24 +301,25 @@ class CourseRecordService:
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error deleting course records: {str(e)}"
-        
+
     @staticmethod
     def get_all_course_records(username: str):
         """Retrieve every course record (i.e. planned course) for the given user."""
         try:
             rows = (
                 db.session.query(CourseRecord, Course)
-                  .filter(CourseRecord.username == username)
-                  .join(Course, Course.course_id == CourseRecord.course_id)
-                  .all()
+                .filter(CourseRecord.username == username)
+                .join(Course, Course.course_id == CourseRecord.course_id)
+                .all()
             )
+            print(rows)
             return [
                 {
-                  "username": rec.username,
-                  "course_id": rec.course_id,
-                  "course_name": crs.course_name,
-                  "term": rec.term,
-                  "year": rec.year
+                    "username": rec.username,
+                    "course_id": rec.course_id,
+                    "course_name": crs.course_name,
+                    "term": rec.term,
+                    "year": rec.year,
                 }
                 for rec, crs in rows
             ]

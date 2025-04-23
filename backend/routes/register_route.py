@@ -96,6 +96,5 @@ def register():
     result = UserService.add_student_details(student_detail)
 
     ## Can add some validation to make sure student details is added
-    print(result)
 
     return jsonify({"message": "Registration successful", "status": "success"}), 201

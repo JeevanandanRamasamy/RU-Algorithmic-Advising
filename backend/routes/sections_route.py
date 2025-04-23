@@ -17,22 +17,22 @@ def get_json(url):
 @section_bp.route("/subject", methods=["GET"])
 def get_course_sections_by_subject():
     subject = request.args.get("subject")
-    semester = request.args.get("semester").lower()
+    term = request.args.get("term").lower()
     year = request.args.get("year")
     campus = request.args.get("campus", "NB")
     level = request.args.get("level", "UG")
-    if semester == "spring":
-        semester = "1"
-    elif semester == "fall":
-        semester = "9"
-    elif semester == "winter":
-        semester = "0"
-    elif semester == "summer":
-        semester = "7"
+    if term == "spring":
+        term = "1"
+    elif term == "fall":
+        term = "9"
+    elif term == "winter":
+        term = "0"
+    elif term == "summer":
+        term = "7"
     else:
         return jsonify({"error": f"Invalid semester: {semester}"})
 
-    semester = semester + year
+    semester = term + year
 
     if not subject or not semester:
         return jsonify({"error": "Missing required parameters"}), 400
@@ -151,6 +151,6 @@ def generate_all_valid_schedules():
     checked_sections = data.get("checkedSections")
     index_to_meeting_map = data.get("indexToMeetingTimesMap")
 
-    print(checked_sections)
-    print(index_to_meeting_map)
+    # print(checked_sections)
+    # print(index_to_meeting_map)
     return {}

@@ -99,11 +99,16 @@ function SPN() {
 			</>
 		);
 	} else if (role === "admin"){ {/* Needed because will try to run this after logout without the check */}
-		const [reloadAllTables, setReloadAllTables] = useState(false);
+		const [reloadOutstanding, setReloadOutstanding] = useState(false);
+		const [reloadClosed, setReloadClosed] = useState(false);
 
-		const triggerReload = () => {
-			setReloadAllTables(prev => !prev);
+		const triggerOutstandingReload = () => {
+			setReloadOutstanding(prev => !prev);
 		};
+
+		const triggerClosedReload = () => {
+			setReloadClosed(prev => !prev);
+		}
 
 		let pendingUrl = apiUrl + `?pending_param=true`;
 		let notPendingUrl = apiUrl + `?pending_param=false`;
@@ -120,8 +125,8 @@ function SPN() {
 						apiUrl={pendingUrl}
 						updateApiUrl={updateUrl}
 						columns={columns}
-						reloadFlag={reloadAllTables}
-						onDataUpdate={triggerReload}
+						reloadFlag={reloadOutstanding}
+						onDataUpdate={triggerClosedReload}
 					/>
 				</main>
 				<header className="app-header">
@@ -132,8 +137,8 @@ function SPN() {
 						apiUrl={notPendingUrl}
 						updateApiUrl={updateUrl}
 						columns={columns}
-						reloadFlag={reloadAllTables}
-						onDataUpdate={triggerReload}
+						reloadFlag={reloadClosed}
+						onDataUpdate={triggerOutstandingReload}
 					/>
 				</main>
 			</div>

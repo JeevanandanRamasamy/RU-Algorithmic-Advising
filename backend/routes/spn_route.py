@@ -105,6 +105,7 @@ def update_spn_request():
     except Exception as e:
         return jsonify({"message": f"Unexpected error: {str(e)}"}), 500
 
+
 @spn_request_bp.route("/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
 def drop_request():
@@ -118,7 +119,7 @@ def drop_request():
     try:
         # Call the service function to remove the course from the user's planned courses
         response = SPNRequestService.delete_spn_request(identifier)
-        print(response)
+        # print(response)
 
         if response.get("success"):
             return jsonify(response.get("msg")), 200  # Successfully removed
@@ -126,4 +127,3 @@ def drop_request():
             return jsonify({"message": response.get("msg")}), 500  # Error message
     except Exception as e:
         return jsonify({"message": response.get("msg")}), 500
-        
