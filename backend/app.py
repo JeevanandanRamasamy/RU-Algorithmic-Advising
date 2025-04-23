@@ -46,7 +46,7 @@ def create_app():
     print(port)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
-        f"mariadb+mariadbconnector://{username}:{password}@{host}/{dbname}"
+        f"mariadb+mariadbconnector://{username}:{password}@{host}:{port}/{dbname}"
     )
     app.config["JWT_SECRET_KEY"] = key
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)

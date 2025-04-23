@@ -27,6 +27,7 @@ def base_spn_payload():
         "reason": "Need for graduation"
     }
 
+# T39
 def test_add_spn_success(client, auth_header, base_spn_payload):
     response = client.post(
         "/api/spn/add",
@@ -43,10 +44,10 @@ def test_add_spn_success(client, auth_header, base_spn_payload):
 @pytest.mark.parametrize(
     "override,expected_status",
     [
-        ({"username": None}, 400), # username missing
-        ({"course_id": None}, 400), # course_id missing
-        ({"sections": []}, 400), # sections missing
-        ({}, 400), # every parameter missing
+        ({"username": None}, 400), # T40: username missing
+        ({"course_id": None}, 400), # T41: course_id missing
+        ({"sections": []}, 400), # T42: sections missing
+        ({}, 400), # T43: every parameter missing
     ]
 )
 
@@ -65,9 +66,6 @@ def test_add_spn_missing_fields(client, auth_header, base_spn_payload, override,
     )
 
     data = response.get_json()
-    print(f"Payload: {payload}")
-    print(f"Response Data: {data}")
-    print(f"Response Status Code: {response.status_code}")
     assert response.status_code == expected_status
     assert data["message"] == "Missing required fields"
 
@@ -88,10 +86,16 @@ def test_update_spn_success(client, auth_header):
     )
 
     data = response.get_json()
-    assert response.status_code in (200, 404)  # depends if it exists
+    assert response.status_code == 200
     assert "message" in data
 
-def test_delete_spn_success(client, auth_header):
+def test_delete_spn_success(client, auth_header, base_spn_payload):
+    response = client.post(
+        "/api/spn/add",
+        json=base_spn_payload,
+        headers={**auth_header, "Content-Type": "application/json"},
+    )
+
     payload = {
         "student_id": "test",
         "course_id": "01:198:111",
@@ -105,8 +109,8 @@ def test_delete_spn_success(client, auth_header):
         json=payload,
         headers={**auth_header, "Content-Type": "application/json"},
     )
-
-    assert response.status_code in (200, 500)  # 200 if deleted, 500 if it doesn't exist
+    # print(response.status_code)
+    assert response.status_code in (200, 500)
     assert response.get_json()
 
 @pytest.mark.parametrize(
@@ -135,6 +139,6 @@ def test_delete_spn_missing_fields(client, auth_header, payload, expected_status
 ])
 def test_get_spn_query_params(client, auth_header, query):
     url = f"/api/spn?{query}" if query else "/api/spn"
-    response = client.get(url, headers=auth_header)
+    response = client.get(url, headers={**auth_header, "Content-Type": "application/json"})
     assert response.status_code in (200, 500)
     assert isinstance(response.get_json(), list)
