@@ -2,15 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { showErrorToast, showSuccessToast } from "../toast/Toast";
 import { useAuth } from "../../context/AuthContext";
 
-const DataTable = ({
-	apiUrl,
-	updateApiUrl,
-	deleteApiUrl,
-	columns,
-	noDataMessage = "No data available.",
-	allowDelete = false,
-	deleteRoles = ["admin"]
-}) => {
+const DataTable = ({ apiUrl, updateApiUrl, deleteApiUrl, columns, noDataMessage = "No data available.", allowDelete = false, deleteRoles = ["admin"], reloadFlag, onDataUpdate}) => {
 	const { user, role, token } = useAuth();
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +11,14 @@ const DataTable = ({
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const tableRef = useRef(null);
+	const scrollTimeout = useRef();
 	const ROW_HEIGHT = 40;
-	const BUFFER_SIZE = 5; // Extra rows to render above and below visible area
+	const BUFFER_SIZE = 5;
+	const SCROLL_BAR_OFFSET = 20;
 
-	// Check if user has delete permission
 	const canDelete = allowDelete && deleteRoles.includes(role);
 
+	// Fix for the dependency array issue
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
@@ -43,15 +37,16 @@ const DataTable = ({
 				}
 
 				const result = await response.json();
-
-				if (!result || (Array.isArray(result) && result.length === 0)) {
-					setError(noDataMessage, "error");
-				} else {
+				
+				// Ensure we have valid data before setting state
+				if (Array.isArray(result)) {
 					setData(result);
 					calculateVisibleRows(0, result);
+				} else {
+					throw new Error("Invalid data format received from API");
 				}
 			} catch (error) {
-				console.log(error);
+				console.error("Data fetch error:", error);
 				setError(error.message);
 				showErrorToast("Error fetching data.", "error-fetching");
 			} finally {
@@ -60,59 +55,86 @@ const DataTable = ({
 		};
 
 		fetchData();
-	}, [apiUrl, noDataMessage, token]);
+	}, [apiUrl, token, reloadFlag]); // Keep only these essential dependencies
+
+	// Add this effect to recalculate visible rows whenever data changes
+	useEffect(() => {
+		if (data.length > 0) {
+		// Short timeout to ensure DOM has updated
+		setTimeout(() => {
+			calculateVisibleRows(scrollTop);
+		}, 0);
+		}
+	}, [data]);
 
 	const calculateVisibleRows = (scrollPosition, rows = data) => {
-		if (!tableRef.current || rows.length === 0) return;
-
-		const tableHeight = tableRef.current.clientHeight;
-		const startIndex = Math.max(0, Math.floor(scrollPosition / ROW_HEIGHT) - BUFFER_SIZE);
-		const endIndex = Math.min(
-			rows.length - 1,
+		// Wait until next tick to ensure table ref exists and has dimensions
+		setTimeout(() => {
+		  if (!tableRef.current || !rows || rows.length === 0) return;
+	  
+		  const tableHeight = tableRef.current.clientHeight;
+		  const startIndex = Math.max(0, Math.floor(scrollPosition / ROW_HEIGHT) - BUFFER_SIZE);
+		  const endIndex = Math.min(
+			rows.length - 1, 
 			Math.ceil((scrollPosition + tableHeight) / ROW_HEIGHT) + BUFFER_SIZE
-		);
+		  );
+		  
+		  const visibleIndices = [];
+		  for (let i = startIndex; i <= endIndex; i++) visibleIndices.push(i);
+		  setVisibleRows(visibleIndices);
+		}, 0);
+	  };
 
-		const visibleIndices = [];
-		for (let i = startIndex; i <= endIndex; i++) {
-			visibleIndices.push(i);
-		}
-
-		setVisibleRows(visibleIndices);
-	};
-
-	const handleScroll = e => {
-		setScrollTop(e.target.scrollTop);
-		calculateVisibleRows(e.target.scrollTop);
+	const handleScroll = (e) => {
+		if (scrollTimeout.current) cancelAnimationFrame(scrollTimeout.current);
+		const scrollPosition = e.target.scrollTop;
+		scrollTimeout.current = requestAnimationFrame(() => {
+			setScrollTop(scrollPosition);
+			calculateVisibleRows(scrollPosition);
+		});
 	};
 
 	const handleCellEdit = (rowIndex, columnAccessor, newValue) => {
 		const updatedData = [...data];
-		const row = { ...updatedData[rowIndex] };
-		// Update the edited cell
-		row[columnAccessor] = newValue;
-		row["admin_id"] = user;
-		updatedData[rowIndex] = row;
+		const oldRow = { ...updatedData[rowIndex] };
+		const updatedRow = { ...oldRow, [columnAccessor]: newValue, admin_id: user };
+		let flag = false;
+		updatedData[rowIndex] = updatedRow;
+		if (!((updatedRow["status"] == "approved" && oldRow["status"] == "denied")
+			|| (updatedRow["status"] == "denied" && oldRow["status"] == "approved"))){
+			updatedData.splice(rowIndex, 1);
+			flag = true;
+		}
 		setData(updatedData);
-		updateDatabase(updatedData[rowIndex]);
+
+		updateDatabase(updatedRow, flag).catch(() => {
+			// Rollback on failure
+			updatedData[rowIndex] = oldRow;
+			setData([...updatedData]);
+		});
+		calculateVisibleRows(scrollTop, updatedData);
 	};
 
-	const updateDatabase = async updatedRow => {
+	const updateDatabase = async (updatedRow, flag) => {
 		try {
 			const response = await fetch(`${updateApiUrl}`, {
 				method: "PUT",
-				headers: {
+				headers: { 
 					"Authorization": `Bearer ${token}`,
-					"Content-Type": "application/json"
+					"Content-Type": "application/json" 
 				},
 				body: JSON.stringify(updatedRow)
 			});
 
 			const result = await response.json();
-			if (!response.ok || !result.success) {
-				throw new Error("Update failed.");
+			if (!response.ok || !result.success) throw new Error("Update failed.");
+			
+			if (onDataUpdate && typeof onDataUpdate === 'function' && flag) {
+				onDataUpdate(); // trigger parent to reload all
 			}
 			showSuccessToast("Data successfully updated.");
-		} catch {
+		} catch (error) {
+			console.error("Update error:", error);
 			showErrorToast("Error updating data.");
 		}
 	};
@@ -122,7 +144,7 @@ const DataTable = ({
 		if (!canDelete) return;
 
 		const rowToDelete = data[rowIndex];
-
+				
 		try {
 			const response = await fetch(`${deleteApiUrl}`, {
 				method: "DELETE",
@@ -133,18 +155,12 @@ const DataTable = ({
 				body: JSON.stringify(rowToDelete)
 			});
 
-			if (!response.ok) {
-				throw new Error("Failed to delete row");
-			}
+			if (!response.ok) throw new Error("Failed to delete row");
 
-			// Remove row from local data
 			const updatedData = [...data];
 			updatedData.splice(rowIndex, 1);
 			setData(updatedData);
-
-			// Recalculate visible rows
 			calculateVisibleRows(scrollTop, updatedData);
-
 			showSuccessToast("SPN successfully removed.");
 		} catch (error) {
 			showErrorToast("Error deleting row.");
@@ -156,7 +172,7 @@ const DataTable = ({
 		if (column.accessor === "status" && role !== "student") {
 			return (
 				<select
-					value={value}
+					value={value || ''}
 					onChange={e => handleCellEdit(rowIndex, column.accessor, e.target.value)}
 					className="w-full">
 					<option value="pending">pending</option>
@@ -165,25 +181,21 @@ const DataTable = ({
 				</select>
 			);
 		}
-
-		return value;
+		return value === undefined || value === null ? '' : value;
 	};
 
-	// Calculate column widths
 	const columnWidth = 150;
-	// Add space for delete button column if needed
 	const effectiveColumns = canDelete ? columns.length + 1 : columns.length;
 	const tableWidth = effectiveColumns * columnWidth;
-
-	// Calculate table height based on data length
-	const tableHeight = Math.min(450, Math.max(data.length * ROW_HEIGHT + 40, 150));
+	// Two rows minimum displayed (single row and headers), + offset pixels for the scrollbar
+	const tableHeight = Math.min(450, Math.max((data.length+1) * ROW_HEIGHT+SCROLL_BAR_OFFSET, ROW_HEIGHT*2+SCROLL_BAR_OFFSET)); 
 
 	if (isLoading) return <p>Loading...</p>;
-	if (error) return <p>{error}</p>;
+	if (error) return <p className="text-red-500 text-center py-4">{error}</p>;
+	if (!isLoading && (!data || data.length === 0)) return <p className="text-center py-4">{noDataMessage}</p>;
 
 	return (
-		<div className="w-full border border-gray-200 rounded z-[4]">
-			{/* Single scrollable container */}
+		<div className="w-full border border-gray-200 rounded">
 			<div
 				className="overflow-auto relative"
 				style={{ height: `${tableHeight}px`, width: "100%" }}
@@ -220,19 +232,17 @@ const DataTable = ({
 						</div>
 					</div>
 
-					{/* Data rows container */}
 					<div style={{ height: `${data.length * ROW_HEIGHT}px`, position: "relative" }}>
-						{/* Only render visible rows */}
 						{visibleRows.map(rowIndex => {
 							const row = data[rowIndex];
+							// Add safety check to prevent error when row is undefined
+							if (!row) return null;
+							
 							return (
 								<div
 									key={rowIndex}
 									className="flex absolute w-full"
-									style={{
-										top: `${rowIndex * ROW_HEIGHT}px`,
-										height: `${ROW_HEIGHT}px`
-									}}>
+									style={{ top: `${rowIndex * ROW_HEIGHT}px`, height: `${ROW_HEIGHT}px` }}>
 									{columns.map(column => {
 										const value = row[column.accessor];
 										return (
@@ -245,19 +255,21 @@ const DataTable = ({
 											</div>
 										);
 									})}
-
-									{/* Delete button cell (always visible) */}
-									<div
-										className="px-4 py-2 border-b border-r flex items-center"
-										style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
-										{canDelete && row["admin_id"] === null && (
+									{/* Delete button cell (if applicable) */}
+									{canDelete && ( 
+ 										<div
+ 											className="px-4 py-2 border-b border-r flex items-center"
+ 											style={{ width: `${columnWidth}px`, flexShrink: 0 }}>
+											{/* If an admin has made a decision (so admin_id exists) will not give remove button*/}
+ 											{(row["status"] === "pending") && ( 
 											<button
 												onClick={() => handleDeleteRow(rowIndex)}
 												className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm cursor-pointer">
 												Remove
 											</button>
-										)}
-									</div>
+											)}
+ 										</div>
+									)}
 								</div>
 							);
 						})}
