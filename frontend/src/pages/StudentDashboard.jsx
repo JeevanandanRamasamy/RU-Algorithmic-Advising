@@ -13,6 +13,7 @@ import { useCourseRecords } from "../context/CourseRecordsContext";
 
 import Card, { CardContent } from "../components/generic/Card";
 import GraduationForecastCard from "../components/widgets/GraduationForecast";
+import Chatbot from "../components/widgets/Chatbot";
 import Progress from "../components/generic/progress";
 import { Circle } from "rc-progress";
 import { Pencil } from "lucide-react";
@@ -59,6 +60,7 @@ function StudentDashboard() {
 		<div className="min-h-screen bg-gray-50">
 			<Navbar />
 			<NotificationsButton />
+			<Chatbot />
 			<div className="p-8 ml-[110px]">
 				<h1 className="text-3xl font-bold mb-6 text-gray-800">
 					Welcome back,{" "}

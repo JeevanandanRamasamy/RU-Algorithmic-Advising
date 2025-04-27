@@ -239,7 +239,6 @@ class RequirementService:
 
         # Check all top-level groups
         for group in requirement_groups:
-            print(group)
             if not RequirementService.check_group_fulfillment(
                 group.group_id, courses_taken
             ):
