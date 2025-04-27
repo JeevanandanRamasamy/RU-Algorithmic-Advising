@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useCourses } from "../context/CoursesContext";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
-import NotificationsButton from "../components/widgets/notifications";
+import NotificationsButton from "../components/widgets/Notifications";
 import Chatbot from "../components/widgets/Chatbot";
 import AvailableCourses from "../components/courses/AvailableCourses";
 import CourseListContainer from "../components/courses/CourseListContainer";

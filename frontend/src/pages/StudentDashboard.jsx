@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar/Navbar";
-import NotificationsButton from "../components/widgets/notifications";
+import NotificationsButton from "../components/widgets/Notifications";
 import { useAuth } from "../context/AuthContext";
 import useAccount from "../hooks/useAccount";
 import useProgramRequirements from "../hooks/useProgramRequirements";
