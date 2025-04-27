@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "../css/DragDrop.css";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/Notifications";
+import Chatbot from "../components/widgets/Chatbot";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import useSemesterInfo from "../hooks/useSemesterInfo";
@@ -151,6 +153,8 @@ const CoursePlanner = () => {
 		<>
 			<div className="app h-auto overflow-x-hidden">
 				<Navbar />
+				<NotificationsButton />
+				<Chatbot />
 				<header className="flex justify-between items-center py-4 mb-8 border-b border-gray-300">
 					<h1>Course Planner</h1>
 				</header>

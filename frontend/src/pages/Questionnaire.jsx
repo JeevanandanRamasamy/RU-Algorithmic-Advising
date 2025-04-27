@@ -11,7 +11,8 @@ import CourseListContainer from "../components/courses/CourseListContainer";
 import Button from "../components/generic/Button";
 import TakenCourses from "../components/courses/TakenCourses";
 import Navbar from "../components/navbar/Navbar";
-import NotificationsButton from "../components/widgets/notifications";
+import NotificationsButton from "../components/widgets/Notifications";
+import Chatbot from "../components/widgets/Chatbot";
 import StudentDetails from "../components/studentInfo/studentDetails";
 import StudentPrograms from "../components/studentInfo/studentPrograms";
 import AvailableCourses from "../components/courses/AvailableCourses";
@@ -99,6 +100,7 @@ const Questionnaire = () => {
 				</header>
 				<Navbar />
 				<NotificationsButton />
+				<Chatbot />
 				<div className="">
 					<div className="flex justify-between pb-5">
 						<StudentDetails
