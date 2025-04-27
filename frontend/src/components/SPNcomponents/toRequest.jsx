@@ -7,7 +7,7 @@ import SemesterSelector from "./semesterSelector";
 import { useAuth } from "../../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const ToRequest = () => {
+const ToRequest = ({triggerReload}) => {
     const { user, token } = useAuth();
     const [droppedCourse, setDroppedCourse] = useState(null); // Store dropped course info
     const [sections, setSections] = useState([]); // Store sections related to the course
@@ -16,8 +16,8 @@ const ToRequest = () => {
     // const [semester, setSemester] = useState({ year: "", season: "" });
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
-
-    let currentYear = new Date().getFullYear();
+    
+	let currentYear = new Date().getFullYear();
 
     const getNextTerm = () => {
         const month = new Date().getMonth();
@@ -174,6 +174,7 @@ const ToRequest = () => {
 					if (data.skipped != 0) {
 						showWarningToast(`${data.skipped} section(s) were skipped.`);
 					}
+					triggerReload();  // This will tell SPN to refresh the DataTable					  
 				} else {
 					// Handle error
 					console.error("Error adding course to the plan:", data.message);

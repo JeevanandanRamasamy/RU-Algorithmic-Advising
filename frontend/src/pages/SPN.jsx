@@ -25,6 +25,7 @@ import HorizontalAvailableCourses from "../components/courses/HorizontalAvailabl
 function SPN() {
 	const { user, role } = useAuth();
 	const columns = [
+		{ header: "Status", accessor: "status" },
 		{ header: "Student ID", accessor: "student_id" },
 		{ header: "Course ID", accessor: "course_id" },
 		{ header: "Section Number", accessor: "section_num" },
@@ -32,7 +33,6 @@ function SPN() {
 		{ header: "Term", accessor: "term" },
 		{ header: "Year", accessor: "year" },
 		{ header: "Reason", accessor: "reason" },
-		{ header: "Status", accessor: "status" },
 		{ header: "Time Requested", accessor: "timestamp" },
 		{ header: "Admin ID", accessor: "admin_id" }
 	];
@@ -44,6 +44,10 @@ function SPN() {
 		const [isOpen, setIsOpen] = useState(false);
 		let url = apiUrl + `?student_id=${encodeURIComponent(user)}`;
 		let deleteUrl = apiUrl + `/drop`;
+		const [reloadFlag, setReloadFlag] = useState(false);
+		const triggerReload = () => {
+			setReloadFlag(prev => !prev); // toggles the flag to trigger useEffect in child
+		};
 
 		const { requirementStrings } = useCourseRequirements();
 		return (
@@ -75,6 +79,7 @@ function SPN() {
 							columns={columns}
 							allowDelete={true}
 							deleteRoles={"student"}
+							reloadFlag={reloadFlag} // new prop
 						/>
 					</main>
 					<header className="app-header">
@@ -88,12 +93,23 @@ function SPN() {
 						/>
 					</div>
 					<main className="gap-8 flex flex-col">
-						<ToRequest />
+					< ToRequest triggerReload={triggerReload} />
 					</main>
 				</div>
 			</>
 		);
 	} else if (role === "admin"){ {/* Needed because will try to run this after logout without the check */}
+		const [reloadOutstanding, setReloadOutstanding] = useState(false);
+		const [reloadClosed, setReloadClosed] = useState(false);
+
+		const triggerOutstandingReload = () => {
+			setReloadOutstanding(prev => !prev);
+		};
+
+		const triggerClosedReload = () => {
+			setReloadClosed(prev => !prev);
+		}
+
 		let pendingUrl = apiUrl + `?pending_param=true`;
 		let notPendingUrl = apiUrl + `?pending_param=false`;
 		let updateUrl = apiUrl + "/update";
@@ -109,6 +125,8 @@ function SPN() {
 						apiUrl={pendingUrl}
 						updateApiUrl={updateUrl}
 						columns={columns}
+						reloadFlag={reloadOutstanding}
+						onDataUpdate={triggerClosedReload}
 					/>
 				</main>
 				<header className="app-header">
@@ -119,6 +137,8 @@ function SPN() {
 						apiUrl={notPendingUrl}
 						updateApiUrl={updateUrl}
 						columns={columns}
+						reloadFlag={reloadClosed}
+						onDataUpdate={triggerOutstandingReload}
 					/>
 				</main>
 			</div>
