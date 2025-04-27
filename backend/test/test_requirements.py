@@ -3,14 +3,16 @@
 # Run with: python -m backend.test.test_requirements
 import sys
 import os
-from app import create_app
 
 # Add the project root (RU-Algorithmic-Advising) to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from app import create_app
+
+
 from services.requirement_group_service import RequirementGroupService
 from services.requirement_service import RequirementService
-
+from services.course_service import CourseService
 
 def show_all_requirements(program_id):
     top_groups = RequirementGroupService.get_requirement_group_by_program(program_id)
@@ -53,23 +55,15 @@ def get_group_by_id_test(group_id):
         print(f"❌ No group found with ID {group_id}")
 
 
-# Not needed because show_all_requirements already shows the tree
-def display_requirement_tree(program_id):
-    trees = RequirementService.get_program_requirement_tree(program_id)
-    if not trees:
-        print("No requirement trees found.")
-        return
-
-    def print_tree(node, depth=0):
-        indent = "  " * depth
-        print(f"{indent}- Group {node.group_id} (Num Required: {node.num_required})")
-        if node.lst:
-            print(f"{indent}  Courses: {node.lst}")
-        for child in node.prerequisites:
-            print_tree(child, depth + 1)
-
-    for tree in trees:
-        print_tree(tree)
+# Function to test get_all_prerequisites
+def show_prereq(course_id):
+    prereqs = RequirementService.get_all_prerequisites(course_id)
+    if not prereqs:
+        print(f"ℹ️  No prerequisites found for course {course_id}")
+    else:
+        print(f"📘 Prerequisites for course {course_id}:")
+        for c in prereqs:
+            print(f"  - {c}")
 
 
 if __name__ == "__main__":
@@ -78,8 +72,15 @@ if __name__ == "__main__":
         # Show all requirements for the CS program
         show_all_requirements("NB198SJ")
 
-        # print("\n--- Testing get_requirement_group_by_id ---")
-        # test_get_group_by_id(1)
 
-        # print("\n--- Testing tree building ---")
-        # display_requirement_tree("NB198SJ")
+        course_id = "01:198:344"
+
+        course = CourseService.get_course_by_id(course_id)
+        print(course)  # Temporarily add this to confirm
+
+        groups = RequirementGroupService.get_requirement_group_by_course(course_id)
+        print(groups)
+
+        # Show prerequisites for a specific course
+        print("\n--- Testing get_all_prerequisites ---")
+        show_prereq(course_id)  # replace with an actual course ID that exists in your DB
