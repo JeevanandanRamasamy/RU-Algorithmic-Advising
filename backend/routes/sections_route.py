@@ -1,8 +1,8 @@
+from services.sections_service import SectionsService
 from flask import Blueprint, jsonify, request
 from services.course_soc_service import RutgersCourseAPI
 import requests
-import os
-import json
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Define a Blueprint for section-related routes
 section_bp = Blueprint("sections", __name__, url_prefix="/api/sections")
@@ -144,13 +144,75 @@ def get_course_sections():
         return jsonify({"error": str(e)}), 500
 
 
-# TODO: finish generating all schedules
 @section_bp.route("/generate_schedules", methods=["POST"])
 def generate_all_valid_schedules():
     data = request.json
     checked_sections = data.get("checkedSections")
     index_to_meeting_map = data.get("indexToMeetingTimesMap")
+    valid_schedules = SectionsService.generate_all_valid_schedules(
+        checked_sections,
+        index_to_meeting_map,
+    )
+    return jsonify(
+        {"message": "Generated all valid schedules", "valid_schedules": valid_schedules}
+    )
 
-    # print(checked_sections)
-    # print(index_to_meeting_map)
-    return {}
+
+@section_bp.route("/schedule", methods=["POST"])
+@jwt_required()
+def save_schedule():
+    username = get_jwt_identity()
+    data = request.get_json()
+    schedule_name = data.get("scheduleName")
+    term = data.get("term")
+    year = data.get("year")
+    sections = data.get("sections")  # [{course_id, index_num}]
+    new_schedule = SectionsService.insert_schedule(
+        {
+            "username": username,
+            "schedule_name": schedule_name,
+            "term": term,
+            "year": year,
+        }
+    )
+    new_sections = SectionsService.insert_section(new_schedule.schedule_id, sections)
+    return {
+        "message": "Successfully saved new schedule",
+        "schedule": {"schedule": new_schedule, "sections": new_sections},
+    }
+
+
+@section_bp.route("/schedule", methods=["DELETE"])
+@jwt_required()
+def delete_schedule():
+    username = get_jwt_identity()
+    data = request.get_json()
+
+    schedule_name = data.get("scheduleName")
+    term = data.get("term")
+    year = data.get("year")
+
+    if not all([schedule_name, term, year]):
+        return jsonify({"error": "Missing scheduleName, term, or year"}), 400
+
+    result = SectionsService.delete_schedule(schedule_name, username, term, year)
+
+    if result.startswith("Error"):
+        return jsonify({"error": result}), 500
+    if result.startswith("Schedule") and "not found" in result:
+        return jsonify({"error": result}), 404
+
+    return jsonify({"message": result}), 200
+
+
+@section_bp.route("/schedules", methods=["GET"])
+@jwt_required()
+def get_all_saved_schedule():
+    username = get_jwt_identity()
+    schedules = SectionsService.get_schedules_with_sections(username)
+    print(schedules)
+    if isinstance(schedules, str):
+        return jsonify({"message": schedules}), 500
+    return jsonify(
+        {"message": "Successfully retrieved new schedule", "schedules": schedules}
+    )

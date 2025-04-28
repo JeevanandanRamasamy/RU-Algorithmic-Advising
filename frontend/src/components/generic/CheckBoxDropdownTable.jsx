@@ -106,11 +106,11 @@ const CheckboxDropdownTable = ({
 																				<li key={index}>
 																					{day}{" "}
 																					{formatted_time}{" "}
-																					{campus !==
-																						"** INVALID **" &&
-																						` | ${campus}`}{" "}
-																					{building}{" "}
-																					{room}
+																					{` | ${campus}`}{" "}
+																					{building}
+																					{room
+																						? `-${room}`
+																						: ""}
 																				</li>
 																			)
 																		)}

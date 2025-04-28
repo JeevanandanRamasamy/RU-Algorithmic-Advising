@@ -131,7 +131,11 @@ export const CourseRecordsProvider = ({ children }) => {
 			if (!res.ok) {
 				setCourseRecordsError(data.message);
 			} else {
-				setCourseRecords(prev => prev.filter(c => c.course_info.course_id !== courseId));
+				setCourseRecords(prev =>
+					prev.filter(
+						c => c.course_info.course_id !== data.removed_course_record.course_id
+					)
+				);
 				fetchPlannedCoursesWithMissingRequirements?.();
 				fetchUserDetails();
 			}
@@ -148,6 +152,7 @@ export const CourseRecordsProvider = ({ children }) => {
 				plannedCourses,
 				setPlannedCourses,
 				courseRecords,
+				courseRecordsRef,
 				setCourseRecords,
 				coursesRecordsLoading,
 				setCoursesRecordsLoading,

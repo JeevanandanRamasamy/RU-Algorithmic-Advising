@@ -14,6 +14,13 @@ from dataclasses import dataclass
 @dataclass
 class SchedulePlan(db.Model):
     __tablename__ = "SchedulePlan"
+
+    schedule_id: str
+    username: str
+    schedule_name: str
+    term: str
+    year: int
+
     schedule_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(
         String(6),
