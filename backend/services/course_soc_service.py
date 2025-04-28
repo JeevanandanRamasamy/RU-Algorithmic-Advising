@@ -1,5 +1,5 @@
 import requests
-from services.timeService import TimeService
+from services.time_service import TimeService
 from services.course_service import CourseService
 
 
@@ -56,20 +56,41 @@ class RutgersCourseAPI:
             meeting_times = []
 
             for meeting in section.get("meetingTimes", []):
+                formattedTime = TimeService.formatTime(
+                    meeting.get("startTime"),
+                    meeting.get("endTime"),
+                    meeting.get("pmCode"),
+                )
+                startTime = None
+                endTime = None
+                print(formattedTime)
+
+                if formattedTime != "Asynchronous Content":
+                    start_time_str, end_time_str = formattedTime.split(" - ")
+                    startTime = TimeService.format_24_hour(start_time_str)
+                    endTime = TimeService.format_24_hour(end_time_str)
+
                 meeting_data = {
                     "day": meeting.get("meetingDay"),
-                    "start_time": meeting.get("startTime"),
-                    "end_time": meeting.get("endTime"),
+                    "start_time": startTime,
+                    "end_time": endTime,
                     "pm_code": meeting.get("pmCode"),
-                    "formatted_time": TimeService.formatTime(
-                        meeting.get("startTime"),
-                        meeting.get("endTime"),
-                        meeting.get("pmCode"),
-                    ),
+                    "formatted_time": formattedTime,
                     "meeting_mode_desc": meeting.get("meetingModeDesc"),
-                    "campus": meeting.get("campusName"),
+                    "campus": (
+                        "ONLINE"
+                        if meeting.get("campusName") == "** INVALID **"
+                        or meeting.get("campusName") == None
+                        else meeting.get("campusName")
+                    ),
                     "building": meeting.get("buildingCode"),
                     "room": meeting.get("roomNumber"),
+                    "course_id": course_id,
+                    "section_number": section.get("number"),
+                    "open_status": section.get("openStatus"),
+                    "course_name": course.get("expandedTitle")
+                    or course.get("title")
+                    or "",
                 }
                 # Append to meeting_times list
                 meeting_times.append(meeting_data)
@@ -81,7 +102,6 @@ class RutgersCourseAPI:
                         for instructor in section.get("instructors", [])
                     ],
                     "meeting_times": meeting_times,
-                    # "open_status": section.get("openStatus"),
                     "index": index,
                     "section_eligibility": section.get("sectionEligibility"),
                     "exam_code": section.get("examCode"),

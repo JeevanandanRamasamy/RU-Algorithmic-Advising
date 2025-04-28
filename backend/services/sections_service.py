@@ -1,11 +1,10 @@
-from backend.services.timeService import TimeService
+from services.time_service import TimeService
 from db import db
 from models.section import Section
 from models.schedule_plan import SchedulePlan
 from sqlalchemy.exc import SQLAlchemyError
-import datetime
 from itertools import product
-from typing import Dict, List
+from datetime import datetime
 
 
 class SectionsService:
@@ -14,16 +13,12 @@ class SectionsService:
     def get_required_gap(c1, c2):
         groups = [
             {"BUSCH", "LIVINGSTON"},
-            {"COLLEGE AVENUE", "C/D"},
+            {"COLLEGE AVENUE", "DOUGLAS/COOK", "DOWNTOWN"},
         ]
         for group in groups:
             if c1 in group and c2 in group:
                 return 30
         return 40
-
-    @staticmethod
-    def generate_all_valid_schedules():
-        pass
 
     @staticmethod
     def has_conflict(meetings1, meetings2):
@@ -51,29 +46,28 @@ class SectionsService:
 
     def get_required_gap(c1: str, c2: str) -> int:
         groups = [
-            {"Busch", "Livingston"},
-            {"College Avenue", "C/D"},
+            {"BUSCH", "LIVINGSTON"},
+            {"COLLEGE AVENUE", "DOUGLAS/COOK", "DOWNTOWN"},
         ]
         for group in groups:
             if c1 in group and c2 in group:
                 return 30
         return 40
 
-    def parse_time(t: str) -> int:
-        return int(t[:2]) * 60 + int(t[2:])
-
-    # TODO handle meeting day conflict
-    def has_conflict(m1: List[dict], m2: List[dict]) -> bool:
+    def has_conflict(m1, m2):
         for a in m1:
             for b in m2:
                 if a["day"] != b["day"]:
                     continue
 
-                start1 = TimeService.parse_time(a["start_time"])
-                end1 = TimeService.parse_time(a["end_time"])
-                start2 = TimeService.parse_time(b["start_time"])
-                end2 = TimeService.parse_time(b["end_time"])
-                gap = TimeService.get_required_gap(a["campus"], b["campus"])
+                if (
+                    a["formatted_time"] == "Asynchronous Content"
+                    or b["formatted_time"] == "Asynchronous Content"
+                ):
+                    continue
+                start1, end1 = TimeService.parse_time_range(a["formatted_time"])
+                start2, end2 = TimeService.parse_time_range(b["formatted_time"])
+                gap = SectionsService.get_required_gap(a["campus"], b["campus"])
 
                 if (start1 < end2 + gap and start1 >= start2) or (
                     start2 < end1 + gap and start2 >= start1
@@ -82,10 +76,9 @@ class SectionsService:
         return False
 
     def generate_all_valid_schedules(
-        checked_sections: Dict[str, List[str]],
-        index_to_meeting_times_map: Dict[str, List[dict]],
-    ) -> List[List[str]]:
-        from itertools import product
+        checked_sections,
+        index_to_meeting_times_map,
+    ):
 
         course_ids = list(checked_sections.keys())
         section_lists = [checked_sections[course_id] for course_id in course_ids]
@@ -113,7 +106,56 @@ class SectionsService:
         return valid_schedules
 
     @staticmethod
-    def get_sections_in_schedule(schedule_data):
+    def get_schedules_with_sections(username):
+        try:
+            results = (
+                db.session.query(SchedulePlan, Section)
+                .join(Section, SchedulePlan.schedule_id == Section.schedule_id)
+                .filter(SchedulePlan.username == username)
+                .all()
+            )
+
+            # Group schedules by term-year keys
+            grouped_by_term = {}
+
+            for schedule, section in results:
+                term_key = f"{schedule.term}-{schedule.year}"
+
+                if term_key not in grouped_by_term:
+                    grouped_by_term[term_key] = {}
+
+                if schedule.schedule_id not in grouped_by_term[term_key]:
+                    grouped_by_term[term_key][schedule.schedule_id] = {
+                        "schedule_id": schedule.schedule_id,
+                        "username": schedule.username,
+                        "schedule_name": schedule.schedule_name,
+                        "last_updated": schedule.last_updated.isoformat(),
+                        "term": schedule.term,
+                        "year": schedule.year,
+                        "sections": [],
+                    }
+
+                grouped_by_term[term_key][schedule.schedule_id]["sections"].append(
+                    {
+                        "course_id": section.course_id,
+                        "index_num": section.index_num,
+                    }
+                )
+
+            # Convert inner dict of schedules to list
+            for term in grouped_by_term:
+                grouped_by_term[term] = list(grouped_by_term[term].values())
+
+            return grouped_by_term
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error retrieving sections: {str(e)}"
+        except Exception as e:
+            return f"Error: {str(e)}"
+
+    @staticmethod
+    def insert_schedule(schedule_data):
         """Insert a new schedule plan."""
         try:
             new_schedule = SchedulePlan(**schedule_data)
@@ -125,12 +167,19 @@ class SectionsService:
             return f"Error retrieving sections: {str(e)}"
 
     @staticmethod
-    def insert_section(section_data):
+    def insert_section(schedule_id, sections_data):
         """Insert a new section into a schedule plan."""
         try:
-            new_section = Section(**section_data)
-            db.session.add(new_section)
-            schedule_id = section_data.get("schedule_id")
+            new_sections = [
+                Section(
+                    schedule_id=schedule_id,
+                    course_id=section["course_id"],
+                    index_num=section["index_num"],
+                )
+                for section in sections_data
+            ]
+
+            db.session.add_all(new_sections)
             schedule_plan = SchedulePlan.query.filter_by(
                 schedule_id=schedule_id
             ).first()
@@ -138,10 +187,32 @@ class SectionsService:
                 schedule_plan.last_updated = datetime.now()
                 db.session.add(schedule_plan)
             db.session.commit()
-            return new_section
+            return new_sections
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error inserting section: {str(e)}"
+
+    @staticmethod
+    def delete_schedule(schedule_name, username, term, year):
+        """Delete a schedule by schedule_name, username, term, and year."""
+        try:
+            schedule = SchedulePlan.query.filter_by(
+                schedule_name=schedule_name, username=username, term=term, year=year
+            ).first()
+
+            if not schedule:
+                return f"Schedule '{schedule_name}' not found for user '{username}' in {term} {year}."
+
+            Section.query.filter_by(schedule_id=schedule.schedule_id).delete()
+
+            db.session.delete(schedule)
+            db.session.commit()
+
+            return f"Schedule '{schedule_name}' deleted successfully."
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return f"Error deleting schedule: {str(e)}"
 
     @staticmethod
     def delete_section(schedule_id, course_id, section_num):

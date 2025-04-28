@@ -42,7 +42,8 @@ const CoursePlanner = () => {
 	// } = useCourseRequirements();
 	const { courses } = useCourses();
 	const { enrollYear, gradYear } = useStudentDetails();
-	const { courseRecords, handleAddCourseRecord, handleRemoveCourseRecord } = useCourseRecords();
+	const { courseRecords, courseRecordsRef, handleAddCourseRecord, handleRemoveCourseRecord } =
+		useCourseRecords();
 	const { takenCourses } = useTakenCourses();
 
 	const [selectedSemesterTabIndex, setSelectedSemesterTabIndex] = useState(0);
@@ -51,20 +52,26 @@ const CoursePlanner = () => {
 	const semestersTillNow = generateSemestersTillNow(enrollYear);
 
 	const {
-		fetchSectionsBySubject,
 		getSemesterNumber,
 		fetchSectionsByCourse,
+		updateSelectedCourseSections,
 		courseAvailableThisSemester,
+		fetchSectionsBySubject,
 		searchedCourses,
 		setSearchedCourses,
 		selectedCourses,
 		setSelectedCourses,
 		checkedSections,
 		setCheckedSections,
-		fetchSectionsByCourses,
 		indexToMeetingTimesMap,
 		setIndexToMeetingTimesMap,
-		generateValidSchedules
+		generateValidSchedules,
+		validSchedules,
+		setValidSchedules,
+		scheduleIndex,
+		setScheduleIndex,
+		generateEventsForSchedule,
+		fetchSavedSchedules
 	} = useSections();
 
 	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
@@ -73,23 +80,26 @@ const CoursePlanner = () => {
 		handleAddCourseRecord(courseId, currentSemester.term, currentSemester.year);
 	};
 
+	useEffect(() => {
+		fetchSavedSchedules();
+	}, []);
+
 	const currentSemester = useMemo(() => {
 		return semesters[selectedSemesterTabIndex];
 	}, [semesters, selectedSemesterTabIndex]);
 
 	const currentCourseRecords = useMemo(() => {
-		if (!courseRecords || !currentSemester) return [];
-		return courseRecords
+		return courseRecordsRef.current
 			.filter(
 				courseRecord =>
 					courseRecord.term === currentSemester.term &&
 					courseRecord.year === currentSemester.year
 			)
 			.map(course => course?.course_info);
-	}, [courseRecords, currentSemester]);
+	}, [courseRecordsRef, currentSemester]);
+
 	useEffect(() => {
-		if (!currentCourseRecords.length || !currentSemester) return;
-		fetchSectionsByCourses(
+		updateSelectedCourseSections(
 			currentCourseRecords.map(course => course.course_id),
 			currentSemester.term,
 			currentSemester.year
@@ -97,25 +107,22 @@ const CoursePlanner = () => {
 	}, [currentCourseRecords, currentSemester]);
 
 	useEffect(() => {
-		if (
-			!Object.keys(checkedSections).length ||
-			Object.keys(checkedSections).length != currentCourseRecords.length
-		)
-			//TODO: handle if no valid schedule
-			return;
+		const initialCheckedSections = {};
+		Object.values(selectedCourses).forEach(({ course_id, sections }) => {
+			const allSectionIndex = new Set(Object.values(sections).map(s => s.index));
+			initialCheckedSections[course_id] = allSectionIndex;
+		});
+		setCheckedSections(initialCheckedSections);
+	}, [selectedCourses]);
+
+	useEffect(() => {
 		generateValidSchedules();
 	}, [checkedSections]);
 
 	useEffect(() => {
-		if (selectedCourses) {
-			const initialCheckedSections = {};
-			Object.values(selectedCourses).forEach(({ course_id, sections }) => {
-				const allSectionIndex = new Set(Object.values(sections).map(s => s.index));
-				initialCheckedSections[course_id] = allSectionIndex;
-			});
-			setCheckedSections(initialCheckedSections);
-		}
-	}, [selectedCourses, setCheckedSections]);
+		setScheduleIndex(0);
+		generateEventsForSchedule();
+	}, [validSchedules]);
 
 	const toggleSectionSelect = (course_id, index) => {
 		setCheckedSections(prev => {
@@ -207,8 +214,18 @@ const CoursePlanner = () => {
 										/>
 									)}
 
-									{view === "Build Schedule" && <BuildSchedule />}
-									{view == "Saved Schedule" && <SavedSchedule />}
+									{view === "Build Schedule" && (
+										<BuildSchedule
+											term={currentSemester.term}
+											year={currentSemester.year}
+										/>
+									)}
+									{view == "Saved Schedule" && (
+										<SavedSchedule
+											term={currentSemester.term}
+											year={currentSemester.year}
+										/>
+									)}
 								</TabPanel>
 							))}
 						</Tabs>

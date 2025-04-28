@@ -14,6 +14,7 @@ const SelectSections = ({
 	handleSelectAll,
 	isAllSectionsSelected
 }) => {
+	//TODO: what if no sections
 	return (
 		<CheckboxDropdownTable
 			courseRecords={courseRecords}

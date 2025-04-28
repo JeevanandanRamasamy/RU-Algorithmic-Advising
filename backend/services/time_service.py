@@ -5,7 +5,7 @@ class TimeService:
     @staticmethod
     def formatTime(starting_time, ending_time, pm_code):
         if not starting_time:
-            return "online"
+            return "Asynchronous Content"
 
         def convert_to_12hr(time_str, period):
             hour = int(time_str[:2])
@@ -41,5 +41,15 @@ class TimeService:
 
     @staticmethod
     def parse_time_range(time_range):
+        print(time_range)
         start_str, end_str = time_range.split(" - ")
         return TimeService.to_minutes(start_str), TimeService.to_minutes(end_str)
+
+    @staticmethod
+    def format_24_hour(time_str):
+        time_format = "%I:%M%p"
+        try:
+            time_obj = datetime.strptime(time_str, time_format)
+            return time_obj.strftime("%H:%M")
+        except ValueError:
+            return None
