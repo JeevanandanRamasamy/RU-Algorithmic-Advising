@@ -3,6 +3,8 @@ import ProgramSelect from "../components/degreeNavigator/ProgramSelect";
 import RequirementTree from "../components/degreeNavigator/RequirementTree";
 import TakenCourses from "../components/degreeNavigator/TakenCourses";
 import Navbar from "../components/navbar/Navbar";
+import NotificationsButton from "../components/widgets/Notifications";
+import Chatbot from "../components/widgets/Chatbot";
 import { useAuth } from "../context/AuthContext";
 
 const DegreeNavigator = () => {
@@ -14,6 +16,8 @@ const DegreeNavigator = () => {
       {/* Left: Navbar */}
       <div className="w-[80px] bg-yellow-100 shadow-md">
         <Navbar />
+        <NotificationsButton />
+        <Chatbot />
       </div>
 
       {/* Right: Main Content */}

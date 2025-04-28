@@ -30,7 +30,7 @@ const ProgramSelect = ({ onSelect }) => {
 
   return (
     <div>
-      <label htmlFor="program-select">Select a Program:</label>
+      <label htmlFor="program-select">Select a Program: </label>
       <select
         id="program-select"
         value={selectedProgram}

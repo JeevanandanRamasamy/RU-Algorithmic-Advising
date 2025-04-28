@@ -119,6 +119,12 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-link">
+              <Link to="/student/degree-navigator">
+                <i className="bx bx-compass icon"></i>
+                <span className="text nav-text">Degree Navigator</span>
+              </Link>
+            </li>
+            <li className="nav-link">
               <Link to="/student/request-spn">
                 <i className="bx bx-envelope icon"></i>
                 <span className="text nav-text">Request SPN</span>
@@ -127,12 +133,6 @@ const Navbar = () => {
             <li className="nav-link">
               <Link to="/student/questionnaire">
                 <i className="bx bx-edit-alt icon"></i>
-                <span className="text nav-text">Questionnaire</span>
-              </Link>
-            </li>
-            <li className="nav-link">
-              <Link to="/student/degree-navigator">
-                <i class="bx bx-leaf icon"></i>
                 <span className="text nav-text">Questionnaire</span>
               </Link>
             </li>

@@ -19,7 +19,33 @@ const useAIChat = () => {
     // Save messages to sessionStorage whenever it changes
     useEffect(() => {
         if (messages.length > 0) {
-            sessionStorage.setItem("chatMessages", JSON.stringify(messages)); // Store messages in sessionStorage
+            const usefulMessages = [];
+            for (let i = 0; i < messages.length; i++) {
+                const msg = messages[i];
+
+                // If this is a user message, check what AI replied
+                if (msg.sender === "user") {
+                    const nextMsg = messages[i + 1];
+                    if (
+                        nextMsg &&
+                        nextMsg.sender === "ai" &&
+                        nextMsg.text &&
+                        nextMsg.text.toLowerCase().includes("something went wrong")
+                    ) {
+                        // Skip both user and assistant error messages
+                        i++;
+                        continue;
+                    } else if (nextMsg && nextMsg.sender === "user") {
+                        continue;
+                    } else {
+                        usefulMessages.push(msg);
+                    }
+                }
+                else {
+                    usefulMessages.push(msg);
+                }
+            }
+            sessionStorage.setItem("chatMessages", JSON.stringify(usefulMessages));
         }
     }, [messages]);
 
