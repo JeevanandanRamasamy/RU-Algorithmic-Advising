@@ -1,0 +1,9 @@
+/* Remove blue highlight from today column */
+.rbc-today {
+  background-color: transparent !important;
+}
+
+/* Remove green current time line */
+.rbc-current-time-indicator {
+  display: none !important;
+}

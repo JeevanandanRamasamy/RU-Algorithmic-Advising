@@ -26,6 +26,7 @@ from routes.requirements_route import requirements_bp
 from routes.degree_navigator_route import degree_navigator_bp
 from routes.admin_route import admin_bp
 from routes.AI_chat_route import AI_chat_bp
+from routes.suggested_courses_route import suggested_courses_bp
 
 load_dotenv()
 
@@ -74,7 +75,8 @@ def create_app():
     app.register_blueprint(degree_navigator_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(AI_chat_bp)
-
+    app.register_blueprint(suggested_courses_bp)
+    
     # CORS preflight
     @app.before_request
     def handle_options_request():
