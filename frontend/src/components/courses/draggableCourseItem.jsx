@@ -20,62 +20,6 @@ const DraggableCourseItem = ({ course, isPlanned = false, requirementString }) =
 		}
 	}, [isDragging, course]);
 
-	const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-	// const [tooltipPosition, setTooltipPosition] = useState({});
-	const linkRef = useRef(null);
-	// const tooltipRef = useRef(null);
-	// const [tooltipTimeout, setTooltipTimeout] = useState(null);
-
-	// const handleMouseEnter = () => {
-	// 	if (tooltipTimeout) {
-	// 		clearTimeout(tooltipTimeout);
-	// 	}
-	// 	const timeout = setTimeout(() => {
-	// 		setIsTooltipVisible(true);
-	// 	}, 500);
-	// 	setTooltipTimeout(timeout);
-	// };
-
-	// const handleMouseLeave = () => {
-	// 	setIsTooltipVisible(false);
-	// 	if (tooltipTimeout) {
-	// 		clearTimeout(tooltipTimeout);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	if (isTooltipVisible) {
-	// 		const frame = requestAnimationFrame(() => {
-	// 			if (!tooltipRef.current || !linkRef.current) return;
-
-	// 			const linkRect = linkRef.current.getBoundingClientRect();
-	// 			const tooltipRect = tooltipRef.current.getBoundingClientRect();
-
-	// 			const windowWidth = window.innerWidth;
-	// 			const windowHeight = window.innerHeight;
-
-	// 			let top = linkRect.bottom + 8;
-	// 			let left = linkRect.right - 6 * tooltipRect.height;
-
-	// 			if (top + tooltipRect.height > windowHeight) {
-	// 				top = linkRect.top - tooltipRect.height - 8;
-	// 			}
-	// 			if (left + tooltipRect.width > windowWidth) {
-	// 				left = windowWidth - tooltipRect.width - 8;
-	// 			}
-	// 			if (left < 0) {
-	// 				left = 8;
-	// 			}
-
-	// 			setTooltipPosition({
-	// 				top: top + window.scrollY,
-	// 				left: left + window.scrollX
-	// 			});
-	// 		});
-
-	// 		return () => cancelAnimationFrame(frame);
-	// 	}
-	// }, [isTooltipVisible]);
 	return (
 		<div
 			ref={drag}

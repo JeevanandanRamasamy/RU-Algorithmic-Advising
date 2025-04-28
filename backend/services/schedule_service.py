@@ -9,8 +9,8 @@ class ScheduleService:
     @staticmethod
     def get_required_gap(c1, c2):
         groups = [
-            {"Busch", "Livingston"},
-            {"College Avenue", "Cook", "Douglass"},
+            {"BUSCH", "LIVINGSTON"},
+            {"COLLEGE AVENUE", "COOK/DOUGLASS", "DOWNTOWN"},
         ]
         for group in groups:
             if c1 in group and c2 in group:
