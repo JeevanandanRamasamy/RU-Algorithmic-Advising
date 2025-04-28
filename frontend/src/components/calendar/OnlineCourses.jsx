@@ -2,12 +2,19 @@ import React from "react";
 import { useSections } from "../../context/SectionsContext";
 import { useCourseRecords } from "../../context/CourseRecordsContext";
 
-const OnlineCourses = ({ asyncCourses, index }) => {
+const OnlineCourses = ({ asyncCourses, index, map }) => {
 	// const { asyncCourses, scheduleIndex } = useSections();
 	// console.log(asyncCourses, Object.keys(asyncCourses).length, !(index in asyncCourses));
-	if (!asyncCourses || Object.keys(asyncCourses).length === 0 || !(index in asyncCourses)) {
+	if (
+		!asyncCourses ||
+		Object.keys(asyncCourses).length === 0 ||
+		!(index in asyncCourses) ||
+		Object.keys(map).length === 0 ||
+		asyncCourses[index].length === 0
+	) {
 		return null;
 	}
+	console.log(asyncCourses);
 	// console.log(asyncCourses, index);
 
 	return (

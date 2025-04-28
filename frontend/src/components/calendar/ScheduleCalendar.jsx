@@ -15,7 +15,6 @@ const ScheduleCalendar = ({ index, map }) => {
 	const locales = {
 		"en-US": enUS
 	};
-	console.log(index, map[index], map);
 
 	const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 

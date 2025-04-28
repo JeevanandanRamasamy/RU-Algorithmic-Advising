@@ -3,7 +3,7 @@ import Button from "../generic/Button";
 
 const ListItem = ({ id, value, onClick, buttonType }) => {
 	return (
-		<div className="flex justify-between items-center p-2 border-b">
+		<div className="flex justify-between items-center p-2 border-b gap-1">
 			<span>{value}</span>
 			<Button
 				onClick={() => onClick(id)}

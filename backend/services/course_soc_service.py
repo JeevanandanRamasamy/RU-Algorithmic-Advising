@@ -63,7 +63,6 @@ class RutgersCourseAPI:
                 )
                 startTime = None
                 endTime = None
-                print(formattedTime)
 
                 if formattedTime != "Asynchronous Content":
                     start_time_str, end_time_str = formattedTime.split(" - ")
@@ -106,6 +105,7 @@ class RutgersCourseAPI:
                     "section_eligibility": section.get("sectionEligibility"),
                     "exam_code": section.get("examCode"),
                     "section_notes": section.get("sectionNotes"),
+                    "open_status": section.get("openStatus"),
                 }
 
         if not sections:

@@ -25,6 +25,10 @@ const DropdownTable = ({
 		handleOnRemoveCourse(course_id);
 	};
 
+	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
+	console.log(visibleCourses);
+	//TODO: section notes
+
 	return (
 		visibleCourses &&
 		Object.keys(visibleCourses).length > 0 && (
@@ -67,26 +71,42 @@ const DropdownTable = ({
 												exit={{ height: 0, opacity: 0 }}
 												transition={{ duration: 0.3 }}
 												className="overflow-hidden px-4 py-2 bg-white">
-												<ul className="space-y-2">
+												<div className="grid grid-cols-2 gap-x-4 gap-y-4">
 													{Object.values(sections).map(
 														({
 															section_number,
 															instructors,
-															meeting_times
+															meeting_times,
+															open_status,
+															index
 														}) => (
-															<li
+															<div
 																key={section_number}
-																className="px-2 py-1 border rounded hover:bg-gray-50">
-																<h3 className="font-medium">
-																	Section: {section_number}
-																</h3>
+																className={`px-2 py-1 border-3  rounded border-dashed hover:bg-gray-50 ${
+																	open_status === false
+																		? " border-[#cc0033] text-[#cc0033]"
+																		: "text-black"
+																}`}>
+																<div className="font-sm">
+																	<span className="font-bold">
+																		Section:
+																	</span>{" "}
+																	{section_number}
+																</div>
+
+																<div className="font-sm">
+																	<span className="font-bold">
+																		Index:
+																	</span>{" "}
+																	{index}
+																</div>
 																<div className="text-sm">
 																	<strong>Instructors:</strong>{" "}
 																	{instructors.join(", ")}
 																</div>
 																<div className="text-sm">
-																	<strong>Meeting Times:</strong>
-																	<ul>
+																	<strong>Meeting Times</strong>
+																	<ul className="m-0">
 																		{meeting_times.map(
 																			(
 																				{
@@ -101,20 +121,22 @@ const DropdownTable = ({
 																				index
 																			) => (
 																				<li key={index}>
-																					{day}{" "}
+																					{days[day]}{" "}
 																					{formatted_time}{" "}
-																					| {campus},{" "}
-																					{building}{" "}
-																					{room}
+																					| {campus}{" "}
+																					{building}
+																					{room
+																						? `-${room}`
+																						: ""}
 																				</li>
 																			)
 																		)}
 																	</ul>
 																</div>
-															</li>
+															</div>
 														)
 													)}
-												</ul>
+												</div>
 											</motion.div>
 										)}
 									</AnimatePresence>

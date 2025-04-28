@@ -49,8 +49,19 @@ const SelectCourses = ({
 
 	return (
 		<>
+			<div className="flex flex-wrap gap-4 pb-2 justify-end">
+				<div className="flex items-center gap-2">
+					<div className="w-4 h-4 border-2 border-dashed border-black rounded-sm bg-white" />
+					<span className="text-sm text-black">Open Section</span>
+				</div>
+
+				<div className="flex items-center gap-2">
+					<div className="w-4 h-4 border-2 border-dashed border-[#cc0033] rounded-sm bg-white" />
+					<span className="text-sm text-[#cc0033]">Closed Section</span>
+				</div>
+			</div>
 			<div className="flex gap-4 items-start">
-				<div className="w-[30%] h-[650px] p-2 border border-gray-200 rounded-md bg-white flex flex-col gap-2">
+				<div className="w-[35%] h-[650px] p-2 border border-gray-200 rounded-md bg-white flex flex-col gap-2">
 					<DropdownItem
 						placeholder="Search by subject code"
 						selectedValue={subjectSearchQuery}
