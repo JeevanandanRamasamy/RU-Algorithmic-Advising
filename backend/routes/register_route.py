@@ -9,6 +9,11 @@ register_bp = Blueprint("register", __name__)  # Create a Blueprint object
 
 @register_bp.route("/api/check_username_exists", methods=["POST"])
 def validate_username():
+    """
+    API endpoint to check if a username already exists in the database.
+    Expects a JSON payload with "username".
+    Returns a JSON response indicating whether the username is valid or already taken.
+    """
     data = request.json
     username = data.get("username")
 
@@ -24,6 +29,11 @@ def validate_username():
 
 @register_bp.route("/api/register", methods=["POST"])
 def register():
+    """
+    API endpoint for user registration.
+    Expects a JSON payload with "username", "password", "first_name", and "last_name".
+    Returns a JSON response indicating the success or failure of the registration.
+    """
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -35,7 +45,7 @@ def register():
     if not username or not password or not first_name or not last_name:
         return jsonify({"message": "All fields are required."}), 400
 
-    if len(username) > 6:
+    if len(username) > 6: # Username length validation
         return (
             jsonify(
                 {"message": "Username must be at most 6 characters.", "status": "error"}
@@ -43,7 +53,7 @@ def register():
             400,
         )
 
-    if len(password) < 6:
+    if len(password) < 6: # Password length validation
         return (
             jsonify(
                 {
@@ -58,9 +68,7 @@ def register():
     if UserService.check_account_exists(username):
         return jsonify({"message": "Username already taken."}), 409
 
-    hashed_password = generate_password_hash(password)
-    print("🔐 Hashed password:", hashed_password)
-    print("📏 Hash length:", len(hashed_password))
+    hashed_password = generate_password_hash(password) # Hash the password
 
     # Insert into database
     account_data = {
@@ -85,16 +93,13 @@ def register():
 
     current_year = datetime.now().year
 
-    student_detail = {
+    student_details = { # Create a dictionary for student details
         "username": username,
         "grad_year": current_year + 4,
         "enroll_year": current_year,
         "credits_earned": 0,
         "gpa": 0.00,
     }
-
-    result = UserService.add_student_details(student_detail)
-
-    ## Can add some validation to make sure student details is added
+    result = UserService.add_student_details(student_details)
 
     return jsonify({"message": "Registration successful", "status": "success"}), 201

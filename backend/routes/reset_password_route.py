@@ -8,6 +8,10 @@ reset_password_bp = Blueprint("reset_password", __name__)  # Create a Blueprint 
 
 @reset_password_bp.route("/api/validate_username", methods=["POST"])
 def validate_username():
+    """
+    Validate if the username exists in the database.
+    Returns a JSON response indicating whether the username is valid or not.
+    """
     data = request.json
     username = data.get("username")
 
@@ -23,6 +27,11 @@ def validate_username():
 
 @reset_password_bp.route("/api/reset_password", methods=["POST"])
 def reset_password():
+    """
+    Reset the password for a user account.
+    Expects a JSON payload with the username and new password.
+    Returns a JSON response indicating the success or failure of the operation.
+    """
     data = request.json
     username = data.get("username")
     new_password = data.get("new_password")

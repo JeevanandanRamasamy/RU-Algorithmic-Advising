@@ -13,6 +13,10 @@ course_record_bp = Blueprint(
 @course_record_bp.route("", methods=["GET"])
 @jwt_required()
 def get_course_records():
+    """
+    Get all course records for the logged-in user.
+    Returns a JSON response with the course records.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -38,6 +42,10 @@ def get_course_records():
 @course_record_bp.route("terms", methods=["GET"])
 @jwt_required()
 def get_course_records_with_terms():
+    """
+    Get all course records with terms for the logged-in user.
+    Returns a JSON response with the course records.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -63,6 +71,10 @@ def get_course_records_with_terms():
 @course_record_bp.route("taken", methods=["GET"])
 @jwt_required()
 def get_taken_courses():
+    """
+    Get all taken courses for the logged-in user.
+    Returns a JSON response with the taken courses.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -88,6 +100,10 @@ def get_taken_courses():
 @course_record_bp.route("termless", methods=["GET"])
 @jwt_required()
 def get_termless_courses():
+    """
+    Get all termless courses for the logged-in user.
+    Returns a JSON response with the termless courses.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -113,6 +129,10 @@ def get_termless_courses():
 @course_record_bp.route("planned", methods=["GET"])
 @jwt_required()
 def get_planned_courses():
+    """
+    Get all planned courses for the logged-in user.
+    Returns a JSON response with the planned courses.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -138,6 +158,10 @@ def get_planned_courses():
 @course_record_bp.route("", methods=["POST"])
 @jwt_required()
 def add_course_record():
+    """
+    Add a course record for the logged-in user.
+    Returns a JSON response with the added course record.
+    """
     try:
         username = get_jwt_identity()
         data = request.get_json()
@@ -184,6 +208,10 @@ def add_course_record():
 @course_record_bp.route("", methods=["DELETE"])
 @jwt_required()
 def remove_course_record():
+    """
+    Remove a course record for the logged-in user.
+    Returns a JSON response with the removed course record.
+    """
     try:
         username = get_jwt_identity()
         data = request.get_json()
@@ -217,6 +245,10 @@ def remove_course_record():
 @course_record_bp.route("", methods=["PUT"])
 @jwt_required()
 def update_course_record():
+    """
+    Update a course record for the logged-in user.
+    Returns a JSON response with the updated course record.
+    """
     try:
         username = get_jwt_identity()
         data = request.get_json()

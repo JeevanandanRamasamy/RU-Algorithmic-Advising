@@ -41,7 +41,7 @@ def test_register_success(client):
 
     token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {token}"},
     )
 
@@ -119,7 +119,7 @@ def register_existing_user(client):
     yield
     token = create_access_token(identity="exist")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {token}"},
     )
 

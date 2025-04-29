@@ -42,7 +42,9 @@ def get_account():
 @users_bp.route("/account", methods=["PUT"])
 @jwt_required()
 def update_account():
-    """Update the account information of the logged-in user."""
+    """
+    Update the account information of the logged-in user.
+    """
     try:
         data = request.get_json()
         username = get_jwt_identity()
@@ -80,7 +82,9 @@ def update_account():
 @users_bp.route("/account", methods=["DELETE"])
 @jwt_required()
 def delete_account():
-    """Delete the account of the logged-in user."""
+    """
+    Delete the account of the logged-in user.
+    """
     try:
         username = get_jwt_identity()
         if not username:
@@ -133,7 +137,9 @@ def get_user_details():
 @users_bp.route("/details", methods=["PUT"])
 @jwt_required()
 def update_user_details():
-    """Update the user details of the logged-in user."""
+    """
+    Update the user details of the logged-in user.
+    """
     try:
         data = request.get_json()
         username = get_jwt_identity()
@@ -163,18 +169,3 @@ def update_user_details():
 
     except Exception as e:
         return jsonify({"message": f"Internal server error: {str(e)}"}), 500
-
-
-@users_bp.route("/details", methods=["DELETE"])
-@jwt_required()
-def delete_user_account():
-    """Delete the account of the currently logged-in user."""
-    username = get_jwt_identity()
-    result = UserService.delete_account(username)
-
-    if result is None:
-        return jsonify({"message": "Account successfully deleted."}), 200
-    elif result == "Account not found":
-        return jsonify({"error": result}), 404
-    else:
-        return jsonify({"error": result}), 500

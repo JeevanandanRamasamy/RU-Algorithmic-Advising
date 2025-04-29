@@ -59,7 +59,7 @@ def register_user(client):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 

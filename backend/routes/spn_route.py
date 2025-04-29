@@ -11,6 +11,12 @@ spn_request_bp = Blueprint("spn_request", __name__, url_prefix="/api/spn")
 @spn_request_bp.route("", methods=["GET"])
 @jwt_required()
 def get_spn_requests():
+    """
+    Get SPN requests based on the provided parameters.
+    If a student_id is provided, fetch SPN requests for that student.
+    If pending_param is provided, fetch SPN requests based on its value.
+    If neither is provided, fetch all SPN requests.
+    """
     student_id = request.args.get("student_id")
     pending_param = request.args.get("pending_param")
 
@@ -38,6 +44,15 @@ def get_spn_requests():
 @spn_request_bp.route("/add", methods=["POST"])
 @jwt_required()  # Ensure the user is authenticated
 def add_spn():
+    """
+    Add SPN requests for a student.
+    Expects a JSON payload with the following fields:
+    - username: The student's username
+    - course_id: The course ID for the SPN request
+    - semester: The semester details (season and year)
+    - sections: A list of sections for the SPN request
+    - reason: The reason for the SPN request
+    """
     data = request.get_json()
     username = data.get("username")
     course_id = data.get("course_id")
@@ -62,7 +77,7 @@ def add_spn():
                 reason=reason,
             )
             for section in sections
-        ]
+        ] # Create SPNRequest objects for each section
 
         result = SPNRequestService.insert_spn_requests_best_effort(spn_requests)
         return jsonify(
@@ -80,10 +95,21 @@ def add_spn():
 
 @spn_request_bp.route("/update", methods=["PUT"])
 def update_spn_request():
+    """
+    Update an existing SPN request.
+    Expects a JSON payload with the following fields:
+    - student_id: The student's username
+    - course_id: The course ID for the SPN request
+    - section_num: The section number for the SPN request
+    - year: The year of the SPN request
+    - term: The term of the SPN request
+    - reason: The new reason for the SPN request
+    - status: The new status for the SPN request
+    """
     data = request.get_json()
     data["timestamp"] = datetime.now(timezone.utc)
     identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
-    identifier = {key: data.get(key) for key in identifier_keys}
+    identifier = {key: data.get(key) for key in identifier_keys} # Extract the identifier fields from the data
 
     try:
         # Call the service method to update the SPN request
@@ -109,6 +135,15 @@ def update_spn_request():
 @spn_request_bp.route("/drop", methods=["DELETE"])
 @jwt_required()  # Ensure the user is authenticated
 def drop_request():
+    """
+    Remove a course from the user's planned courses.
+    Expects a JSON payload with the following fields:
+    - student_id: The student's username
+    - course_id: The course ID for the SPN request
+    - section_num: The section number for the SPN request
+    - year: The year of the SPN request
+    - term: The term of the SPN request
+    """
     data = request.get_json()
     identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
     identifier = {key: data.get(key) for key in identifier_keys}
@@ -119,7 +154,6 @@ def drop_request():
     try:
         # Call the service function to remove the course from the user's planned courses
         response = SPNRequestService.delete_spn_request(identifier)
-        # print(response)
 
         if response.get("success"):
             return jsonify(response.get("msg")), 200  # Successfully removed
