@@ -32,14 +32,6 @@ const ToRequest = ({triggerReload}) => {
 
     const semester = { year: currentYear, season: nextTerm };
 
-    /*
-    const handleSemesterSelection = (year, season) => {
-        // Only update if the values change
-        if (year !== semester.year || season !== semester.season) {
-        setSemester({ year, season });
-        }
-    };*/
-
     // Handle course drop: When a course is dropped, fetch its details and sections.
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: "COURSE",
