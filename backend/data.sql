@@ -1,10 +1,5 @@
 USE RUAA; -- Switch to the RUAA database
 
--- Add an admin into database
--- Admins cannot register on frontend of application for security reasons
-INSERT INTO Account (username, password, first_name, last_name, role)
-VALUES ('admin1', 'adminpassword123', 'John', 'Doe', 'admin');
-
 -- Add programs into database
 INSERT INTO Program (program_id, program_name, program_type, is_credit_intensive, additional_details)
 VALUES ('01', 'The SAS Core Curriculum', 'sas_core', FALSE,

@@ -1,10 +1,14 @@
 import os
+import sys
+
+# Add backend/ to sys.path so imports work
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import re
 import json
 import requests
 import pandas as pd
 from services.requirement_group_service import RequirementGroupService
-from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
 from services.requirement_group_service import RequirementGroupService
@@ -13,8 +17,6 @@ from models.course import Course
 from db import db
 from app import create_app
 from services.course_service import CourseService
-
-load_dotenv()
 
 def get_json(url):
     """Fetches JSON data from a URL."""
