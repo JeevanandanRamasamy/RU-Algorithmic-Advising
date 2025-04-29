@@ -31,10 +31,38 @@ import SelectSections from "../components/coursePlanner/SelectSections";
 const CoursePlanner = () => {
 	const { getCurrentAndNextSemester } = useSemesterInfo();
 
-	const semesters = [
-		{ term: "summer", year: 2025 },
-		{ term: "fall", year: 2025 }
-	];
+	const currentYear = new Date().getFullYear();
+
+	const getNextTerm = (month, year) => {
+		if (month < 2) return { term: "spring", year };
+		if (month < 5) return { term: "summer", year };
+		if (month < 8) return { term: "fall", year };
+		return { term: "winter", year: year + 1 }; // winter counts for next year
+	};
+
+	const month = new Date().getMonth();
+
+	const firstSemester = getNextTerm(month, currentYear);
+
+	let secondSemester;
+	switch (firstSemester.term) {
+		case "spring":
+			secondSemester = { term: "summer", year: currentYear };
+			break;
+		case "summer":
+			secondSemester = { term: "fall", year: currentYear };
+			break;
+		case "fall":
+			secondSemester = { term: "winter", year: currentYear + 1 };
+			break;
+		case "winter":
+			secondSemester = { term: "spring", year: currentYear + 1 };
+			break;
+		default:
+			throw new Error("Unknown semester term");
+	}
+
+	const semesters = [firstSemester, secondSemester];
 
 	//TODO: highlight in red if you can not take the course
 	// const {

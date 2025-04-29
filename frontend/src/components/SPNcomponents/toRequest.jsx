@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { showErrorToast, showSuccessToast, showWarningToast } from "../toast/Toast"; // adjust the path as needed
 import SectionsTable from "./sectionsTable";
-import NoPlaceholderDropdown from "../generic/NoPlaceholderDropdown";
-import SemesterSelector from "./semesterSelector";
 import { useAuth } from "../../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -13,32 +11,21 @@ const ToRequest = ({triggerReload}) => {
     const [sections, setSections] = useState([]); // Store sections related to the course
     const [isLoading, setIsLoading] = useState(false); // Track loading state
     const [selectedSections, setSelectedSections] = useState([]); // Track selected sections
-    // const [semester, setSemester] = useState({ year: "", season: "" });
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
     
-	let currentYear = new Date().getFullYear();
+	const currentYear = new Date().getFullYear();
 
-    const getNextTerm = () => {
-        const month = new Date().getMonth();
-        if (month < 2) return "Spring";
-        if (month < 5) return "Summer";
-        if (month < 8) return "Fall";
-        currentYear += 1;
-        return "Winter";
-      };
+	const getNextTerm = (month, year) => {
+		if (month < 2) return { season: "Spring", year };
+		if (month < 5) return { season: "Summer", year };
+		if (month < 8) return { season: "Fall", year };
+		return { season: "Winter", year: year + 1 }; // winter counts for next year
+	};
 
-    const nextTerm = getNextTerm();
+	const month = new Date().getMonth();
 
-    const semester = { year: currentYear, season: nextTerm };
-
-    /*
-    const handleSemesterSelection = (year, season) => {
-        // Only update if the values change
-        if (year !== semester.year || season !== semester.season) {
-        setSemester({ year, season });
-        }
-    };*/
+	const semester = getNextTerm(month, currentYear);
 
     // Handle course drop: When a course is dropped, fetch its details and sections.
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -201,7 +188,7 @@ const ToRequest = ({triggerReload}) => {
         <h3 className="text-lg font-bold">Drop Courses Here</h3>
         {/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
 		<div>
-             <label className="block mb-1 font-bold">{nextTerm} {currentYear}</label>
+             <label className="block mb-1 font-bold">{semester.term} {currentYear}</label>
         </div>
         {isLoading && <p>Loading course details...</p>}
         {droppedCourse ? (
