@@ -1,5 +1,5 @@
 from freezegun import freeze_time
-from backend.services.semesters_service import SemestersService
+from services.semesters_service import SemestersService
 
 
 # T01

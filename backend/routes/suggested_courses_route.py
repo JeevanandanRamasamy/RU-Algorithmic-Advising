@@ -2,7 +2,6 @@
 from flask import Blueprint, request, jsonify
 from services.requirement_service import RequirementService  # wherever your function lives
 from models.course import Course
-from db import db  
 
 suggested_courses_bp = Blueprint('suggested_courses', __name__)
 

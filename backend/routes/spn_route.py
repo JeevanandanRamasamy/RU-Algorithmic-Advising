@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.spn_request import SPNRequest
 from services.spn_request_service import SPNRequestService
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Define a Blueprint for course records
 spn_request_bp = Blueprint("spn_request", __name__, url_prefix="/api/spn")
@@ -81,7 +81,7 @@ def add_spn():
 @spn_request_bp.route("/update", methods=["PUT"])
 def update_spn_request():
     data = request.get_json()
-    data["timestamp"] = datetime.utcnow()
+    data["timestamp"] = datetime.now(timezone.utc)
     identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
     identifier = {key: data.get(key) for key in identifier_keys}
 

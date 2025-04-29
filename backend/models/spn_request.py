@@ -8,7 +8,7 @@ from sqlalchemy import (
     ForeignKey,
     CheckConstraint,
 )
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.dialects.mysql import YEAR
 
 class SPNRequest(db.Model):
@@ -32,7 +32,7 @@ class SPNRequest(db.Model):
         Enum("pending", "approved", "denied"), nullable=False, default="pending"
     )
     timestamp = Column(
-        DateTime, default=datetime.utcnow, nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )
     admin_id = Column(
         String(6),

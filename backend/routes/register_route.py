@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from services.user_service import UserService
 from flask import Blueprint
 from werkzeug.security import generate_password_hash  # pbkdf2:sha256 hashing method

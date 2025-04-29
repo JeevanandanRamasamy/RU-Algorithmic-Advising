@@ -5,11 +5,10 @@ import json
 import os
 
 from unittest.mock import patch
-from backend.app import create_app
-from backend.db import db
+from app import create_app
 from flask_jwt_extended import create_access_token
-from backend.services.user_program_service import UserProgramService
-from backend.services.requirement_service import RequirementService
+from services.user_program_service import UserProgramService
+from services.requirement_service import RequirementService
 
 logging.basicConfig(level=logging.INFO)
 

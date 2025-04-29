@@ -1,5 +1,4 @@
-from backend.app import create_app
-from backend.models.student_details import StudentDetails
+from app import create_app
 import pytest
 from flask_jwt_extended import create_access_token
 

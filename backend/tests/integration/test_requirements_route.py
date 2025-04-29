@@ -1,8 +1,6 @@
 import pytest
 import sys
 import os
-from unittest.mock import patch
-from flask import Flask
 from flask_jwt_extended import create_access_token
 from freezegun import freeze_time
 

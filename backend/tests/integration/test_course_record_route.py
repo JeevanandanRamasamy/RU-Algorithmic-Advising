@@ -1,12 +1,7 @@
 from app import create_app
-from backend.models.student_details import StudentDetails
-from backend.services.course_record_service import CourseRecordService
 import pytest
 from app import create_app
 from flask_jwt_extended import create_access_token
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, jsonify
-from db import db
 from freezegun import freeze_time
 
 

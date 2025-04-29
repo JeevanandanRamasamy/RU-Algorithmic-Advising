@@ -1,9 +1,7 @@
-from collections import defaultdict, deque
 import os
 import re
 from services.semesters_service import SemestersService
 from models.requirement_group_node import RequirementGroupNode
-from models.requirement_group import RequirementGroup
 from services.requirement_group_service import RequirementGroupService
 from services.program_service import ProgramService
 from services.course_service import CourseService
@@ -250,7 +248,6 @@ class RequirementService:
         """Recursively check if a student meets the requirements for a requirement group."""
         group = RequirementGroupService.get_requirement_group_by_id(group_id)
         if not group:
-
             return True  # No requirements to fulfill
 
         num_required = group.num_required

@@ -1,10 +1,3 @@
-from db import db
-from models.section import Section
-from models.schedule_plan import SchedulePlan
-from sqlalchemy.exc import SQLAlchemyError
-import datetime
-
-
 class ScheduleService:
     @staticmethod
     def get_required_gap(c1, c2):
