@@ -93,7 +93,7 @@ const Chatbot = () => {
                 whileHover={{ scale: 1.05 }} // Slight hover effect
                 whileTap={{ scale: 0.90 }}  // Scale tap (press animation)
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-[1rem] border border-gray-200 shadow-md bg-white group flex items-center justify-center transition-colors duration-200"
+                className="cursor-pointer fixed bottom-8 right-8 z-50 w-14 h-14 rounded-[1rem] border border-gray-200 shadow-md bg-white group flex items-center justify-center transition-colors duration-200"
             >
                 <SparklesIcon className="w-6 h-6 text-[#cc0033] transition-colors duration-200 group-hover:text-[#fcf8d7]" />
                 <div className="absolute inset-0 rounded-[1rem] bg-transparent group-hover:bg-[#cc0033] transition-colors duration-200 -z-10"></div>
