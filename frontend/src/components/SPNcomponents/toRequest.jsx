@@ -14,20 +14,18 @@ const ToRequest = ({triggerReload}) => {
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
     
-	let currentYear = new Date().getFullYear();
+	const currentYear = new Date().getFullYear();
 
-    const getNextTerm = () => {
-        const month = new Date().getMonth();
-        if (month < 2) return "Spring";
-        if (month < 5) return "Summer";
-        if (month < 8) return "Fall";
-        currentYear += 1;
-        return "Winter";
-      };
+	const getNextTerm = (month, year) => {
+		if (month < 2) return { season: "Spring", year };
+		if (month < 5) return { season: "Summer", year };
+		if (month < 8) return { season: "Fall", year };
+		return { season: "Winter", year: year + 1 }; // winter counts for next year
+	};
 
-    const nextTerm = getNextTerm();
+	const month = new Date().getMonth();
 
-    const semester = { year: currentYear, season: nextTerm };
+	const semester = getNextTerm(month, currentYear);
 
     // Handle course drop: When a course is dropped, fetch its details and sections.
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
@@ -190,7 +188,7 @@ const ToRequest = ({triggerReload}) => {
         <h3 className="text-lg font-bold">Drop Courses Here</h3>
         {/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
 		<div>
-             <label className="block mb-1 font-bold">{nextTerm} {currentYear}</label>
+             <label className="block mb-1 font-bold">{semester.term} {currentYear}</label>
         </div>
         {isLoading && <p>Loading course details...</p>}
         {droppedCourse ? (
