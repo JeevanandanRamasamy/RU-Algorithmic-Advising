@@ -30,10 +30,6 @@ const SavedSchedule = ({ term, year }) => {
 			setSelectedScheduleName(savedScheduleNames[`${term}-${year}`][0] || "");
 		}
 	}, [term, year, savedScheduleNames]);
-	console.log(
-		savedAsyncCourses[`${term}-${year}`] || {},
-		savedSchedulesMap[`${term}-${year}`] || {}
-	);
 	return (
 		<>
 			<CalendarLegend />

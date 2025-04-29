@@ -335,7 +335,6 @@ export const SectionsProvider = ({ children }) => {
 			showErrorToast("Schedule name has already been taken", "taken-schedule-name");
 			return;
 		}
-		console.log(savedSchedulesMap);
 
 		if (
 			savedSchedulesMap &&
