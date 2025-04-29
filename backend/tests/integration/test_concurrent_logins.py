@@ -5,9 +5,8 @@ from queue import Queue
 from app import create_app
 from services.user_service import UserService
 
-BASE_URL = "http://localhost:8080/api"
-REGISTER_URL = f"{BASE_URL}/register"
-LOGIN_URL = f"{BASE_URL}/login"
+REGISTER_URL = "http://localhost:8080/api/register"
+LOGIN_URL = "http://localhost:8080/api/login"
 
 NUM_USERS = 250
 TEST_USERS = [
@@ -16,6 +15,16 @@ TEST_USERS = [
 ]
 
 def test_concurrent_logins_under_10_seconds():
+    """
+    Test concurrent logins for 250 users to ensure the system can handle multiple login requests simultaneously.
+    The test will:
+    1. Register 250 users.
+    2. Perform login requests in parallel using threading.
+    3. Measure the time taken for all login requests to complete.
+    4. Assert that the time taken is under 10 seconds.
+    5. Assert that all login requests are successful (status code 200).
+    6. Cleanup by deleting all registered users.
+    """
     # 1. Register all users
     for user in TEST_USERS:
         response = requests.post(REGISTER_URL, json=user)
@@ -28,25 +37,25 @@ def test_concurrent_logins_under_10_seconds():
     def login(user):
         try:
             res = requests.post(LOGIN_URL, json={"username": user["username"], "password": user["password"]})
-            responses.put(res.status_code)
+            responses.put(res.status_code) # Store the status code in the queue
         except Exception as e:
             responses.put(f"error: {e}")
 
     start_time = time.time()
 
-    for user in TEST_USERS:
+    for user in TEST_USERS: # Create a thread for each user
         thread = threading.Thread(target=login, args=(user,))
         thread.start()
         threads.append(thread)
 
     for thread in threads:
-        thread.join()
+        thread.join() # Wait for all threads to finish
 
     end_time = time.time()
     total_time = end_time - start_time
 
-    print(f"Time taken for 50 concurrent logins: {total_time:.2f} seconds")
-    results = [responses.get() for _ in range(NUM_USERS)]
+    print(f"Time taken for {NUM_USERS} concurrent logins: {total_time:.2f} seconds")
+    results = [responses.get() for _ in range(NUM_USERS)] # Collect all responses
     success_count = results.count(200)
 
     assert total_time <= 10, f"Expected logins to finish within 10 seconds, took {total_time:.2f}"
@@ -58,4 +67,5 @@ def test_concurrent_logins_under_10_seconds():
         for user in TEST_USERS:
             UserService.delete_account(user["username"])
     
+    # 4. Print the results
     print(f"Time taken for {NUM_USERS} concurrent logins: {total_time:.2f} seconds")

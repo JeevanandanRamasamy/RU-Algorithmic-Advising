@@ -12,6 +12,9 @@ sys.path.insert(
 
 @pytest.fixture
 def client():
+    """
+    A test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -20,5 +23,8 @@ def client():
 
 @pytest.fixture
 def auth_header(frozen_time):
+    """
+    Fixture to create an authorization header with a JWT token for testing.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}

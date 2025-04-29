@@ -6,6 +6,9 @@ from services.user_service import UserService
 
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():

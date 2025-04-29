@@ -10,6 +10,9 @@ from app import create_app
 
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -18,6 +21,9 @@ def client():
 
 @pytest.fixture
 def register_user(client):
+    """
+    Register a test user for login tests.
+    """
     client.post(
         "/api/register",
         json={
@@ -37,6 +43,9 @@ def register_user(client):
 
 # T27
 def test_login_correct_password(client, register_user):
+    """
+    Test the login route with correct credentials.
+    """
     response = client.post(
         "/api/login", json={"username": "test", "password": "123456"}
     )
@@ -51,6 +60,9 @@ def test_login_correct_password(client, register_user):
 
 # T28
 def test_login_unknown_user_password(client, register_user):
+    """
+    Test the login route with an unknown user.
+    """
     response = client.post(
         "/api/login", json={"username": "unknown", "password": "178"}
     )
@@ -66,6 +78,9 @@ def test_login_unknown_user_password(client, register_user):
 
 # T29
 def test_login_incorrect_password(client, register_user):
+    """
+    Test the login route with incorrect password.
+    """
     response = client.post(
         "/api/login", json={"username": "test", "password": "wrong_password"}
     )

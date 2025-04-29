@@ -7,6 +7,9 @@ from freezegun import freeze_time
 
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -15,18 +18,27 @@ def client():
 
 @pytest.fixture
 def frozen_time():
+    """
+    Freeze time for the duration of the test.
+    """
     with freeze_time("2025-04-20 12:00:00"):
         yield
 
 
 @pytest.fixture
 def auth_header(frozen_time):
+    """
+    Create an authorization header with a JWT token for the test user.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture
 def register_user(client, frozen_time):
+    """
+    Register a test user before running the tests.
+    """
     client.post(
         "/api/register",
         json={
@@ -46,6 +58,10 @@ def register_user(client, frozen_time):
 
 @pytest.fixture
 def add_courses_records(client, auth_header, frozen_time):
+    """
+    Add course records for the test user before running the tests.
+    This includes past, termless, and future courses.
+    """
     # past
     client.post(
         "/api/users/course_record",
@@ -69,6 +85,7 @@ def add_courses_records(client, auth_header, frozen_time):
 
     yield
 
+    # Cleanup: remove the added course records after the tests
     client.delete(
         "/api/users/course_record",
         json={"course_id": "01:198:111"},
@@ -92,6 +109,10 @@ def add_courses_records(client, auth_header, frozen_time):
 def test_get_course_records_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
+    """
+    This test checks if the course records are returned correctly
+    after adding them to the database.
+    """
     response = client.get("/api/users/course_record", headers=auth_header)
     assert response.status_code == 200
     assert response.json == {
@@ -138,6 +159,10 @@ def test_get_course_records_added(
 def test_get_course_records_with_terms_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
+    """
+    This test checks if the course records with terms are returned correctly
+    after adding them to the database.
+    """
     response = client.get("/api/users/course_record/terms", headers=auth_header)
 
     assert response.status_code == 200
@@ -174,6 +199,10 @@ def test_get_course_records_with_terms_courses_added(
 def test_get_taken_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
+    """
+    This test checks if the taken courses are returned correctly
+    after adding them to the database.
+    """
     response = client.get("/api/users/course_record/taken", headers=auth_header)
 
     assert response.status_code == 200
@@ -210,6 +239,9 @@ def test_get_taken_courses_courses_added(
 def test_get_termless_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
+    """
+    Test the retrieval of termless courses for a user.
+    """
     response = client.get("/api/users/course_record/termless", headers=auth_header)
 
     assert response.status_code == 200
@@ -230,6 +262,9 @@ def test_get_termless_courses_courses_added(
 def test_get_planned_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
+    """
+    Test the retrieval of planned courses for a user.
+    """
     response = client.get("/api/users/course_record/planned", headers=auth_header)
 
     assert response.status_code == 200
@@ -291,6 +326,9 @@ def test_add_course_record(
     expected_status,
     expected_json,
 ):
+    """
+    Test the addition of course records for a user.
+    """
     response = client.post(
         "/api/users/course_record", json=payload, headers=auth_header
     )
@@ -323,6 +361,9 @@ def test_remove_course_record_failure(
     expected_status,
     expected_response,
 ):
+    """
+    Test the failure cases for removing course records.
+    """
     response = client.delete(
         "/api/users/course_record",
         json=payload,
@@ -337,6 +378,9 @@ def test_remove_course_record_failure(
 def test_remove_course_record_success(
     client, register_user, frozen_time, auth_header, add_courses_records
 ):
+    """
+    Test the successful removal of a course record.
+    """
     response = client.delete(
         "/api/users/course_record",
         json={"course_id": "01:198:111"},
@@ -363,6 +407,9 @@ def test_update_course_record_none_added(
     frozen_time,
     auth_header,
 ):
+    """
+    Test the failure case for updating a course record that doesn't exist.
+    """
     response = client.put(
         "/api/users/course_record",
         json={"course_id": "01:198:111", "term": "Fall", "year": 2023, "grade": "A"},
@@ -421,6 +468,9 @@ def test_update_course_record_courses_added(
     expected_status,
     expected_json,
 ):
+    """
+    Test the update of course records for a user.
+    """
     response = client.put("/api/users/course_record", json=payload, headers=auth_header)
 
     assert response.status_code == expected_status
