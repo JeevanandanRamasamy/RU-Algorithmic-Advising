@@ -1,10 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Button from "./Button";
 import { useCourseRequirements } from "../../context/CourseRequirementContext";
 
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
+import { showInfoToast, clearToast } from "../toast/Toast";
 
 const DropdownTable = ({
 	courses,
@@ -21,13 +22,15 @@ const DropdownTable = ({
 		setOpenCourses(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
 	};
 
-	const handleAdd = (e, course_id) => {
+	const handleAdd = async (e, course_id) => {
 		e.stopPropagation();
-		handleOnAddCourse(course_id);
+		await handleOnAddCourse(course_id);
 	};
-	const handleRemove = (e, course_id) => {
+	const handleRemove = async (e, course_id) => {
 		e.stopPropagation();
-		handleOnRemoveCourse(course_id);
+		showInfoToast("Removing Course", "remove-course-record");
+		await handleOnRemoveCourse(course_id);
+		clearToast("remove-course-record");
 	};
 
 	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };

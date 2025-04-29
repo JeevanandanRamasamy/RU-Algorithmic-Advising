@@ -17,3 +17,5 @@ dataclasses
 
 pytest
 freezegun
+
+google-genai

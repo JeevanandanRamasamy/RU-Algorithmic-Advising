@@ -150,7 +150,6 @@ class CourseRecordService:
 
             courses = base_query.all()
             return CourseRecordService.convert_courses_to_dict(courses)
-
         except SQLAlchemyError as e:
             db.session.rollback()
             return f"Error retrieving past course records: {str(e)}"
