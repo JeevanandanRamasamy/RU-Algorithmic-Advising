@@ -12,6 +12,11 @@ from services.user_service import UserService
 app = create_app()
 
 def prompt_admin_details():
+    """
+    Prompt the user for admin account details and validate them.
+    Returns:
+        dict: A dictionary containing the admin account details.
+    """
     print("🔧 Admin Account Creation")
     username = input("Username (max 6 chars): ").strip()
 
@@ -53,15 +58,15 @@ def prompt_admin_details():
 if __name__ == "__main__":
     app = create_app()
 
-    with app.app_context():
+    with app.app_context(): # Ensure the app context is available
         user_data = prompt_admin_details()
         if user_data is None:
             print("🚫 Aborting admin creation.")
             sys.exit(1)
 
-        result = UserService.insert_new_account(user_data)
+        result = UserService.insert_new_account(user_data) # Insert the new admin account
 
-        if isinstance(result, str):
+        if isinstance(result, str): # Check if the result is an error message
             print(f"❌ Failed to create admin account: {result}")
         else:
             print(f"✅ Admin account '{user_data['username']}' created successfully.")
