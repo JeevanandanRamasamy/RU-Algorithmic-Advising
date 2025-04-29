@@ -24,7 +24,7 @@ const TakenCourses = ({
 		})
 	}));
 
-	const isActive = isOver && canDrop; // Just used something similar from toRequest.jsx
+	const isActive = isOver && canDrop;
 
 	return (
 		<div
