@@ -1,6 +1,7 @@
 import time
 import threading
 import requests
+from queue import Queue
 from app import create_app
 from services.user_service import UserService
 
@@ -21,15 +22,15 @@ def test_concurrent_logins_under_10_seconds():
         assert response.status_code == 201
 
     # 2. Prepare and perform login in parallel
-    responses = []
+    responses = Queue()
     threads = []
 
     def login(user):
         try:
             res = requests.post(LOGIN_URL, json={"username": user["username"], "password": user["password"]})
-            responses.append(res.status_code)
+            responses.put(res.status_code)
         except Exception as e:
-            responses.append(f"error: {e}")
+            responses.put(f"error: {e}")
 
     start_time = time.time()
 
@@ -45,7 +46,8 @@ def test_concurrent_logins_under_10_seconds():
     total_time = end_time - start_time
 
     print(f"Time taken for 50 concurrent logins: {total_time:.2f} seconds")
-    success_count = responses.count(200)
+    results = [responses.get() for _ in range(NUM_USERS)]
+    success_count = results.count(200)
 
     assert total_time <= 10, f"Expected logins to finish within 10 seconds, took {total_time:.2f}"
     assert success_count == NUM_USERS, f"Expected {NUM_USERS} successful logins, got {success_count}"
