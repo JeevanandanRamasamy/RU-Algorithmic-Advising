@@ -32,14 +32,6 @@ const SavedSchedule = ({ term, year }) => {
 	console.log(selectedScheduleName);
 	return (
 		<>
-			{/* <div className="pb-2 flex justify-end gap-2">
-				{!(
-					Object.keys(savedSchedulesMap[`${term}-${year}`]).length === 1 &&
-					Array.isArray(savedSchedulesMap[0]) &&
-					savedSchedulesMap[0].length === 0
-				) && (
-				)}
-			</div> */}
 			<CalendarLegend />
 
 			<div className="flex gap-4">
@@ -59,16 +51,6 @@ const SavedSchedule = ({ term, year }) => {
 									buttonType="-"
 								/>
 							))}
-						{/* {courseRecords &&
-      courseRecords.map(courseRecord => (
-        <ListItem
-          key={courseRecord["course_id"]}
-          id={courseRecord["course_id"]}
-          value={`${courseRecord["course_id"]} ${courseRecord["course_name"]}`}
-          onClick={handleRemoveCourseRecord}
-          buttonType="-"
-        />
-      ))} */}
 					</div>
 				</div>
 				<div className="w-[80%]">

@@ -7,11 +7,32 @@ import "../../css/ScheduleCalendar.css";
 import { useSections } from "../../context/SectionsContext";
 import CustomEvent from "../calendar/CustomEvent";
 
-const MinimalToolbar = ({ label }) => (
-	<div style={{ textAlign: "center", padding: "0.5rem", fontWeight: "bold" }}></div>
+const MinimalToolbar = ({ view, setView, hasView }) => (
+	<>
+		{!hasView ? (
+			<div style={{ textAlign: "center", padding: "0.5rem", fontWeight: "bold" }}></div>
+		) : (
+			<div className="flex space-x-4 mb-4">
+				<button
+					onClick={() => setView("calendar")}
+					className={`underline cursor-pointer ${
+						view === "calendar" ? "text-blue-600" : "text-gray-600"
+					}`}>
+					Calendar View
+				</button>
+				<button
+					onClick={() => setView("list")}
+					className={`underline cursor-pointer ${
+						view === "list" ? "text-blue-600" : "text-gray-600"
+					}`}>
+					List View
+				</button>
+			</div>
+		)}
+	</>
 );
 
-const ScheduleCalendar = ({ index, map }) => {
+const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 	const locales = {
 		"en-US": enUS
 	};
@@ -57,7 +78,13 @@ const ScheduleCalendar = ({ index, map }) => {
 				eventPropGetter={eventPropGetter}
 				components={{
 					header: ({ date }) => <span>{days[date.getDay() - 1]}</span>, // Adjust for starting on Monday
-					toolbar: props => <MinimalToolbar label="Schedule" />
+					toolbar: (view, setView) => (
+						<MinimalToolbar
+							hasView={hasView}
+							view={view}
+							setView={setView}
+						/>
+					)
 				}}
 				style={{ height: "100%" }}
 				min={new Date(1970, 1, 1, 8, 0)}

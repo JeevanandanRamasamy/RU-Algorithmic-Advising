@@ -85,28 +85,6 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 			</h3>
 			<p className="course-code m-0 p-1">ID: {course.course_id}</p>
 			<p className="course-credits m-0 p-1">{course.credits} credits</p>
-			{/* {requirementString && (
-				<span className={`relative group group-requirement-${course.course_id}`}>
-					<span
-						ref={linkRef}
-						className="cursor-pointer text-blue-500 underline"
-						onMouseEnter={handleMouseEnter}
-						onMouseLeave={handleMouseLeave}>
-						requirements
-					</span>
-					{isTooltipVisible && (
-						<pre
-							ref={tooltipRef}
-							className="fixed px-4 py-3 text-sm bg-gray-800 text-white rounded-md opacity-100 transition-opacity z-50 shadow-lg max-w-none"
-							style={{
-								top: `${tooltipPosition?.top}px`,
-								left: `${tooltipPosition?.left}px`
-							}}>
-							{requirementString}
-						</pre>
-					)}
-				</span>
-			)} */}
 
 			{requirementString && (
 				<>
