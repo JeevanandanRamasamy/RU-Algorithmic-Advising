@@ -236,7 +236,7 @@ export const SectionsProvider = ({ children }) => {
 
 	const generateEventsForSchedule = () => {
 		if (validSchedules?.length === 0) {
-			if (Object.keys(selectedCourses).length !== 0) {
+			if (selectedCourses && Object.keys(selectedCourses).length !== 0) {
 				showErrorToast("No valid schedules", "no-valid-schedules");
 			}
 			setSchedulesMap({});
@@ -316,7 +316,9 @@ export const SectionsProvider = ({ children }) => {
 	const saveSchedule = async (term, year) => {
 		if (
 			(!schedulesMap && !asyncCourses) ||
-			(Object.keys(schedulesMap[scheduleIndex]).length === 0 &&
+			(schedulesMap &&
+				Object.keys(schedulesMap[scheduleIndex]).length === 0 &&
+				asyncCourses &&
 				Object.keys(asyncCourses[scheduleIndex]).length === 0)
 		) {
 			showErrorToast("Must include at least one course before registering");
@@ -333,8 +335,13 @@ export const SectionsProvider = ({ children }) => {
 			showErrorToast("Schedule name has already been taken", "taken-schedule-name");
 			return;
 		}
+		console.log(savedSchedulesMap);
 
-		if (Object.keys(savedSchedulesMap[`${term}-${year}`]).length >= 10) {
+		if (
+			savedSchedulesMap &&
+			savedSchedulesMap[`${term}-${year}`] &&
+			Object.keys(savedSchedulesMap[`${term}-${year}`]).length >= 10
+		) {
 			showErrorToast("Can only save up to 10 schedules", "save-schedule-limit");
 			return;
 		}
@@ -368,7 +375,6 @@ export const SectionsProvider = ({ children }) => {
 				sections: uniqueSections
 			})
 		});
-		// const data = await sectionResponse.json();
 		if (sectionResponse.ok) {
 			setScheduleName("");
 			setSavedScheduleNames(prev => {

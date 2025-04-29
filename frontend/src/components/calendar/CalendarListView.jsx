@@ -1,12 +1,31 @@
 import React from "react";
 import { useSections } from "../../context/SectionsContext";
 
-const CalendarListView = ({ schedules, index }) => {
+const CalendarListView = ({ schedules, index, hasView, view, setView }) => {
 	const { indexToCourseMapRef } = useSections();
 
 	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
 	return (
 		<>
+			{hasView && (
+				<div className="text-center flex space-x-2 items-center">
+					<a
+						onClick={() => setView("calendar")}
+						className={`underline cursor-pointer ${
+							view === "calendar" ? "text-gray-600" : "text-blue-600"
+						}`}>
+						Calendar View
+					</a>
+					<span className="text-black"> | </span>
+					<a
+						onClick={() => setView("list")}
+						className={`underline cursor-pointer ${
+							view === "list" ? "text-gray-600" : "text-blue-600"
+						}`}>
+						List View
+					</a>
+				</div>
+			)}
 			<div className="pt-2 grid grid-cols-32 font-bold border-b pb-2 border-gray-300">
 				<span className="col-span-8">Course Name</span>
 				<span className="col-span-2">Section</span>

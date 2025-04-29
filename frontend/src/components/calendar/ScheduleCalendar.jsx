@@ -12,21 +12,22 @@ const MinimalToolbar = ({ view, setView, hasView }) => (
 		{!hasView ? (
 			<div style={{ textAlign: "center", padding: "0.5rem", fontWeight: "bold" }}></div>
 		) : (
-			<div className="flex space-x-4 mb-4">
-				<button
+			<div className="text-center flex space-x-2 items-center">
+				<a
 					onClick={() => setView("calendar")}
 					className={`underline cursor-pointer ${
-						view === "calendar" ? "text-blue-600" : "text-gray-600"
+						view === "calendar" ? "text-gray-600" : "text-blue-600"
 					}`}>
 					Calendar View
-				</button>
-				<button
+				</a>
+				<span className="text-black"> | </span>
+				<a
 					onClick={() => setView("list")}
 					className={`underline cursor-pointer ${
-						view === "list" ? "text-blue-600" : "text-gray-600"
+						view === "list" ? "text-gray-600" : "text-blue-600"
 					}`}>
 					List View
-				</button>
+				</a>
 			</div>
 		)}
 	</>
@@ -50,10 +51,11 @@ const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 	const eventPropGetter = event => ({
 		style: {
 			minHeight: "30px",
+			width: "100%",
 			// backgroundColor: "#3174ad",
 			// color: "white",
 			fontSize: "0.75rem",
-			borderRadius: "5px",
+			// borderRadius: "5px",
 			border: event.open_status === false ? "3px dashed #cc0033" : "none",
 			backgroundColor: event.background_color,
 			color: event.open_status === false ? "#cc0033" : "black"
@@ -78,7 +80,7 @@ const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 				eventPropGetter={eventPropGetter}
 				components={{
 					header: ({ date }) => <span>{days[date.getDay() - 1]}</span>, // Adjust for starting on Monday
-					toolbar: (view, setView) => (
+					toolbar: () => (
 						<MinimalToolbar
 							hasView={hasView}
 							view={view}
