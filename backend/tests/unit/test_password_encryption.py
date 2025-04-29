@@ -1,8 +1,8 @@
 import pytest
 from werkzeug.security import check_password_hash
 from app import create_app
-from db import db
 from models.account import Account
+from services.user_service import UserService
 
 @pytest.fixture
 def client():
@@ -56,5 +56,4 @@ def test_new_user_password_encrypted(client):
     assert check_password_hash(user.password, "123456")
 
     # Clean up: delete the user
-    db.session.delete(user)
-    db.session.commit()
+    UserService.delete_account("test")
