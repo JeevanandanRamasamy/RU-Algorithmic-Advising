@@ -69,7 +69,7 @@ def get_course_sections_expanded():
     elif term == "summer":
         term = "7"
     else:
-        return jsonify({"error": f"Invalid semester: {semester}"})
+        return jsonify({"error": f"Invalid semester"})
 
     semester = term + year
 
@@ -80,6 +80,7 @@ def get_course_sections_expanded():
             subject=subject, semester=semester, campus=campus, level=level
         )
         courses = api.get_courses()
+        print(courses)
         if len(courses) < 1:
             return jsonify({"error": "No courses exist"}), 404
         if not any(course["course_id"] == course_id for course in courses.values()):
