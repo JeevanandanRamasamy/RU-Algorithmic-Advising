@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { showErrorToast, showSuccessToast, showWarningToast } from "../toast/Toast"; // adjust the path as needed
 import SectionsTable from "./sectionsTable";
-import NoPlaceholderDropdown from "../generic/NoPlaceholderDropdown";
-import SemesterSelector from "./semesterSelector";
 import { useAuth } from "../../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -13,7 +11,6 @@ const ToRequest = ({triggerReload}) => {
     const [sections, setSections] = useState([]); // Store sections related to the course
     const [isLoading, setIsLoading] = useState(false); // Track loading state
     const [selectedSections, setSelectedSections] = useState([]); // Track selected sections
-    // const [semester, setSemester] = useState({ year: "", season: "" });
     const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
     const [reason, setReason] = useState('');
     
