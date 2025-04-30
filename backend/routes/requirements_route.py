@@ -40,6 +40,9 @@ def get_course_requirements_string():
 
 @requirements_bp.route("", methods=["GET"])
 def get_course_requirements():
+    """
+    This endpoint retrieves the course requirements for a specific course.
+    """
     try:
         course_id = request.args.get("course_id")
         prerequisuites = RequirementService.get_prerequisites_tree(course_id)
@@ -110,6 +113,9 @@ def get_taken_courses_for_program():
 @requirements_bp.route("/planned-courses/missing", methods=["GET"])
 @jwt_required()
 def get_missing_requirements_for_planned_courses():
+    """
+    This endpoint retrieves the courses that are missing requirements for a student.
+    """
     username = get_jwt_identity()
     student_details = UserService.get_student_details(username=username)
     if isinstance(student_details, str):
@@ -133,6 +139,9 @@ def get_missing_requirements_for_planned_courses():
 @requirements_bp.route("/planned-courses/group", methods=["GET"])
 @jwt_required()
 def get_requirements_for_planned_courses():
+    """
+    This endpoint retrieves the requirements for planned courses for a student.
+    """
     username = get_jwt_identity()
     student_details = UserService.get_student_details(username=username)
     if isinstance(student_details, str):

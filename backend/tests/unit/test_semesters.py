@@ -1,12 +1,12 @@
 from freezegun import freeze_time
-from backend.services.semesters_service import SemestersService
+from services.semesters_service import SemestersService
 
 
 # T01
 def test_generate_semesters():
     """
-    Verifies that the `generate_semesters` method correctly generates a list of semesters
-    for the given range of years.
+    Test the generate_semesters function to ensure it generates the correct
+    semesters for a given year range.
     """
     semesters = SemestersService.generate_semesters(2023, 2024)
     assert semesters == [

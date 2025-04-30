@@ -1,11 +1,14 @@
 import pytest
 from flask_jwt_extended import create_access_token
-from backend.app import create_app
+from app import create_app
 
 
 # Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     flask_app = create_app()
     with flask_app.test_client() as client:
         with flask_app.app_context():
@@ -15,6 +18,9 @@ def client():
 # Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
+    """
+    Create an authorization header with a JWT token for testing.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
@@ -22,6 +28,10 @@ def auth_header():
 # Fixture: Base payload for SPN request used in SPN-related tests
 @pytest.fixture
 def base_spn_payload():
+    """
+    Create a base payload for SPN requests.
+    This payload is used in multiple tests to ensure consistency.
+    """
     return {
         "username": "test",
         "course_id": "01:198:111",
@@ -37,9 +47,7 @@ def base_spn_payload():
 # T39: Test successful SPN submission with all required fields present
 def test_add_spn_success(client, auth_header, base_spn_payload):
     """
-    Verifies that the SPN request is successfully processed when all required fields
-    are provided. The test checks that the response contains a success message and
-    that the "inserted" and "skipped" keys are included in the response data.
+    This test checks if the API endpoint correctly processes a valid SPN request.
     """
     response = client.post(
         "/api/spn/add",
@@ -68,9 +76,7 @@ def test_add_spn_missing_fields(
     client, auth_header, base_spn_payload, override, expected_status
 ):
     """
-    Verifies that the SPN request returns a 400 error when one or more required fields
-    are missing in the request payload. The test checks for appropriate error messages
-    when fields such as `username`, `course_id`, or `sections` are not provided.
+    This test checks if the API endpoint correctly handles missing required fields in the SPN request.
     """
     payload = base_spn_payload.copy()
 

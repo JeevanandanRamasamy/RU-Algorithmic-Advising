@@ -16,6 +16,9 @@ def get_json(url):
 
 @section_bp.route("/subject", methods=["GET"])
 def get_course_sections_by_subject():
+    """
+    Fetches course sections based on subject, term, year, campus, and level.
+    """
     subject = request.args.get("subject")
     term = request.args.get("term").lower()
     year = request.args.get("year")
@@ -29,19 +32,19 @@ def get_course_sections_by_subject():
         term = "0"
     elif term == "summer":
         term = "7"
-    else:
+    else: # Handle invalid semester
         return jsonify({"error": f"Invalid semester: {semester}"})
 
     semester = term + year
 
-    if not subject or not semester:
+    if not subject or not semester: # Check if required parameters are missing
         return jsonify({"error": "Missing required parameters"}), 400
     try:
         api = RutgersCourseAPI(
             subject=subject, semester=semester, campus=campus, level=level
-        )
+        ) # Initialize the API with the provided parameters
         courses = api.get_courses()
-        if len(courses) < 1:
+        if len(courses) < 1: # Check if any courses exist
             return jsonify({"error": "No courses exist"}), 404
 
         return jsonify({"sections": courses})
@@ -53,6 +56,9 @@ def get_course_sections_by_subject():
 
 @section_bp.route("/expanded", methods=["GET"])
 def get_course_sections_expanded():
+    """
+    Fetches expanded course sections based on course ID, term, year, campus, and level.
+    """
     course_id = request.args.get("course_id")
     _, subject, course_number = course_id.split(":")
     term = request.args.get("term").lower()
@@ -68,20 +74,19 @@ def get_course_sections_expanded():
         term = "0"
     elif term == "summer":
         term = "7"
-    else:
-        return jsonify({"error": f"Invalid semester"})
+    else: # Handle invalid semester
+        return jsonify({"error": f"Invalid semester: {semester}"})
 
     semester = term + year
 
-    if not subject or not semester or not course_number:
+    if not subject or not semester or not course_number: # Check if required parameters are missing
         return jsonify({"error": "Missing required parameters"}), 400
     try:
         api = RutgersCourseAPI(
             subject=subject, semester=semester, campus=campus, level=level
-        )
+        ) # Initialize the API with the provided parameters
         courses = api.get_courses()
-        print(courses)
-        if len(courses) < 1:
+        if len(courses) < 1: # Check if any courses exist
             return jsonify({"error": "No courses exist"}), 404
         if not any(course["course_id"] == course_id for course in courses.values()):
             return jsonify({"error": "Course not found"}), 404
@@ -100,7 +105,9 @@ def get_course_sections_expanded():
 
 @section_bp.route("", methods=["GET"])
 def get_course_sections():
-
+    """
+    Fetches course sections based on course ID, term, year, campus, and level.
+    """
     course_id = request.args.get("course_id")
     _, subject, course_number = course_id.split(":")
     term = request.args.get("term").lower()
@@ -116,7 +123,7 @@ def get_course_sections():
         term = "0"
     elif term == "summer":
         term = "7"
-    else:
+    else: # Handle invalid semester
         return jsonify({"error": f"Invalid semester"})
 
     semester = term + year
@@ -127,10 +134,10 @@ def get_course_sections():
     try:
         api = RutgersCourseAPI(
             subject=subject, semester=semester, campus=campus, level=level
-        )
+        ) # Initialize the API with the provided parameters
         courses = api.get_courses()
 
-        if len(courses) < 1:
+        if len(courses) < 1: # Check if any courses exist
             return jsonify({"error": "No courses exist"}), 404
         if not any(course["course_id"] == course_id for course in courses.values()):
             return jsonify({"error": "Course not found"}), 404
@@ -138,7 +145,7 @@ def get_course_sections():
         section_info = [
             {"section_number": section["section_number"], "index": section.get("index")}
             for section in courses[course_id]["sections"].values()
-        ]
+        ] # Extract section numbers and indices
         return jsonify({"sections": section_info})
 
     except Exception as e:
@@ -147,13 +154,16 @@ def get_course_sections():
 
 @section_bp.route("/generate_schedules", methods=["POST"])
 def generate_all_valid_schedules():
+    """
+    Generates all valid schedules based on selected sections and their meeting times.
+    """
     data = request.json
     checked_sections = data.get("checkedSections")
     index_to_meeting_map = data.get("indexToMeetingTimesMap")
     valid_schedules = SectionsService.generate_all_valid_schedules(
         checked_sections,
         index_to_meeting_map,
-    )
+    ) # Generate all valid schedules
     return jsonify(
         {"message": "Generated all valid schedules", "valid_schedules": valid_schedules}
     )
@@ -162,6 +172,9 @@ def generate_all_valid_schedules():
 @section_bp.route("/schedule", methods=["POST"])
 @jwt_required()
 def save_schedule():
+    """
+    Saves a new schedule for the user.
+    """
     username = get_jwt_identity()
     data = request.get_json()
     schedule_name = data.get("scheduleName")
@@ -175,7 +188,7 @@ def save_schedule():
             "term": term,
             "year": year,
         }
-    )
+    ) # Create a new schedule
     new_sections = SectionsService.insert_section(new_schedule.schedule_id, sections)
     return {
         "message": "Successfully saved new schedule",
@@ -186,6 +199,9 @@ def save_schedule():
 @section_bp.route("/schedule", methods=["DELETE"])
 @jwt_required()
 def delete_schedule():
+    """
+    Deletes a schedule for the user.
+    """
     username = get_jwt_identity()
     data = request.get_json()
 
@@ -193,12 +209,12 @@ def delete_schedule():
     term = data.get("term")
     year = data.get("year")
 
-    if not all([schedule_name, term, year]):
+    if not all([schedule_name, term, year]): # Check if required parameters are missing
         return jsonify({"error": "Missing scheduleName, term, or year"}), 400
 
     result = SectionsService.delete_schedule(schedule_name, username, term, year)
 
-    if result.startswith("Error"):
+    if result.startswith("Error"): # Check if an error occurred
         return jsonify({"error": result}), 500
     if result.startswith("Schedule") and "not found" in result:
         return jsonify({"error": result}), 404
@@ -209,10 +225,12 @@ def delete_schedule():
 @section_bp.route("/schedules", methods=["GET"])
 @jwt_required()
 def get_all_saved_schedule():
+    """
+    Retrieves all saved schedules for the user.
+    """
     username = get_jwt_identity()
     schedules = SectionsService.get_schedules_with_sections(username)
-    print(schedules)
-    if isinstance(schedules, str):
+    if isinstance(schedules, str): # Check if an error occurred
         return jsonify({"message": schedules}), 500
     return jsonify(
         {"message": "Successfully retrieved new schedule", "schedules": schedules}

@@ -143,9 +143,7 @@ CREATE TABLE SchedulePlan (
 CREATE TABLE Section (
     schedule_id INT NOT NULL,
     course_id CHAR(10) NOT NULL,
-    -- section_num CHAR(2) NOT NULL,  -- Section number (e.g., "01")
     index_num CHAR(5) NOT NULL,  -- Index number for registration
-    -- instructor VARCHAR(50) NOT NULL,  -- Instructor's name
     PRIMARY KEY (schedule_id, course_id),
     FOREIGN KEY (schedule_id) REFERENCES SchedulePlan (schedule_id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES Course (course_id) ON DELETE CASCADE

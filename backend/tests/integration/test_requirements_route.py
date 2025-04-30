@@ -1,8 +1,6 @@
 import pytest
 import sys
 import os
-from unittest.mock import patch
-from flask import Flask
 from flask_jwt_extended import create_access_token
 from freezegun import freeze_time
 
@@ -18,6 +16,9 @@ from backend.app import create_app
 # Fixture for setting up a Flask test client
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -27,6 +28,9 @@ def client():
 # Fixture to freeze the time during tests
 @pytest.fixture
 def frozen_time():
+    """
+    Freeze time to a specific date and time for testing.
+    """
     with freeze_time("2025-04-20 12:00:00"):
         yield
 
@@ -34,6 +38,9 @@ def frozen_time():
 # Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header(frozen_time):
+    """
+    Create an authorization header with a JWT token for testing.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
@@ -41,6 +48,9 @@ def auth_header(frozen_time):
 # Fixture to register a test user
 @pytest.fixture
 def register_user(client):
+    """
+    Register a test user for the API.
+    """
     client.post(
         "/api/register",
         json={
@@ -53,7 +63,7 @@ def register_user(client):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -61,7 +71,7 @@ def register_user(client):
 # T24: Test successful retrieval of course requirements string
 def test_get_course_requirements_string(client):
     """
-    Verifies that the course requirements string is successfully retrieved from the API.
+    Test the endpoint for getting course requirements as a string.
     """
     response = client.get("/api/users/requirements/string")
     data = response.get_json()
@@ -76,6 +86,9 @@ def test_get_course_requirements_string(client):
 def add_courses_records_success_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
 ):
+    """
+    Add course records for a user to test the missing requirements endpoint's success case.
+    """
     # past
     client.post(
         "/api/users/course_record",
@@ -99,6 +112,7 @@ def add_courses_records_success_get_missing_requirements_for_planned_courses(
 
     yield
 
+    # Clean up the test data
     client.delete(
         "/api/users/course_record",
         json={"course_id": "01:198:111"},
@@ -126,9 +140,8 @@ def test_get_missing_requirements_for_planned_courses(
     add_courses_records_success_get_missing_requirements_for_planned_courses,
 ):
     """
-    Verifies that the missing course requirements are correctly fetched for planned courses.
+    Test the endpoint for getting missing requirements for planned courses.
     """
-
     response = client.get(
         "/api/users/requirements/planned-courses/missing",
         headers=auth_header,
@@ -152,8 +165,7 @@ def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
 ):
     """
-    Verifies that missing course requirements are correctly identified when prerequisites are
-    not fulfilled for planned courses.
+    Add course records for a user to test the missing requirements endpoint's failure case.
     """
     client.post(
         "/api/users/course_record",
@@ -163,6 +175,7 @@ def add_courses_records_failure_get_missing_requirements_for_planned_courses(
 
     yield
 
+    # Clean up the test data
     client.delete(
         "/api/users/course_record",
         json={"course_id": "01:198:112"},
@@ -178,8 +191,7 @@ def test_get_missing_requirements_for_planned_courses_missing(
     add_courses_records_failure_get_missing_requirements_for_planned_courses,
 ):
     """
-    Verifies that courses with unmet prerequisites are correctly identified, with missing
-    requirements highlighted in red and `requirements_fulfilled` set to `False`.
+    Test the endpoint for getting missing requirements for planned courses when requirements are not fulfilled.
     """
     response = client.get(
         "/api/users/requirements/planned-courses/missing",

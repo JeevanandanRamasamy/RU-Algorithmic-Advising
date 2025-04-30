@@ -1,5 +1,4 @@
-from backend.app import create_app
-from backend.models.student_details import StudentDetails
+from app import create_app
 import pytest
 from flask_jwt_extended import create_access_token
 
@@ -7,6 +6,9 @@ from flask_jwt_extended import create_access_token
 # Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
+    """
+    This fixture sets up a test client for the Flask application.
+    """
     flask_app = create_app()
     with flask_app.test_client() as client:
         with flask_app.app_context():
@@ -16,6 +18,9 @@ def client():
 # Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
+    """
+    This fixture creates an authorization header with a JWT token for testing.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
@@ -23,6 +28,9 @@ def auth_header():
 # Fixture to register a test user
 @pytest.fixture
 def register_user(client):
+    """
+    This fixture registers a test user in the database.
+    """
     client.post(
         "/api/register",
         json={
@@ -35,7 +43,7 @@ def register_user(client):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -43,9 +51,8 @@ def register_user(client):
 # T02
 def test_update_user_details_success(client, register_user, auth_header):
     """
-    Verifies that the user details are successfully updated when valid data is provided,
-    including enrollment year, graduation year, and GPA. The GPA should be formatted to
-    two decimal places, and the response should contain the updated user details.
+    Test case for successfully updating user details.
+    It verifies that the user details are updated correctly in the database.
     """
     response = client.put(
         "/api/users/details",
@@ -94,9 +101,8 @@ def test_update_user_details_with_null_fields(
     client, payload, missing_field, register_user, auth_header
 ):
     """
-    Verifies that the user detail update fails with appropriate error messages when
-    required fields are missing or provided as null. This test covers the scenarios where
-    `enroll_year`, `grad_year`, or the entire payload are missing.
+    Test case for updating user details with null or missing fields.
+    It verifies that the API returns a 400 status code and the correct error message.
     """
     access_token = create_access_token(identity="test")
 
@@ -110,8 +116,8 @@ def test_update_user_details_with_null_fields(
 # T06
 def test_update_user_details_missing_gpa(client, register_user, auth_header):
     """
-    Verifies that when GPA is missing during user detail update, it defaults to "0.00".
-    The response should reflect the default GPA and the other valid user details.
+    Test case for updating user details with a missing GPA.
+    It verifies that the GPA is set to 0.00 in the database.
     """
     access_token = create_access_token(identity="test")
 

@@ -15,6 +15,14 @@ EMAIL_PASS = os.getenv("EMAIL_PASSWORD")
 
 
 def send_email(email, code):
+    """
+    Send an email with the verification code to the user.
+    Args:
+        email (str): The recipient's email address.
+        code (str): The verification code to send.
+    Returns:
+        bool: True if email sent successfully, False otherwise.
+    """
     print(f"{EMAIL_USER} : {EMAIL_PASS}")
 
     subject = "Your Verification Code"
@@ -36,6 +44,13 @@ def send_email(email, code):
 # Route to send a verification code
 @verification_bp.route("/api/send-verification", methods=["POST"])
 def send_verification():
+    """
+    Send a verification code to the user's email address.
+    Args:
+        netid (str): The user's NetID.
+    Returns:
+        JSON response indicating success or failure.
+    """
     data = request.json
     netid = data.get("username")
 
@@ -57,6 +72,14 @@ def send_verification():
 # Route to verify the OTP
 @verification_bp.route("/api/verify-code", methods=["POST"])
 def verify_code():
+    """
+    Verify the OTP entered by the user.
+    Args:
+        netid (str): The user's NetID.
+        code (str): The OTP entered by the user.
+    Returns:
+        JSON response indicating success or failure.
+    """
     data = request.json
     netid = data.get("username")
     code = data.get("code")

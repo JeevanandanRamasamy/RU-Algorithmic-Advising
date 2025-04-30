@@ -1,18 +1,16 @@
 from app import create_app
-from backend.models.student_details import StudentDetails
-from backend.services.course_record_service import CourseRecordService
 import pytest
 from app import create_app
 from flask_jwt_extended import create_access_token
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, jsonify
-from db import db
 from freezegun import freeze_time
 
 
 # Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -22,6 +20,9 @@ def client():
 # Fixture to freeze the time during tests
 @pytest.fixture
 def frozen_time():
+    """
+    Freeze time for the duration of the test.
+    """
     with freeze_time("2025-04-20 12:00:00"):
         yield
 
@@ -29,6 +30,9 @@ def frozen_time():
 # Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header(frozen_time):
+    """
+    Create an authorization header with a JWT token for the test user.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
@@ -36,6 +40,9 @@ def auth_header(frozen_time):
 # Fixture to register a test user
 @pytest.fixture
 def register_user(client, frozen_time):
+    """
+    Register a test user before running the tests.
+    """
     client.post(
         "/api/register",
         json={
@@ -48,7 +55,7 @@ def register_user(client, frozen_time):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -56,6 +63,10 @@ def register_user(client, frozen_time):
 # Fixture to add course records for a test user
 @pytest.fixture
 def add_courses_records(client, auth_header, frozen_time):
+    """
+    Add course records for the test user before running the tests.
+    This includes past, termless, and future courses.
+    """
     # past
     client.post(
         "/api/users/course_record",
@@ -79,6 +90,7 @@ def add_courses_records(client, auth_header, frozen_time):
 
     yield
 
+    # Cleanup: remove the added course records after the tests
     client.delete(
         "/api/users/course_record",
         json={"course_id": "01:198:111"},
@@ -103,9 +115,8 @@ def test_get_course_records_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
     """
-    Test to verify that course records are correctly retrieved for a user.
-    It ensures that all types of courses (past, termless, future) are returned
-    correctly for the test user.
+    This test checks if the course records are returned correctly
+    after adding them to the database.
     """
     response = client.get("/api/users/course_record", headers=auth_header)
     assert response.status_code == 200
@@ -154,8 +165,8 @@ def test_get_course_records_with_terms_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
     """
-    Test to verify that courses with terms are correctly retrieved for a user.
-    It checks that only courses with terms (e.g., past and future courses) are returned.
+    This test checks if the course records with terms are returned correctly
+    after adding them to the database.
     """
     response = client.get("/api/users/course_record/terms", headers=auth_header)
 
@@ -195,7 +206,8 @@ def test_get_taken_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
     """
-    Test to verify that only courses that have been taken (i.e., past courses and termless courses) are retrieved.
+    This test checks if the taken courses are returned correctly
+    after adding them to the database.
     """
     response = client.get("/api/users/course_record/taken", headers=auth_header)
 
@@ -235,7 +247,7 @@ def test_get_termless_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
     """
-    Test to verify that only termless courses are retrieved. This includes courses that do not have a specified term.
+    Test the retrieval of termless courses for a user.
     """
     response = client.get("/api/users/course_record/termless", headers=auth_header)
 
@@ -259,7 +271,7 @@ def test_get_planned_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
     """
-    Test to verify that only planned courses (i.e., future courses) are retrieved.
+    Test the retrieval of planned courses for a user.
     """
     response = client.get("/api/users/course_record/planned", headers=auth_header)
 
@@ -324,10 +336,7 @@ def test_add_course_record(
     expected_json,
 ):
     """
-    Test adding a new course record with different payloads.
-    This function tests various cases such as missing required fields
-    and ensures the correct response and status codes are returned
-    for both success and failure scenarios.
+    Test the addition of course records for a user.
     """
     response = client.post(
         "/api/users/course_record", json=payload, headers=auth_header
@@ -363,10 +372,7 @@ def test_remove_course_record_failure(
     expected_response,
 ):
     """
-    Test the failure scenarios for removing a course record.
-    This function checks for cases where the payload is missing
-    required data or the course record does not exist, verifying
-    the correct error messages and status codes.
+    Test the failure cases for removing course records.
     """
     response = client.delete(
         "/api/users/course_record",
@@ -384,8 +390,6 @@ def test_remove_course_record_success(
 ):
     """
     Test the successful removal of a course record.
-    This function ensures that when a course record is removed,
-    the correct status code and success message are returned.
     """
     response = client.delete(
         "/api/users/course_record",
@@ -414,9 +418,7 @@ def test_update_course_record_none_added(
     auth_header,
 ):
     """
-    Test the scenario where a non-existing course record is attempted
-    to be updated. This function ensures the correct error status and
-    message are returned when attempting to update a non-existent record.
+    Test the failure case for updating a course record that doesn't exist.
     """
     response = client.put(
         "/api/users/course_record",
@@ -477,10 +479,7 @@ def test_update_course_record_courses_added(
     expected_json,
 ):
     """
-    Test updating an existing course record with various payloads.
-    This function checks for missing required fields, and ensures
-    the correct error messages are returned. It also tests successful
-    updates and ensures the correct updated record is returned.
+    Test the update of course records for a user.
     """
     response = client.put("/api/users/course_record", json=payload, headers=auth_header)
 

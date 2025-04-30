@@ -7,9 +7,17 @@ from sqlalchemy import or_
 
 
 class CourseRecordService:
+    """
+    Service class for managing course records in a user's degree plan.
+    This class provides methods to create, read, update, and delete course records.
+    It also includes methods to retrieve course records based on various criteria.
+    """
+    
     @staticmethod
     def convert_courses_to_dict(courses):
-        """Helper Method: Convert course records to a list of dictionaries."""
+        """
+        Helper Method: Convert course records to a list of dictionaries.
+        """
         return [
             {
                 "username": course_record.username,
@@ -28,6 +36,9 @@ class CourseRecordService:
     # ------------------ COURSE RECORD OPERATIONS ------------------
     @staticmethod
     def check_course_exists_for_student(username, course_id):
+        """
+        Check if a course record exists for a given student.
+        """
         try:
             return CourseRecord.query.filter(
                 CourseRecord.username == username, CourseRecord.course_id == course_id
@@ -38,7 +49,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_course_records(username):
-        """Retrieve all course records from a user's degree plan."""
+        """
+        Retrieve all course records from a user's degree plan.
+        """
         try:
             courses = (
                 db.session.query(CourseRecord, Course)
@@ -55,7 +68,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_course_records_with_terms(username):
-        """Retrieve all course records from a user's degree plan."""
+        """
+        Retrieve all course records from a user's degree plan.
+        """
         try:
             courses = (
                 db.session.query(CourseRecord, Course)
@@ -73,7 +88,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_course_record_by_course_id(username, course_id):
-        """Retrieve a course record by its username and course_id."""
+        """
+        Retrieve a course record by its username and course_id.
+        """
         try:
             course = (
                 db.session.query(CourseRecord, Course)
@@ -90,7 +107,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_course_record_by_term(username, term, year):
-        """Retrieve course records from a user's degree plan by semester and year."""
+        """
+        Retrieve course records from a user's degree plan by semester and year.
+        """
         try:
             courses = (
                 db.session.query(CourseRecord, Course)
@@ -111,7 +130,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_past_course_records(username):
-        """Retrieve all past course records from a user's degree plan."""
+        """
+        Retrieve all past course records from a user's degree plan.
+        """
         try:
             current_date = datetime.now()
 
@@ -158,7 +179,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_future_course_records(username):
-        """Retrieve all future course records from a user's degree plan."""
+        """
+        Retrieve all future course records from a user's degree plan.
+        """
         try:
             # use datetime to filter future records
             current_date = datetime.now()
@@ -200,7 +223,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_termless_course_records(username):
-        """Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits)."""
+        """
+        Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits).
+        """
         try:
             courses = (
                 db.session.query(Course)
@@ -217,7 +242,10 @@ class CourseRecordService:
 
     @staticmethod
     def get_termless_course_records_joined(username):
-        """Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits)."""
+        """
+        Retrieve all course records from a user's degree plan that have no term assigned (e.g., AP or transfer credits).
+        This method joins the CourseRecord and Course tables to get course details.
+        """
         try:
             courses = (
                 db.session.query(CourseRecord, Course)
@@ -234,7 +262,9 @@ class CourseRecordService:
 
     @staticmethod
     def insert_course_record(course_record_data):
-        """Insert a course record into a user's degree plan."""
+        """
+        Insert a course record into a user's degree plan.
+        """
         try:
             new_course = CourseRecord(**course_record_data)
             db.session.add(new_course)
@@ -248,7 +278,9 @@ class CourseRecordService:
 
     @staticmethod
     def update_course_record(username, course_id, new_data):
-        """Update a course record by its username and course_id."""
+        """
+        Update a course record by its username and course_id.
+        """
         try:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
@@ -271,7 +303,9 @@ class CourseRecordService:
 
     @staticmethod
     def delete_course_record(username, course_id):
-        """Delete a course record from a user's degree plan."""
+        """
+        Delete a course record from a user's degree plan.
+        """
         try:
             course_record = CourseRecord.query.filter_by(
                 username=username, course_id=course_id
@@ -303,7 +337,9 @@ class CourseRecordService:
 
     @staticmethod
     def get_all_course_records(username: str):
-        """Retrieve every course record (i.e. planned course) for the given user."""
+        """
+        Retrieve every course record (i.e. planned course) for the given user.
+        """
         try:
             rows = (
                 db.session.query(CourseRecord, Course)
@@ -311,7 +347,6 @@ class CourseRecordService:
                 .join(Course, Course.course_id == CourseRecord.course_id)
                 .all()
             )
-            print(rows)
             return [
                 {
                     "username": rec.username,

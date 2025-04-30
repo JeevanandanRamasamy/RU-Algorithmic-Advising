@@ -1,10 +1,5 @@
 USE RUAA; -- Switch to the RUAA database
 
--- Add an admin into database
--- Admins cannot register on frontend of application for security reasons
-INSERT INTO Account (username, password, first_name, last_name, role)
-VALUES ('admin1', 'adminpassword123', 'John', 'Doe', 'admin');
-
 -- Add programs into database
 INSERT INTO Program (program_id, program_name, program_type, is_credit_intensive, additional_details)
 VALUES ('01', 'The SAS Core Curriculum', 'sas_core', FALSE,
@@ -124,8 +119,8 @@ VALUES (NULL, NULL, 5, '["01:198:210", "01:198:213", "01:198:214", "01:198:314",
 
 -- BSCS Physics/Chemistry Requirement
 INSERT INTO RequirementGroup (program_id, course_id, num_required, list, parent_group_id)
-VALUES (NULL, NULL, 0, '["01:750:271", "01:750:272", "01:750:275", "01:750:276"]', 5),
-	(NULL, NULL, 0, '["01:750:203", "01:750:204", "01:750:205", "01:750:206"]', 5),
+VALUES (NULL, NULL, 0, '["01:750:203", "01:750:204", "01:750:205", "01:750:206"]', 5),
+	(NULL, NULL, 0, '["01:750:271", "01:750:272", "01:750:275", "01:750:276"]', 5),
 	(NULL, NULL, 0, '["01:750:123", "01:750:124", "01:750:227", "01:750:229"]', 5),
 	(NULL, NULL, 0, '["01:750:193", "01:750:194"]', 5),
 	(NULL, NULL, 0, '["01:160:159", "01:160:160", "01:160:171"]', 5),

@@ -1,10 +1,7 @@
 import pytest
 import sys
 import os
-from unittest.mock import patch
-from flask import Flask
 from flask_jwt_extended import create_access_token
-from freezegun import freeze_time
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
@@ -14,6 +11,9 @@ from app import create_app
 # Fixture to set up a Flask test client for testing
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -23,6 +23,9 @@ def client():
 # Fixture to register a user and clean up after the test
 @pytest.fixture
 def register_user(client):
+    """
+    Register a test user for login tests.
+    """
     client.post(
         "/api/register",
         json={
@@ -35,7 +38,7 @@ def register_user(client):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
@@ -44,7 +47,7 @@ def register_user(client):
 # Test case for logging in with the correct password
 def test_login_correct_password(client, register_user):
     """
-    Verifies that a user can successfully log in with the correct password.
+    Test the login route with correct credentials.
     """
     response = client.post(
         "/api/login", json={"username": "test", "password": "123456"}
@@ -62,7 +65,7 @@ def test_login_correct_password(client, register_user):
 # Test case for logging in with a username that does not exist
 def test_login_unknown_user_password(client, register_user):
     """
-    Verifies that login fails when the username does not exist.
+    Test the login route with an unknown user.
     """
     response = client.post(
         "/api/login", json={"username": "unknown", "password": "178"}
@@ -81,7 +84,7 @@ def test_login_unknown_user_password(client, register_user):
 # Test case for logging in with an incorrect password
 def test_login_incorrect_password(client, register_user):
     """
-    Verifies that login fails when the password is incorrect.
+    Test the login route with incorrect password.
     """
     response = client.post(
         "/api/login", json={"username": "test", "password": "wrong_password"}

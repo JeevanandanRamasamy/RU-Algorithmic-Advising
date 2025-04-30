@@ -6,8 +6,19 @@ import json
 
 
 class Prerequisites:
+    """
+    This class is responsible for generating and saving course prerequisites
+    in a JSON file. It uses the RequirementService to fetch the prerequisites
+    for each course and formats them into a string representation.
+    """
+
     @staticmethod
     def generate_course_requirement_string(course_id):
+        """
+        Generates a string representation of the course requirements for a given course ID.
+        :param course_id: The ID of the course for which to generate the requirements string.
+        :return: A string representation of the course requirements.
+        """
         prerequisites = RequirementService.get_prerequisites_tree(course_id)
         if prerequisites:
             return prerequisites.requirement_str() if prerequisites != "" else ""
@@ -15,7 +26,11 @@ class Prerequisites:
 
     @staticmethod
     def generate_all_course_requirements():
-
+        """
+        Generates and saves the course requirements for all courses in the database
+        to a JSON file. The JSON file will contain a mapping of course IDs to their
+        respective requirement strings.
+        """
         with app.app_context():
             all_courses = db.session.query(Course).all()
             course_requirements = {}

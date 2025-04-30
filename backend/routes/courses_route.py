@@ -49,10 +49,10 @@ def get_db_courses():
 
 @course_bp.route("/<course_id>", methods=["GET"])
 def get_course_by_id(course_id):
+    """
+    API endpoint to fetch a specific course by its ID.
+    """
     try:
-
-        # print(f"Received course_id: {course_id}")  # Log the course_id to the console
-
         if not course_id:
             return jsonify({"message": "Course ID is required"}), 400
 

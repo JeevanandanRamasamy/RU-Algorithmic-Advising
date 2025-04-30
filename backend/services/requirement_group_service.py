@@ -4,10 +4,16 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 class RequirementGroupService:
-    # ------------------ REQUIREMENT GROUP OPERATIONS ------------------
+    """
+    Service class for managing requirement group-related operations.
+    This includes retrieving, inserting, and deleting requirement groups.
+    """
+    
     @staticmethod
     def get_requirement_group_by_id(group_id):
-        """Retrieve a requirement group by its group_id."""
+        """
+        Retrieve a requirement group by its group_id.
+        """
         try:
             return RequirementGroup.query.filter_by(group_id=group_id).first()
         except SQLAlchemyError as e:
@@ -16,7 +22,9 @@ class RequirementGroupService:
 
     @staticmethod
     def get_requirement_group_by_program(program_id):
-        """Retrieve all requirement groups associated with a program."""
+        """
+        Retrieve all requirement groups associated with a program.
+        """
         try:
             return RequirementGroup.query.filter_by(program_id=program_id).all()
         except SQLAlchemyError as e:
@@ -25,7 +33,9 @@ class RequirementGroupService:
 
     @staticmethod
     def get_requirement_group_by_course(course_id):
-        """Retrieve all requirement groups associated with a course."""
+        """
+        Retrieve all requirement groups associated with a course.
+        """
         try:
             return RequirementGroup.query.filter_by(course_id=course_id).all()
         except SQLAlchemyError as e:
@@ -34,7 +44,9 @@ class RequirementGroupService:
 
     @staticmethod
     def get_child_requirement_groups(parent_group_id):
-        """Retrieve all child requirement groups associated with a parent group."""
+        """
+        Retrieve all child requirement groups associated with a parent group.
+        """
         try:
             return RequirementGroup.query.filter_by(
                 parent_group_id=parent_group_id
@@ -45,7 +57,9 @@ class RequirementGroupService:
 
     @staticmethod
     def insert_requirement_group(requirement_data):
-        """Insert a new requirement group."""
+        """
+        Insert a new requirement group.
+        """
         try:
             new_requirement = RequirementGroup(**requirement_data)
             db.session.add(new_requirement)
@@ -57,7 +71,9 @@ class RequirementGroupService:
 
     @staticmethod
     def delete_requirement_group(group_id):
-        """Delete a requirement group by its group_id."""
+        """
+        Delete a requirement group by its group_id.
+        """
         try:
             requirement = RequirementGroup.query.filter_by(group_id=group_id).first()
             if requirement:

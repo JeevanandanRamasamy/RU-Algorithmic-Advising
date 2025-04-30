@@ -1,10 +1,14 @@
 import os
+import sys
+
+# Add backend/ to sys.path so imports work
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import re
 import json
 import requests
 import pandas as pd
 from services.requirement_group_service import RequirementGroupService
-from dotenv import load_dotenv
 from sympy import symbols
 from sympy.logic.boolalg import Or, And, simplify_logic
 from services.requirement_group_service import RequirementGroupService
@@ -14,17 +18,23 @@ from db import db
 from app import create_app
 from services.course_service import CourseService
 
-load_dotenv()
-
-
 def get_json(url):
-    """Fetches JSON data from a URL."""
+    """
+    Fetches JSON data from a URL.
+    """
     response = requests.get(url)
     return response.json()
 
 
 def parse_and_simplify_prereqs(subject, pre_reqs):
-    """Parses and simplifies the prerequisites string into a logical structure."""
+    """
+    Parses and simplifies the course prerequisites string into a logical structure.
+    Args:
+        subject (str): The subject code of the course.
+        pre_reqs (str): The prerequisites string to parse.
+    Returns:
+        dict: A dictionary representing the logical structure of the prerequisites.
+    """
     if not pre_reqs:
         return None
 
@@ -208,7 +218,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
             "parent_group_id": parent_group_id,
         }
         result = RequirementGroupService.insert_requirement_group(group)
-        if isinstance(result, RequirementGroup):
+        if isinstance(result, RequirementGroup): # Check if insertion was successful
             print(f"Added group: {result}")
     else:
         # If we are processing a group of prerequisites (AND/OR)
@@ -218,7 +228,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
 
         group = {"course_id": courseID, "parent_group_id": parent_group_id}
         if logic == "AND":
-            group["num_required"] = 0
+            group["num_required"] = 0 # 0 means all are required
         elif logic == "OR":
             group["num_required"] = 1
         elif logic.startswith("ATLEAST"):
@@ -227,7 +237,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
             # If there are no nested groups
             group["list"] = requirements
         group_result = RequirementGroupService.insert_requirement_group(group)
-        if not isinstance(group_result, RequirementGroup):
+        if not isinstance(group_result, RequirementGroup): # Check if insertion was successful
             return
         print(f"Added group: {group_result}")
 
@@ -245,13 +255,13 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 else:
                     same_group.append(requirement)
 
-            if same_group:
+            if same_group: # If there are courses in the same group
                 sub_group = {
                     "parent_group_id": group_result.group_id,
                     "list": same_group,
                 }
                 if logic == "AND":
-                    sub_group["num_required"] = 0
+                    sub_group["num_required"] = 0 # 0 means all are required
                 elif logic == "OR":
                     sub_group["num_required"] = 1
                 elif logic.startswith("ATLEAST"):
@@ -260,7 +270,7 @@ def add_prerequisites_to_database(courseID, prerequisites, parent_group_id=None)
                 sub_group_result = RequirementGroupService.insert_requirement_group(
                     sub_group
                 )
-                if isinstance(sub_group_result, RequirementGroup):
+                if isinstance(sub_group_result, RequirementGroup): # Check if insertion was successful
                     print(f"Added sub-group: {sub_group_result}")
 
 
@@ -268,11 +278,11 @@ def add_courses_to_database(filename):
     """Adds courses from a CSV file to the database."""
     app = create_app()
     with app.app_context():
-        db.create_all()
+        db.create_all() # Create tables if they don't exist
         df = pd.read_csv(filename)
 
         # Handle missing values for credits and course_link
-        df["credits"] = df["credits"].fillna(0)
+        df["credits"] = df["credits"].fillna(0) # Default to 0 if NaN
         df["course_link"] = df["course_link"].where(pd.notna(df["course_link"]), None)
 
         # Add courses to the database
@@ -299,5 +309,5 @@ def add_courses_to_database(filename):
 
 if __name__ == "__main__":
     file_name = "course_list.csv"
-    # get_course_list(file_name)
+    # get_course_list(file_name) # Uncomment to fetch new data (this will take a while)
     add_courses_to_database(file_name)
