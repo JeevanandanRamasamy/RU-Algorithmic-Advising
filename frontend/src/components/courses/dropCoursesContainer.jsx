@@ -24,16 +24,19 @@ const DropCoursesContainer = ({
 	);
 	const { containsSemester } = useSemesterInfo();
 
-	const [{ isOver }, drop] = useDrop(() => ({
+	const [{ isOver, canDrop}, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
 			// console.log("Added course:", item, term, year);
 			handleAddPlannedCourse(item.id, term, year);
 		},
 		collect: monitor => ({
-			isOver: !!monitor.isOver()
+			isOver: !!monitor.isOver(),
+			canDrop: monitor.canDrop()
 		})
 	}));
+
+	const isActive = isOver && canDrop;
 
 	return (
 		<div
@@ -55,9 +58,8 @@ const DropCoursesContainer = ({
 			</div>
 			<div
 				ref={drop}
-				className={`bg-white h-[90%] border border-gray-200 overflow-y-scroll rounded-md p-2.5 ${
-					isOver ? "drag-over" : ""
-				}`}>
+				className={`h-[90%] border overflow-y-scroll rounded-md p-2.5 ${
+					isActive ? "bg-green-100 border-green-400" : "bg-white border-gray-200"}`}>
 				{loading ? (
 					<div>Loading taken courses...</div>
 				) : (

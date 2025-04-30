@@ -301,6 +301,7 @@ def add_courses_to_database(filename):
                         row["course_id"], row["prerequisites"]
                     )
             else:
+                print(course_result)
                 print(f"Error adding course: {course}")
                 break
         print("Courses added to database successfully!")

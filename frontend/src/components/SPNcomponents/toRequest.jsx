@@ -2,77 +2,64 @@ import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { showErrorToast, showSuccessToast, showWarningToast } from "../toast/Toast"; // adjust the path as needed
 import SectionsTable from "./sectionsTable";
-import NoPlaceholderDropdown from "../generic/NoPlaceholderDropdown";
-import SemesterSelector from "./semesterSelector";
 import { useAuth } from "../../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const ToRequest = ({triggerReload}) => {
-    const { user, token } = useAuth();
-    const [droppedCourse, setDroppedCourse] = useState(null); // Store dropped course info
-    const [sections, setSections] = useState([]); // Store sections related to the course
-    const [isLoading, setIsLoading] = useState(false); // Track loading state
-    const [selectedSections, setSelectedSections] = useState([]); // Track selected sections
-    // const [semester, setSemester] = useState({ year: "", season: "" });
-    const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
-    const [reason, setReason] = useState('');
-    
-	let currentYear = new Date().getFullYear();
+const ToRequest = ({ triggerReload }) => {
+	const { user, token } = useAuth();
+	const [droppedCourse, setDroppedCourse] = useState(null); // Store dropped course info
+	const [sections, setSections] = useState([]); // Store sections related to the course
+	const [isLoading, setIsLoading] = useState(false); // Track loading state
+	const [selectedSections, setSelectedSections] = useState([]); // Track selected sections
+	const [courseId, setCourseId] = useState(null); // Added courseId state for handling course fetching
+	const [reason, setReason] = useState("");
 
-    const getNextTerm = () => {
-        const month = new Date().getMonth();
-        if (month < 2) return "Spring";
-        if (month < 5) return "Summer";
-        if (month < 8) return "Fall";
-        currentYear += 1;
-        return "Winter";
-      };
+	const currentYear = new Date().getFullYear();
 
-    const nextTerm = getNextTerm();
+	const getNextTerm = (month, year) => {
+		if (month < 2) return { season: "Spring", year };
+		if (month < 5) return { season: "Summer", year };
+		if (month < 8) return { season: "Fall", year };
+		return { season: "Winter", year: year + 1 }; // winter counts for next year
+	};
 
-    const semester = { year: currentYear, season: nextTerm };
+	const month = new Date().getMonth();
 
-    /*
-    const handleSemesterSelection = (year, season) => {
-        // Only update if the values change
-        if (year !== semester.year || season !== semester.season) {
-        setSemester({ year, season });
-        }
-    };*/
+	const semester = getNextTerm(month, currentYear);
 
-    // Handle course drop: When a course is dropped, fetch its details and sections.
-    const [{ isOver, canDrop }, drop] = useDrop(() => ({
-        accept: "COURSE",
-        drop: (item) => {
-        setCourseId(item.id); // Set course_id state
-        },
-        collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-        }),
-    }));
+	// Handle course drop: When a course is dropped, fetch its details and sections.
+	const [{ isOver, canDrop }, drop] = useDrop(() => ({
+		accept: "COURSE",
+		drop: item => {
+			setCourseId(item.id); // Set course_id state
+		},
+		collect: monitor => ({
+			isOver: monitor.isOver(),
+			canDrop: monitor.canDrop()
+		})
+	}));
 
-    // Function to fetch course details
-    const fetchCourseDetails = async (course_id) => {
-        try {
-        const response = await fetch(`${backendUrl}/api/courses/${course_id}`);
-        if (!response.ok) {
-            showErrorToast("Failed to fetch course details.");
-            return;
-        }
-        const data = await response.json();
-        if (data.course) {
-            setDroppedCourse(data.course); // Update the state with the course data
-        } else {
-            showErrorToast("Course not found!");
-        }
-        } catch (error) {
-        console.error("Error fetching course details:", error);
-        showErrorToast("Failed to fetch course details.");
-        } finally {
-        setIsLoading(false); // End loading
-        }
-    };
+	// Function to fetch course details
+	const fetchCourseDetails = async course_id => {
+		try {
+			const response = await fetch(`${backendUrl}/api/courses/${course_id}`);
+			if (!response.ok) {
+				showErrorToast("Failed to fetch course details.");
+				return;
+			}
+			const data = await response.json();
+			if (data.course) {
+				setDroppedCourse(data.course); // Update the state with the course data
+			} else {
+				showErrorToast("Course not found!");
+			}
+		} catch (error) {
+			console.error("Error fetching course details:", error);
+			showErrorToast("Failed to fetch course details.", "fetch-error");
+		} finally {
+			setIsLoading(false); // End loading
+		}
+	};
 
 	// Function to fetch sections based on course_id and semester
 	const fetchSections = async () => {
@@ -117,13 +104,13 @@ const ToRequest = ({triggerReload}) => {
 		fetchSections(); // Only run when courseId and semester are both available
 	}, [courseId, semester.year, semester.season]); // Re-run when any of these dependencies change
 
-    // Function to clear the dropped course and section info
-    const clearDroppedCourse = () => {
-        setDroppedCourse(null); // Reset dropped course
-        setSections([]); // Clear sections data
-        setSelectedSections([]); // Clear selected sections
-        setReason("");
-    };
+	// Function to clear the dropped course and section info
+	const clearDroppedCourse = () => {
+		setDroppedCourse(null); // Reset dropped course
+		setSections([]); // Clear sections data
+		setSelectedSections([]); // Clear selected sections
+		setReason("");
+	};
 
 	// Function to handle checkbox selection
 	const handleCheckboxChange = sectionObj => {
@@ -174,7 +161,7 @@ const ToRequest = ({triggerReload}) => {
 					if (data.skipped != 0) {
 						showWarningToast(`${data.skipped} section(s) were skipped.`);
 					}
-					triggerReload();  // This will tell SPN to refresh the DataTable					  
+					triggerReload(); // This will tell SPN to refresh the DataTable
 				} else {
 					// Handle error
 					console.error("Error adding course to the plan:", data.message);
@@ -191,28 +178,29 @@ const ToRequest = ({triggerReload}) => {
 
 	const isActive = isOver && canDrop;
 
-    return (
-        <div
-        ref={drop}
-        className={`border-2 rounded p-4 min-h-[200px] transition-all ${
-            isActive ? "border-green-500 bg-green-100" : "border-gray-400 bg-white"
-        }`}
-        >
-        <h3 className="text-lg font-bold">Drop Courses Here</h3>
-        {/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
-		<div>
-             <label className="block mb-1 font-bold">{nextTerm} {currentYear}</label>
-        </div>
-        {isLoading && <p>Loading course details...</p>}
-        {droppedCourse ? (
-            <div className="mt-2">
-            <p>Course Name: {droppedCourse.course_name}</p>
-            <p>Course ID: {droppedCourse.course_id}</p>
-            <p>Credits: {droppedCourse.credits}</p>
-            </div>
-        ) : (
-            <p className="text-gray-500 italic">No courses dropped yet.</p>
-        )}
+	return (
+		<div
+			ref={drop}
+			className={`border-2 rounded p-4 min-h-[200px] transition-all ${
+				isActive ? "border-green-500 bg-green-100" : "border-gray-400 bg-white"
+			}`}>
+			<h3 className="text-lg font-bold">Drop Courses Here</h3>
+			{/* <SemesterSelector onSemesterSelect={handleSemesterSelection} /> No longer allowing selection*/}
+			<div>
+				<label className="block mb-1 font-bold">
+					{semester.term} {currentYear}
+				</label>
+			</div>
+			{isLoading && <p>Loading course details...</p>}
+			{droppedCourse ? (
+				<div className="mt-2">
+					<p>Course Name: {droppedCourse.course_name}</p>
+					<p>Course ID: {droppedCourse.course_id}</p>
+					<p>Credits: {droppedCourse.credits}</p>
+				</div>
+			) : (
+				<p className="text-gray-500 italic">No courses dropped yet.</p>
+			)}
 
 			{/* Clear Button */}
 			{droppedCourse && (

@@ -4,6 +4,8 @@ import ScheduleCalendar from "../calendar/ScheduleCalendar";
 import CalendarLegend from "../calendar/CalendarLegend";
 import OnlineCourses from "../calendar/OnlineCourses";
 import Button from "../generic/Button";
+import { useState } from "react";
+import CalendarListView from "../calendar/CalendarListView";
 
 const BuildSchedule = ({ term, year }) => {
 	const {
@@ -15,6 +17,8 @@ const BuildSchedule = ({ term, year }) => {
 		schedulesMap,
 		asyncCourses
 	} = useSections();
+	const [view, setView] = useState("calendar");
+	const { validSchedules } = useSections();
 
 	const handleNext = () => {
 		if (scheduleIndex < Object.keys(schedulesMap).length - 1) {
@@ -29,20 +33,38 @@ const BuildSchedule = ({ term, year }) => {
 	};
 	return (
 		<>
-			<div className="pb-2 flex justify-end gap-2">
+			<div className="pb-2 flex gap-2">
 				{!(
 					Object.keys(schedulesMap).length === 1 &&
 					Array.isArray(schedulesMap[0]) &&
 					schedulesMap[0].length === 0
 				) && (
 					<>
-						{scheduleIndex != 0 && (
-							<Button
-								onClick={handlePrevious}
-								className="p-2 w-[72px] flex items-center justify-center rounded bg-blue-500 text-white  border border-black"
-								label="Previous"
-							/>
-						)}
+						<div className="text-center flex space-x-2 items-center">
+							<a
+								onClick={() => setView("calendar")}
+								className={`underline cursor-pointer ${
+									view === "calendar" ? "text-gray-600" : "text-blue-600"
+								}`}>
+								Calendar View
+							</a>
+							<span className="text-black"> | </span>
+							<a
+								onClick={() => setView("list")}
+								className={`underline cursor-pointer ${
+									view === "list" ? "text-gray-600" : "text-blue-600"
+								}`}>
+								List View
+							</a>
+							<span className="text-black"> | </span>
+						</div>
+						<Button
+							onClick={handlePrevious}
+							className={`p-2 w-[72px] flex items-center justify-center rounded bg-blue-500 text-white border border-black ${
+								scheduleIndex === 0 ? "opacity-0 pointer-events-none" : ""
+							}`}
+							label="Previous"
+						/>
 						<div className="text-center flex items-center">
 							{Object.keys(schedulesMap).length === 0
 								? "0 of 0"
@@ -52,7 +74,7 @@ const BuildSchedule = ({ term, year }) => {
 							onClick={handleNext}
 							className={`p-2 w-[72px] flex items-center justify-center rounded bg-blue-500 text-white border border-black ${
 								scheduleIndex === Object.keys(schedulesMap).length - 1
-									? "invisible"
+									? "opacity-0 pointer-events-none"
 									: ""
 							}`}
 							label="Next"
@@ -72,16 +94,31 @@ const BuildSchedule = ({ term, year }) => {
 					label="Save Schedule"
 				/>
 			</div>
-			<CalendarLegend />
-			<ScheduleCalendar
-				map={schedulesMap}
-				index={scheduleIndex}
-			/>
-			<OnlineCourses
-				map={schedulesMap}
-				asyncCourses={asyncCourses}
-				index={scheduleIndex}
-			/>
+			{view === "list" && (
+				<>
+					<CalendarListView
+						schedules={validSchedules}
+						index={scheduleIndex}
+					/>
+				</>
+			)}
+			{view === "calendar" && (
+				<>
+					<CalendarLegend />
+					<ScheduleCalendar
+						map={schedulesMap}
+						index={scheduleIndex}
+						view={view}
+						setView={setView}
+						hasView={false}
+					/>
+					<OnlineCourses
+						map={schedulesMap}
+						asyncCourses={asyncCourses}
+						index={scheduleIndex}
+					/>
+				</>
+			)}
 		</>
 	);
 };

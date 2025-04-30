@@ -79,12 +79,6 @@ const usePlannedCourses = () => {
 		setPlannedCoursesLoading(true);
 
 		try {
-			// if (!planId) {
-			// 	// console.log(planId);
-			// 	console.error("Plan ID is missing!");
-			// 	return;
-			// }
-
 			const response = await fetch(`${backendUrl}/api/users/course_record`, {
 				method: "DELETE",
 				headers: {
@@ -93,7 +87,6 @@ const usePlannedCourses = () => {
 				},
 				body: JSON.stringify({
 					course_id: courseId
-					// plan_id: planId
 				})
 			});
 
@@ -101,25 +94,13 @@ const usePlannedCourses = () => {
 			if (!response.ok) {
 				console.error("Error removing course:", data.message);
 				plannedCoursesError(data.message);
-				set;
-				// If there's an error, restore the previous state by re-fetching
-				// await fetchPlannedCourses();
 			} else {
 				setPlannedCourses(prevPlannedCourses =>
 					prevPlannedCourses.filter(course => course.course_info.course_id !== courseId)
 				);
-
-				// setPlanId(
-				// 	data?.planned_courses?.length > 0 ? data.planned_courses[0].plan_id : planId
-				// ); // Only update if new plan_id is returned
-			} //else {
-			//console.log("Course removed successfully");
-			// No need to refetch if the operation was successful
-			//}
+			}
 		} catch (error) {
 			console.error("Error removing course from the plan:", error);
-			// In case of an error, restore the previous state
-			// await fetchPlannedCourses();
 		} finally {
 			setPlannedCoursesLoading(false);
 		}

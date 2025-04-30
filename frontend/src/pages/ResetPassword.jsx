@@ -154,45 +154,49 @@ function ResetPassword() {
             {step === 1 && (
                 <div>
                     <h3>Enter Your Rutgers NetID</h3>
-                    <input
-                        type="text"
-                        placeholder="Enter your NetID (e.g., abc123)"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <button onClick={handleRequestReset} disabled={loading}>
-                        {loading ? "Sending..." : "Send Code"}
-                    </button>
+                    <form onSubmit={handleRequestReset}>
+                        <input
+                            type="text"
+                            placeholder="Enter your NetID (e.g., abc123)"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <button onClick={handleRequestReset} disabled={loading}>
+                            {loading ? "Sending..." : "Send Code"}
+                        </button>
+                    </form>
                 </div>
             )}
 
             {step === 2 && (
                 <div>
                     <h3>Verify Code & Set New Password</h3>
-                    <input
-                        type="text"
-                        placeholder="Enter Verification Code"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        placeholder="New Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                    <br />
-                    <button onClick={handleVerifyAndReset} disabled={loading}>
-                        {loading ? "Resetting..." : "Reset Password"}
-                    </button>
+                    <form onSubmit={handleVerifyAndReset}>
+                        <input
+                            type="text"
+                            placeholder="Enter Verification Code"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                        />
+                        <br />
+                        <input
+                            type="password"
+                            placeholder="New Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <br />
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                        <br />
+                        <button onClick={handleVerifyAndReset} disabled={loading}>
+                            {loading ? "Resetting..." : "Reset Password"}
+                        </button>
+                    </form>
                 </div>
             )}
 
