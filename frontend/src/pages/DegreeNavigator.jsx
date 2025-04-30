@@ -1,3 +1,19 @@
+/**
+ * DegreeNavigator.jsx
+ *
+ * This page serves as the main Degree Navigator view for students.
+ * It allows users to:
+ * - Select a degree program from a dropdown.
+ * - View the corresponding requirement tree for that program.
+ * - See a list of completed (taken) courses.
+ *
+ * The page layout includes:
+ * - A left sidebar with navigation, notifications, and chatbot.
+ * - A right content area that adapts:
+ *    - If a program is selected: shows RequirementTree and TakenCourses side-by-side.
+ *    - If no program is selected: shows TakenCourses full-width.
+ *
+ */
 import React, { useState } from "react";
 import ProgramSelect from "../components/degreeNavigator/ProgramSelect";
 import RequirementTree from "../components/degreeNavigator/RequirementTree";

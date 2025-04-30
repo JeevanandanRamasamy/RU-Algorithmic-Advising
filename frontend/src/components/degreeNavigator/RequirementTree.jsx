@@ -1,12 +1,34 @@
+/**
+ * RequirementTree.jsx
+ *
+ * This component renders a collapsible tree structure representing a degree program's
+ * requirements for a given user. Each requirement group can contain subgroups or
+ * individual courses. Progress bars and checkmarks visually represent completion status.
+ *
+ * Features:
+ * - Fetches requirement tree data based on selected program and user.
+ * - Renders a nested requirement tree with progress bars.
+ * - Allows toggling (expand/collapse) of tree nodes.
+ * - Provides "Expand All" and "Collapse All" functionality.
+ */
+
 import React, { useEffect, useState } from "react";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * RequirementTree component
+ * @param {string} programId - The ID of the selected program.
+ * @param {string} username - The current user's username.
+ */
 const RequirementTree = ({ programId, username }) => {
   const [treeData, setTreeData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedNodes, setExpandedNodes] = useState(new Set());
 
+  /**
+   * Fetches the requirement tree data when the programId changes.
+   */
   useEffect(() => {
     const fetchTree = async () => {
       try {
@@ -32,6 +54,11 @@ const RequirementTree = ({ programId, username }) => {
     fetchTree();
   }, [programId]);
 
+  /**
+   * Counts the number of completed courses or subgroups within a node.
+   * @param {object} node - A requirement node.
+   * @returns {number} - Number of completed items.
+   */
   const countCompleted = (node) => {
     if (node.courses?.length) {
       return node.courses.filter((course) => course.taken).length;
@@ -47,6 +74,10 @@ const RequirementTree = ({ programId, username }) => {
     return 0;
   };
 
+  /**
+   * Toggles a requirement group node's expanded/collapsed state.
+   * @param {string} groupId - The ID of the group to toggle.
+   */
   const toggleNode = (groupId) => {
     setExpandedNodes((prev) => {
       const updated = new Set(prev);
@@ -59,6 +90,11 @@ const RequirementTree = ({ programId, username }) => {
     });
   };
 
+  /**
+   * Collects all group IDs from the tree to support bulk expanding/collapsing.
+   * @param {Array} nodes - The root-level tree data.
+   * @returns {Set} - Set of all group IDs.
+   */
   const collectAllGroupIds = (nodes) => {
     let ids = new Set();
     const traverse = (nodeList) => {
@@ -73,6 +109,10 @@ const RequirementTree = ({ programId, username }) => {
     return ids;
   };
 
+  /**
+   * Expands or collapses all requirement nodes.
+   * @param {string} action - Either "expand" or "collapse".
+   */
   const handleExpandCollapse = (action) => {
     if (action === "expand") {
       const allIds = collectAllGroupIds(treeData);
@@ -81,6 +121,14 @@ const RequirementTree = ({ programId, username }) => {
       setExpandedNodes(new Set());
     }
   };
+
+  /**
+   * Recursively renders the requirement tree with progress indicators.
+   * @param {object} node - A requirement group or leaf node.
+   * @param {number} depth - The current depth in the tree (for indentation).
+   * @param {string} parentLabel - The label prefix for hierarchical numbering.
+   * @returns {JSX.Element}
+   */
 
   const renderTree = (node, depth = 0, parentLabel = "") => {
     const isExpandable = node.children?.length > 0 || node.courses?.length > 0;
