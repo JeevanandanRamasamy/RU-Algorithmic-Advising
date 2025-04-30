@@ -3,11 +3,15 @@ import React, { useEffect, useState } from "react";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * A component to display the completed courses for a specific user.
+ * The courses are fetched from a backend API and displayed in a list.
+ */
 const TakenCourses = ({ username }) => {
 	const [courses, setCourses] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-
+	// Fetch courses data when component is mounted or username changes
 	useEffect(() => {
 		const fetchTakenCourses = async () => {
 			try {

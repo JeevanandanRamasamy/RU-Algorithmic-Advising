@@ -1,3 +1,8 @@
+/**
+ * Dropdown component that renders a select input field with options.
+ * It handles the selection of an option and triggers a change event
+ * when a new option is selected.
+ */
 const Dropdown = ({ options, selectedValue, onChange, placeholder }) => {
 	return (
 		<select

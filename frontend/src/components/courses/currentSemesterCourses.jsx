@@ -3,6 +3,11 @@ import { useDrop } from "react-dnd";
 import CourseList from "./CourseList";
 import PlannedCourseItem from "./PlannedCourseItem";
 
+/**
+ * Component for displaying the current semester's courses.
+ * It handles adding courses to the current semester by dragging and dropping.
+ * When a course is dropped, it triggers `onAddCourse` callback.
+ */
 const currentSemesterCourses = ({
 	loading,
 	courses,

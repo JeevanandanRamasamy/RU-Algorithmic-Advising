@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * OpenClosedLegend Component
+ *
+ * Displays a visual legend that explains the meaning of open and closed course section indicators.
+ * Used in course scheduling UIs to help users interpret dashed border color codes.
+ */
 const OpenClosedLegend = () => {
 	return (
 		<div className="flex flex-wrap gap-4 pb-2 justify-end">

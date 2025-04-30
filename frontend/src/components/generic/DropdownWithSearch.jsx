@@ -3,6 +3,9 @@ import { subjects, schools } from "../../data/sas";
 import DropdownItem from "./DropdownItem";
 import CourseList from "../courses/CourseList";
 
+/**
+ * A component for searching and filtering courses with dropdown filters for subjects and schools.
+ */
 const SearchWithDropdowns = ({
 	courses,
 	getCourse,
@@ -12,7 +15,6 @@ const SearchWithDropdowns = ({
 	handleSchoolFilter,
 	courseComponentProps
 }) => {
-	// const [searchQuery, setSearchQuery] = useState("");
 	const [showFilters, setShowFilters] = useState(false);
 
 	return (

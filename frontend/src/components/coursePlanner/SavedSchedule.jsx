@@ -3,11 +3,15 @@ import { useSections } from "../../context/SectionsContext";
 import CalendarLegend from "../calendar/CalendarLegend";
 import ScheduleCalendar from "../calendar/ScheduleCalendar";
 import OnlineCourses from "../calendar/OnlineCourses";
-import Button from "../generic/Button";
 import { useEffect, useState } from "react";
 import ListItemWithLink from "../generic/ListItemWithLink";
 import CalendarListView from "../calendar/CalendarListView";
 
+/**
+ * Component to display saved course schedules for a given term and year.
+ * Allows users to view saved schedules in both list and calendar formats,
+ * select a schedule, and delete existing schedules.
+ */
 const SavedSchedule = ({ term, year }) => {
 	const {
 		savedSchedulesMap,
@@ -15,8 +19,7 @@ const SavedSchedule = ({ term, year }) => {
 		setSelectedScheduleName,
 		savedAsyncCourses,
 		savedScheduleNames,
-		deleteSchedule,
-		fetchSavedSchedules
+		deleteSchedule
 	} = useSections();
 	const [view, setView] = useState("calendar");
 

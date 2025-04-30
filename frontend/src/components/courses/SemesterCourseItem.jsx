@@ -4,8 +4,12 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDrag } from "react-dnd";
 
+/**
+ * Represents a course item with a collapsible dropdown and drag-and-drop functionality.
+ * - Toggles the visibility of additional course options.
+ * - Can be dragged within the UI.
+ */
 const SemesterCourseItem = ({ hasDelete }) => {
-	// const { label, options } = item;
 	const [isOpen, setIsOpen] = useState(false);
 
 	const toggleOpen = () => setIsOpen(prev => !prev);
@@ -19,13 +23,6 @@ const SemesterCourseItem = ({ hasDelete }) => {
 		})
 		// canDrag: !isPlanned // Disable drag when the course is already planned
 	}));
-
-	// Log the course ID when the drag starts
-	// useEffect(() => {
-	// 	if (isDragging) {
-	// 		console.log(`Dragging course: ${course.course_name} (ID: ${course.course_id})`);
-	// 	}
-	// }, [isDragging, course]);
 
 	return (
 		<div
@@ -49,13 +46,13 @@ const SemesterCourseItem = ({ hasDelete }) => {
 							transition={{ duration: 0.3 }}
 							className="overflow-hidden px-4 py-2 bg-white">
 							<ul className="space-y-1">
-								{/* {options.map(({ value, label }) => (
+								{options.map(({ value, label }) => (
 									<li
 										key={value}
 										className="px-3 py-2 rounded bg-gray-50 hover:bg-gray-100">
 										{label}
 									</li>
-								))} */}
+								))}
 							</ul>
 						</motion.div>
 					)}
@@ -64,10 +61,5 @@ const SemesterCourseItem = ({ hasDelete }) => {
 		</div>
 	);
 };
-
-// export default CheckboxDropdownItem;
-// const SemesterCourseItem = () => {
-// 	return <div>SemesterCourseItem</div>;
-// };
 
 export default SemesterCourseItem;

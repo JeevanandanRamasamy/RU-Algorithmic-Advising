@@ -22,6 +22,7 @@ PROGRAMS = ["01", "NB198SJ"]
 COURSES_TAKEN = ["01:198:111", "01:198:112", "01:198:142"]
 
 
+# Fixture to load course prerequisite strings from a JSON file
 @pytest.fixture(scope="module")
 def course_prerequisites_strings():
     """
@@ -36,9 +37,7 @@ def course_prerequisites_strings():
 
 # #32CD32 is a shade of green
 # ##FF6347 is a shade of red
-
-
-# T22
+# Test T22: User has not taken the required course
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_failing_to_meet_requirement(
     mock_get_course_string,
@@ -50,14 +49,14 @@ def test_validate_prerequisite_string_failing_to_meet_requirement(
     mock_get_course_string.side_effect = lambda course_id: {
         "01:198:112": "01:198:112 DATA STRUCTURES",
         "01:198:111": "01:198:111 INTRO COMPUTER SCI",
-    }[course_id] # Mocking the CourseService to return course strings
+    }[
+        course_id
+    ]  # Mocking the CourseService to return course strings
     prerequisite_string = course_prerequisites_strings["01:198:112"]
     prerequisite = ["01:198:111"]
     taken_courses = set()
 
-    expected_output = (
-        '(\n  <span style="color:#FF6347;">01:198:111 INTRO COMPUTER SCI</span>\n)'
-    ) # Expecting the prerequisite to be highlighted in red
+    expected_output = '(\n  <span style="color:#FF6347;">01:198:111 INTRO COMPUTER SCI</span>\n)'  # Expecting the prerequisite to be highlighted in red
     assert prerequisite_string == "(\n  01:198:111 INTRO COMPUTER SCI\n)"
 
     assert (
@@ -70,7 +69,7 @@ def test_validate_prerequisite_string_failing_to_meet_requirement(
     )
 
 
-# T23
+# Test T23: User has met the course prerequisite
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_meeting_requirement(
     mock_get_course_string,
@@ -82,15 +81,15 @@ def test_validate_prerequisite_string_meeting_requirement(
     mock_get_course_string.side_effect = lambda course_id: {
         "01:198:112": "01:198:112 DATA STRUCTURES",
         "01:198:111": "01:198:111 INTRO COMPUTER SCI",
-    }[course_id] # Mocking the CourseService to return course strings
+    }[
+        course_id
+    ]  # Mocking the CourseService to return course strings
 
     prerequisite_string = course_prerequisites_strings["01:198:112"]
     prerequisite = ["01:198:111"]
     taken_courses = {"01:198:111"}
 
-    expected_output = (
-        '(\n  <span style="color:#32CD32;">01:198:111 INTRO COMPUTER SCI</span>\n)'
-    ) # Expecting the prerequisite to be highlighted in green
+    expected_output = '(\n  <span style="color:#32CD32;">01:198:111 INTRO COMPUTER SCI</span>\n)'  # Expecting the prerequisite to be highlighted in green
 
     assert prerequisite_string == "(\n  01:198:111 INTRO COMPUTER SCI\n)"
     assert (
@@ -103,6 +102,7 @@ def test_validate_prerequisite_string_meeting_requirement(
     )
 
 
+# Fixture to create Flask test client
 @pytest.fixture
 def client():
     """
@@ -114,6 +114,7 @@ def client():
             yield client
 
 
+# Fixture to generate a JWT auth header
 @pytest.fixture
 def auth_header():
     """
@@ -123,6 +124,7 @@ def auth_header():
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a user and enroll them in multiple programs
 @pytest.fixture
 def register_user(client):
     """
@@ -150,6 +152,7 @@ def register_user(client):
     )
 
 
+# Fixture to add and then delete course records for a user
 @pytest.fixture
 def add_courses_records(client, auth_header):
     """
@@ -173,7 +176,7 @@ def add_courses_records(client, auth_header):
         )
 
 
-# 35
+# Test 35
 def test_get_all_prerequisites(client):
     """
     Test the get_all_prerequisites function.
@@ -261,7 +264,7 @@ def test_check_requirements_met(client, register_user, add_courses_records):
             ), f"Requirements should be met for course {course_id}"
 
 
-# T37
+# Test T37: Check if requirement group is fulfilled
 def test_check_group_fulfillment(client):
     """
     Test the check_group_fulfillment function.
@@ -288,7 +291,7 @@ def test_check_group_fulfillment(client):
         ), "Group 48 should be fulfilled with current courses"
 
 
-# 38
+# Test 38: Get number of requirements for a program or course
 def test_get_num_requirements(client):
     """
     Test the get_num_requirements function.
@@ -314,7 +317,7 @@ def test_get_num_requirements(client):
             ), f"Number of requirements for course {course_id} should be {num_reqs}"
 
 
-# 39
+# Test 39: Count number of courses taken that fulfill requirements
 def test_get_num_courses_taken(client, register_user, add_courses_records):
     """
     Test the get_num_courses_taken function.
@@ -347,7 +350,7 @@ def test_get_num_courses_taken(client, register_user, add_courses_records):
             ), f"Number of courses taken for course {course_id} should be {num_courses}"
 
 
-# 40
+# T40:
 def test_get_missing_requirements(client, register_user, add_courses_records):
     """
     Test the get_missing_requirements function.
@@ -376,7 +379,7 @@ def test_get_missing_requirements(client, register_user, add_courses_records):
             ), "Requirements should be met with extra courses"
 
 
-# 41
+# T41:
 def test_get_suggested_courses(client, register_user, add_courses_records):
     """
     Test the get_suggested_courses function.

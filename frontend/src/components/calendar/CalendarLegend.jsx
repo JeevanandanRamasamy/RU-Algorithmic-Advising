@@ -1,3 +1,8 @@
+/**
+ * CalendarLegend is a UI component that renders a legend explaining
+ * the color codes used in the course calendar for different campuses
+ * and section statuses (open/closed).
+ */
 const CalendarLegend = () => {
 	const campusColors = {
 		"LIVINGSTON": "bg-[#ffcc99]",

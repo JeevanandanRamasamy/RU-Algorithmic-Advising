@@ -5,6 +5,11 @@ import Button from "../generic/Button";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
+/**
+ * Represents a planned course item with drag-and-drop functionality.
+ * Displays course information (name, ID, credits) and allows for removal.
+ * Shows a tooltip with requirements if provided and highlights if requirements are not fulfilled.
+ */
 const PlannedCourseItem = ({
 	course,
 	onRemove,

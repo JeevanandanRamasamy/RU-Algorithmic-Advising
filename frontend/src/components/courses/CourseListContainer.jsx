@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import DropdownItem from "../generic/DropdownItem";
 import { schools, subjects } from "../../data/sas";
-import DropdownWithSearch from "../generic/DropdownWithSearch";
 import useFilterCourses from "../../hooks/useFilterCourses";
 import { AnimatePresence, motion } from "framer-motion";
 
+/**
+ * Container component that displays a list of courses with filtering options.
+ * It includes functionality for filtering courses by name, school, and subject code.
+ * Optionally, it shows total credits based on filtered courses.
+ */
 const CourseListContainer = ({
 	title = "",
 	courses = [],
@@ -92,7 +96,6 @@ const CourseListContainer = ({
 					)}
 				</AnimatePresence>
 			</div>
-			{/* <div className={`p-2 border border-gray-200 rounded-md `}> */}
 			<CourseComponent
 				courses={filterCourses(courses, excludedCourseIds)}
 				getCourse={getCourse}
@@ -101,7 +104,6 @@ const CourseListContainer = ({
 				requirementStrings={requirementStrings}
 				{...courseComponentProps}
 			/>
-			{/* </div> */}
 		</section>
 	);
 };

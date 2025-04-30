@@ -1,6 +1,9 @@
 import React from "react";
 import ListItem from "./ListItem";
 
+/**
+ * A component that displays a list of items filtered by a query, with an input field for search and a list of clickable items.
+ */
 const ListContainer = ({
 	query,
 	handleQueryChange,

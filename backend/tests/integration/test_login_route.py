@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 from app import create_app
 
 
+# Fixture to set up a Flask test client for testing
 @pytest.fixture
 def client():
     """
@@ -19,6 +20,7 @@ def client():
             yield client
 
 
+# Fixture to register a user and clean up after the test
 @pytest.fixture
 def register_user(client):
     """
@@ -42,6 +44,7 @@ def register_user(client):
 
 
 # T27
+# Test case for logging in with the correct password
 def test_login_correct_password(client, register_user):
     """
     Test the login route with correct credentials.
@@ -59,6 +62,7 @@ def test_login_correct_password(client, register_user):
 
 
 # T28
+# Test case for logging in with a username that does not exist
 def test_login_unknown_user_password(client, register_user):
     """
     Test the login route with an unknown user.
@@ -77,6 +81,7 @@ def test_login_unknown_user_password(client, register_user):
 
 
 # T29
+# Test case for logging in with an incorrect password
 def test_login_incorrect_password(client, register_user):
     """
     Test the login route with incorrect password.

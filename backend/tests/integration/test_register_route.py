@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from app import create_app
 
+
 @pytest.fixture
 def client():
     """
@@ -18,7 +19,7 @@ def client():
             yield client
 
 
-# T30
+# T30: Test successful user registration
 def test_register_success(client):
     """
     Test the registration route with valid data.
@@ -46,7 +47,7 @@ def test_register_success(client):
     )
 
 
-# T31
+# T31: Test registration with missing required fields
 def test_register_missing_fields(client):
     """
     Test the registration route with missing fields.
@@ -62,7 +63,7 @@ def test_register_missing_fields(client):
     assert response.get_json()["message"] == "All fields are required."
 
 
-# T32
+# T32: Test registration with username longer than 6 characters
 def test_register_username_too_long(client):
     """
     Test the registration route with a username that is too long.
@@ -82,7 +83,7 @@ def test_register_username_too_long(client):
     assert data["status"] == "error"
 
 
-# T33
+# T33: Test registration with password shorter than 6 characters
 def test_register_password_too_short(client):
     """
     Test the registration route with a password that is too short.
@@ -102,6 +103,7 @@ def test_register_password_too_short(client):
     assert data["status"] == "error"
 
 
+# function to test T34. Adds temporary user
 @pytest.fixture
 def register_existing_user(client):
     """
@@ -124,7 +126,7 @@ def register_existing_user(client):
     )
 
 
-# T34
+# T34: Test registration fails when username is already taken
 def test_register_username_taken(client, register_existing_user):
     """
     Test the registration route with a username that is already taken.

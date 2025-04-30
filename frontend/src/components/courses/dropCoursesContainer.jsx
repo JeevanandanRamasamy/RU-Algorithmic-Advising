@@ -6,6 +6,11 @@ import CourseItem from "./CourseItem";
 import PlannedCourseItem from "./PlannedCourseItem";
 import useSemesterInfo from "../../hooks/useSemesterInfo";
 
+/**
+ * DropCoursesContainer Component
+ * This component allows courses to be dropped onto a container representing a specific semester and year.
+ * It displays a list of planned courses for a particular semester and year and handles the addition/removal of courses.
+ */
 const DropCoursesContainer = ({
 	loading,
 	term,
@@ -24,7 +29,7 @@ const DropCoursesContainer = ({
 	);
 	const { containsSemester } = useSemesterInfo();
 
-	const [{ isOver, canDrop}, drop] = useDrop(() => ({
+	const [{ isOver, canDrop }, drop] = useDrop(() => ({
 		accept: "COURSE",
 		drop: item => {
 			// console.log("Added course:", item, term, year);
@@ -59,7 +64,8 @@ const DropCoursesContainer = ({
 			<div
 				ref={drop}
 				className={`h-[90%] border overflow-y-scroll rounded-md p-2.5 ${
-					isActive ? "bg-green-100 border-green-400" : "bg-white border-gray-200"}`}>
+					isActive ? "bg-green-100 border-green-400" : "bg-white border-gray-200"
+				}`}>
 				{loading ? (
 					<div>Loading taken courses...</div>
 				) : (

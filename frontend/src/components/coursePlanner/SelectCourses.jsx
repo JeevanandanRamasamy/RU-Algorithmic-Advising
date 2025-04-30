@@ -1,17 +1,17 @@
 import React, { useMemo, useState, useEffect } from "react";
-
-import useFilterCourses from "../../hooks/useFilterCourses";
-
 import DropdownItem from "../generic/DropdownItem";
 import ListItem from "../generic/ListItem";
-
-import { schools, subjects } from "../../data/sas";
+import { subjects } from "../../data/sas";
 import { useCourseRecords } from "../../context/CourseRecordsContext";
-import { useCourseRequirements } from "../../context/CourseRequirementContext";
 import DropdownTable from "../generic/DropdownTable";
 import { useTakenCourses } from "../../context/TakenCoursesContext";
 import { showInfoToast, clearToast } from "../toast/Toast";
 import OpenClosedLegend from "../calendar/OpenClosedLegend";
+
+/**
+ * Component for selecting courses, searching by subject code, displaying selected courses,
+ * and handling the addition/removal of courses.
+ */
 const SelectCourses = ({
 	courseRecords,
 	handleOnAddCourse,
@@ -25,17 +25,20 @@ const SelectCourses = ({
 	const [subjectSearchQuery, setSubjectSearchQuery] = useState("");
 	const { takenCourses } = useTakenCourses();
 
+	// Memoize added course IDs to avoid recalculating on every render
 	const addedCourseIds = useMemo(() => {
 		const courseRecordIds = courseRecords?.map(course => course.course_id) || [];
 		const takenCourseIds = takenCourses?.map(course => course.course_id) || [];
 		return [...new Set([...courseRecordIds, ...takenCourseIds])];
 	}, [courseRecords, takenCourses]);
 
+	// Effect to reset search query and searched courses whenever the term or year changes
 	useEffect(() => {
 		setSubjectSearchQuery("");
 		setSearchedCourses({});
 	}, [term, year]);
 
+	// Effect to search for courses based on the subject code when the search query changes
 	useEffect(() => {
 		showInfoToast("Loading", "search");
 		const match = subjectSearchQuery?.match(/\((\d+)\)/);

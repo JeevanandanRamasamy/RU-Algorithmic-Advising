@@ -2,11 +2,13 @@ import { Calendar, Views, dateFnsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
-import React, { useState } from "react";
+import React from "react";
 import "../../css/ScheduleCalendar.css";
-import { useSections } from "../../context/SectionsContext";
-import CustomEvent from "../calendar/CustomEvent";
 
+/**
+ * MinimalToolbar
+ * Displays a simple toggle between calendar and list views if view switching is enabled.
+ */
 const MinimalToolbar = ({ view, setView, hasView }) => (
 	<>
 		{!hasView ? (
@@ -33,6 +35,13 @@ const MinimalToolbar = ({ view, setView, hasView }) => (
 	</>
 );
 
+/**
+ * ScheduleCalendar
+ * Displays a weekly schedule in calendar format using react-big-calendar.
+ * - Events are styled based on their `open_status` and `background_color`.
+ * - Week starts on Monday.
+ * - Only weekdays (Mon-Fri) are emphasized.
+ */
 const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 	const locales = {
 		"en-US": enUS
@@ -47,20 +56,15 @@ const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 		getDay,
 		locales
 	});
-	// const { validSchedules, indexToMeetingTimesMap, scheduleIndex, schedulesMap } = useSections();
 	const eventPropGetter = event => ({
 		style: {
 			minHeight: "30px",
 			width: "100%",
-			// backgroundColor: "#3174ad",
-			// color: "white",
 			fontSize: "0.75rem",
-			// borderRadius: "5px",
 			border: event.open_status === false ? "3px dashed #cc0033" : "none",
 			backgroundColor: event.background_color,
 			color: event.open_status === false ? "#cc0033" : "black"
 		}
-		// "data-tooltip-id": `event-tooltip-${event.title}-${event.start}`
 	});
 	return (
 		<div style={{ height: "80vh" }}>

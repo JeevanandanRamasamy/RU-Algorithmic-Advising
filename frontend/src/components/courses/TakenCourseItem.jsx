@@ -3,6 +3,11 @@ import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 import Button from "../generic/Button";
 
+/**
+ * Displays a single course item in the "Taken Courses" list.
+ * Provides course details like name, ID, credits, and requirements,
+ * along with a button to remove the course from the list.
+ */
 const TakenCourseItem = ({ course, onRemove, requirementString }) => {
 	return (
 		<div

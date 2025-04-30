@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 from app import create_app
 
 
+# Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
     """
@@ -14,6 +15,7 @@ def client():
             yield client
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
     """
@@ -23,6 +25,7 @@ def auth_header():
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture: Base payload for SPN request used in SPN-related tests
 @pytest.fixture
 def base_spn_payload():
     """
@@ -41,7 +44,7 @@ def base_spn_payload():
     }
 
 
-# T39
+# T39: Test successful SPN submission with all required fields present
 def test_add_spn_success(client, auth_header, base_spn_payload):
     """
     This test checks if the API endpoint correctly processes a valid SPN request.
@@ -59,7 +62,7 @@ def test_add_spn_success(client, auth_header, base_spn_payload):
     assert "skipped" in data
 
 
-# T40-43
+# T40-T43: Parameterized test to check that missing required fields result in 400 error
 @pytest.mark.parametrize(
     "override,expected_status",
     [

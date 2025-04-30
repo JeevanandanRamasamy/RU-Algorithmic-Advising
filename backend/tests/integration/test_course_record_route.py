@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token
 from freezegun import freeze_time
 
 
+# Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
     """
@@ -16,6 +17,7 @@ def client():
             yield client
 
 
+# Fixture to freeze the time during tests
 @pytest.fixture
 def frozen_time():
     """
@@ -25,6 +27,7 @@ def frozen_time():
         yield
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header(frozen_time):
     """
@@ -34,6 +37,7 @@ def auth_header(frozen_time):
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a test user
 @pytest.fixture
 def register_user(client, frozen_time):
     """
@@ -56,6 +60,7 @@ def register_user(client, frozen_time):
     )
 
 
+# Fixture to add course records for a test user
 @pytest.fixture
 def add_courses_records(client, auth_header, frozen_time):
     """
@@ -196,6 +201,7 @@ def test_get_course_records_with_terms_courses_added(
 
 
 # T09
+# Test: Get taken courses
 def test_get_taken_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
@@ -236,6 +242,7 @@ def test_get_taken_courses_courses_added(
 
 
 # T10
+# Test: Get termless courses
 def test_get_termless_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
@@ -259,6 +266,7 @@ def test_get_termless_courses_courses_added(
 
 
 # T11
+# Test: Get planned courses
 def test_get_planned_courses_courses_added(
     client, auth_header, register_user, frozen_time, add_courses_records
 ):
@@ -287,6 +295,7 @@ def test_get_planned_courses_courses_added(
 
 
 # T12-T13
+# Test: Add a new course record with different payloads
 @pytest.mark.parametrize(
     "payload,expected_status,expected_json",
     [
@@ -337,6 +346,7 @@ def test_add_course_record(
 
 
 # T14-T15
+# Test: Add a new course record with different payloads
 @pytest.mark.parametrize(
     "payload, expected_status, expected_response",
     [
@@ -374,7 +384,7 @@ def test_remove_course_record_failure(
     assert response.get_json() == expected_response
 
 
-# T16
+# T16: Test removal of a course record
 def test_remove_course_record_success(
     client, register_user, frozen_time, auth_header, add_courses_records
 ):
@@ -400,7 +410,7 @@ def test_remove_course_record_success(
     }
 
 
-# T17
+# T17: Test update of a non-existing course record
 def test_update_course_record_none_added(
     client,
     register_user,
@@ -419,7 +429,7 @@ def test_update_course_record_none_added(
     assert response.get_json() == {"message": "Course record not found"}
 
 
-# T18-21
+# T18-21: Test various updates for course records
 @pytest.mark.parametrize(
     "payload,expected_status,expected_json",
     [

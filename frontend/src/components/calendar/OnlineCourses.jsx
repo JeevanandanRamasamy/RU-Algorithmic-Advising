@@ -2,6 +2,16 @@ import React from "react";
 import { useSections } from "../../context/SectionsContext";
 import { useCourseRecords } from "../../context/CourseRecordsContext";
 
+/**
+ * OnlineCourses Component
+ *
+ * Displays a list of "By Arrangement" (asynchronous) courses in tabular format.
+ *
+ * Props:
+ * - asyncCourses: Object mapping schedule indices to lists of asynchronous course data
+ * - index: The current schedule index to display
+ * - map: Optional object used to validate if course data exists (typically index-to-data map)
+ */
 const OnlineCourses = ({ asyncCourses, index, map }) => {
 	if (
 		!asyncCourses ||

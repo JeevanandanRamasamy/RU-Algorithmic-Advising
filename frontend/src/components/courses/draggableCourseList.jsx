@@ -9,6 +9,10 @@ import useFilterCourses from "../../hooks/useFilterCourses";
 import Button from "../generic/Button";
 import { motion, AnimatePresence } from "framer-motion";
 
+/**
+ * DraggableCourseList Component
+ * This component allows the user to interact with a list of courses. It includes filtering, dragging, and displaying course information.
+ */
 const DraggableCourseList = ({
 	title,
 	courses,

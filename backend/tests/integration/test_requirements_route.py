@@ -13,6 +13,7 @@ sys.path.insert(
 from backend.app import create_app
 
 
+# Fixture for setting up a Flask test client
 @pytest.fixture
 def client():
     """
@@ -24,6 +25,7 @@ def client():
             yield client
 
 
+# Fixture to freeze the time during tests
 @pytest.fixture
 def frozen_time():
     """
@@ -33,6 +35,7 @@ def frozen_time():
         yield
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header(frozen_time):
     """
@@ -42,6 +45,7 @@ def auth_header(frozen_time):
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a test user
 @pytest.fixture
 def register_user(client):
     """
@@ -64,7 +68,7 @@ def register_user(client):
     )
 
 
-# T24
+# T24: Test successful retrieval of course requirements string
 def test_get_course_requirements_string(client):
     """
     Test the endpoint for getting course requirements as a string.
@@ -77,6 +81,7 @@ def test_get_course_requirements_string(client):
     assert len(data["course_requirements_string"]) == 3165
 
 
+# fixture for T25, add course records for success for missing requirements for planned courses
 @pytest.fixture
 def add_courses_records_success_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
@@ -127,7 +132,7 @@ def add_courses_records_success_get_missing_requirements_for_planned_courses(
     )
 
 
-# T25
+# T25: Test successful retrieval of missing requirements for future planned courses
 def test_get_missing_requirements_for_planned_courses(
     client,
     register_user,
@@ -154,6 +159,7 @@ def test_get_missing_requirements_for_planned_courses(
     }
 
 
+# fixture for T26, adds courses for testing failure for missing requirements
 @pytest.fixture
 def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
@@ -177,7 +183,7 @@ def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     )
 
 
-# T26
+# T26: Test retrieval of missing requirements when prerequisites are not fulfilled
 def test_get_missing_requirements_for_planned_courses_missing(
     client,
     register_user,

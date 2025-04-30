@@ -3,7 +3,7 @@ import pytest
 from flask_jwt_extended import create_access_token
 
 
-# class TestUsersRoutes:
+# Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
     """
@@ -15,6 +15,7 @@ def client():
             yield client
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
     """
@@ -24,6 +25,7 @@ def auth_header():
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a test user
 @pytest.fixture
 def register_user(client):
     """
@@ -65,6 +67,7 @@ def test_update_user_details_success(client, register_user, auth_header):
     assert data["updated_user_details"]["gpa"] == "3.90"
 
 
+# T03-T05: Parameterized test for missing required fields in user detail update
 @pytest.mark.parametrize(
     "payload,missing_field",
     [

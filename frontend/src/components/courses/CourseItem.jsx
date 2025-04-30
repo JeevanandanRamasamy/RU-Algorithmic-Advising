@@ -4,6 +4,11 @@ import { useDrag } from "react-dnd";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
+/**
+ * CourseItem component represents a single course in the UI.
+ * It allows users to drag the course, display information about it,
+ * and show additional requirements in a tooltip if available.
+ */
 const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",
