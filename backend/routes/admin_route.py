@@ -4,7 +4,7 @@ from services.spn_request_service import SPNRequestService
 from services.course_service import CourseService
 from services.user_service import UserService
 from services.course_record_service import CourseRecordService
-from datetime import datetime, timezone
+from datetime import datetime
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
@@ -49,7 +49,7 @@ def update_spn_request():
     admin_id = get_jwt_identity()
     updated = SPNRequestService.update_spn_request(
         {"student_id": sid, "course_id": cid, "section_num": sec},
-        {"status": status, "admin_id": admin_id, "timestamp": datetime.now(timezone.utc)},
+        {"status": status, "admin_id": admin_id, "timestamp": datetime.now()},
     )
     if hasattr(updated, "to_dict"): # check if the update was successful
         out = updated.to_dict()

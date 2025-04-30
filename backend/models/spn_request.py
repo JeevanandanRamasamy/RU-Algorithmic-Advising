@@ -8,7 +8,7 @@ from sqlalchemy import (
     ForeignKey,
     CheckConstraint,
 )
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy.dialects.mysql import YEAR
 
 class SPNRequest(db.Model):
@@ -69,7 +69,7 @@ class SPNRequest(db.Model):
 
     # Timestamp of when the request was created
     timestamp = Column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+        DateTime(timezone=True), default=lambda: datetime.now(), nullable=False
     )
 
     # Foreign key to Account.username (admin handling the request)

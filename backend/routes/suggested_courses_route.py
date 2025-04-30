@@ -1,6 +1,5 @@
-# backend/routes/suggested_courses_route.py
 from flask import Blueprint, request, jsonify
-from services.requirement_service import RequirementService  # wherever your function lives
+from services.requirement_service import RequirementService
 from models.course import Course
 
 suggested_courses_bp = Blueprint('suggested_courses', __name__)

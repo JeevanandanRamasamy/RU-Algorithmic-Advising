@@ -4,10 +4,17 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 class DBService:
+    """
+    Service class for managing database operations related to schedules.
+    Handles miscellaneous operations not included in other service classes.
+    """
+    
     # ------------------ SCHEDULE PLAN OPERATIONS ------------------
     @staticmethod
     def get_schedule(username):
-        """Retrieve all schedules associated with a student."""
+        """
+        Retrieve all schedules associated with a student.
+        """
         try:
             return SchedulePlan.query.filter_by(username=username).all()
         except SQLAlchemyError as e:
@@ -16,7 +23,9 @@ class DBService:
 
     @staticmethod
     def insert_schedule(schedule_data):
-        """Insert a new schedule plan."""
+        """
+        Insert a new schedule plan.
+        """
         try:
             new_schedule = SchedulePlan(**schedule_data)
             db.session.add(new_schedule)
@@ -28,7 +37,9 @@ class DBService:
 
     @staticmethod
     def delete_schedule(schedule_id):
-        """Delete a schedule plan by its ID."""
+        """
+        Delete a schedule plan by its ID.
+        """
         try:
             schedule = SchedulePlan.query.filter_by(schedule_id=schedule_id).first()
             if schedule:
@@ -44,7 +55,9 @@ class DBService:
     # ------------------ GENERAL OPERATIONS ------------------
     @staticmethod
     def execute_raw_sql(query):
-        """Execute a raw SQL query and return the result."""
+        """
+        Execute a raw SQL query and return the result.
+        """
         try:
             result = db.session.execute(query)
             return result.fetchall()
@@ -54,7 +67,9 @@ class DBService:
 
     @staticmethod
     def commit_session():
-        """Commit the current database session."""
+        """
+        Commit the current database session.
+        """
         try:
             db.session.commit()
         except SQLAlchemyError as e:

@@ -4,9 +4,21 @@ from services.course_service import CourseService
 
 
 class RutgersCourseAPI:
+    """
+    A class to interact with the Rutgers University Schedule of Classes (SOC) API.
+    This class fetches course data based on subject, semester, campus, and level.
+    """
+
     BASE_URL = "https://sis.rutgers.edu/oldsoc/courses.json"
 
     def __init__(self, subject, semester, campus, level):
+        """
+        Initialize the RutgersCourseAPI with the required parameters.
+        :param subject: The subject code for the courses (e.g., "198").
+        :param semester: The semester code (e.g., "12025" for Fall 2023).
+        :param campus: The campus code (e.g., "NB" for New Brunswick).
+        :param level: The level of the courses (e.g., "UG" for undergraduate).
+        """
         self.subject = subject
         self.semester = semester
         self.campus = campus
@@ -37,7 +49,7 @@ class RutgersCourseAPI:
         school = CourseService.get_course_prefix_from_subject(
             f'{course.get("subject")}'
         )
-        if not school:
+        if not school: # Skip if school is not found
             print(course)
         course_id = (
             school + ":" + course.get("subject") + ":" + course.get("courseNumber")
@@ -46,25 +58,25 @@ class RutgersCourseAPI:
         #    res_dict[course_id][sections].
 
         sections = {}
-        for section in course.get("sections", []):
+        for section in course.get("sections", []): # Iterate through sections
             index = section.get("index")
             if index is None:
-                continue
+                continue # Skip if index is None
             if section.get("printed") != "Y":
-                continue
+                continue # Skip if printed is not "Y"
 
             meeting_times = []
 
-            for meeting in section.get("meetingTimes", []):
+            for meeting in section.get("meetingTimes", []): # Iterate through meeting times
                 formattedTime = TimeService.formatTime(
                     meeting.get("startTime"),
                     meeting.get("endTime"),
                     meeting.get("pmCode"),
-                )
+                ) # Format time using TimeService
                 startTime = None
                 endTime = None
 
-                if formattedTime != "Asynchronous Content":
+                if formattedTime != "Asynchronous Content": # Format time if not asynchronous
                     start_time_str, end_time_str = formattedTime.split(" - ")
                     startTime = TimeService.format_24_hour(start_time_str)
                     endTime = TimeService.format_24_hour(end_time_str)
@@ -90,9 +102,8 @@ class RutgersCourseAPI:
                     "course_name": course.get("expandedTitle")
                     or course.get("title")
                     or "",
-                }
-                # Append to meeting_times list
-                meeting_times.append(meeting_data)
+                } # Create meeting data dictionary
+                meeting_times.append(meeting_data) # Append to meeting_times list
 
                 sections[index] = {
                     "section_number": section.get("number"),
@@ -106,7 +117,7 @@ class RutgersCourseAPI:
                     "exam_code": section.get("examCode"),
                     "section_notes": section.get("sectionNotes"),
                     "open_status": section.get("openStatus"),
-                }
+                } # Create sections dictionary
 
         if not sections:
             return  # Don't add this course if it has no valid sections
@@ -123,9 +134,7 @@ class RutgersCourseAPI:
                 "sections": sections,
             }
 
-    def get_courses(
-        self,
-    ):
+    def get_courses(self):
         """
         Retrieve and parse courses from the API.
         """

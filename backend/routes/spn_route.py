@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from models.spn_request import SPNRequest
 from services.spn_request_service import SPNRequestService
-from datetime import datetime, timezone
+from datetime import datetime
 
 # Define a Blueprint for course records
 spn_request_bp = Blueprint("spn_request", __name__, url_prefix="/api/spn")
@@ -107,7 +107,7 @@ def update_spn_request():
     - status: The new status for the SPN request
     """
     data = request.get_json()
-    data["timestamp"] = datetime.now(timezone.utc)
+    data["timestamp"] = datetime.now()
     identifier_keys = ["student_id", "course_id", "section_num", "year", "term"]
     identifier = {key: data.get(key) for key in identifier_keys} # Extract the identifier fields from the data
 
