@@ -3,6 +3,7 @@ import isEqual from "lodash/isEqual";
 import { showInfoToast, showErrorToast, clearToast } from "../components/toast/Toast";
 import { useAuth } from "../context/AuthContext";
 import { useRef } from "react";
+import { useCourseRequirements } from "./CourseRequirementContext";
 
 const SectionsContext = createContext();
 
@@ -21,6 +22,7 @@ const campusToColorMap = {
 
 export const SectionsProvider = ({ children }) => {
 	const { token } = useAuth();
+	const { checkRequirements } = useCourseRequirements();
 	const [searchedCourses, setSearchedCourses] = useState({});
 	const [selectedCourses, setSelectedCourses] = useState({});
 	const [checkedSections, setCheckedSections] = useState({});
@@ -36,6 +38,7 @@ export const SectionsProvider = ({ children }) => {
 	const indexToMeetingTimesMapRef = useRef({});
 	const [savedScheduleNames, setSavedScheduleNames] = useState({});
 	const indexToCourseMapRef = useRef({});
+	const [selectCoursesMissingRequirements, setSelectCoursesMissingRequirements] = useState({});
 
 	const validSemesters = [
 		{ term: "summer", year: 2025 },
@@ -170,6 +173,11 @@ export const SectionsProvider = ({ children }) => {
 			);
 			const sectionData = await sectionResponse.json();
 			setSearchedCourses(sectionData.sections || {});
+			const coursesMissingRequirements = await checkRequirements(
+				Object.keys(sectionData.sections)
+			);
+			setSelectCoursesMissingRequirements(coursesMissingRequirements);
+
 			if (sectionData.error === "No courses exist") {
 				showErrorToast(`No courses found`, "courses-not-found");
 			}
@@ -581,7 +589,9 @@ export const SectionsProvider = ({ children }) => {
 		savedScheduleNames,
 		setSavedScheduleNames,
 		deleteSchedule,
-		indexToCourseMapRef
+		indexToCourseMapRef,
+		selectCoursesMissingRequirements,
+		setSelectCoursesMissingRequirements
 	};
 
 	return <SectionsContext.Provider value={value}>{children}</SectionsContext.Provider>;

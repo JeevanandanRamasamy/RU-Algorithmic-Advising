@@ -12,6 +12,7 @@ export const AvailableCourses = ({
 	showFilters,
 	requirementStrings
 }) => {
+	console.log(courses);
 	return (
 		<div
 			className={`p-2 overflow-y-scroll border border-gray-200 rounded-md ${

@@ -14,9 +14,7 @@ export const CourseRequirementsProvider = ({ children }) => {
 
 		try {
 			const response = await fetch(
-				`${
-					import.meta.env.VITE_BACKEND_URL
-				}/api/users/requirements/planned-courses/missing`,
+				`${backendUrl}/api/users/requirements/planned-courses/missing`,
 				{
 					method: "GET",
 					headers: {
@@ -31,6 +29,34 @@ export const CourseRequirementsProvider = ({ children }) => {
 			console.error("Error fetching missing requirements for planned courses", error);
 		}
 	}, [token]);
+	const checkRequirements = async courseIds => {
+		try {
+			const params = new URLSearchParams();
+			courseIds.forEach(courseId => params.append("course", courseId));
+
+			const response = await fetch(
+				`${backendUrl}/api/users/requirements/courses?${params.toString()}`,
+				{
+					method: "GET",
+					headers: {
+						"Authorization": `Bearer ${token}`,
+						"Content-Type": "application/json"
+					}
+				}
+			);
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || "Failed to fetch requirements.");
+			}
+
+			return data.courses_missing_requirements;
+		} catch (error) {
+			console.error("Error checking requirements:", error.message);
+			return { error: error.message };
+		}
+	};
 
 	const getRequirementsStrings = async () => {
 		try {
@@ -65,7 +91,8 @@ export const CourseRequirementsProvider = ({ children }) => {
 				coursesWithMissingRequirements,
 				fetchPlannedCoursesWithMissingRequirements,
 				requirementStrings,
-				setRequirementStrings
+				setRequirementStrings,
+				checkRequirements
 			}}>
 			{children}
 		</CourseRequirementsContext.Provider>
