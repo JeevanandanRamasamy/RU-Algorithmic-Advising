@@ -13,7 +13,7 @@ class SectionsService:
     def get_required_gap(c1, c2):
         groups = [
             {"BUSCH", "LIVINGSTON"},
-            {"COLLEGE AVENUE", "DOUGLAS/COOK", "DOWNTOWN"},
+            {"COLLEGE AVENUE", "COOK/DOUGLASS", "DOWNTOWN"},
         ]
         for group in groups:
             if c1 in group and c2 in group:
