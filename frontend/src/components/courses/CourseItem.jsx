@@ -21,52 +21,6 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 		}
 	}, [isDragging, course]);
 
-	// const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-	// const [tooltipPosition, setTooltipPosition] = useState({});
-	// const linkRef = useRef(null);
-	// const tooltipRef = useRef(null);
-	// const [tooltipTimeout, setTooltipTimeout] = useState(null);
-
-	// const handleMouseEnter = () => {
-	// 	if (tooltipTimeout) {
-	// 		clearTimeout(tooltipTimeout);
-	// 	}
-	// 	const timeout = setTimeout(() => {
-	// 		setIsTooltipVisible(true);
-	// 	}, 500);
-	// 	setTooltipTimeout(timeout);
-	// };
-
-	// const handleMouseLeave = () => {
-	// 	setIsTooltipVisible(false);
-	// 	if (tooltipTimeout) {
-	// 		clearTimeout(tooltipTimeout);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	if (isTooltipVisible && tooltipRef.current && linkRef.current) {
-	// 		const linkRect = linkRef.current.getBoundingClientRect();
-	// 		const tooltipRect = tooltipRef.current.getBoundingClientRect();
-	// 		const windowWidth = window.innerWidth;
-	// 		const windowHeight = window.innerHeight;
-	// 		console.log(linkRect, tooltipRect.height, windowHeight, windowWidth);
-
-	// 		let top = linkRect.top;
-	// 		let left = linkRect.right + window.scrollX + 8;
-
-	// 		if (top + tooltipRect.height > windowHeight) {
-	// 			top = linkRect.top - tooltipRect.height - 8;
-	// 		}
-
-	// 		if (left + tooltipRect.width > windowWidth) {
-	// 			left = linkRect.left + window.scrollX - tooltipRect.width - 8;
-	// 		}
-
-	// 		setTooltipPosition({ top, left });
-	// 	}
-	// }, [isTooltipVisible]);
-
 	return (
 		<div
 			ref={drag}
@@ -85,28 +39,6 @@ const CourseItem = ({ course, isPlanned = false, requirementString }) => {
 			</h3>
 			<p className="course-code m-0 p-1">ID: {course.course_id}</p>
 			<p className="course-credits m-0 p-1">{course.credits} credits</p>
-			{/* {requirementString && (
-				<span className={`relative group group-requirement-${course.course_id}`}>
-					<span
-						ref={linkRef}
-						className="cursor-pointer text-blue-500 underline"
-						onMouseEnter={handleMouseEnter}
-						onMouseLeave={handleMouseLeave}>
-						requirements
-					</span>
-					{isTooltipVisible && (
-						<pre
-							ref={tooltipRef}
-							className="fixed px-4 py-3 text-sm bg-gray-800 text-white rounded-md opacity-100 transition-opacity z-50 shadow-lg max-w-none"
-							style={{
-								top: `${tooltipPosition?.top}px`,
-								left: `${tooltipPosition?.left}px`
-							}}>
-							{requirementString}
-						</pre>
-					)}
-				</span>
-			)} */}
 
 			{requirementString && (
 				<>

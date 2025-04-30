@@ -34,6 +34,7 @@ class RutgersCourseAPI:
         """
         Parse a single course dictionary into a structured format.
         """
+
         school = CourseService.get_course_prefix_from_subject(
             f'{course.get("subject")}'
         )
@@ -42,8 +43,8 @@ class RutgersCourseAPI:
         course_id = (
             school + ":" + course.get("subject") + ":" + course.get("courseNumber")
         )
-        # if course_id in res_dict:
-        #    res_dict[course_id][sections].
+        c = CourseService.get_course_by_id(course_id)
+        link = c.course_link if c else None
 
         sections = {}
         for section in course.get("sections", []):
@@ -115,12 +116,14 @@ class RutgersCourseAPI:
             res_dict[course_id]["sections"].update(sections)
         else:
             res_dict[course_id] = {
+                "course_link": link,
                 "course_id": course_id,
                 "course_name": course.get("expandedTitle") or course.get("title") or "",
                 "credits": f"{float(course.get('credits') or 0):.1f}",
                 "description": course.get("courseDescription"),
-                # "prerequisites": course.get("preReqNotes"),
+                "course_link": link,
                 "sections": sections,
+                "subject_notes": course.get("subjectNotes"),
             }
 
     def get_courses(

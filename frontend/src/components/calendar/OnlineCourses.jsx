@@ -3,28 +3,17 @@ import { useSections } from "../../context/SectionsContext";
 import { useCourseRecords } from "../../context/CourseRecordsContext";
 
 const OnlineCourses = ({ asyncCourses, index, map }) => {
-	// const { asyncCourses, scheduleIndex } = useSections();
-	// console.log(asyncCourses, Object.keys(asyncCourses).length, !(index in asyncCourses));
 	if (
 		!asyncCourses ||
-		Object.keys(asyncCourses).length === 0 ||
+		(asyncCourses && Object.keys(asyncCourses).length === 0) ||
 		!(index in asyncCourses) ||
-		Object.keys(map).length === 0 ||
-		asyncCourses[index].length === 0
+		(map && Object.keys(map).length === 0) ||
+		(asyncCourses && asyncCourses[index].length === 0)
 	) {
 		return null;
 	}
-	console.log(asyncCourses);
-	// console.log(asyncCourses, index);
-
 	return (
 		<>
-			{/* {!(
-				(Object.keys(asyncCourses).length === 1) */}
-			{/* // &&
-				// Array.isArray(asyncCourses[0]) &&
-				// asyncCourses[0].length === 0 */}
-			{/* ) && ( */}
 			<>
 				<div className="pt-2">BY ARRANGEMENT COURSES:</div>
 				<div className="pt-2 grid grid-cols-5 font-bold border-b pb-2 border-gray-300">

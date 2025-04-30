@@ -44,7 +44,7 @@ const DraggableCourseItem = ({ course, isPlanned = false, requirementString }) =
 						data-tooltip-id={`tooltip-${course.course_id}`}
 						className="cursor-pointer text-blue-500 underline"
 						data-tooltip-place="bottom">
-						requirements
+						Requirements
 					</a>
 					<Tooltip
 						id={`tooltip-${course.course_id}`}

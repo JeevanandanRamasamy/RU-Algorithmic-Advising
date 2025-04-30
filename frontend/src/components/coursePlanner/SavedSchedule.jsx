@@ -4,8 +4,9 @@ import CalendarLegend from "../calendar/CalendarLegend";
 import ScheduleCalendar from "../calendar/ScheduleCalendar";
 import OnlineCourses from "../calendar/OnlineCourses";
 import Button from "../generic/Button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ListItemWithLink from "../generic/ListItemWithLink";
+import CalendarListView from "../calendar/CalendarListView";
 
 const SavedSchedule = ({ term, year }) => {
 	const {
@@ -17,6 +18,8 @@ const SavedSchedule = ({ term, year }) => {
 		deleteSchedule,
 		fetchSavedSchedules
 	} = useSections();
+	const [view, setView] = useState("calendar");
+
 	useEffect(() => {
 		if (
 			term &&
@@ -27,23 +30,11 @@ const SavedSchedule = ({ term, year }) => {
 			setSelectedScheduleName(savedScheduleNames[`${term}-${year}`][0] || "");
 		}
 	}, [term, year, savedScheduleNames]);
-	//TODO: handle remove schedule
-	console.log(savedSchedulesMap[`${term}-${year}`] || {});
-	console.log(selectedScheduleName);
 	return (
 		<>
-			{/* <div className="pb-2 flex justify-end gap-2">
-				{!(
-					Object.keys(savedSchedulesMap[`${term}-${year}`]).length === 1 &&
-					Array.isArray(savedSchedulesMap[0]) &&
-					savedSchedulesMap[0].length === 0
-				) && (
-				)}
-			</div> */}
 			<CalendarLegend />
-
 			<div className="flex gap-4">
-				<div className="w-[20%]  p-2 border border-gray-200 rounded-md bg-white flex flex-col">
+				<div className="w-[20%] h-[600px] p-2 border border-gray-200 rounded-md bg-white flex flex-col">
 					<h2 className="m-0 text-center">Saved Schedules</h2>
 					<div className="overflow-y-auto flex-1 p-2 border border-gray-200 rounded-2xl">
 						{savedScheduleNames &&
@@ -59,27 +50,52 @@ const SavedSchedule = ({ term, year }) => {
 									buttonType="-"
 								/>
 							))}
-						{/* {courseRecords &&
-      courseRecords.map(courseRecord => (
-        <ListItem
-          key={courseRecord["course_id"]}
-          id={courseRecord["course_id"]}
-          value={`${courseRecord["course_id"]} ${courseRecord["course_name"]}`}
-          onClick={handleRemoveCourseRecord}
-          buttonType="-"
-        />
-      ))} */}
 					</div>
 				</div>
 				<div className="w-[80%]">
-					<ScheduleCalendar
-						map={savedSchedulesMap[`${term}-${year}`] || {}}
-						index={selectedScheduleName}
-					/>
-					<OnlineCourses
-						asyncCourses={savedAsyncCourses[`${term}-${year}`] || {}}
-						index={selectedScheduleName}
-					/>
+					{view === "list" && (
+						<>
+							{(() => {
+								const semester = `${term}-${year}`;
+								const scheduleEntries =
+									savedSchedulesMap[semester]?.[selectedScheduleName] || [];
+								const asyncEntries =
+									savedAsyncCourses[semester]?.[selectedScheduleName] || [];
+
+								const combinedIndexes = Array.from(
+									new Set([
+										...scheduleEntries.map(e => e.index),
+										...asyncEntries.map(e => e.index)
+									])
+								);
+
+								return (
+									<CalendarListView
+										schedules={{ [selectedScheduleName]: combinedIndexes }}
+										index={selectedScheduleName}
+										hasView
+										view={view}
+										setView={setView}
+									/>
+								);
+							})()}
+						</>
+					)}
+					{view === "calendar" && (
+						<>
+							<ScheduleCalendar
+								map={savedSchedulesMap[`${term}-${year}`] || {}}
+								index={selectedScheduleName}
+								hasView={true}
+								view={view}
+								setView={setView}
+							/>
+							<OnlineCourses
+								asyncCourses={savedAsyncCourses[`${term}-${year}`] || {}}
+								index={selectedScheduleName}
+							/>
+						</>
+					)}
 				</div>
 			</div>
 		</>

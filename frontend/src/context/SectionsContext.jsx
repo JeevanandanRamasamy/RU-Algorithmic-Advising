@@ -35,6 +35,7 @@ export const SectionsProvider = ({ children }) => {
 	const [savedAsyncCourses, setSavedAsyncCourses] = useState({});
 	const indexToMeetingTimesMapRef = useRef({});
 	const [savedScheduleNames, setSavedScheduleNames] = useState({});
+	const indexToCourseMapRef = useRef({});
 
 	const validSemesters = [
 		{ term: "summer", year: 2025 },
@@ -59,6 +60,7 @@ export const SectionsProvider = ({ children }) => {
 	const getSectionsDataByCourses = async (courseIds, term, year) => {
 		const allSections = {};
 		const indexToMeetingMap = {};
+		const indexToCourseMap = {};
 
 		await Promise.all(
 			courseIds.map(async courseId => {
@@ -71,24 +73,45 @@ export const SectionsProvider = ({ children }) => {
 				Object.values(courseSections).forEach(section => {
 					const sectionIndex = section.index;
 					const meetingTimes = section.meeting_times || [];
+					indexToCourseMap[sectionIndex] = {
+						course_name: sectionData?.sections?.course_name || "",
+						section_number:
+							sectionData?.sections?.sections[sectionIndex].section_number,
+						course_id: sectionData?.sections?.course_id || "",
+						index: sectionIndex,
+						meeting_times: section.meeting_times,
+						exam_code: section.exam_code,
+						open_status: section.open_status,
+						instructors: section.instructors,
+						course_link: sectionData?.sections?.course_link
+					};
 					indexToMeetingMap[sectionIndex] = meetingTimes;
 				});
 				allSections[courseId] = sectionData.sections;
 			})
 		);
 
-		return { allSections, indexToMeetingMap };
+		return { allSections, indexToMeetingMap, indexToCourseMap };
 	};
 
 	const updateSelectedCourseSections = async (courseIds, term, year) => {
-		const { allSections, indexToMeetingMap } = await getSectionsDataByCourses(
+		const { allSections, indexToMeetingMap, indexToCourseMap } = await getSectionsDataByCourses(
 			courseIds,
 			term,
 			year
 		);
+
 		setSelectedCourses(prev => {
 			return isEqual(prev, allSections) ? prev : allSections;
 		});
+
+		const updatedCourseMap = { ...indexToCourseMapRef.current };
+		Object.entries(indexToCourseMap).forEach(([key, value]) => {
+			if (!updatedCourseMap[key]) {
+				updatedCourseMap[key] = value;
+			}
+		});
+		indexToCourseMapRef.current = updatedCourseMap;
 
 		const updatedMap = { ...indexToMeetingTimesMapRef.current };
 		Object.entries(indexToMeetingMap).forEach(([key, value]) => {
@@ -213,6 +236,9 @@ export const SectionsProvider = ({ children }) => {
 
 	const generateEventsForSchedule = () => {
 		if (validSchedules?.length === 0) {
+			if (selectedCourses && Object.keys(selectedCourses).length !== 0) {
+				showErrorToast("No valid schedules", "no-valid-schedules");
+			}
 			setSchedulesMap({});
 			return;
 		}
@@ -290,7 +316,9 @@ export const SectionsProvider = ({ children }) => {
 	const saveSchedule = async (term, year) => {
 		if (
 			(!schedulesMap && !asyncCourses) ||
-			(Object.keys(schedulesMap[scheduleIndex]).length === 0 &&
+			(schedulesMap &&
+				Object.keys(schedulesMap[scheduleIndex]).length === 0 &&
+				asyncCourses &&
 				Object.keys(asyncCourses[scheduleIndex]).length === 0)
 		) {
 			showErrorToast("Must include at least one course before registering");
@@ -307,11 +335,17 @@ export const SectionsProvider = ({ children }) => {
 			showErrorToast("Schedule name has already been taken", "taken-schedule-name");
 			return;
 		}
-		if (Object.keys(savedSchedulesMap).length == 10) {
+
+		if (
+			savedSchedulesMap &&
+			savedSchedulesMap[`${term}-${year}`] &&
+			Object.keys(savedSchedulesMap[`${term}-${year}`]).length >= 10
+		) {
 			showErrorToast("Can only save up to 10 schedules", "save-schedule-limit");
 			return;
 		}
-		//
+
+		showInfoToast("Saving schedule", "save-schedule");
 		const allSections = [
 			...(schedulesMap[scheduleIndex] || []),
 			...(asyncCourses[scheduleIndex] || [])
@@ -320,8 +354,8 @@ export const SectionsProvider = ({ children }) => {
 		const uniqueSections = Array.from(
 			new Map(
 				allSections.map(section => [
-					`${section.index}-${section.course_id}`, // key
-					{ index_num: section.index, course_id: section.course_id } // value
+					`${section.index}-${section.course_id}`,
+					{ index_num: section.index, course_id: section.course_id }
 				])
 			).values()
 		);
@@ -340,8 +374,45 @@ export const SectionsProvider = ({ children }) => {
 				sections: uniqueSections
 			})
 		});
-		setScheduleName("");
-		fetchSavedSchedules();
+		if (sectionResponse.ok) {
+			setScheduleName("");
+			setSavedScheduleNames(prev => {
+				const updated = { ...prev };
+				const key = `${term}-${year}`;
+				if (!updated[key]) {
+					updated[key] = [];
+				}
+				if (!updated[key].includes(scheduleName)) {
+					updated[key].push(scheduleName);
+				}
+
+				return updated;
+			});
+			setSavedSchedulesMap(prev => {
+				const updated = { ...prev };
+				const key = `${term}-${year}`;
+				const newScheduleSections = schedulesMap[scheduleIndex] || [];
+				if (!updated[key]) {
+					updated[key] = [];
+				}
+				updated[key][scheduleName] = newScheduleSections;
+				return updated;
+			});
+
+			setSavedAsyncCourses(prev => {
+				const updated = { ...prev };
+				const key = `${term}-${year}`;
+				const newAsyncSections = asyncCourses[scheduleIndex] || [];
+				if (!updated[key]) {
+					updated[key] = [];
+				}
+				updated[key][scheduleName] = newAsyncSections;
+				return updated;
+			});
+		} else {
+			showErrorToast("Error saving schedule", "save-schedule-error");
+		}
+		clearToast("save-schedule");
 	};
 
 	const fetchSavedSchedules = async () => {
@@ -353,50 +424,64 @@ export const SectionsProvider = ({ children }) => {
 			}
 		});
 		const data = await sectionResponse.json();
-		//TODO: check if there is nothing here
-		// if (Object.keys(data.schedules).length === 0) {
-		// 	setSavedSchedulesMap({});
-		// 	return;
-		// }
+
+		const savedScheduleMap = {};
+		const savedAsyncMap = {};
+		const savedScheduleNamesMap = {};
 
 		for (const [semester, schedulesArray] of Object.entries(data.schedules)) {
 			const [term, year] = semester.split("-");
 			const courseIds = schedulesArray.flatMap(schedule =>
 				schedule.sections.map(section => section.course_id)
 			);
-			const { indexToMeetingMap } = await getSectionsDataByCourses(courseIds, term, year);
-			const updatedMap = { ...indexToMeetingTimesMapRef.current };
-			Object.entries(indexToMeetingMap).forEach(([key, value]) => {
-				if (!updatedMap[key]) {
-					updatedMap[key] = value;
-				}
-			});
-			indexToMeetingTimesMapRef.current = updatedMap;
-		}
 
-		const savedScheduleMap = {};
-		const savedAsyncMap = {};
-		const savedScheduleNamesMap = {};
-		for (const [semester, schedulesArray] of Object.entries(data.schedules)) {
-			const newSavedSchedule = new Map();
-			const savedAsync = new Map();
-			const newScheduleName = [];
+			const newCourseIds = courseIds.filter(
+				courseId =>
+					!indexToCourseMapRef.current[courseId] &&
+					!indexToMeetingTimesMapRef.current[courseId]
+			);
+
+			if (newCourseIds.length > 0) {
+				const { indexToMeetingMap, indexToCourseMap } = await getSectionsDataByCourses(
+					newCourseIds,
+					term,
+					year
+				);
+
+				indexToCourseMapRef.current = {
+					...indexToCourseMapRef.current,
+					...indexToCourseMap
+				};
+
+				indexToMeetingTimesMapRef.current = {
+					...indexToMeetingTimesMapRef.current,
+					...indexToMeetingMap
+				};
+			}
+
+			const newSavedSchedule = {};
+			const savedAsync = {};
+			const newScheduleNames = [];
 
 			for (const schedule of schedulesArray) {
 				let scheduleName = schedule.schedule_name;
 				const events = [];
 				const async = [];
+
 				for (const section of schedule.sections) {
 					populateEvents(section.index_num, events, async);
 				}
-				newScheduleName.push(scheduleName);
+
+				newScheduleNames.push(scheduleName);
 				newSavedSchedule[scheduleName] = events;
 				savedAsync[scheduleName] = async;
 			}
+
 			savedScheduleMap[semester] = newSavedSchedule;
 			savedAsyncMap[semester] = savedAsync;
-			savedScheduleNamesMap[semester] = newScheduleName;
+			savedScheduleNamesMap[semester] = newScheduleNames;
 		}
+
 		setSavedScheduleNames(savedScheduleNamesMap);
 		setSavedAsyncCourses(savedAsyncMap);
 		setSavedSchedulesMap(savedScheduleMap);
@@ -431,31 +516,34 @@ export const SectionsProvider = ({ children }) => {
 				year: year
 			})
 		});
-		// setSavedSchedulesMap(prev => {
-		// 	const newMap = {};
-		// 	for (let key in prev) {
-		// 		newMap[key] = new Map(prev[key]);
-		// 	}
-		// 	console.log(newMap[semester]);
-		// 	console.log("cloned Map:", newMap[semester]);
-		// 	newMap[semester].delete(scheduleName);
-		// 	return newMap;
-		// });
 
-		// setSavedAsyncCourses(prev => {
-		// 	const newAsyncCourses = {};
-		// 	for (let key in prev) {
-		// 		newAsyncCourses[key] = new Map(prev[key]);
-		// 	}
-		// 	newAsyncCourses[semester].delete(scheduleName);
-		// 	console.log("updated async courses:", newAsyncCourses[semester]);
-		// 	return newAsyncCourses;
-		// });
+		setSavedScheduleNames(prev => {
+			const oldList = prev[semester] || [];
+			const newList = oldList.filter(name => name !== scheduleName);
+			if (selectedScheduleName === scheduleName) {
+				setSelectedScheduleName(newList[0] || "");
+			}
+			return {
+				...prev,
+				[semester]: newList
+			};
+		});
 
-		await fetchSavedSchedules();
-		if (selectedScheduleName == scheduleName) {
-			setSelectedScheduleName(savedScheduleNames[`${term}-${year}`][0] || "");
-		}
+		setSavedSchedulesMap(prev => {
+			const updated = { ...prev };
+			if (updated[semester] && updated[semester][scheduleName]) {
+				delete updated[semester][scheduleName];
+			}
+			return updated;
+		});
+
+		setSavedAsyncCourses(prev => {
+			const updated = { ...prev };
+			if (updated[semester] && updated[semester][scheduleName]) {
+				delete updated[semester][scheduleName];
+			}
+			return updated;
+		});
 		clearToast("delete-schedule");
 	};
 
@@ -492,7 +580,8 @@ export const SectionsProvider = ({ children }) => {
 		fetchSavedSchedules,
 		savedScheduleNames,
 		setSavedScheduleNames,
-		deleteSchedule
+		deleteSchedule,
+		indexToCourseMapRef
 	};
 
 	return <SectionsContext.Provider value={value}>{children}</SectionsContext.Provider>;

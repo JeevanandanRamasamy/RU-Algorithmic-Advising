@@ -16,6 +16,7 @@ from services.course_service import CourseService
 
 load_dotenv()
 
+
 def get_json(url):
     """Fetches JSON data from a URL."""
     response = requests.get(url)
@@ -290,6 +291,7 @@ def add_courses_to_database(filename):
                         row["course_id"], row["prerequisites"]
                     )
             else:
+                print(course_result)
                 print(f"Error adding course: {course}")
                 break
         print("Courses added to database successfully!")
