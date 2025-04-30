@@ -22,22 +22,37 @@ const DegreeNavigator = () => {
 
       {/* Right: Main Content */}
       <div className="flex-1 px-6 py-8">
-        {" "}
-        {/* ↓ changed padding to px-6 instead of p-8 */}
-        <h1 className="text-2xl font-bold mb-6">Degree Navigator</h1>
-        <div className="mb-6">
-          <ProgramSelect onSelect={setSelectedProgram} />
-        </div>
-        {user && (
+        <div className="bg-yellow-100 p-6 rounded-xl shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-center mb-8 text-gray-800">
+            🎓 Degree Navigator
+          </h1>
+
           <div className="mb-6">
-            <TakenCourses username={user} />
+            <ProgramSelect onSelect={setSelectedProgram} />
           </div>
-        )}
-        {user && selectedProgram && (
-          <div>
-            <RequirementTree programId={selectedProgram} username={user} />
-          </div>
-        )}
+
+          {user && (
+            <>
+              {selectedProgram ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <RequirementTree
+                      programId={selectedProgram}
+                      username={user}
+                    />
+                  </div>
+                  <div>
+                    <TakenCourses username={user} />
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <TakenCourses username={user} />
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
