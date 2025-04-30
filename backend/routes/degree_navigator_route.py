@@ -113,4 +113,6 @@ def get_labeled_requirement_tree(program_id):
     print(f"Building requirement tree for program: {program_id}, user: {username}")
 
     tree = get_program_requirement_tree_structured(program_id, username)
+
     return jsonify(tree)
+
