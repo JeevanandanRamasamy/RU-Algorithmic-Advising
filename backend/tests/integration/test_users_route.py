@@ -1,5 +1,4 @@
-from backend.app import create_app
-from backend.models.student_details import StudentDetails
+from app import create_app
 import pytest
 from flask_jwt_extended import create_access_token
 
@@ -7,6 +6,9 @@ from flask_jwt_extended import create_access_token
 # class TestUsersRoutes:
 @pytest.fixture
 def client():
+    """
+    This fixture sets up a test client for the Flask application.
+    """
     flask_app = create_app()
     with flask_app.test_client() as client:
         with flask_app.app_context():
@@ -15,12 +17,18 @@ def client():
 
 @pytest.fixture
 def auth_header():
+    """
+    This fixture creates an authorization header with a JWT token for testing.
+    """
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture
 def register_user(client):
+    """
+    This fixture registers a test user in the database.
+    """
     client.post(
         "/api/register",
         json={
@@ -33,13 +41,17 @@ def register_user(client):
     yield
     access_token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {access_token}"},
     )
 
 
 # T02
 def test_update_user_details_success(client, register_user, auth_header):
+    """
+    Test case for successfully updating user details.
+    It verifies that the user details are updated correctly in the database.
+    """
     response = client.put(
         "/api/users/details",
         json={"enroll_year": 2020, "grad_year": 2024, "gpa": 3.9},
@@ -85,6 +97,10 @@ def test_update_user_details_success(client, register_user, auth_header):
 def test_update_user_details_with_null_fields(
     client, payload, missing_field, register_user, auth_header
 ):
+    """
+    Test case for updating user details with null or missing fields.
+    It verifies that the API returns a 400 status code and the correct error message.
+    """
     access_token = create_access_token(identity="test")
 
     response = client.put("/api/users/details", json=payload, headers=auth_header)
@@ -96,6 +112,10 @@ def test_update_user_details_with_null_fields(
 
 # T06
 def test_update_user_details_missing_gpa(client, register_user, auth_header):
+    """
+    Test case for updating user details with a missing GPA.
+    It verifies that the GPA is set to 0.00 in the database.
+    """
     access_token = create_access_token(identity="test")
 
     response = client.put(

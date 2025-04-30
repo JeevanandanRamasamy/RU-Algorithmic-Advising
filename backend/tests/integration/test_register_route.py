@@ -1,23 +1,17 @@
 import pytest
 import sys
 import os
-from unittest.mock import patch
-from flask import Flask
 from flask_jwt_extended import create_access_token
-from freezegun import freeze_time
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from app import create_app
 
-
-from unittest.mock import patch
-from flask import jsonify
-from datetime import datetime
-
-
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     with app.test_client() as client:
         with app.app_context():
@@ -26,6 +20,9 @@ def client():
 
 # T30
 def test_register_success(client):
+    """
+    Test the registration route with valid data.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -44,13 +41,16 @@ def test_register_success(client):
 
     token = create_access_token(identity="test")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {token}"},
     )
 
 
 # T31
 def test_register_missing_fields(client):
+    """
+    Test the registration route with missing fields.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -64,6 +64,9 @@ def test_register_missing_fields(client):
 
 # T32
 def test_register_username_too_long(client):
+    """
+    Test the registration route with a username that is too long.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -81,6 +84,9 @@ def test_register_username_too_long(client):
 
 # T33
 def test_register_password_too_short(client):
+    """
+    Test the registration route with a password that is too short.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -98,6 +104,9 @@ def test_register_password_too_short(client):
 
 @pytest.fixture
 def register_existing_user(client):
+    """
+    Fixture to register a user that already exists in the database.
+    """
     client.post(
         "/api/register",
         json={
@@ -110,13 +119,16 @@ def register_existing_user(client):
     yield
     token = create_access_token(identity="exist")
     client.delete(
-        "/api/users/details",
+        "/api/users/account",
         headers={"Authorization": f"Bearer {token}"},
     )
 
 
 # T34
 def test_register_username_taken(client, register_existing_user):
+    """
+    Test the registration route with a username that is already taken.
+    """
     response = client.post(
         "/api/register",
         json={

@@ -1,7 +1,7 @@
 import pytest
 import time
 import logging
-from backend.app import create_app
+from app import create_app
 
 logging.basicConfig(level=logging.INFO)
 
@@ -9,12 +9,18 @@ logging.basicConfig(level=logging.INFO)
 # Test fixture for app
 @pytest.fixture
 def client():
+    """
+    Create a test client for the Flask application.
+    """
     app = create_app()
     return app.test_client()
 
 
 # Test case for health check endpoint
 def test_health_check(client):
+    """
+    Test the health check endpoint to ensure the application is running.
+    """
     response = client.get("/api/health")
     assert response.status_code == 200
     assert response.get_json() == {"status": "ok"}
@@ -22,6 +28,9 @@ def test_health_check(client):
 
 # Test to check uptime over a simulated day
 def test_uptime_over_day(client):
+    """
+    This test simulates a 24-hour uptime check by performing periodic health checks.
+    """
     # total_checks = 24 * 60 * 60  # 24 hours in seconds
     total_checks = 3  # To be removed for actual testing
     passed_checks = 0

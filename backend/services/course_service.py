@@ -6,15 +6,30 @@ from sqlalchemy import func, desc, asc
 
 
 class CourseService:
-    # ------------------ COURSE OPERATIONS ------------------
+    """
+    Service class for managing course-related operations.
+    This includes retrieving, inserting, and deleting courses,
+    as well as fetching popular courses based on enrollment.
+    """
+    
     @staticmethod
     def get_course_prefix_from_subject(subject):
+        """
+        Given a subject, return the course prefix.
+        The course prefix is the part of the course_id between the colons.
+        For example, if the course_id is "01:198:111", the prefix is "198".
+        """
         pattern = f"%:{subject}:%"
         course = Course.query.filter(Course.course_id.like(pattern)).first()
         return course.course_id.split(":")[0]
 
     @staticmethod
     def get_course_string(course_id):
+        """
+        Given a course_id, return a string representation of the course.
+        The string format is "course_id course_name".
+        If the course_name is not available, return just the course_id.
+        """
         try:
             course = CourseService.get_course_by_id(course_id)
             if course:
@@ -27,7 +42,9 @@ class CourseService:
 
     @staticmethod
     def get_course_by_id(course_id):
-        """Retrieve a course by its course_id."""
+        """
+        Retrieve a course by its course_id.
+        """
         try:
             return Course.query.filter_by(course_id=course_id).first()
         except SQLAlchemyError as e:
@@ -36,7 +53,9 @@ class CourseService:
 
     @staticmethod
     def get_courses_by_ids(course_ids):
-        """Retrieve courses by their course_ids."""
+        """
+        Retrieve courses by their course_ids.
+        """
         try:
             return Course.query.filter(Course.course_id.in_(course_ids)).all()
         except SQLAlchemyError as e:
@@ -45,7 +64,9 @@ class CourseService:
 
     @staticmethod
     def insert_course(course_data):
-        """Insert a new course into the database."""
+        """
+        Insert a new course into the database.
+        """
         try:
             new_course = Course(**course_data)
             db.session.add(new_course)
@@ -57,7 +78,9 @@ class CourseService:
 
     @staticmethod
     def delete_course(course_id):
-        """Delete a course by its course_id."""
+        """
+        Delete a course by its course_id.
+        """
         try:
             course = Course.query.filter_by(course_id=course_id).first()
             if course:
@@ -72,7 +95,9 @@ class CourseService:
 
     @staticmethod
     def get_most_popular_courses(n=3):
-        """Return the n courses with highest enrollment counts."""
+        """
+        Return the n courses with highest enrollment counts.
+        """
         try:
             results = (
                 db.session.query(
@@ -91,7 +116,9 @@ class CourseService:
 
     @staticmethod
     def get_least_popular_courses(n=3):
-        """Return the n courses with lowest enrollment counts."""
+        """
+        Return the n courses with lowest enrollment counts.
+        """
         try:
             results = (
                 db.session.query(

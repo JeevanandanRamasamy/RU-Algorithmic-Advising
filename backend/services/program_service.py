@@ -3,9 +3,16 @@ from models.program import Program
 from sqlalchemy.exc import SQLAlchemyError
 
 class ProgramService:
-    # ------------------ PROGRAM OPERATIONS ------------------
+    """
+    Service class for managing program-related operations.
+    This includes retrieving, inserting, and deleting programs.
+    """
+    
     @staticmethod
     def get_programs(program_type):
+        """
+        Retrieve all programs of a specific type.
+        """
         try:
             return Program.query.filter(program_type=program_type).all()
         except SQLAlchemyError as e:
@@ -14,6 +21,9 @@ class ProgramService:
 
     @staticmethod
     def get_programs():
+        """
+        Retrieve all programs.
+        """
         try:
             return Program.query.all()
         except SQLAlchemyError as e:
@@ -22,6 +32,9 @@ class ProgramService:
 
     @staticmethod
     def get_program(program_id):
+        """
+        Retrieve a program by its program_id.
+        """
         try:
             return Program.query.filter(Program.program_id == program_id).first()
         except SQLAlchemyError as e:
@@ -30,6 +43,9 @@ class ProgramService:
 
     @staticmethod
     def check_program_exists(program_id):
+        """
+        Check if a program exists by its program_id.
+        """
         try:
             return db.session.query(
                 db.exists().where(Program.program_id == program_id)
@@ -40,7 +56,9 @@ class ProgramService:
 
     @staticmethod
     def insert_program(program_data):
-        """Insert a new program into the database."""
+        """
+        Insert a new program into the database.
+        """
         try:
             new_program = Program(**program_data)
             db.session.add(new_program)
@@ -52,7 +70,9 @@ class ProgramService:
 
     @staticmethod
     def delete_program(program_id):
-        """Delete a program by its program_id."""
+        """
+        Delete a program by its program_id.
+        """
         try:
             program = Program.query.filter_by(program_id=program_id).first()
             if program:
