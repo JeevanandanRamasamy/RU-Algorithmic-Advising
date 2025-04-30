@@ -15,7 +15,6 @@ const RequirementTree = ({ programId, username }) => {
 	useEffect(() => {
 		const fetchTree = async () => {
 			try {
-				console.log("Fetching labeled requirement tree...");
 				const res = await fetch(
 					`${backendUrl}/api/degree_navigator/programs/${programId}/requirement-tree-labeled?username=${username}`
 				);

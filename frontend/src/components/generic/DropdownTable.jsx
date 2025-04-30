@@ -51,7 +51,6 @@ const DropdownTable = ({
 
 	const { selectCoursesMissingRequirements } = useSections();
 	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
-	console.log(selectCoursesMissingRequirements);
 
 	return (
 		visibleCourses &&
@@ -73,7 +72,6 @@ const DropdownTable = ({
 
 							const courseInfo =
 								selectCoursesMissingRequirements?.[String(course_id)];
-							console.log(courseInfo);
 							const updatedRequirementString =
 								courseInfo?.requirement_string ?? requirementString;
 
