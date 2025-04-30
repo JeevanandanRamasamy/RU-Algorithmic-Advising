@@ -114,9 +114,3 @@ def get_labeled_requirement_tree(program_id):
 
     tree = get_program_requirement_tree_structured(program_id, username)
     return jsonify(tree)
-<<<<<<< HEAD
-
-
-# http://127.0.0.1:8080/api/degree_navigator/programs/NB198SJ/requirement-tree-labeled
-=======
->>>>>>> main
