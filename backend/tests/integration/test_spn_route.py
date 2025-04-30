@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token
 from backend.app import create_app
 
 
+# Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
     flask_app = create_app()
@@ -11,12 +12,14 @@ def client():
             yield client
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture: Base payload for SPN request used in SPN-related tests
 @pytest.fixture
 def base_spn_payload():
     return {
@@ -31,8 +34,13 @@ def base_spn_payload():
     }
 
 
-# T39
+# T39: Test successful SPN submission with all required fields present
 def test_add_spn_success(client, auth_header, base_spn_payload):
+    """
+    Verifies that the SPN request is successfully processed when all required fields
+    are provided. The test checks that the response contains a success message and
+    that the "inserted" and "skipped" keys are included in the response data.
+    """
     response = client.post(
         "/api/spn/add",
         json=base_spn_payload,
@@ -46,7 +54,7 @@ def test_add_spn_success(client, auth_header, base_spn_payload):
     assert "skipped" in data
 
 
-# T40-43
+# T40-T43: Parameterized test to check that missing required fields result in 400 error
 @pytest.mark.parametrize(
     "override,expected_status",
     [
@@ -59,6 +67,11 @@ def test_add_spn_success(client, auth_header, base_spn_payload):
 def test_add_spn_missing_fields(
     client, auth_header, base_spn_payload, override, expected_status
 ):
+    """
+    Verifies that the SPN request returns a 400 error when one or more required fields
+    are missing in the request payload. The test checks for appropriate error messages
+    when fields such as `username`, `course_id`, or `sections` are not provided.
+    """
     payload = base_spn_payload.copy()
 
     if not override:  # This checks if override is an empty dictionary

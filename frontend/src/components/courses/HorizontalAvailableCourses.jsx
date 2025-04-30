@@ -1,8 +1,10 @@
-// import React, { useState, useEffect, useCallback } from "react";
-// import "../css/DragDrop.css";
 import CourseList from "./CourseList";
 import CourseItem from "./CourseItem";
 
+/**
+ * Displays a horizontally scrollable list of available courses.
+ * The height of the list adjusts based on the visibility of filters.
+ */
 export const HorizontalAvailableCourses = ({ courses, getCourse, showFilters, limit }) => {
 	return (
 		<div className={`p-2`}>

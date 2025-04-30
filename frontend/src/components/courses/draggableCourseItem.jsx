@@ -4,6 +4,11 @@ import { useDrag } from "react-dnd";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
+/**
+ * A draggable course item component.
+ * Displays course details and allows dragging the course item.
+ * When dragging, the item's opacity is reduced.
+ */
 const DraggableCourseItem = ({ course, isPlanned = false, requirementString }) => {
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: "COURSE",

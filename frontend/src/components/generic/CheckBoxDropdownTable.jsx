@@ -5,6 +5,10 @@ import { useCourseRequirements } from "../../context/CourseRequirementContext";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 
+/**
+ * CheckboxDropdownTable component for displaying courses with checkboxes and dropdown for sections.
+ * Allows users to toggle and select individual sections and see additional course details.
+ */
 const CheckboxDropdownTable = ({
 	courseRecords,
 	selectedCourses,

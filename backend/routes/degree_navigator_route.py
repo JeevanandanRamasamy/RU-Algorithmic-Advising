@@ -4,7 +4,9 @@ from services.requirement_group_service import RequirementGroupService
 from services.course_record_service import CourseRecordService
 from services.course_service import CourseService
 
-degree_navigator_bp = Blueprint("degree_navigator", __name__, url_prefix="/api/degree_navigator")
+degree_navigator_bp = Blueprint(
+    "degree_navigator", __name__, url_prefix="/api/degree_navigator"
+)
 
 
 @degree_navigator_bp.route("/programs/with-requirements", methods=["GET"])
@@ -12,26 +14,28 @@ def get_programs_with_requirements():
     all_programs = ProgramService.get_programs()
     programs_with_requirements = []
 
-    
     for program in all_programs:
 
-        req_groups = RequirementGroupService.get_requirement_group_by_program(program.program_id)
+        req_groups = RequirementGroupService.get_requirement_group_by_program(
+            program.program_id
+        )
         if req_groups:
-            programs_with_requirements.append({
-                "program_id": program.program_id,
-                "program_name": program.program_name  # adjust based on your schema
-            })
+            programs_with_requirements.append(
+                {"program_id": program.program_id, "program_name": program.program_name}
+            )
 
     return jsonify(programs_with_requirements)
 
-@degree_navigator_bp.route('/users/<string:username>/completed-courses', methods=['GET'])
+
+@degree_navigator_bp.route(
+    "/users/<string:username>/completed-courses", methods=["GET"]
+)
 def get_completed_courses(username):
     result = CourseRecordService.get_past_course_records(username)
     # print("Result from completed courses api (degree_navigator_route):", result)
     if isinstance(result, str):  # error message
         return jsonify({"error": result}), 500
     return jsonify(result), 200
-
 
 
 def get_program_requirement_tree_structured(program_id, username=None):
@@ -55,23 +59,25 @@ def get_program_requirement_tree_structured(program_id, username=None):
             for course_id in group.list:
                 course = CourseService.get_course_by_id(course_id)
                 if course:
-                    course_objs.append({
-                        "course_id": course.course_id,
-                        "course_name": course.course_name,
-                        "course_credits": course.credits,
-                        "taken": course.course_id in taken_set
-                    })
+                    course_objs.append(
+                        {
+                            "course_id": course.course_id,
+                            "course_name": course.course_name,
+                            "course_credits": course.credits,
+                            "taken": course.course_id in taken_set,
+                        }
+                    )
 
         return {
             "label": f"R{prefix}" if depth == 0 else prefix,
             "group_id": group.group_id,
             "group_name": group.group_name,
             "num_required": group.num_required,
-            "courses": course_objs if course_objs else None,  
+            "courses": course_objs if course_objs else None,
             "children": [
                 build_group_node(child, f"{prefix}.{i+1}", depth + 1)
                 for i, child in enumerate(children)
-            ]
+            ],
         }
 
     tree = []

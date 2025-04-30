@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * The `VerticalCourseListContainer` component displays a list of courses
+ * in a vertical layout with a search bar at the top to filter courses based on their name.
+ * It allows for customization through various props, including excluding specific courses
+ * and passing a custom course component to render the list.
+ */
 const VerticalCourseListContainer = ({
 	title = "",
 	searchQuery = "",
@@ -38,12 +44,6 @@ const VerticalCourseListContainer = ({
 				getCourse={getCourse}
 				{...courseComponentProps}
 			/>
-
-			{/* <CourseList
-				courses={filteredCourses}
-				CourseItemComponent={courseItemComponent}
-				courseItemProps={courseItemProps}
-			/> */}
 		</section>
 	);
 };

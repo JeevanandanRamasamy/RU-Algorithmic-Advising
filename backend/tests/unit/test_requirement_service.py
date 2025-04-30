@@ -23,6 +23,7 @@ PROGRAMS = ["01", "NB198SJ"]
 COURSES_TAKEN = ["01:198:111", "01:198:112", "01:198:142"]
 
 
+# Fixture to load course prerequisite strings from a JSON file
 @pytest.fixture(scope="module")
 def course_prerequisites_strings():
     with open(PREREQUISITES_FILE_PATH, "r") as prereq_file:
@@ -32,14 +33,16 @@ def course_prerequisites_strings():
 
 # #32CD32 is a shade of green
 # ##FF6347 is a shade of red
-
-
-# T22
+# Test T22: User has not taken the required course
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_failing_to_meet_requirement(
     mock_get_course_string,
     course_prerequisites_strings,
 ):
+    """
+    Verifies that when a user has not taken the required course, the prerequisite
+    string is displayed with the appropriate color (red).
+    """
     mock_get_course_string.side_effect = lambda course_id: {
         "01:198:112": "01:198:112 DATA STRUCTURES",
         "01:198:111": "01:198:111 INTRO COMPUTER SCI",
@@ -63,12 +66,16 @@ def test_validate_prerequisite_string_failing_to_meet_requirement(
     )
 
 
-# T23
+# Test T23: User has met the course prerequisite
 @patch("services.requirement_service.CourseService.get_course_string")
 def test_validate_prerequisite_string_meeting_requirement(
     mock_get_course_string,
     course_prerequisites_strings,
 ):
+    """
+    Verifies that when a user has met the course prerequisite, the prerequisite
+    string is displayed with the appropriate color (green).
+    """
 
     mock_get_course_string.side_effect = lambda course_id: {
         "01:198:112": "01:198:112 DATA STRUCTURES",
@@ -94,6 +101,7 @@ def test_validate_prerequisite_string_meeting_requirement(
     )
 
 
+# Fixture to create Flask test client
 @pytest.fixture
 def client():
     app = create_app()
@@ -102,12 +110,14 @@ def client():
             yield client
 
 
+# Fixture to generate a JWT auth header
 @pytest.fixture
 def auth_header():
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a user and enroll them in multiple programs
 @pytest.fixture
 def register_user(client):
     client.post(
@@ -132,6 +142,7 @@ def register_user(client):
     )
 
 
+# Fixture to add and then delete course records for a user
 @pytest.fixture
 def add_courses_records(client, auth_header):
     for course_id in ["01:198:111", "01:198:112", "01:198:142"]:
@@ -151,8 +162,12 @@ def add_courses_records(client, auth_header):
         )
 
 
-# 35
+# Test 35
 def test_get_all_prerequisites(client):
+    """
+    Verifies that the prerequisites for a course are fetched correctly and
+    match the expected prerequisites.
+    """
     with client.application.app_context():
         prerequisites = RequirementService.get_all_prerequisites(course_id="01:640:151")
         assert isinstance(prerequisites, set)
@@ -179,6 +194,11 @@ def test_get_all_prerequisites(client):
 
 # T36
 def test_check_requirements_met(client, register_user, add_courses_records):
+    """
+    Verifies that the `check_requirements_met` method correctly evaluates whether
+    the requirements for a program or course have been met, considering the courses
+    taken by the user.
+    """
     with client.application.app_context():
         for program_id in PROGRAMS:
             requirements_met = RequirementService.check_requirements_met(
@@ -227,8 +247,12 @@ def test_check_requirements_met(client, register_user, add_courses_records):
             ), f"Requirements should be met for course {course_id}"
 
 
-# T37
+# Test T37: Check if requirement group is fulfilled
 def test_check_group_fulfillment(client):
+    """
+    Verifies that the `check_group_fulfillment` method correctly checks if the
+    requirements for a group of courses are fulfilled, based on the courses taken.
+    """
     with client.application.app_context():
         # Group 47: ALL from ["01:198:111", "01:198:112", "01:198:205", "01:198:211", "01:198:344"]
         group_47_fulfilled = RequirementService.check_group_fulfillment(
@@ -249,8 +273,12 @@ def test_check_group_fulfillment(client):
         ), "Group 48 should be fulfilled with current courses"
 
 
-# 38
+# Test 38: Get number of requirements for a program or course
 def test_get_num_requirements(client):
+    """
+    Verifies that the `get_num_requirements` method returns the correct number
+    of requirements for a program or course.
+    """
     with client.application.app_context():
         num_requirements = [14, 45]
         for program_id, num_reqs in zip(PROGRAMS, num_requirements):
@@ -270,8 +298,12 @@ def test_get_num_requirements(client):
             ), f"Number of requirements for course {course_id} should be {num_reqs}"
 
 
-# 39
+# Test 39: Count number of courses taken that fulfill requirements
 def test_get_num_courses_taken(client, register_user, add_courses_records):
+    """
+    Verifies that the `get_num_courses_taken` method returns the correct number
+    of courses taken that fulfill requirements for a program or course.
+    """
     with client.application.app_context():
         num_courses_taken = [2, 2]
         for program_id, num_courses in zip(PROGRAMS, num_courses_taken):
@@ -298,8 +330,12 @@ def test_get_num_courses_taken(client, register_user, add_courses_records):
             ), f"Number of courses taken for course {course_id} should be {num_courses}"
 
 
-# 40
+# T40:
 def test_get_missing_requirements(client, register_user, add_courses_records):
+    """
+    Verifies that the `get_missing_requirements` method returns the correct missing
+    requirements for a program or course.
+    """
     with client.application.app_context():
         for program_id in PROGRAMS:
             missing_courses = RequirementService.get_missing_requirements(
@@ -322,8 +358,13 @@ def test_get_missing_requirements(client, register_user, add_courses_records):
             ), "Requirements should be met with extra courses"
 
 
-# 41
+# T41:
 def test_get_suggested_courses(client, register_user, add_courses_records):
+    """
+    Verifies that the `get_suggested_courses` method returns valid courses and
+    total credits without exceeding the credit limit, and that it does not suggest
+    courses that the user has already taken.
+    """
     with client.application.app_context():
         result = RequirementService.get_suggested_courses(
             username=USERNAME, max_credits=17
@@ -343,6 +384,10 @@ def test_get_suggested_courses(client, register_user, add_courses_records):
 
 # 42
 def test_create_degree_plan(client, register_user, add_courses_records):
+    """
+    Verifies that the `create_degree_plan` method generates a valid degree plan,
+    ensures no errors are present, and that no previously taken courses are included in the plan.
+    """
     with client.application.app_context():
         result = RequirementService.create_degree_plan(
             username=USERNAME, max_credits=17

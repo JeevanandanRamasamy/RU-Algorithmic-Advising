@@ -7,6 +7,10 @@ import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 import { showInfoToast, clearToast } from "../toast/Toast";
 
+/**
+ * DropdownTable is a component that displays a list of courses with their sections
+ * and handles adding/removing courses.
+ */
 const DropdownTable = ({
 	courses,
 	limit,
@@ -18,14 +22,25 @@ const DropdownTable = ({
 	const visibleCourses = limit ? courses.slice(0, limit) : courses;
 	const [openCourses, setOpenCourses] = useState([]);
 
+	/**
+	 * Toggles the visibility of the course details.
+	 */
 	const toggleOpen = key => {
 		setOpenCourses(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
 	};
 
+	/**
+	 * Handles the action of adding a course.
+	 * Triggers the parent callback and waits for its completion.
+	 */
 	const handleAdd = async (e, course_id) => {
 		e.stopPropagation();
 		await handleOnAddCourse(course_id);
 	};
+	/**
+	 * Handles the action of removing a course.
+	 * Displays a toast message and then triggers the parent callback to remove the course.
+	 */
 	const handleRemove = async (e, course_id) => {
 		e.stopPropagation();
 		showInfoToast("Removing Course", "remove-course-record");

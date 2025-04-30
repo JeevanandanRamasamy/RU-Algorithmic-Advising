@@ -7,6 +7,12 @@ import Button from "../generic/Button";
 import { useState } from "react";
 import CalendarListView from "../calendar/CalendarListView";
 
+/**
+ * Component for building and managing course schedules.
+ * Allows users to toggle between calendar and list views,
+ * navigate between generated schedule options, name a schedule,
+ * and save the selected schedule.
+ */
 const BuildSchedule = ({ term, year }) => {
 	const {
 		saveSchedule,
@@ -20,12 +26,14 @@ const BuildSchedule = ({ term, year }) => {
 	const [view, setView] = useState("calendar");
 	const { validSchedules } = useSections();
 
+	// Advances to the next schedule in the list
 	const handleNext = () => {
 		if (scheduleIndex < Object.keys(schedulesMap).length - 1) {
 			setScheduleIndex(scheduleIndex + 1);
 		}
 	};
 
+	// Goes back to the previous schedule in the list
 	const handlePrevious = () => {
 		if (scheduleIndex > 0) {
 			setScheduleIndex(scheduleIndex - 1);

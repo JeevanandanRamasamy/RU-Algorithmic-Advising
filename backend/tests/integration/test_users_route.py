@@ -4,7 +4,7 @@ import pytest
 from flask_jwt_extended import create_access_token
 
 
-# class TestUsersRoutes:
+# Fixture to create a test client for making HTTP requests
 @pytest.fixture
 def client():
     flask_app = create_app()
@@ -13,12 +13,14 @@ def client():
             yield client
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header():
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a test user
 @pytest.fixture
 def register_user(client):
     client.post(
@@ -40,6 +42,11 @@ def register_user(client):
 
 # T02
 def test_update_user_details_success(client, register_user, auth_header):
+    """
+    Verifies that the user details are successfully updated when valid data is provided,
+    including enrollment year, graduation year, and GPA. The GPA should be formatted to
+    two decimal places, and the response should contain the updated user details.
+    """
     response = client.put(
         "/api/users/details",
         json={"enroll_year": 2020, "grad_year": 2024, "gpa": 3.9},
@@ -53,6 +60,7 @@ def test_update_user_details_success(client, register_user, auth_header):
     assert data["updated_user_details"]["gpa"] == "3.90"
 
 
+# T03-T05: Parameterized test for missing required fields in user detail update
 @pytest.mark.parametrize(
     "payload,missing_field",
     [
@@ -85,6 +93,11 @@ def test_update_user_details_success(client, register_user, auth_header):
 def test_update_user_details_with_null_fields(
     client, payload, missing_field, register_user, auth_header
 ):
+    """
+    Verifies that the user detail update fails with appropriate error messages when
+    required fields are missing or provided as null. This test covers the scenarios where
+    `enroll_year`, `grad_year`, or the entire payload are missing.
+    """
     access_token = create_access_token(identity="test")
 
     response = client.put("/api/users/details", json=payload, headers=auth_header)
@@ -96,6 +109,10 @@ def test_update_user_details_with_null_fields(
 
 # T06
 def test_update_user_details_missing_gpa(client, register_user, auth_header):
+    """
+    Verifies that when GPA is missing during user detail update, it defaults to "0.00".
+    The response should reflect the default GPA and the other valid user details.
+    """
     access_token = create_access_token(identity="test")
 
     response = client.put(

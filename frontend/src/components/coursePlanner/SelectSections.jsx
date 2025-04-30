@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import CheckboxDropdownTable from "../generic/CheckBoxDropdownTable";
 import OpenClosedLegend from "../calendar/OpenClosedLegend";
 
+/**
+ * Component for selecting course sections, displaying a legend and
+ * a dropdown table for selecting and checking sections for courses.
+ */
 const SelectSections = ({
 	courseRecords,
 	term,

@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * DropdownItem component renders a select input field with a list of options.
+ * It handles the selection and triggering of a change event when a new option is selected.
+ */
 const DropdownItem = ({ selectedValue, onChange, placeholder, options }) => {
 	return (
 		<select

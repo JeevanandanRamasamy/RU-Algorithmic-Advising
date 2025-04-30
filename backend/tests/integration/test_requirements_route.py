@@ -15,6 +15,7 @@ sys.path.insert(
 from backend.app import create_app
 
 
+# Fixture for setting up a Flask test client
 @pytest.fixture
 def client():
     app = create_app()
@@ -23,18 +24,21 @@ def client():
             yield client
 
 
+# Fixture to freeze the time during tests
 @pytest.fixture
 def frozen_time():
     with freeze_time("2025-04-20 12:00:00"):
         yield
 
 
+# Fixture to generate an authentication header for tests
 @pytest.fixture
 def auth_header(frozen_time):
     access_token = create_access_token(identity="test")
     return {"Authorization": f"Bearer {access_token}"}
 
 
+# Fixture to register a test user
 @pytest.fixture
 def register_user(client):
     client.post(
@@ -54,8 +58,11 @@ def register_user(client):
     )
 
 
-# T24
+# T24: Test successful retrieval of course requirements string
 def test_get_course_requirements_string(client):
+    """
+    Verifies that the course requirements string is successfully retrieved from the API.
+    """
     response = client.get("/api/users/requirements/string")
     data = response.get_json()
 
@@ -64,6 +71,7 @@ def test_get_course_requirements_string(client):
     assert len(data["course_requirements_string"]) == 3165
 
 
+# fixture for T25, add course records for success for missing requirements for planned courses
 @pytest.fixture
 def add_courses_records_success_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
@@ -110,13 +118,16 @@ def add_courses_records_success_get_missing_requirements_for_planned_courses(
     )
 
 
-# T25
+# T25: Test successful retrieval of missing requirements for future planned courses
 def test_get_missing_requirements_for_planned_courses(
     client,
     register_user,
     auth_header,
     add_courses_records_success_get_missing_requirements_for_planned_courses,
 ):
+    """
+    Verifies that the missing course requirements are correctly fetched for planned courses.
+    """
 
     response = client.get(
         "/api/users/requirements/planned-courses/missing",
@@ -135,10 +146,15 @@ def test_get_missing_requirements_for_planned_courses(
     }
 
 
+# fixture for T26, adds courses for testing failure for missing requirements
 @pytest.fixture
 def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     client, auth_header, frozen_time
 ):
+    """
+    Verifies that missing course requirements are correctly identified when prerequisites are
+    not fulfilled for planned courses.
+    """
     client.post(
         "/api/users/course_record",
         json={"course_id": "01:198:213", "term": "Fall", "year": 2026},
@@ -154,13 +170,17 @@ def add_courses_records_failure_get_missing_requirements_for_planned_courses(
     )
 
 
-# T26
+# T26: Test retrieval of missing requirements when prerequisites are not fulfilled
 def test_get_missing_requirements_for_planned_courses_missing(
     client,
     register_user,
     auth_header,
     add_courses_records_failure_get_missing_requirements_for_planned_courses,
 ):
+    """
+    Verifies that courses with unmet prerequisites are correctly identified, with missing
+    requirements highlighted in red and `requirements_fulfilled` set to `False`.
+    """
     response = client.get(
         "/api/users/requirements/planned-courses/missing",
         headers=auth_header,

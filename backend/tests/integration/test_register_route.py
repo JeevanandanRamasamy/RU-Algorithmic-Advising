@@ -16,6 +16,7 @@ from flask import jsonify
 from datetime import datetime
 
 
+# Fixture for setting up a Flask test client
 @pytest.fixture
 def client():
     app = create_app()
@@ -24,8 +25,11 @@ def client():
             yield client
 
 
-# T30
+# T30: Test successful user registration
 def test_register_success(client):
+    """
+    Verifies that a user can successfully register with valid data.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -49,8 +53,11 @@ def test_register_success(client):
     )
 
 
-# T31
+# T31: Test registration with missing required fields
 def test_register_missing_fields(client):
+    """
+    Verifies that registration fails when required fields are missing.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -62,8 +69,11 @@ def test_register_missing_fields(client):
     assert response.get_json()["message"] == "All fields are required."
 
 
-# T32
+# T32: Test registration with username longer than 6 characters
 def test_register_username_too_long(client):
+    """
+    Verifies that registration fails when the username is longer than 6 characters.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -79,8 +89,11 @@ def test_register_username_too_long(client):
     assert data["status"] == "error"
 
 
-# T33
+# T33: Test registration with password shorter than 6 characters
 def test_register_password_too_short(client):
+    """
+    Verifies that registration fails when the password is shorter than 6 characters.
+    """
     response = client.post(
         "/api/register",
         json={
@@ -96,6 +109,7 @@ def test_register_password_too_short(client):
     assert data["status"] == "error"
 
 
+# function to test T34. Adds temporary user
 @pytest.fixture
 def register_existing_user(client):
     client.post(
@@ -115,8 +129,11 @@ def register_existing_user(client):
     )
 
 
-# T34
+# T34: Test registration fails when username is already taken
 def test_register_username_taken(client, register_existing_user):
+    """
+    Verifies that registration fails when the username is already taken.
+    """
     response = client.post(
         "/api/register",
         json={

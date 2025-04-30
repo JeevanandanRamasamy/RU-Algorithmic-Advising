@@ -3,6 +3,10 @@ import { useDrop } from "react-dnd";
 import PlannedCourseItem from "./PlannedCourseItem";
 import CourseList from "./CourseList";
 
+/**
+ * Displays a list of planned courses with drag-and-drop functionality for adding courses.
+ * Shows loading and error states, and allows removing courses from the list.
+ */
 const PlannedCourses = ({ courses, getCourse, loading, error, onRemoveCourse, onAddCourse }) => {
 	const [{ isOver }, drop] = useDrop(() => ({
 		accept: "COURSE",

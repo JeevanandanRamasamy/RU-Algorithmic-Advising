@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ * Button component renders a customizable button element.
+ * The button supports an onClick handler, custom CSS classes,
+ * and a label to display inside the button.
+ */
 const Button = ({ onClick, className, label }) => {
 	return (
 		<button

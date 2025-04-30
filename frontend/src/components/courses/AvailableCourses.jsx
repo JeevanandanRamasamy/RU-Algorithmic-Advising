@@ -1,7 +1,10 @@
 import CourseList from "./CourseList";
 import CourseItem from "./CourseItem";
-import TakenCourseItem from "./TakenCourseItem";
 
+/**
+ * Component for displaying a list of available courses with the option to show filters
+ * and manage the course list according to specified limits and requirements.
+ */
 export const AvailableCourses = ({
 	courses,
 	getCourse,

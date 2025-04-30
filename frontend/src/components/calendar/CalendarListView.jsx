@@ -1,5 +1,16 @@
 import React from "react";
 import { useSections } from "../../context/SectionsContext";
+/**
+ * CalendarListView displays a list view of scheduled courses
+ * with detailed information like section, instructor, meeting times, etc.
+ *
+ * Props:
+ * - schedules: An object where each key is a schedule index and value is a list of course indices
+ * - index: The current schedule index to display
+ * - hasView: Boolean to determine if view toggle (Calendar/List) should be shown
+ * - view: Current active view mode
+ * - setView: Function to change the view mode
+ */
 
 const CalendarListView = ({ schedules, index, hasView, view, setView }) => {
 	const { indexToCourseMapRef } = useSections();
