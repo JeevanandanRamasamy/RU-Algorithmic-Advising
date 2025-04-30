@@ -1,3 +1,22 @@
+/**
+ * Navbar Component
+ *
+ * This component renders the collapsible sidebar navigation menu for authenticated users.
+ * It dynamically adapts based on user roles (`student` or `admin`) and provides:
+ *
+ * - Role-specific navigation links (e.g., Dashboard, Degree Planner, etc.)
+ * - Color theme toggling (dark/light mode logic via CSS variable flipping)
+ * - Persistent navbar collapsed state using localStorage
+ * - Logout functionality with toast notification and redirect to login
+ *
+ * Key Features:
+ * - Sidebar collapse toggle stored in localStorage (`navbar-collapsed`)
+ * - Theme color flip stored in localStorage (`color-flipped`) with 6-second cooldown on toast
+ * - Redirect to `/` (login) if no authenticated user is detected
+ * - Uses `useAuth` context for user data and logout method
+ * - Uses `react-router-dom`'s `Link` for navigation and `useNavigate` for redirection
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import "./style.css"; // Ensure styles are imported
 import logo from "../../assets/minilogo.png";

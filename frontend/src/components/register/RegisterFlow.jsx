@@ -1,3 +1,23 @@
+/**
+ * RegisterFlow Component
+ *
+ * This is a multi-step registration flow that guides the user through:
+ *
+ * Step 1: Entering their Rutgers NetID (username)
+ * Step 2: Verifying the OTP sent to their Rutgers email
+ * Step 3: Completing their profile by entering name and password
+ *
+ * The component uses internal state to track:
+ * - Current step
+ * - User credentials and profile info
+ * - OTP code
+ * - Loading status and error/success messages
+ * - Timer for controlling OTP resend button cooldown
+ *
+ * UI components are broken out into subcomponents (`EnterEmail`, `VerifyOTP`, `SetUserDetails`)
+ * and the component shows relevant toast messages based on API responses.
+ */
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EnterEmail from "./RegisterSteps/EnterEmail";
@@ -27,7 +47,14 @@ export default function RegisterFlow() {
   const [resendTimer, setResendTimer] = useState(0); // Keep track of the time for resending the code
   const RESEND_DELAY = 30; // 30 second resend timer
 
-  // Step 1: Enter Email
+  /**
+   * Step 1 — Send Verification Code to Email
+   * Sends the verification code to the user's Rutgers email address.
+   * Optionally:
+   * - Checks if user already exists before sending (`checkUser`)
+   * - Advances to step 2 (`goToStep2`)
+   * - Starts the resend timer (`startTimer`)
+   */
   const sendCode = async ({
     checkUser = false,
     goToStep2 = false,
@@ -95,6 +122,11 @@ export default function RegisterFlow() {
     }
   };
 
+  /**
+   * Starts the countdown timer for the "Resend Code" button.
+   * Disables the button for RESEND_DELAY seconds.
+   */
+
   const startResendTimer = () => {
     setResendTimer(RESEND_DELAY); // 30 seconds
 
@@ -108,7 +140,12 @@ export default function RegisterFlow() {
       });
     }, 1000);
   };
-  // Step 2: Verify Code Only
+
+  /**
+   * Step 2 — Verifies the OTP code entered by the user.
+   * If the code is correct, advances to Step 3.
+   */
+
   const handleVerifyCode = async () => {
     setMessage("");
 
@@ -134,7 +171,7 @@ export default function RegisterFlow() {
         return;
       }
 
-      // ✅ Only advance to Step 3 if verified
+      // Only advance to Step 3 if verified
       setStep(3);
     } catch (error) {
       console.error("Verification error:", error);
@@ -144,7 +181,11 @@ export default function RegisterFlow() {
     }
   };
 
-  // Step 3: Final registration after code is verified
+  /**
+   * Step 3 — Final step that registers the user using the filled form.
+   * Requires all fields to be filled and passwords to match.
+   * Shows a success message and redirects to login/home on success.
+   */
   const handleRegisterUser = async () => {
     setMessage("");
 

@@ -1,3 +1,27 @@
+/**
+ * VerifyOTP Component
+ *
+ * This component represents Step 2 in a multi-step registration process,
+ * where the user must enter a One-Time Password (OTP) that was sent to their Rutgers email.
+ *
+ * Props:
+ * - username (string): The NetID of the user, used to indicate which email received the code.
+ * - code (string): The current value of the entered OTP.
+ * - setCode (function): Function to update the OTP value as the user types.
+ * - onNext (function): Callback triggered when the user clicks the "Next" button.
+ * - onBack (function): Callback triggered when the user clicks the "Back" button.
+ * - onResend (function): Callback triggered when the user clicks "Resend Code".
+ * - resendTimer (number): Countdown in seconds until the "Resend Code" button is re-enabled.
+ *
+ * The component includes:
+ * - A message informing the user where the code was sent.
+ * - An input field for entering the 6-digit OTP.
+ * - A "Back" button to return to the previous step.
+ * - A "Resend Code" button that is disabled during the cooldown timer.
+ * - A "Next" button that proceeds to the next step only when a code is entered.
+ *
+ */
+
 export default function VerifyOTP({
   username,
   code,
