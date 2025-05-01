@@ -61,7 +61,6 @@ const MinimalToolbar = ({ view, setView, hasView, term, year, courses }) => {
  * - Only weekdays (Mon-Fri) are emphasized.
  */
 const ScheduleCalendar = ({ index, map, hasView, view, setView, term, year }) => {
-	console.log(map[index]);
 	const locales = {
 		"en-US": enUS
 	};
