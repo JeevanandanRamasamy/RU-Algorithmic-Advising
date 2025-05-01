@@ -129,7 +129,6 @@ class RequirementService:
             int(student_details.enroll_year),
             int(student_details.grad_year),
         )  # Extract username and years from student details
-        print(enroll_year)
         semesters = SemestersService.generate_semesters_till_now(enroll_year)
         res = {}
 
