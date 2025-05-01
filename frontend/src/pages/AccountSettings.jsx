@@ -104,7 +104,7 @@ const AccountSettings = () => {
 						<span>{form.first_name}</span>
 						<button
 							onClick={() => setEditField("first_name")}
-							className="text-blue-600">
+							className="text-blue-600 cursor-pointer">
 							Edit
 						</button>
 					</div>
@@ -145,7 +145,7 @@ const AccountSettings = () => {
 						<span>{form.last_name}</span>
 						<button
 							onClick={() => setEditField("last_name")}
-							className="text-blue-600">
+							className="text-blue-600 cursor-pointer">
 							Edit
 						</button>
 					</div>
@@ -198,7 +198,7 @@ const AccountSettings = () => {
 						<span>******</span>
 						<button
 							onClick={() => setEditField("password")}
-							className="text-blue-600">
+							className="text-blue-600 cursor-pointer">
 							Edit
 						</button>
 					</div>
@@ -207,7 +207,7 @@ const AccountSettings = () => {
 
 			<button
 				onClick={handleDelete}
-				className="mt-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded w-full">
+				className="mt-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded w-full cursor-pointer">
 				Delete Account
 			</button>
 
