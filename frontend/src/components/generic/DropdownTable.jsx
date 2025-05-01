@@ -50,7 +50,7 @@ const DropdownTable = ({
 	};
 
 	const { selectCoursesMissingRequirements } = useSections();
-	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
+	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Friday" };
 
 	return (
 		visibleCourses &&

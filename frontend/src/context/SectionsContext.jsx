@@ -156,10 +156,12 @@ export const SectionsProvider = ({ children }) => {
 	};
 
 	const fetchSectionsBySubject = async (subject, term, year) => {
+		showInfoToast("Fetching sections", "fetch-sections");
 		if (subject === "") {
 			setSearchedCourses({});
 			return;
 		}
+
 		try {
 			const sectionResponse = await fetch(
 				`${backendUrl}/api/sections/subject?subject=${subject}&term=${term}&year=${year}`,
@@ -181,6 +183,8 @@ export const SectionsProvider = ({ children }) => {
 			if (sectionData.error === "No courses exist") {
 				showErrorToast(`No courses found`, "courses-not-found");
 			}
+
+			clearToast("fetch-sections");
 		} catch (error) {
 			console.error("Error fetching sections:", error);
 			showErrorToast("Failed to fetch sections.");
@@ -188,6 +192,7 @@ export const SectionsProvider = ({ children }) => {
 	};
 
 	const generateValidSchedules = async () => {
+		showInfoToast("generating schedules", "generate-schedules");
 		try {
 			const serializableCheckedSections = Object.fromEntries(
 				Object.entries(checkedSections).map(([courseId, sectionSet]) => [
@@ -210,6 +215,7 @@ export const SectionsProvider = ({ children }) => {
 			setValidSchedules(prev =>
 				isEqual(prev, data.valid_schedules) ? prev : data.valid_schedules
 			);
+			clearToast("generate-schedules");
 		} catch (error) {
 			console.error("Error fetching sections:", error);
 			showErrorToast("Failed to fetch sections.");

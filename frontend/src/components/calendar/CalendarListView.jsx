@@ -1,5 +1,7 @@
 import React from "react";
 import { useSections } from "../../context/SectionsContext";
+import useSemester from "../../hooks/useSemester";
+
 /**
  * CalendarListView displays a list view of scheduled courses
  * with detailed information like section, instructor, meeting times, etc.
@@ -11,11 +13,11 @@ import { useSections } from "../../context/SectionsContext";
  * - view: Current active view mode
  * - setView: Function to change the view mode
  */
-
-const CalendarListView = ({ schedules, index, hasView, view, setView }) => {
+const CalendarListView = ({ schedules, index, hasView, view, setView, term, year }) => {
 	const { indexToCourseMapRef } = useSections();
+	const { generateUrl } = useSemester();
 
-	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
+	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Friday" };
 	return (
 		<>
 			{hasView && (
@@ -34,6 +36,12 @@ const CalendarListView = ({ schedules, index, hasView, view, setView }) => {
 							view === "list" ? "text-gray-600" : "text-blue-600"
 						}`}>
 						List View
+					</a>
+					<span className="text-black"> | </span>
+					<a
+						href={generateUrl(term, year, schedules[index])}
+						className={`underline cursor-pointer text-blue-600`}>
+						register
 					</a>
 				</div>
 			)}
