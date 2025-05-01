@@ -79,6 +79,8 @@ const SavedSchedule = ({ term, year }) => {
 										hasView
 										view={view}
 										setView={setView}
+										term={term}
+										year={year}
 									/>
 								);
 							})()}
@@ -92,6 +94,8 @@ const SavedSchedule = ({ term, year }) => {
 								hasView={true}
 								view={view}
 								setView={setView}
+								term={term}
+								year={year}
 							/>
 							<OnlineCourses
 								asyncCourses={savedAsyncCourses[`${term}-${year}`] || {}}

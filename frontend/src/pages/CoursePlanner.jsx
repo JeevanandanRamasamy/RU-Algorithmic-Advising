@@ -53,12 +53,6 @@ const CoursePlanner = () => {
 
 	const semesters = [firstSemester, secondSemester];
 
-	//TODO: highlight in red if you can not take the course
-	// const {
-	// 	coursesWithMissingRequirements,
-	// 	fetchPlannedCoursesWithMissingRequirements,
-	// 	requirementStrings
-	// } = useCourseRequirements();
 	const { courses } = useCourses();
 	const { enrollYear, gradYear } = useStudentDetails();
 	const { courseRecords, courseRecordsRef, handleAddCourseRecord, handleRemoveCourseRecord } =
