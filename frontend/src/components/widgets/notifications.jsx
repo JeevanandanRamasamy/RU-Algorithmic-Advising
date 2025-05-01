@@ -18,7 +18,7 @@ import { useState, useEffect } from "react";
 import { Bell, X } from "lucide-react";
 import { motion } from "framer-motion";
 
-const NotificationsPanel = ({ notifications }) => (
+const NotificationsPanel = ({ notifications, setNotifications }) => (
 	<div className="fixed top-26 right-8 z-50 w-80 bg-white rounded-xl shadow-lg border border-gray-200">
 		<div className="p-4 max-h-[300px] overflow-y-auto">
 			<p className="text-lg font-semibold mb-2">Notifications</p>
@@ -50,12 +50,7 @@ const NotificationsPanel = ({ notifications }) => (
 
 const NotificationsButton = ({ onToggle }) => {
 	const [isOpen, setIsOpen] = useState(false);
-
-	useEffect(() => {
-		if (onToggle) onToggle(isOpen);
-	}, [isOpen, onToggle]);
-
-	const notifications = [
+	const [notifications, setNotifications] = useState([
 		{ message: "New assignment available in Math 101" },
 		{ message: "Your project submission is due tomorrow" },
 		{ message: "Don't forget to register for classes!" },
@@ -66,20 +61,29 @@ const NotificationsButton = ({ onToggle }) => {
 		{ message: "New event: Career Fair on March 15th" },
 		{ message: "You have a new message from your advisor" },
 		{ message: "Library books are due next week" }
-	];
+	]);
+
+	useEffect(() => {
+		if (onToggle) onToggle(isOpen);
+	}, [isOpen, onToggle]);
 
 	return (
 		<>
 			<motion.button
-				whileHover={{ scale: 1.05 }} // Slight scale up on hover
-				whileTap={{ scale: 0.9 }} // Slight scale down on tap (press)
+				whileHover={{ scale: 1.05 }}
+				whileTap={{ scale: 0.9 }}
 				onClick={() => setIsOpen(!isOpen)}
 				className="fixed top-10 right-8 z-50 w-14 h-14 rounded-[1rem] cursor-pointer border border-gray-200 shadow-md bg-white group flex items-center justify-center transition-colors duration-200">
 				<Bell className="w-6 h-6 text-[#cc0033] transition-colors duration-200 group-hover:text-[#fcf8d7]" />
 				<div className="absolute inset-0 rounded-[1rem] bg-transparent group-hover:bg-[#cc0033] transition-colors duration-200 -z-10"></div>
 			</motion.button>
 
-			{isOpen && <NotificationsPanel notifications={notifications} />}
+			{isOpen && (
+				<NotificationsPanel
+					notifications={notifications}
+					setNotifications={setNotifications}
+				/>
+			)}
 		</>
 	);
 };
