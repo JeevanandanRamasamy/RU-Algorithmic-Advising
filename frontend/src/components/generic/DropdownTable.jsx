@@ -6,6 +6,7 @@ import { useCourseRequirements } from "../../context/CourseRequirementContext";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip } from "react-tooltip";
 import { showInfoToast, clearToast } from "../toast/Toast";
+import { useSections } from "../../context/SectionsContext";
 
 /**
  * DropdownTable is a component that displays a list of courses with their sections
@@ -48,7 +49,8 @@ const DropdownTable = ({
 		clearToast("remove-course-record");
 	};
 
-	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Fri" };
+	const { selectCoursesMissingRequirements } = useSections();
+	const days = { M: "Monday", T: "Tuesday", W: "Wednesday", TH: "Thursday", F: "Friday" };
 
 	return (
 		visibleCourses &&
@@ -67,6 +69,14 @@ const DropdownTable = ({
 							const isOpen = openCourses.includes(course_id);
 							const isAdded = addedCourseIds.includes(course_id);
 							const requirementString = requirementStrings[course_id] || "";
+
+							const courseInfo =
+								selectCoursesMissingRequirements?.[String(course_id)];
+							const updatedRequirementString =
+								courseInfo?.requirement_string ?? requirementString;
+
+							const isRed =
+								courseInfo && courseInfo?.requirements_fulfilled === false;
 							const { openCount, closedCount } = Object.values(sections).reduce(
 								(counts, { open_status }) => {
 									if (open_status) {
@@ -104,12 +114,16 @@ const DropdownTable = ({
 													<span className="text-red-600">
 														closed {closedCount}
 													</span>
-													{requirementString && (
+													{updatedRequirementString && (
 														<>
 															{" | "}
 															<a
 																data-tooltip-id={`tooltip-${course_id}`}
-																className="cursor-pointer underline text-blue-600"
+																className={`cursor-pointer underline ${
+																	isRed
+																		? "text-red-600"
+																		: "text-blue-600"
+																}`}
 																data-tooltip-place="bottom">
 																Requirements
 															</a>
@@ -119,7 +133,7 @@ const DropdownTable = ({
 																<pre
 																	className="text-sm z-10000"
 																	dangerouslySetInnerHTML={{
-																		__html: requirementString
+																		__html: updatedRequirementString
 																	}}
 																/>
 															</Tooltip>

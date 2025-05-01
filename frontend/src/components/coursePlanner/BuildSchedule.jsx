@@ -21,10 +21,10 @@ const BuildSchedule = ({ term, year }) => {
 		scheduleIndex,
 		setScheduleIndex,
 		schedulesMap,
-		asyncCourses
+		asyncCourses,
+		validSchedules
 	} = useSections();
 	const [view, setView] = useState("calendar");
-	const { validSchedules } = useSections();
 
 	// Advances to the next schedule in the list
 	const handleNext = () => {
@@ -119,6 +119,8 @@ const BuildSchedule = ({ term, year }) => {
 						view={view}
 						setView={setView}
 						hasView={false}
+						term={term}
+						year={year}
 					/>
 					<OnlineCourses
 						map={schedulesMap}

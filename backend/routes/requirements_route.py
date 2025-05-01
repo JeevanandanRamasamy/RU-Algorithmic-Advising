@@ -191,3 +191,32 @@ def get_course_plan_size():
         ),
         200,
     )
+
+
+@requirements_bp.route("/courses", methods=["GET"])
+@jwt_required()
+def get_missing_requirements_for_courses():
+    """
+    This endpoint retrieves the requirements for specific courses
+    """
+    username = get_jwt_identity()
+    courses = request.args.getlist("course")
+    student_details = UserService.get_student_details(username=username)
+    if isinstance(student_details, str):
+        return jsonify({"message": student_details}), 500
+
+    courses_missing_requirements = (
+        RequirementService.check_courses_missing_requirements(
+            student_details=student_details, courses_to_check=courses
+        )
+    )
+
+    return (
+        jsonify(
+            {
+                "message": "Successfully fetched courses with missing requirements",
+                "courses_missing_requirements": courses_missing_requirements,
+            }
+        ),
+        200,
+    )

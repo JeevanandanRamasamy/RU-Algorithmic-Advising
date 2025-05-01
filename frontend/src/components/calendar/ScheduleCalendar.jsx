@@ -4,36 +4,54 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
 import React from "react";
 import "../../css/ScheduleCalendar.css";
+import useSemester from "../../hooks/useSemester";
 
 /**
  * MinimalToolbar
  * Displays a simple toggle between calendar and list views if view switching is enabled.
  */
-const MinimalToolbar = ({ view, setView, hasView }) => (
-	<>
-		{!hasView ? (
-			<div style={{ textAlign: "center", padding: "0.5rem", fontWeight: "bold" }}></div>
-		) : (
-			<div className="text-center flex space-x-2 items-center">
-				<a
-					onClick={() => setView("calendar")}
-					className={`underline cursor-pointer ${
-						view === "calendar" ? "text-gray-600" : "text-blue-600"
-					}`}>
-					Calendar View
-				</a>
-				<span className="text-black"> | </span>
-				<a
-					onClick={() => setView("list")}
-					className={`underline cursor-pointer ${
-						view === "list" ? "text-gray-600" : "text-blue-600"
-					}`}>
-					List View
-				</a>
-			</div>
-		)}
-	</>
-);
+const MinimalToolbar = ({ view, setView, hasView, term, year, courses }) => {
+	const { generateUrl } = useSemester();
+
+	const uniqueIndices =
+		Array.isArray(courses) && courses.length > 0
+			? [...new Set(courses.map(course => course.index))]
+			: [];
+
+	return (
+		<>
+			{!hasView ? (
+				<div style={{ textAlign: "center", padding: "0.5rem", fontWeight: "bold" }}></div>
+			) : (
+				<div className="text-center flex space-x-2 items-center">
+					<a
+						onClick={() => setView("calendar")}
+						className={`underline cursor-pointer ${
+							view === "calendar" ? "text-gray-600" : "text-blue-600"
+						}`}>
+						Calendar View
+					</a>
+					<span className="text-black"> | </span>
+					<a
+						onClick={() => setView("list")}
+						className={`underline cursor-pointer ${
+							view === "list" ? "text-gray-600" : "text-blue-600"
+						}`}>
+						List View
+					</a>
+					<span className="text-black"> | </span>
+					<a
+						href={generateUrl(term, year, uniqueIndices)}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="underline cursor-pointer text-blue-600">
+						Register
+					</a>
+				</div>
+			)}
+		</>
+	);
+};
 
 /**
  * ScheduleCalendar
@@ -42,7 +60,7 @@ const MinimalToolbar = ({ view, setView, hasView }) => (
  * - Week starts on Monday.
  * - Only weekdays (Mon-Fri) are emphasized.
  */
-const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
+const ScheduleCalendar = ({ index, map, hasView, view, setView, term, year }) => {
 	const locales = {
 		"en-US": enUS
 	};
@@ -89,6 +107,9 @@ const ScheduleCalendar = ({ index, map, hasView, view, setView }) => {
 							hasView={hasView}
 							view={view}
 							setView={setView}
+							term={term}
+							year={year}
+							courses={map[index]}
 						/>
 					)
 				}}

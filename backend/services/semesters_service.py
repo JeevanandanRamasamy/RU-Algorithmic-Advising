@@ -70,6 +70,9 @@ class SemestersService:
 
         return semesters
 
+    # @staticmethod
+    # def generate_semesters_till_current_semester(current_semester):
+
     @staticmethod
     def generate_future_semesters(grad_year):
         """
