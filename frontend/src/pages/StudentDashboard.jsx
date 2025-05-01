@@ -14,7 +14,7 @@ import { useCourseRecords } from "../context/CourseRecordsContext";
 import Card, { CardContent } from "../components/generic/Card";
 import GraduationForecastCard from "../components/widgets/GraduationForecast";
 import Chatbot from "../components/widgets/Chatbot";
-import Progress from "../components/generic/progress";
+import Progress from "../components/generic/Progress";
 import { Circle } from "rc-progress";
 import { Pencil } from "lucide-react";
 import "../css/home.css";
