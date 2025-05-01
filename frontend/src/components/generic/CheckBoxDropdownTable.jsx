@@ -103,8 +103,8 @@ const CheckboxDropdownTable = ({
 														<Tooltip
 															id={`tooltip-subject_notes-${course_id}`}
 															className="bg-black">
-															<pre
-																className="text-sm z-10000"
+															<div
+																className="text-sm z-10000 whitespace-pre-wrap break-words w-[400px]"
 																dangerouslySetInnerHTML={{
 																	__html: subject_notes
 																}}

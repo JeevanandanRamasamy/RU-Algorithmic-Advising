@@ -36,15 +36,24 @@ class TimeService:
 
             return f"{hour}:{minute}{suffix}"
 
+        if (
+            starting_time.startswith("12")
+            and ending_time.startswith("01")
+            and pm_code == "P"
+        ):
+            start_formatted = convert_to_12hr(starting_time, "PM")
+            end_formatted = convert_to_12hr(ending_time, "PM")
+            return f"{start_formatted} - {end_formatted}"
+
         start_hour = int(starting_time[:2])
         end_hour = int(ending_time[:2])
         start_period = "AM" if pm_code == "A" else "PM"
         if end_hour < start_hour or (
             end_hour == start_hour and ending_time[2:] < starting_time[2:]
         ):
-            end_period = "PM" if start_period == "AM" else "AM" # Handle overnight case
+            end_period = "PM" if start_period == "AM" else "AM"  # Handle overnight case
         else:
-            end_period = start_period # Keep the same period
+            end_period = start_period  # Keep the same period
 
         start_formatted = convert_to_12hr(starting_time, start_period)
         end_formatted = convert_to_12hr(ending_time, end_period)
