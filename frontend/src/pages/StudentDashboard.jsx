@@ -76,7 +76,7 @@ function StudentDashboard() {
 						<CardContent className="p-6">
 							<div className="flex justify-between items-center">
 								<p className="text-xl font-semibold">Academic Overview</p>
-								<Link to="/questionnaire">
+								<Link to="/student/questionnaire">
 									<div className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white hover:bg-blue-500 transition-colors group">
 										<Pencil className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
 									</div>

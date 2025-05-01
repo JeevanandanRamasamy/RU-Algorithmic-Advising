@@ -72,7 +72,7 @@ const DataTable = ({
 		};
 
 		fetchData();
-	}, [apiUrl, token, reloadFlag]); // Keep only these essential dependencies
+	}, [apiUrl, reloadFlag]); // Keep only these essential dependencies
 
 	/**
 	 * Recalculates the rows that should be visible based on the current scroll position.
