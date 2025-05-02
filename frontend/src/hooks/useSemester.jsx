@@ -6,7 +6,6 @@ const useSemester = () => {
 			return;
 		}
 		const base = "https://sims.rutgers.edu/webreg/editSchedule.htm";
-		console.log(selectedIndexes);
 		const indexListParam = selectedIndexes.join(",");
 		const semester = getSemesterCode(term, year);
 

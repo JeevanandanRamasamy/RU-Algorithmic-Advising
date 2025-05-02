@@ -40,8 +40,9 @@ const CalendarListView = ({ schedules, index, hasView, view, setView, term, year
 					<span className="text-black"> | </span>
 					<a
 						href={generateUrl(term, year, schedules[index])}
+						target="_blank"
 						className={`underline cursor-pointer text-blue-600`}>
-						register
+						Register
 					</a>
 				</div>
 			)}

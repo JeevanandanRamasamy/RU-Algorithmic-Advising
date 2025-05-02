@@ -59,10 +59,9 @@ const useAccount = () => {
 			const response = await fetch(`${backendUrl}/api/users/account`, {
 				method: "DELETE",
 				headers: {
-					"Authorization": `Bearer ${token}`
+					Authorization: `Bearer ${token}`
 				}
 			});
-			console.log("Response:", response);
 
 			if (!response.ok) {
 				const err = await response.json();
@@ -71,7 +70,6 @@ const useAccount = () => {
 
 			// Parse message if there is any
 			const data = await response.json();
-			console.log("Account deleted:", data.message);
 
 			await logout();
 			showSuccessToast("Account deleted successfully!");

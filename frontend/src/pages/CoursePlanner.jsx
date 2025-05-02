@@ -100,7 +100,6 @@ const CoursePlanner = () => {
 	const currentSemester = useMemo(() => {
 		return semesters[selectedSemesterTabIndex];
 	}, [semesters, selectedSemesterTabIndex]);
-	console.log(courseRecordsRef.current);
 
 	const currentCourseRecords = useMemo(() => {
 		return courseRecordsRef.current
