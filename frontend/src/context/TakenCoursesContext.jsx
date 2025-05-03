@@ -6,6 +6,11 @@ import { showErrorToast } from "../components/toast/Toast";
 
 const TakenCoursesContext = createContext();
 
+/**
+ * Provides functionality and state management for handling taken courses.
+ *
+ * @param {React.ReactNode} children - The child components that need access to the TakenCourses context.
+ */
 export const TakenCoursesProvider = ({ children }) => {
 	const { token } = useAuth();
 	const { fetchPlannedCoursesWithMissingRequirements } = useCourseRequirements();
@@ -18,6 +23,12 @@ export const TakenCoursesProvider = ({ children }) => {
 
 	const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+	/**
+	 * Fetches the list of taken courses from the backend API.
+	 * This function is called when the component mounts or when the token changes.
+	 *
+	 * @returns {void}
+	 */
 	const fetchTakenCourses = useCallback(async () => {
 		setTakenCoursesLoading(true);
 		try {
@@ -38,10 +49,17 @@ export const TakenCoursesProvider = ({ children }) => {
 		}
 	}, [backendUrl, token]);
 
+	// Fetch taken courses when the component mounts or when token changes
 	useEffect(() => {
 		if (token) fetchTakenCourses();
 	}, [token, fetchTakenCourses]);
 
+	/**
+	 * Handles adding a course to the taken courses list.
+	 *
+	 * @param {string} courseId - The ID of the course to add.
+	 * @returns {void}
+	 */
 	const handleAddTakenCourse = async courseId => {
 		try {
 			const res = await fetch(`${backendUrl}/api/users/course_record`, {
@@ -67,6 +85,12 @@ export const TakenCoursesProvider = ({ children }) => {
 		}
 	};
 
+	/**
+	 * Handles removing a course from the taken courses list.
+	 *
+	 * @param {string} courseId - The ID of the course to remove.
+	 * @returns {void}
+	 */
 	const handleRemoveTakenCourse = async courseId => {
 		setTakenCoursesLoading(true);
 		try {

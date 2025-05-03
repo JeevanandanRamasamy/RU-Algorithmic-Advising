@@ -1,3 +1,7 @@
+/**
+ * Renders a dropdown menu without a visible placeholder.
+ * Accepts an array of options, a selected value, and a change handler.
+ */
 const NoPlaceholderDropdown = ({ options, selectedValue, onChange, placeholder }) => {
 	return (
 		<select

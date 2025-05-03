@@ -23,6 +23,7 @@ import DataTable from "../components/generic/DataTable"; // Adjust the import pa
 import { useCourseRequirements } from "../context/CourseRequirementContext";
 import HorizontalAvailableCourses from "../components/courses/HorizontalAvailableCourses";
 
+// Component for handling spn
 function SPN() {
 	const { user, role } = useAuth();
 	const columns = [
@@ -95,22 +96,27 @@ function SPN() {
 						/>
 					</div>
 					<main className="gap-8 flex flex-col">
-					< ToRequest triggerReload={triggerReload} />
+						<ToRequest triggerReload={triggerReload} />
 					</main>
 				</div>
 			</>
 		);
-	} else if (role === "admin"){ {/* Needed because will try to run this after logout without the check */}
+	} else if (role === "admin") {
+		{
+			/* Needed because will try to run this after logout without the check */
+		}
 		const [reloadOutstanding, setReloadOutstanding] = useState(false);
 		const [reloadClosed, setReloadClosed] = useState(false);
 
+		// Function to toggle the state of 'reloadOutstanding'
 		const triggerOutstandingReload = () => {
 			setReloadOutstanding(prev => !prev);
 		};
 
+		// Function to toggle the state of 'reloadClosed'
 		const triggerClosedReload = () => {
 			setReloadClosed(prev => !prev);
-		}
+		};
 
 		let pendingUrl = apiUrl + `?pending_param=true`;
 		let notPendingUrl = apiUrl + `?pending_param=false`;

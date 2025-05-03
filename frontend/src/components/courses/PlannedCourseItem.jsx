@@ -26,12 +26,20 @@ const PlannedCourseItem = ({
 		canDrag: true
 	}));
 
+	/**
+	 * Logs course information to the console when dragging starts.
+	 * Should be used inside a component that handles drag-and-drop for courses.
+	 */
 	useEffect(() => {
 		if (isDragging) {
 			console.log(`Dragging course: ${course.course_name} (ID: ${course.course_id})`);
 		}
 	}, [isDragging, course]);
 
+	/**
+	 * Disables default scrolling behavior while dragging,
+	 * allowing custom scroll handling via the mouse wheel.
+	 */
 	useEffect(() => {
 		const handleWheel = e => {
 			if (scrolling) {

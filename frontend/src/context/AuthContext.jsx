@@ -23,12 +23,18 @@ export const AuthProvider = ({ children }) => {
 		}
 	}, [user, token, role]);
 
+	/**
+	 * Logs in the user by setting username, token, and role.
+	 */
 	const login = (username, accessToken, role) => {
 		setUser(username);
 		setToken(accessToken);
 		setRole(role);
 	};
 
+	/**
+	 * Logs out the user by clearing user state and local storage.
+	 */
 	const logout = () => {
 		setUser(null);
 		setToken(null);

@@ -19,6 +19,10 @@ import { Circle } from "rc-progress";
 import { Pencil } from "lucide-react";
 import "../css/home.css";
 
+/**
+ * StudentDashboard Component - Displays the student's dashboard with program stats,
+ * personal details, and course information.
+ */
 function StudentDashboard() {
 	const { user, role } = useAuth();
 	const navigate = useNavigate();
@@ -31,6 +35,9 @@ function StudentDashboard() {
 	const { takenCourses } = useTakenCourses();
 	const totalCredits = 120;
 
+	/**
+	 * Effect hook to handle user authentication and role-based redirection
+	 */
 	useEffect(() => {
 		if (!user) {
 			navigate("/"); // Redirect to login if not authenticated
@@ -39,6 +46,10 @@ function StudentDashboard() {
 			navigate("/admin/home"); // Redirect to admin dashboard if user is admin
 		}
 
+		/**
+		 * Loads data for selected programs, including program requirements
+		 * and the number of taken courses, then stores the calculated statistics.
+		 */
 		const loadProgramData = async () => {
 			const stats = {};
 			for (const program of selectedPrograms) {

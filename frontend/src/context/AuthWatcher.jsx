@@ -5,6 +5,11 @@ import { useAuth } from "./AuthContext";
 import { toast } from "react-toastify"; // if you're using react-toastify or similar
 import { showWarningToast } from "../components/toast/Toast";
 
+/**
+ * Watches the authentication token's expiration and handles warnings and logout.
+ * - Logs out the user when the token expires.
+ * - Shows a warning 5 minutes before the token expires.
+ */
 const AuthWatcher = () => {
 	const { token, logout } = useAuth();
 	const navigate = useNavigate();

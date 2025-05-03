@@ -3,11 +3,20 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { useAuth } from "../context/AuthContext";
 import { showSuccessToast } from "../components/toast/Toast";
 
+/**
+ * Custom hook to manage user account details (fetch, update, delete).
+ *
+ * @returns {Object} The account details and methods to update or delete the account.
+ */
 const useAccount = () => {
 	const { user, token, logout } = useAuth();
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 
+	/**
+	 * Fetches the current user's account details from the backend API.
+	 * This is triggered when the component mounts or when the user data changes.
+	 */
 	useEffect(() => {
 		const fetchAccountDetails = async () => {
 			try {
@@ -30,6 +39,16 @@ const useAccount = () => {
 		fetchAccountDetails();
 	}, [user]);
 
+	/**
+	 * Updates the user's account details (first name, last name, and password).
+	 *
+	 * @param {Object} accountDetails - The account details to update.
+	 * @param {string} accountDetails.first_name - The user's new first name.
+	 * @param {string} accountDetails.last_name - The user's new last name.
+	 * @param {string} accountDetails.password - The user's new password.
+	 *
+	 * @returns {Object} Result indicating success or failure of the update.
+	 */
 	const updateAccount = async ({ first_name, last_name, password }) => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/account`, {
@@ -54,6 +73,11 @@ const useAccount = () => {
 		}
 	};
 
+	/**
+	 * Deletes the user's account.
+	 *
+	 * @returns {Object} Result indicating success or failure of the deletion.
+	 */
 	const deleteAccount = async () => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/account`, {

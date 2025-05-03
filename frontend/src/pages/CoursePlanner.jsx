@@ -17,11 +17,18 @@ import SavedSchedule from "../components/coursePlanner/SavedSchedule";
 import SelectCourses from "../components/coursePlanner/SelectCourses";
 import SelectSections from "../components/coursePlanner/SelectSections";
 
+/**
+ * CoursePlanner Component for managing course selection, section selection,
+ * and schedule generation for students. It interacts with hooks to fetch
+ * semester info, courses, and student details, and supports adding/removing
+ * courses and generating valid schedules.
+ */
 const CoursePlanner = () => {
 	const { getCurrentAndNextSemester } = useSemesterInfo();
 
 	const currentYear = new Date().getFullYear();
 
+	// Function to get next term
 	const getNextTerm = (month, year) => {
 		if (month < 2) return { term: "spring", year };
 		if (month < 5) return { term: "summer", year };
@@ -34,6 +41,8 @@ const CoursePlanner = () => {
 	const firstSemester = getNextTerm(month, currentYear);
 
 	let secondSemester;
+
+	// Function to get next semester
 	switch (firstSemester.term) {
 		case "spring":
 			secondSemester = { term: "summer", year: currentYear };
@@ -89,6 +98,7 @@ const CoursePlanner = () => {
 
 	const views = ["Select Courses", "Select Sections", "Build Schedule", "Saved Schedule"];
 
+	// Handles add courses
 	const handleOnAddCourse = courseId => {
 		handleAddCourseRecord(courseId, currentSemester.term, currentSemester.year);
 	};
@@ -97,10 +107,12 @@ const CoursePlanner = () => {
 		fetchSavedSchedules();
 	}, []);
 
+	// Memo to get current semester
 	const currentSemester = useMemo(() => {
 		return semesters[selectedSemesterTabIndex];
 	}, [semesters, selectedSemesterTabIndex]);
 
+	// get courseRecords for current term
 	const currentCourseRecords = useMemo(() => {
 		return courseRecordsRef.current
 			.filter(
@@ -111,6 +123,7 @@ const CoursePlanner = () => {
 			.map(course => course?.course_info);
 	}, [courseRecordsRef, currentSemester]);
 
+	// UseEffect to update current course selections
 	useEffect(() => {
 		updateSelectedCourseSections(
 			currentCourseRecords.map(course => course.course_id),
@@ -119,6 +132,7 @@ const CoursePlanner = () => {
 		);
 	}, [currentCourseRecords, currentSemester]);
 
+	// useEffect to initialize checked sections based on selected courses
 	useEffect(() => {
 		const initialCheckedSections = {};
 		Object.values(selectedCourses).forEach(({ course_id, sections }) => {
@@ -128,15 +142,18 @@ const CoursePlanner = () => {
 		setCheckedSections(initialCheckedSections);
 	}, [selectedCourses]);
 
+	// useEffect to generate valid schedules whenever checkedSections change
 	useEffect(() => {
 		generateValidSchedules();
 	}, [checkedSections]);
 
+	// useEffect to reset schedule index and generate events when validSchedules change
 	useEffect(() => {
 		setScheduleIndex(0);
 		generateEventsForSchedule();
 	}, [validSchedules]);
 
+	// Toggles section selection for a given course and index
 	const toggleSectionSelect = (course_id, index) => {
 		setCheckedSections(prev => {
 			const currentSet = prev[course_id] || new Set();
@@ -149,11 +166,14 @@ const CoursePlanner = () => {
 			return { ...prev, [course_id]: updatedSet };
 		});
 	};
+	// Checks if a specific section is selected
 	const isSectionSelected = (course_id, index) => {
 		return checkedSections[course_id]?.has(index);
 	};
+	// Checks if all sections of a course are selected
 	const isAllSectionsSelected = (course_id, courseSections) =>
 		checkedSections[course_id]?.size === Object.keys(courseSections).length;
+	// Handles selecting or deselecting all sections of a course
 	const handleSelectAll = (e, course_id, sections) => {
 		e.stopPropagation();
 		if (isAllSectionsSelected(course_id, sections)) {

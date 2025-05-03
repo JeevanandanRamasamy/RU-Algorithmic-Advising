@@ -25,6 +25,7 @@ import CoursePlanner from "./pages/CoursePlanner";
 import AuthLayout from "./components/protectedRoutes/AuthLayout";
 import AuthWatcher from "./context/AuthWatcher";
 
+// component to render the App and handles out routing
 function App() {
 	return (
 		<AuthProvider>

@@ -4,11 +4,15 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const CourseRequirementsContext = createContext();
 
+/**
+ * Provides the course requirements and methods to check and fetch missing course requirements.
+ */
 export const CourseRequirementsProvider = ({ children }) => {
 	const { token } = useAuth();
 	const [coursesWithMissingRequirements, setCoursesWithMissingRequirements] = useState({});
 	const [requirementStrings, setRequirementStrings] = useState({});
 
+	// Fetch planned courses with missing requirements
 	const fetchPlannedCoursesWithMissingRequirements = useCallback(async () => {
 		if (!token) return;
 
@@ -29,6 +33,7 @@ export const CourseRequirementsProvider = ({ children }) => {
 			console.error("Error fetching missing requirements for planned courses", error);
 		}
 	}, [token]);
+	// Check requirements for specific courses
 	const checkRequirements = async courseIds => {
 		try {
 			const params = new URLSearchParams();
@@ -58,6 +63,7 @@ export const CourseRequirementsProvider = ({ children }) => {
 		}
 	};
 
+	// Fetch the course requirements strings
 	const getRequirementsStrings = async () => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/requirements/string`, {

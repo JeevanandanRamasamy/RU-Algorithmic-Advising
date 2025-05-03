@@ -9,6 +9,9 @@ import { useStudentDetails } from "../context/StudentDetailsContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const CourseRecordsContext = createContext();
 
+/**
+ * Provides course records, planned courses, and the necessary methods to interact with them.
+ */
 export const CourseRecordsProvider = ({ children }) => {
 	const { fetchPlannedCoursesWithMissingRequirements } = useCourseRequirements();
 	const { courseOfferedThisSemester } = useSections();
@@ -21,6 +24,7 @@ export const CourseRecordsProvider = ({ children }) => {
 	const [plannedCourses, setPlannedCourses] = useState([]);
 	const { fetchUserDetails } = useStudentDetails();
 
+	// Fetch planned courses from the backend
 	const fetchPlannedCourses = async () => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/course_record/planned`, {
@@ -45,6 +49,7 @@ export const CourseRecordsProvider = ({ children }) => {
 		}
 	}, [courseRecords]);
 
+	// Fetch course records from the backend
 	const fetchCourseRecords = useCallback(async () => {
 		setCoursesRecordsLoading(true);
 		try {
@@ -70,6 +75,7 @@ export const CourseRecordsProvider = ({ children }) => {
 		courseRecordsRef.current = courseRecords;
 	}, [courseRecords]);
 
+	// Add a course record
 	const handleAddCourseRecord = async (courseId, term, year) => {
 		const isAvailable = await courseAvailableThisSemester(courseId, term, year);
 		clearToast(`checking-${courseId}-${term}-${year}`);
@@ -116,6 +122,7 @@ export const CourseRecordsProvider = ({ children }) => {
 		}
 	};
 
+	// Remove a course record
 	const handleRemoveCourseRecord = async courseId => {
 		setCoursesRecordsLoading(true);
 		try {

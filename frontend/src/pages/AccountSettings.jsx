@@ -3,6 +3,7 @@ import Navbar from "../components/navbar/Navbar";
 import useAccount from "../hooks/useAccount";
 import { useAuth } from "../context/AuthContext";
 
+// AccountSettings component allows users to update their personal information and delete their account.
 const AccountSettings = () => {
 	const { user } = useAuth();
 	const { firstName, lastName, updateAccount, deleteAccount } = useAccount();
@@ -16,6 +17,7 @@ const AccountSettings = () => {
 	const [editField, setEditField] = useState(null);
 	const [message, setMessage] = useState("");
 
+	// useEffect hook to populate form when user data is available
 	useEffect(() => {
 		if (user) {
 			setForm({
@@ -27,10 +29,12 @@ const AccountSettings = () => {
 		}
 	}, [user, firstName, lastName]);
 
+	// Handle changes in form input fields
 	const handleChange = e => {
 		setForm({ ...form, [e.target.name]: e.target.value });
 	};
 
+	// Validate and submit form data (for updating account details)
 	const handleSubmit = async () => {
 		// Password validation (only if editing password)
 		if (editField === "password") {
@@ -56,6 +60,7 @@ const AccountSettings = () => {
 		}
 	};
 
+	// Handle account deletion
 	const handleDelete = async () => {
 		if (
 			window.confirm("Are you sure you want to delete your account? This cannot be undone.")

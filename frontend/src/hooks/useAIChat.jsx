@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * Custom hook to manage AI chat interactions.
+ * Handles sending and receiving messages, storing chat history, and user info management.
+ */
 const useAIChat = () => {
 	const { token } = useAuth();
 	const [messages, setMessages] = useState([]);

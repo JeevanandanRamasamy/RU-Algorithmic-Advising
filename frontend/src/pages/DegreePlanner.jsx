@@ -16,6 +16,14 @@ import { useCourses } from "../context/CoursesContext";
 import { useCourseRequirements } from "../context/CourseRequirementContext";
 import { useCourseRecords } from "../context/CourseRecordsContext";
 
+/**
+ * DragDrop Component
+ *
+ * This component manages the drag-and-drop functionality for course planning.
+ * It includes course selection, semester planning, and interactions with
+ * taken courses and course records. The user can see available courses,
+ * plan their semester, and add/remove courses to/from their records.
+ */
 function DragDrop() {
 	const { user, token, role } = useAuth();
 	const { courses } = useCourses();
@@ -50,6 +58,7 @@ function DragDrop() {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
 
+	// Effect to handle redirections based on user authentication and role
 	useEffect(() => {
 		if (!user) {
 			navigate("/");

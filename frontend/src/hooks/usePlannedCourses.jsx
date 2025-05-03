@@ -3,6 +3,10 @@ import { useAuth } from "../context/AuthContext";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * Custom hook for managing planned courses.
+ * This hook handles fetching, adding, removing, and searching courses.
+ */
 const usePlannedCourses = () => {
 	const { user, token } = useAuth();
 	const [plannedCourses, setPlannedCourses] = useState([]);
@@ -10,6 +14,10 @@ const usePlannedCourses = () => {
 	const [plannedCoursesError, setPlannedCoursesError] = useState(null);
 	const [searchPlannedQuery, setSearchPlannedQuery] = useState("");
 
+	/**
+	 * Custom hook for managing planned courses.
+	 * This hook handles fetching, adding, removing, and searching courses.
+	 */
 	const fetchPlannedCourses = async () => {
 		setPlannedCoursesLoading(true);
 		try {
@@ -29,12 +37,22 @@ const usePlannedCourses = () => {
 			setPlannedCoursesLoading(false);
 		}
 	};
+	// Fetch planned courses when the component mounts or token changes
 	useEffect(() => {
 		if (token) {
 			fetchPlannedCourses();
 		}
 	}, []);
 
+	/**
+	 * Adds a new course to the planned courses list.
+	 * If the course already exists, it updates the term and year.
+	 *
+	 * @param {string} courseId - The ID of the course to be added.
+	 * @param {string} term - The term (e.g., Fall, Spring) for the course.
+	 * @param {number} year - The year to assign to the course.
+	 * @param {string} type - The type of course (e.g., 'planned' or 'taken').
+	 */
 	const handleAddCourse = async (courseId, term, year, type) => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/course_record`, {
@@ -75,6 +93,14 @@ const usePlannedCourses = () => {
 		}
 	};
 
+	/**
+	 * Updates the list of planned courses by either modifying an existing course or adding a new one.
+	 *
+	 * @param {string} courseId - The ID of the course to update or add.
+	 * @param {string} term - The new term to assign to the course.
+	 * @param {number} year - The new year to assign to the course.
+	 * @param {object} courseData - The course data returned from the API.
+	 */
 	const handleRemoveCourse = async (courseId, type) => {
 		setPlannedCoursesLoading(true);
 

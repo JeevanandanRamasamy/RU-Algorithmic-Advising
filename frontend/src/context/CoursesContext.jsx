@@ -5,12 +5,16 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const CoursesContext = createContext();
 
+/**
+ * Provides the list of courses and related states such as loading and errors.
+ */
 export const CoursesProvider = ({ children }) => {
 	const { token } = useAuth();
 	const [courses, setCourses] = useState([]);
 	const [coursesLoading, setCoursesLoading] = useState(false);
 	const [coursesError, setCoursesError] = useState(null);
 
+	// Fetch courses from the API
 	const fetchCourses = useCallback(async () => {
 		setCoursesLoading(true);
 		try {

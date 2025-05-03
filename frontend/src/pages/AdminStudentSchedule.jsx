@@ -8,6 +8,7 @@ import Card, { CardContent } from "../components/generic/Card";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+// AdminStudentSchedule displays the student's course schedule
 export default function AdminStudentSchedule() {
 	const { studentId } = useParams();
 	const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function AdminStudentSchedule() {
 	const [schedule, setSchedule] = useState([]);
 	const [studentName, setStudentName] = useState("");
 
+	// Fetch student schedule and name on component mount
 	useEffect(() => {
 		// Fetch schedule
 		fetch(`${backendUrl}/api/admin/students/${studentId}/schedule`, {

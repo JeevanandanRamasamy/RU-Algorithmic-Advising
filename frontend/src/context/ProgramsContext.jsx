@@ -6,6 +6,10 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const ProgramsContext = createContext();
 
+/**
+ * ProgramsProvider manages the programs available to the user and their selected programs.
+ * It handles fetching, filtering, adding, and removing programs.
+ */
 export const ProgramsProvider = ({ children }) => {
 	const { user, token } = useAuth();
 	const [selectedProgramsQuery, setSelectedProgramsQuery] = useState("");
@@ -15,6 +19,7 @@ export const ProgramsProvider = ({ children }) => {
 	const [filteredPrograms, setFilteredPrograms] = useState([]);
 	const [filteredSelectedPrograms, setFilteredSelectedPrograms] = useState([]);
 
+	// Fetch all programs
 	useEffect(() => {
 		const fetchPrograms = async () => {
 			try {
@@ -27,6 +32,7 @@ export const ProgramsProvider = ({ children }) => {
 			}
 		};
 
+		// Fetch user programs
 		const fetchUserPrograms = async () => {
 			if (!user) return;
 			try {
@@ -48,6 +54,7 @@ export const ProgramsProvider = ({ children }) => {
 		fetchUserPrograms();
 	}, [user, token]);
 
+	// Fetch programs and user programs when user or token changes
 	useEffect(() => {
 		if (!programs) return;
 
@@ -60,6 +67,7 @@ export const ProgramsProvider = ({ children }) => {
 		setFilteredPrograms(filtered);
 	}, [programsQuery, programs]);
 
+	// Filter selected programs based on the query
 	useEffect(() => {
 		if (!selectedPrograms) return;
 
@@ -72,6 +80,7 @@ export const ProgramsProvider = ({ children }) => {
 		setFilteredSelectedPrograms(filtered);
 	}, [selectedProgramsQuery, selectedPrograms]);
 
+	// Handle adding a program to the selected programs
 	const handleInsertProgram = async program_id => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/programs`, {
@@ -93,7 +102,7 @@ export const ProgramsProvider = ({ children }) => {
 			console.error("Error inserting program:", error);
 		}
 	};
-
+	// Handle removing a program from the selected programs
 	const handleRemoveProgram = async program_id => {
 		try {
 			const response = await fetch(`${backendUrl}/api/users/programs`, {

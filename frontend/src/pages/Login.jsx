@@ -6,10 +6,13 @@ import {
 	showErrorToast,
 	showInfoToast,
 	showSuccessToast,
-	showWarningToast,
+	showWarningToast
 } from "../components/toast/Toast";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * Login component - Handles the user login functionality.
+ */
 function Login() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -17,6 +20,9 @@ function Login() {
 	const { login, user, role } = useAuth();
 	const navigate = useNavigate();
 
+	/**
+	 * Effect to redirect user based on their authentication state.
+	 */
 	useEffect(() => {
 		if (user) {
 			if (role === "admin") {
@@ -27,14 +33,17 @@ function Login() {
 		}
 	}, [user, role, navigate]);
 
-	const handleLogin = async (e) => {
+	/**
+	 * Handles the login form submission.
+	 * Sends login request to the backend and processes the response.
+	 */
+	const handleLogin = async e => {
 		e.preventDefault();
 		const response = await fetch(`${backendUrl}/api/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ username, password })
 		});
-
 
 		const data = await response.json();
 
@@ -60,7 +69,11 @@ function Login() {
 				<div className="w-full max-w-lg p-8 flex flex-col items-center">
 					{/* Logo Section */}
 					<div className="mb-4">
-						<img src={logo} alt="Logo" className="w-32 h-32" />
+						<img
+							src={logo}
+							alt="Logo"
+							className="w-32 h-32"
+						/>
 					</div>
 					<header className="mb-0">
 						<h1>Welcome!</h1>
@@ -68,8 +81,9 @@ function Login() {
 					<p>
 						Need an account? <Link to="/register">Create an Account</Link>
 					</p>
-					<form onSubmit={handleLogin} className="flex flex-col items-center">
-
+					<form
+						onSubmit={handleLogin}
+						className="flex flex-col items-center">
 						<input
 							type="text"
 							placeholder="Username"

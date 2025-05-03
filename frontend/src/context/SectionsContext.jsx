@@ -20,6 +20,7 @@ const campusToColorMap = {
 	"ONLINE": "#ff8080"
 };
 
+// Provider component for sections context
 export const SectionsProvider = ({ children }) => {
 	const { token } = useAuth();
 	const { checkRequirements } = useCourseRequirements();
@@ -45,6 +46,7 @@ export const SectionsProvider = ({ children }) => {
 		{ term: "fall", year: 2025 }
 	];
 
+	// Function to convert semester to numeric format
 	const getSemesterNumber = (term, year) => {
 		if (term === "spring") return "1" + year;
 		if (term === "fall") return "9" + year;
@@ -52,6 +54,7 @@ export const SectionsProvider = ({ children }) => {
 		if (term === "summer") return "7" + year;
 	};
 
+	// Function to fetch sections data by course ID
 	const fetchSectionsByCourse = async (courseId, term, year) => {
 		const sectionResponse = await fetch(
 			`${backendUrl}/api/sections?course_id=${courseId}&term=${term}&year=${year}`
@@ -59,7 +62,7 @@ export const SectionsProvider = ({ children }) => {
 		const sectionData = await sectionResponse.json();
 		return sectionData.sections;
 	};
-
+	// Fetching sections data for multiple courses
 	const getSectionsDataByCourses = async (courseIds, term, year) => {
 		const allSections = {};
 		const indexToMeetingMap = {};
@@ -97,6 +100,7 @@ export const SectionsProvider = ({ children }) => {
 		return { allSections, indexToMeetingMap, indexToCourseMap };
 	};
 
+	// Updates the selected course sections with new data
 	const updateSelectedCourseSections = async (courseIds, term, year) => {
 		const { allSections, indexToMeetingMap, indexToCourseMap } = await getSectionsDataByCourses(
 			courseIds,
@@ -125,6 +129,7 @@ export const SectionsProvider = ({ children }) => {
 		indexToMeetingTimesMapRef.current = updatedMap;
 	};
 
+	// Function to check if a course is available for a semester
 	const courseAvailableThisSemester = async (courseId, term, year) => {
 		if (!validSemesters.some(sem => sem.term === term && sem.year === year)) {
 			return true;
@@ -155,6 +160,7 @@ export const SectionsProvider = ({ children }) => {
 		return true;
 	};
 
+	// Function to fetch sections by subject
 	const fetchSectionsBySubject = async (subject, term, year) => {
 		showInfoToast("Fetching sections", "fetch-sections");
 		if (subject === "") {
@@ -191,6 +197,7 @@ export const SectionsProvider = ({ children }) => {
 		}
 	};
 
+	// Function to generate valid schedules from checked sections
 	const generateValidSchedules = async () => {
 		showInfoToast("generating schedules", "generate-schedules");
 		try {
@@ -230,6 +237,7 @@ export const SectionsProvider = ({ children }) => {
 		F: 4
 	};
 
+	// Function to get the start of the week from a date
 	const getStartOfWeek = date => {
 		const start = new Date(date);
 		const day = start.getDay();
@@ -239,6 +247,7 @@ export const SectionsProvider = ({ children }) => {
 		return start;
 	};
 
+	// Parsing time in string format to hours and minutes
 	const parseTime = (timeStr, pmCode) => {
 		let hour = parseInt(timeStr.slice(0, 2), 10);
 		const minute = parseInt(timeStr.slice(3, 5), 10);
@@ -247,7 +256,7 @@ export const SectionsProvider = ({ children }) => {
 		}
 		return { hour, minute };
 	};
-
+	// Function to generate events from valid schedules
 	const generateEventsForSchedule = () => {
 		if (validSchedules?.length === 0) {
 			if (selectedCourses && Object.keys(selectedCourses).length !== 0) {
@@ -276,6 +285,7 @@ export const SectionsProvider = ({ children }) => {
 		setSchedulesMap(newScheduleMap);
 	};
 
+	// Populate events for a schedule based on meeting times
 	const populateEvents = (index, events, async) => {
 		const meetings = indexToMeetingTimesMapRef.current[index];
 		for (let k = 0; k < meetings.length; k++) {
@@ -327,6 +337,7 @@ export const SectionsProvider = ({ children }) => {
 		}
 	};
 
+	// Function to save schedules
 	const saveSchedule = async (term, year) => {
 		if (
 			(!schedulesMap && !asyncCourses) ||
@@ -429,6 +440,7 @@ export const SectionsProvider = ({ children }) => {
 		clearToast("save-schedule");
 	};
 
+	// fetched saved schedules
 	const fetchSavedSchedules = async () => {
 		const sectionResponse = await fetch(`${backendUrl}/api/sections/schedules`, {
 			method: "GET",
@@ -501,6 +513,13 @@ export const SectionsProvider = ({ children }) => {
 		setSavedSchedulesMap(savedScheduleMap);
 	};
 
+	/**
+	 * Deletes a given schedule by removing it from the local state and making an API request to the backend.
+	 *
+	 * @param {string} term - The term (e.g., "Fall", "Spring").
+	 * @param {number} year - The academic year (e.g., 2025).
+	 * @param {string} scheduleName - The name of the schedule to be deleted.
+	 */
 	const deleteSchedule = async (term, year, scheduleName) => {
 		showInfoToast("Deleting schedule", "delete-schedule");
 
