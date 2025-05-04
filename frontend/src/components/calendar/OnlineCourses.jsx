@@ -43,7 +43,7 @@ const OnlineCourses = ({ asyncCourses, index, map }) => {
 						<span>{item.course_id}</span>
 						<span>{item.section_number}</span>
 						<span>{item.index}</span>
-						<span>{String(item.open_status)}</span>
+						<span>{item.open_status ? "Open" : "Closed"}</span>
 					</div>
 				))}
 			</>
