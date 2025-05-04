@@ -101,7 +101,7 @@ function Login() {
 						<br />
 						<button
 							onClick={handleLogin}
-							className="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 ">
+							className="bg-blue-600 text-white cursor-pointer font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-500 ">
 							Login
 						</button>
 					</form>
