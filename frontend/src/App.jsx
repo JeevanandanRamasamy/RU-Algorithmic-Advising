@@ -13,7 +13,6 @@ import SPN from "./pages/SPN";
 import DegreeNavigator from "./pages/DegreeNavigator";
 import AccountSettings from "./pages/AccountSettings";
 
-import ToastDemo from "./pages/ToastDemo";
 import { ToastWrapper } from "./components/toast/Toast";
 
 import AdminDashboard from "./pages/AdminDashboard";
@@ -103,10 +102,6 @@ function App() {
 										<CoursePlanner />
 									</DndProvider>
 								}
-							/>
-							<Route
-								path="toast"
-								element={<ToastDemo />}
 							/>
 							<Route
 								path="degree-navigator"

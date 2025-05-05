@@ -4,6 +4,7 @@ import sys
 import os
 from flask_jwt_extended import create_access_token
 
+from freezegun import freeze_time
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
